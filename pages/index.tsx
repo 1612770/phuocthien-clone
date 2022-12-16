@@ -1,15 +1,31 @@
+import { Typography } from 'antd';
 import PrimaryLayout from '../components/layouts/primary/PrimaryLayout';
 import SidebarLayout from '../components/layouts/sidebar/SidebarLayout';
-import styles from '../styles/Home.module.css';
 import { NextPageWithLayout } from './page';
 
 const Home: NextPageWithLayout = () => {
   return (
-    <section className={styles.main}>
-      <h1 className={styles.title}>
-        Welcome to <a href="https://nextjs.org">Next.js!</a>
-      </h1>
-    </section>
+    <main className="p-4 md:p-11">
+      <Typography.Title level={1}>NextJS-Antd-Tailwindcss</Typography.Title>
+
+      <section>
+        <Typography.Title level={2}>Button</Typography.Title>
+      </section>
+
+      <section>
+        <Typography.Title level={3}>Input</Typography.Title>
+      </section>
+
+      <section>
+        <Typography.Title level={4}>Switch</Typography.Title>
+      </section>
+
+      <section>
+        <Typography.Title level={5} className="font-bold underline">
+          Modal
+        </Typography.Title>
+      </section>
+    </main>
   );
 };
 
