@@ -1,4 +1,5 @@
 import type { AppProps } from 'next/app';
+import Head from 'next/head';
 import '../styles/style.scss';
 import { NextPageWithLayout } from './page';
 interface AppPropsWithLayout extends AppProps {
@@ -7,5 +8,12 @@ interface AppPropsWithLayout extends AppProps {
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout || ((page) => page);
 
-  return getLayout(<Component {...pageProps} />);
+  return (
+    <>
+      <Head>
+        <title>Nhà thuốc Phước Thiện</title>
+      </Head>
+      {getLayout(<Component {...pageProps} />)}{' '}
+    </>
+  );
 }
