@@ -1,3 +1,4 @@
+import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import '../styles/style.scss';
@@ -13,7 +14,15 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       <Head>
         <title>Nhà thuốc Phước Thiện</title>
       </Head>
-      {getLayout(<Component {...pageProps} />)}{' '}
+      <ConfigProvider
+        theme={{
+          token: {
+            fontFamily: 'Roboto',
+          },
+        }}
+      >
+        {getLayout(<Component {...pageProps} />)}{' '}
+      </ConfigProvider>
     </>
   );
 }
