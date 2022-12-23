@@ -9,7 +9,7 @@ type PrimaryHeaderProps = {};
 // eslint-disable-next-line no-empty-pattern
 function PrimaryHeader({}: PrimaryHeaderProps) {
   return (
-    <>
+    <header>
       <div className="bg-primary">
         <div className="container m-auto flex items-center justify-between py-2">
           <Space align="center">
@@ -37,7 +37,7 @@ function PrimaryHeader({}: PrimaryHeaderProps) {
             />
           </Space>
 
-          <Space>
+          <Space size={16}>
             <Button type="primary" className="h-10 bg-primary-dark shadow-none">
               <Space align="center" className="h-full w-full">
                 <ShoppingCart className="text-white" size={20} />
@@ -54,6 +54,14 @@ function PrimaryHeader({}: PrimaryHeaderProps) {
                 </Typography.Text>
               </Space>
             </Button>
+            <Space align="center" direction="vertical" size={0}>
+              <Typography.Text className="text-center text-sm text-white">
+                Hotline (08h00 - 20h30)
+              </Typography.Text>
+              <Typography.Text className="text-center text-base font-semibold text-yellow-500">
+                1800599964
+              </Typography.Text>
+            </Space>
           </Space>
         </div>
       </div>
@@ -61,7 +69,6 @@ function PrimaryHeader({}: PrimaryHeaderProps) {
       <div className="bg-primary">
         <div className="container m-auto flex items-center justify-between p-2">
           <Space
-            align="baseline"
             split={
               <Typography.Text className="text-white" type="secondary">
                 |
@@ -91,7 +98,7 @@ function PrimaryHeader({}: PrimaryHeaderProps) {
           </Space>
         </div>
       </div>
-    </>
+    </header>
   );
 }
 

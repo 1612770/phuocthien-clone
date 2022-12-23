@@ -1,17 +1,17 @@
 import { Space, Typography } from 'antd';
 
-type SectionProps = {
+type SectionTitleProps = {
   title: string;
   children: React.ReactNode;
   className?: string;
 };
 
-function Section({ title, children, className }: SectionProps) {
+function SectionTitle({ title, children, className }: SectionTitleProps) {
   return (
     <Space direction="vertical">
       <Typography.Title
         level={3}
-        className={`mb-1 mt-2 uppercase ${className}`}
+        className={`mb-4 mt-12 uppercase ${className}`}
       >
         {title}
       </Typography.Title>
@@ -20,4 +20,4 @@ function Section({ title, children, className }: SectionProps) {
   );
 }
 
-export default Section;
+export default SectionTitle;
