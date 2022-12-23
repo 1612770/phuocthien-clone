@@ -1,41 +1,66 @@
-import { Typography } from 'antd';
-import PrimaryLayout from '../components/layouts/primary/PrimaryLayout';
-import SidebarLayout from '../components/layouts/sidebar/SidebarLayout';
+import PrimaryLayout from 'components/layouts/PrimaryLayout/PrimaryLayout';
+import ProductCard from 'components/templates/ProductCard';
 import { NextPageWithLayout } from './page';
+import Section from 'components/templates/Section';
+import { Carousel, Col, Row } from 'antd';
 
 const Home: NextPageWithLayout = () => {
   return (
-    <main className="p-4 md:p-11">
-      <Typography.Title level={1}>NextJS-Antd-Tailwindcss</Typography.Title>
+    <>
+      <Carousel autoplay>
+        <img
+          className="h-96 w-full object-cover"
+          src="https://phuocthien.vn/Images/ImageUpload/2021-10/amh%20bia.jpg"
+          alt="carousel image"
+        />
+        <img
+          className="h-96 w-full object-cover"
+          src="https://phuocthien.vn/Images/ImageUpload/2022-11/c.jpg"
+          alt="carousel image"
+        />
+      </Carousel>
 
-      <section>
-        <Typography.Title level={2}>Button</Typography.Title>
-      </section>
+      <div className="container">
+        <Section title="Sản phẩm bán chạy" className="mt-8">
+          <Row gutter={32}>
+            <Col span={6}>
+              <ProductCard title="Hỗn dịch uống Phosphalugel 20% trị trào ngược dạ dày, thực quản" />
+            </Col>
+            <Col span={6}>
+              <ProductCard title="Khẩu trang y tế Khánh An 4 lớp màu trắng" />
+            </Col>
+            <Col span={6}>
+              <ProductCard title="Nước muối Safin giúp sát khuẩn, súc miệng" />
+            </Col>
+            <Col span={6}>
+              <ProductCard title="Cao dán Salonpas giảm đau, kháng viêm" />
+            </Col>
+          </Row>
+        </Section>
 
-      <section>
-        <Typography.Title level={3}>Input</Typography.Title>
-      </section>
-
-      <section>
-        <Typography.Title level={4}>Switch</Typography.Title>
-      </section>
-
-      <section>
-        <Typography.Title level={5} className="font-bold underline">
-          Modal
-        </Typography.Title>
-      </section>
-    </main>
+        <Section title="Sản phẩm bán chạy" className="mt-8">
+          <Row gutter={32}>
+            <Col span={6}>
+              <ProductCard title="Hỗn dịch uống Phosphalugel 20% trị trào ngược dạ dày, thực quản" />
+            </Col>
+            <Col span={6}>
+              <ProductCard title="Khẩu trang y tế Khánh An 4 lớp màu trắng" />
+            </Col>
+            <Col span={6}>
+              <ProductCard title="Nước muối Safin giúp sát khuẩn, súc miệng" />
+            </Col>
+            <Col span={6}>
+              <ProductCard title="Cao dán Salonpas giảm đau, kháng viêm" />
+            </Col>
+          </Row>
+        </Section>
+      </div>
+    </>
   );
 };
 
 export default Home;
 
 Home.getLayout = (page) => {
-  return (
-    <PrimaryLayout>
-      <SidebarLayout />
-      {page}
-    </PrimaryLayout>
-  );
+  return <PrimaryLayout>{page}</PrimaryLayout>;
 };
