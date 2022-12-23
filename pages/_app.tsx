@@ -1,8 +1,12 @@
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
+
 import '../styles/style.scss';
+import 'antd/dist/reset.css';
+
 import { NextPageWithLayout } from './page';
+import COLORS from 'configs/colors';
 interface AppPropsWithLayout extends AppProps {
   Component: NextPageWithLayout;
 }
@@ -18,6 +22,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         theme={{
           token: {
             fontFamily: 'Roboto',
+            colorPrimary: COLORS.primary,
           },
         }}
       >
