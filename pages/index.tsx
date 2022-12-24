@@ -21,6 +21,7 @@ export async function getServerSideProps(ctx: any) {
   return returnObject;
 }
 const Home: NextPageWithLayout = (props) => {
+  console.log(props);
   return (
     <>
       <img
