@@ -50,7 +50,11 @@ class BaseClient {
 
   async call(method: string, url: string, data: any) {
     return typeof window === 'undefined'
-      ? await this.makeRequest(method, process.env.API_HOST + url, data)
+      ? await this.makeRequest(
+          method,
+          `${process.env.API_HOST}/${process.env.API_VERSION}/${url}`,
+          data
+        )
       : await this.makeRequest(method, '/backend' + url, data);
   }
 }

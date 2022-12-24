@@ -7,13 +7,14 @@ import 'antd/dist/reset.css';
 
 import { NextPageWithLayout } from './page';
 import COLORS from 'configs/colors';
+import { GeneralClient } from 'libs/client/General';
 interface AppPropsWithLayout extends AppProps {
   Component: NextPageWithLayout;
+  props?: any;
 }
 
-export default function App({ Component, pageProps }: AppPropsWithLayout) {
+function App({ Component, pageProps, props }: AppPropsWithLayout) {
   const getLayout = Component.getLayout || ((page) => page);
-
   return (
     <>
       <Head>
@@ -27,8 +28,24 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           },
         }}
       >
-        {getLayout(<Component {...pageProps} />)}{' '}
+        {getLayout(<Component {...pageProps} {...props} />)}{' '}
       </ConfigProvider>
     </>
   );
 }
+
+App.getInitialProps = async (ctx: any) => {
+  let returnObject: { props: any } = { props: {} };
+  const generalClient = new GeneralClient(ctx, {});
+  try {
+    const _res = await generalClient.getAllMenu();
+    if (_res.success) {
+      returnObject.props.fullMenu = _res.data;
+    }
+  } catch (error) {
+    console.info(`error call API, ${JSON.stringify(error)}`);
+  }
+  return returnObject;
+};
+
+export default App;
