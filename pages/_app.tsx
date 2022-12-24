@@ -5,6 +5,7 @@ import { NextPageWithLayout } from './page';
 interface AppPropsWithLayout extends AppProps {
   Component: NextPageWithLayout;
 }
+
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout || ((page) => page);
 
