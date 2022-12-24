@@ -6,22 +6,8 @@ import { Button, Col, Row, Space } from 'antd';
 import HomepageCarousel from 'modules/homepage/HomepageCarousel';
 import SectionBanner from 'components/templates/SectionBanner';
 import { ChevronRight } from 'react-feather';
-import { GeneralClient } from '@libs/client/General';
-export async function getServerSideProps(ctx: any) {
-  let returnObject: { props: any } = { props: {} };
-  const generalClient = new GeneralClient(ctx, {});
-  try {
-    const _res = await generalClient.getAllMenu();
-    if (_res.success) {
-      returnObject.props.data = _res.data;
-    }
-  } catch (error) {
-    console.info(`error call API, ${JSON.stringify(error)}`);
-  }
-  return returnObject;
-}
-const Home: NextPageWithLayout = (props) => {
-  console.log(props);
+
+const Home: NextPageWithLayout = () => {
   return (
     <>
       <img
