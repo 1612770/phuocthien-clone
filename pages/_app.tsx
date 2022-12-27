@@ -8,6 +8,7 @@ import 'antd/dist/reset.css';
 import { NextPageWithLayout } from './page';
 import COLORS from 'configs/colors';
 import { GeneralClient } from 'libs/client/General';
+import { getLogger } from '@libs/pino';
 interface AppPropsWithLayout extends AppProps {
   Component: NextPageWithLayout;
   props?: any;
@@ -43,7 +44,7 @@ App.getInitialProps = async (ctx: any) => {
       returnObject.props.fullMenu = _res.data;
     }
   } catch (error) {
-    console.info(`error call API, ${JSON.stringify(error)}`);
+    getLogger('production').error(error);
   }
   return returnObject;
 };

@@ -3,9 +3,10 @@ import COLORS from 'configs/colors';
 
 type ProductCardProps = {
   title: string;
+  className?: string;
 };
 
-function ProductCard({ title }: ProductCardProps) {
+function ProductCard({ title, className }: ProductCardProps) {
   return (
     <Card
       cover={
@@ -17,7 +18,7 @@ function ProductCard({ title }: ProductCardProps) {
       bodyStyle={{
         padding: '12px',
       }}
-      className="relative"
+      className={`${className} relative`}
     >
       <Tag
         color={COLORS.red}
@@ -28,7 +29,7 @@ function ProductCard({ title }: ProductCardProps) {
       <div className="relative flex flex-col">
         <Space direction="vertical" size={0}>
           <Tag color="blue">Hộp 1 vỉ x 1 viên</Tag>
-          <Typography.Text className="mt-1 block min-h-[40px]">
+          <Typography.Text className="mt-1 block min-h-[48px]">
             {title}
           </Typography.Text>
           <Typography.Text className="mt-1 block">

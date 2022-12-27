@@ -3,3 +3,16 @@
 
 // base
 @import './base/_reset';
+
+.product-cart-item-collapse {
+  .ant-collapse-header {
+    padding-left: 0 !important;
+  }
+  .ant-collapse-expand-icon {
+    padding-inline-end: 4px !important;
+  }
+  .ant-collapse-content-box {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
