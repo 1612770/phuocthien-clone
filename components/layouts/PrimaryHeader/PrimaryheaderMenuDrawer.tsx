@@ -7,17 +7,39 @@ import {
   Space,
   Typography,
 } from 'antd';
-import { ChevronDown, ShoppingCart, User } from 'react-feather';
+import { ChevronDown, ShoppingCart, User, X } from 'react-feather';
 import PrimaryHeaderMenuList from './PrimaryHeaderMenuList';
+import IMAGES from '@configs/assests/images';
+import Link from 'next/link';
 
 function PrimaryheaderMenuDrawer({ open, onClose }: DrawerProps) {
   return (
     <Drawer
-      title=""
+      title={
+        <div className="flex flex-1 items-center">
+          <Link href="/" style={{ color: 'white' }}>
+            <img
+              src={IMAGES.logo}
+              alt="Nhà thuốc Phước Thiện"
+              className="aspect-square h-8 w-16 object-contain"
+            />
+          </Link>
+
+          <Space direction="vertical" size={0} className="mr-4 w-[92px]">
+            <Typography.Text className="m-0 -mb-2 inline-block text-base text-white">
+              Nhà thuốc
+            </Typography.Text>
+            <Typography.Text strong className="uppercase text-white">
+              Phước Thiện
+            </Typography.Text>
+          </Space>
+        </div>
+      }
       placement="right"
       onClose={onClose}
       open={open}
-      closable={false}
+      closable
+      closeIcon={<X size={16} />}
     >
       <Space size={16} direction="vertical" className="w-full">
         <Button

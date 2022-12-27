@@ -8,7 +8,7 @@ import PrimaryheaderMenuDrawer from './PrimaryheaderMenuDrawer';
 
 function PrimaryHeader() {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
-
+  const [openSearchMenu, setOpenSearchMenu] = useState(false);
   return (
     <header>
       <div className="bg-primary py-2">
@@ -34,7 +34,7 @@ function PrimaryHeader() {
             <Input
               placeholder="Tìm kiếm sản phẩm..."
               size="large"
-              className="ml-2 hidden h-10 w-full flex-1 lg:block"
+              className="ml-2 hidden h-10 w-full flex-1 lg:flex"
               suffix={<Search size={20} />}
             />
           </div>
@@ -42,7 +42,7 @@ function PrimaryHeader() {
           <Space size={16}>
             <Button
               type="primary"
-              className="ml-8 hidden h-10 bg-primary-dark shadow-none lg:block"
+              className="ml-8 hidden h-10 bg-primary-dark shadow-none md:block"
             >
               <Space align="center" className="h-full w-full">
                 <ShoppingCart className="text-white" size={20} />
@@ -53,7 +53,7 @@ function PrimaryHeader() {
             </Button>
             <Button
               type="primary"
-              className="hidden h-10 bg-primary-dark shadow-none lg:block"
+              className="hidden h-10 bg-primary-dark shadow-none md:block"
             >
               <Space align="center" className="h-full w-full">
                 <User className="text-white" width={20} height={20} />
@@ -79,8 +79,15 @@ function PrimaryHeader() {
             <Button
               shape="circle"
               type="primary"
+              onClick={() => setOpenSearchMenu(!openSearchMenu)}
+              className="flex h-10 w-[40px] items-center justify-center shadow-none lg:hidden"
+              icon={<Search size={20} className="cursor-pointer text-white" />}
+            />
+            <Button
+              shape="circle"
+              type="primary"
               onClick={() => setOpenMobileMenu(!openMobileMenu)}
-              className="flex h-10 w-[40px] items-center justify-center shadow-none"
+              className="flex h-10 w-[40px] items-center justify-center shadow-none lg:hidden"
               icon={<Menu size={20} className="cursor-pointer text-white" />}
             />
           </Space>

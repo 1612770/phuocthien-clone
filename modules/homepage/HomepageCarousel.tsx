@@ -13,16 +13,16 @@ function HomepageCarousel() {
         dots={false}
         ref={(ref) => (carouselRef.current = ref)}
       >
-        <div className="w-full px-4">
+        <div className="w-full">
           <Row>
-            <Col span={12}>
+            <Col xs={24} lg={12} className="px-2">
               <img
                 className="block h-40 w-full rounded-lg object-cover"
                 src="https://phuocthien.vn/Images/ImageUpload/2021-10/amh%20bia.jpg"
                 alt="carousel image"
               />
             </Col>
-            <Col span={12}>
+            <Col span={12} className="hidden lg:block">
               <img
                 className="block h-40 w-full rounded-lg object-cover"
                 src="https://phuocthien.vn/Images/ImageUpload/2022-11/c.jpg"
@@ -33,14 +33,14 @@ function HomepageCarousel() {
         </div>
         <div className="w-full">
           <Row>
-            <Col span={12}>
+            <Col xs={24} lg={12} className="px-2">
               <img
                 className="block h-40 w-full rounded-lg object-cover"
                 src="https://phuocthien.vn/Images/ImageUpload/2021-10/amh%20bia.jpg"
                 alt="carousel image"
               />
             </Col>
-            <Col span={12}>
+            <Col span={12} className="hidden lg:block">
               <img
                 className="block h-40 w-full rounded-lg object-cover"
                 src="https://phuocthien.vn/Images/ImageUpload/2022-11/c.jpg"
@@ -51,14 +51,14 @@ function HomepageCarousel() {
         </div>
         <div className="w-full">
           <Row>
-            <Col span={12}>
+            <Col xs={24} lg={12} className="px-2">
               <img
                 className="block h-40 w-full rounded-lg object-cover"
                 src="https://phuocthien.vn/Images/ImageUpload/2021-10/amh%20bia.jpg"
                 alt="carousel image"
               />
             </Col>
-            <Col span={12}>
+            <Col span={12} className="hidden lg:block">
               <img
                 className="block h-40 w-full rounded-lg object-cover"
                 src="https://phuocthien.vn/Images/ImageUpload/2022-11/c.jpg"
@@ -74,7 +74,7 @@ function HomepageCarousel() {
         size="large"
         onClick={() => carouselRef.current?.prev()}
         icon={<ChevronLeft />}
-        className="absolute top-1/2 left-[20px] -translate-y-1/2 -translate-x-1/2"
+        className="absolute top-1/2 left-[28px] -translate-y-1/2 -translate-x-1/2"
       />
 
       <Button
