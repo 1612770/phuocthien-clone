@@ -22,14 +22,18 @@ function PrimaryHeader() {
               />
             </Link>
 
-            <Space direction="vertical" size={0} className="mr-4 w-[92px]">
-              <Typography.Text className="m-0 -mb-2 inline-block text-base text-white">
-                Nhà thuốc
-              </Typography.Text>
-              <Typography.Text strong className="uppercase text-white">
-                Phước Thiện
-              </Typography.Text>
-            </Space>
+            <Link href="/">
+              <a>
+                <Space direction="vertical" size={0} className="mr-4 w-[92px]">
+                  <Typography.Text className="m-0 -mb-2 inline-block text-base text-white">
+                    Nhà thuốc
+                  </Typography.Text>
+                  <Typography.Text strong className="uppercase text-white">
+                    Phước Thiện
+                  </Typography.Text>
+                </Space>
+              </a>
+            </Link>
 
             <Input
               placeholder="Tìm kiếm sản phẩm..."
@@ -40,17 +44,19 @@ function PrimaryHeader() {
           </div>
 
           <Space size={16}>
-            <Button
-              type="primary"
-              className="ml-8 hidden h-10 bg-primary-dark shadow-none md:block"
-            >
-              <Space align="center" className="h-full w-full">
-                <ShoppingCart className="text-white" size={20} />
-                <Typography.Text className="text-white">
-                  Giỏ hàng
-                </Typography.Text>
-              </Space>
-            </Button>
+            <Link href="/cart">
+              <Button
+                type="primary"
+                className="ml-8 hidden h-10 bg-primary-dark shadow-none md:block"
+              >
+                <Space align="center" className="h-full w-full">
+                  <ShoppingCart className="text-white" size={20} />
+                  <Typography.Text className="text-white">
+                    Giỏ hàng
+                  </Typography.Text>
+                </Space>
+              </Button>
+            </Link>
             <Button
               type="primary"
               className="hidden h-10 bg-primary-dark shadow-none md:block"

@@ -4,14 +4,15 @@ import PrimaryFooter from '../PrimaryFooter';
 
 export interface IPrimaryLayout {
   children: React.ReactNode;
+  hideFooter?: boolean;
 }
 
-const PrimaryLayout: React.FC<IPrimaryLayout> = ({ children }) => {
+const PrimaryLayout: React.FC<IPrimaryLayout> = ({ hideFooter, children }) => {
   return (
     <>
       <PrimaryHeader />
       <Layout.Content>{children}</Layout.Content>
-      <PrimaryFooter />
+      {!hideFooter && <PrimaryFooter />}
     </>
   );
 };
