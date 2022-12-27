@@ -1,6 +1,7 @@
-import { List, Popover, Space, Typography } from 'antd';
+import { Popover, Space, Typography } from 'antd';
 import Link from 'next/link';
 import { ChevronDown } from 'react-feather';
+import PrimaryHeaderMenuList from './PrimaryHeaderMenuList';
 
 function PrimaryHeaderMenuItem({
   label,
@@ -15,33 +16,7 @@ function PrimaryHeaderMenuItem({
     <Link href="/" style={{ color: 'white' }}>
       <Popover
         placement="bottomLeft"
-        content={
-          <List
-            size="small"
-            itemLayout="horizontal"
-            dataSource={['Cơ xương khớp, gút', 'Da liễu, dị ứng']}
-            header={
-              <List.Item className="py-1">
-                <Link href="/">
-                  <a>
-                    <Typography.Text className="font-medium uppercase text-primary">
-                      Xem tất cả thuốc
-                    </Typography.Text>
-                  </a>
-                </Link>
-              </List.Item>
-            }
-            renderItem={(item) => (
-              <List.Item className="min-w-32">
-                <Link href="/">
-                  <a>
-                    <Typography.Text>{item}</Typography.Text>
-                  </a>
-                </Link>
-              </List.Item>
-            )}
-          />
-        }
+        content={<PrimaryHeaderMenuList />}
         trigger="hover"
       >
         <a>

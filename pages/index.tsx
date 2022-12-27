@@ -20,20 +20,22 @@ const Home: NextPageWithLayout = () => {
         <HomepageCarousel />
 
         <SectionTitle title="Sản phẩm bán chạy">
-          <Row gutter={16}>
-            <Col span={6}>
-              <ProductCard title="Hỗn dịch uống Phosphalugel 20% trị trào ngược dạ dày, thực quản" />
-            </Col>
-            <Col span={6}>
-              <ProductCard title="Khẩu trang y tế Khánh An 4 lớp màu trắng" />
-            </Col>
-            <Col span={6}>
-              <ProductCard title="Nước muối Safin giúp sát khuẩn, súc miệng" />
-            </Col>
-            <Col span={6}>
-              <ProductCard title="Cao dán Salonpas giảm đau, kháng viêm" />
-            </Col>
-          </Row>
+          <div className="px-0">
+            <Row>
+              <Col sm={24} md={12} lg={6} className="w-full">
+                <ProductCard title="Hỗn dịch uống Phosphalugel 20% trị trào ngược dạ dày, thực quản" />
+              </Col>
+              <Col sm={24} md={12} lg={6} className="w-full">
+                <ProductCard title="Khẩu trang y tế Khánh An 4 lớp màu trắng" />
+              </Col>
+              <Col sm={24} md={12} lg={6} className="w-full">
+                <ProductCard title="Nước muối Safin giúp sát khuẩn, súc miệng" />
+              </Col>
+              <Col sm={24} md={12} lg={6} className="w-full">
+                <ProductCard title="Cao dán Salonpas giảm đau, kháng viêm" />
+              </Col>
+            </Row>
+          </div>
         </SectionTitle>
 
         <SectionBanner src="https://phuocthien.vn/Images/ImageUpload/2022-11/TOCDE.png">
@@ -42,7 +44,7 @@ const Home: NextPageWithLayout = () => {
               <Button size="large" className="border-none bg-gray-100">
                 Nổi bật
               </Button>
-              <Button size="large" className="border-none bg-gray-100">
+              {/* <Button size="large" className="border-none bg-gray-100">
                 Giảm đau, hạ sốt
               </Button>
               <Button size="large" className="border-none bg-gray-100">
@@ -50,20 +52,20 @@ const Home: NextPageWithLayout = () => {
               </Button>
               <Button size="large" className="border-none bg-gray-100">
                 Mắt, tai, mũi, họng
-              </Button>
+              </Button> */}
             </Space>
           </div>
-          <Row gutter={16}>
-            <Col span={6}>
+          <Row>
+            <Col sm={24} md={12} lg={6} className="w-full">
               <ProductCard title="Hỗn dịch uống Phosphalugel 20% trị trào ngược dạ dày, thực quản" />
             </Col>
-            <Col span={6}>
+            <Col sm={24} md={12} lg={6} className="w-full">
               <ProductCard title="Khẩu trang y tế Khánh An 4 lớp màu trắng" />
             </Col>
-            <Col span={6}>
+            <Col sm={24} md={12} lg={6} className="w-full">
               <ProductCard title="Nước muối Safin giúp sát khuẩn, súc miệng" />
             </Col>
-            <Col span={6}>
+            <Col sm={24} md={12} lg={6} className="w-full">
               <ProductCard title="Cao dán Salonpas giảm đau, kháng viêm" />
             </Col>
           </Row>
@@ -76,17 +78,17 @@ const Home: NextPageWithLayout = () => {
         </SectionBanner>
 
         <SectionTitle title="Thần dược chữa rụng tóc">
-          <Row gutter={16}>
-            <Col span={6}>
+          <Row>
+            <Col sm={24} md={12} lg={6} className="w-full">
               <ProductCard title="Hỗn dịch uống Phosphalugel 20% trị trào ngược dạ dày, thực quản" />
             </Col>
-            <Col span={6}>
+            <Col sm={24} md={12} lg={6} className="w-full">
               <ProductCard title="Khẩu trang y tế Khánh An 4 lớp màu trắng" />
             </Col>
-            <Col span={6}>
+            <Col sm={24} md={12} lg={6} className="w-full">
               <ProductCard title="Nước muối Safin giúp sát khuẩn, súc miệng" />
             </Col>
-            <Col span={6}>
+            <Col sm={24} md={12} lg={6} className="w-full">
               <ProductCard title="Cao dán Salonpas giảm đau, kháng viêm" />
             </Col>
           </Row>
@@ -98,7 +100,7 @@ const Home: NextPageWithLayout = () => {
               <Button size="large" className="border-none bg-gray-100">
                 Nổi bật
               </Button>
-              <Button size="large" className="border-none bg-gray-100">
+              {/* <Button size="large" className="border-none bg-gray-100">
                 Giảm đau, hạ sốt
               </Button>
               <Button size="large" className="border-none bg-gray-100">
@@ -106,20 +108,20 @@ const Home: NextPageWithLayout = () => {
               </Button>
               <Button size="large" className="border-none bg-gray-100">
                 Mắt, tai, mũi, họng
-              </Button>
+              </Button> */}
             </Space>
           </div>
-          <Row gutter={16}>
-            <Col span={6}>
+          <Row>
+            <Col sm={24} md={12} lg={6} className="w-full">
               <ProductCard title="Hỗn dịch uống Phosphalugel 20% trị trào ngược dạ dày, thực quản" />
             </Col>
-            <Col span={6}>
+            <Col sm={24} md={12} lg={6} className="w-full">
               <ProductCard title="Khẩu trang y tế Khánh An 4 lớp màu trắng" />
             </Col>
-            <Col span={6}>
+            <Col sm={24} md={12} lg={6} className="w-full">
               <ProductCard title="Nước muối Safin giúp sát khuẩn, súc miệng" />
             </Col>
-            <Col span={6}>
+            <Col sm={24} md={12} lg={6} className="w-full">
               <ProductCard title="Cao dán Salonpas giảm đau, kháng viêm" />
             </Col>
           </Row>

@@ -13,8 +13,8 @@ function HomepageCarousel() {
         dots={false}
         ref={(ref) => (carouselRef.current = ref)}
       >
-        <div className="w-full">
-          <Row gutter={16}>
+        <div className="w-full px-4">
+          <Row>
             <Col span={12}>
               <img
                 className="block h-40 w-full rounded-lg object-cover"
@@ -32,7 +32,7 @@ function HomepageCarousel() {
           </Row>
         </div>
         <div className="w-full">
-          <Row gutter={16}>
+          <Row>
             <Col span={12}>
               <img
                 className="block h-40 w-full rounded-lg object-cover"
@@ -50,7 +50,7 @@ function HomepageCarousel() {
           </Row>
         </div>
         <div className="w-full">
-          <Row gutter={16}>
+          <Row>
             <Col span={12}>
               <img
                 className="block h-40 w-full rounded-lg object-cover"
@@ -74,7 +74,7 @@ function HomepageCarousel() {
         size="large"
         onClick={() => carouselRef.current?.prev()}
         icon={<ChevronLeft />}
-        className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2"
+        className="absolute top-1/2 left-[20px] -translate-y-1/2 -translate-x-1/2"
       />
 
       <Button
@@ -82,7 +82,7 @@ function HomepageCarousel() {
         size="large"
         onClick={() => carouselRef.current?.next()}
         icon={<ChevronRight />}
-        className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2"
+        className="absolute top-1/2 right-[20px] -translate-y-1/2 translate-x-1/2"
       />
     </div>
   );

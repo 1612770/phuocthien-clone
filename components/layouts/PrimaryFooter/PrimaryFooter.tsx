@@ -9,11 +9,10 @@ type PrimaryFooterProps = {};
 function PrimaryFooter({}: PrimaryFooterProps) {
   return (
     <>
-      <div className="bg-primary">
+      <footer className="mt-8 bg-primary px-4">
         <div className="container py-8">
-          <Row gutter={16}>
-            <Col span={6}>
-              <img src={IMAGES.logo} alt="logo" className="mb-3 block h-10" />
+          <Row>
+            <Col xs={24} sm={12} lg={6} className="my-4">
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                 Nhà thuốc Phước Thiện
               </Typography.Text>
@@ -35,35 +34,9 @@ function PrimaryFooter({}: PrimaryFooterProps) {
                   phuocthiendn@yahoo.com
                 </Typography.Text>
               </Space>
-              <Space className="mt-2">
-                <Link
-                  href="https://www.facebook.com/PhuocThienPharmacy/"
-                  passHref
-                >
-                  <a target={'_blank'}>
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
-                      <Facebook color="white" size={16} />
-                    </span>
-                  </a>
-                </Link>
-                <Link href="/">
-                  <a>
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
-                      <Youtube color="white" size={16} />
-                    </span>
-                  </a>
-                </Link>
-                <Link href="/">
-                  <a>
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
-                      <Twitter color="white" size={16} />
-                    </span>
-                  </a>
-                </Link>
-              </Space>
             </Col>
 
-            <Col span={6}>
+            <Col xs={24} sm={12} lg={6} className="my-4">
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                 Hỗ trợ khách hàng
               </Typography.Text>
@@ -96,7 +69,7 @@ function PrimaryFooter({}: PrimaryFooterProps) {
               </Space>
             </Col>
 
-            <Col span={6}>
+            <Col xs={24} sm={12} lg={6} className="my-4">
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                 Hệ thống thuốc
               </Typography.Text>
@@ -138,7 +111,7 @@ function PrimaryFooter({}: PrimaryFooterProps) {
               </Space>
             </Col>
 
-            <Col span={6}>
+            <Col xs={24} sm={12} lg={6} className="my-4">
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                 Thông tin chung
               </Typography.Text>
@@ -176,17 +149,48 @@ function PrimaryFooter({}: PrimaryFooterProps) {
               </Link>
             </Col>
           </Row>
+          <div>
+            <img src={IMAGES.logo} alt="logo" className="my-3 block h-10" />
+            <Space className="my-2">
+              <Link
+                href="https://www.facebook.com/PhuocThienPharmacy/"
+                passHref
+              >
+                <a target={'_blank'}>
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
+                    <Facebook color="white" size={16} />
+                  </span>
+                </a>
+              </Link>
+              <Link href="/">
+                <a>
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
+                    <Youtube color="white" size={16} />
+                  </span>
+                </a>
+              </Link>
+              <Link href="/">
+                <a>
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
+                    <Twitter color="white" size={16} />
+                  </span>
+                </a>
+              </Link>
+            </Space>
+          </div>
           <Divider className="bg-white" />
-          <Typography.Text className="text-center text-xs text-white">
-            © 2020 HỆ THỐNG NHÀ THUỐC PHƯỚC THIỆN. Giấy phép kinh doanh:
-            32A8031215 - được cấp ngày: 16/04/2020. Địa chỉ: 370 Trưng Nữ Vương,
-            Quận Hải Châu, TP Đà Nẵng. Điện thoại: (0236) 3827.772 - Fax: (0236)
-            3827.772. Email: phuocthien.pharmacy@gmail.com. Người quản lý nội
-            dung: Ds Ngô Thị Huyền Trâm. All rights reserved.
-          </Typography.Text>
-          <Typography.Text className="text-center text-xs text-white">
-            (Phiên bản chạy thử)
-          </Typography.Text>
+          <div>
+            <Typography className="text-center text-xs text-white">
+              © 2020 HỆ THỐNG NHÀ THUỐC PHƯỚC THIỆN. Giấy phép kinh doanh:
+              32A8031215 - được cấp ngày: 16/04/2020. Địa chỉ: 370 Trưng Nữ
+              Vương, Quận Hải Châu, TP Đà Nẵng. Điện thoại: (0236) 3827.772 -
+              Fax: (0236) 3827.772. Email: phuocthien.pharmacy@gmail.com. Người
+              quản lý nội dung: Ds Ngô Thị Huyền Trâm. All rights reserved.
+            </Typography>
+            <Typography className="text-center text-xs text-white">
+              (Phiên bản chạy thử)
+            </Typography>
+          </div>
           <div className="mt-4 flex items-center justify-center">
             <img
               src={IMAGES.bocongthuongDathongbao}
@@ -200,7 +204,7 @@ function PrimaryFooter({}: PrimaryFooterProps) {
             />
           </div>
         </div>
-      </div>
+      </footer>
     </>
   );
 }
