@@ -12,7 +12,7 @@ function ProductCard({ title, className }: ProductCardProps) {
       cover={
         <img
           alt="product image"
-          src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+          src="https://cdn.tgdd.vn/Products/Images/10243/247941/bonlutin-thumb-1-600x600.jpg"
         />
       }
       bodyStyle={{

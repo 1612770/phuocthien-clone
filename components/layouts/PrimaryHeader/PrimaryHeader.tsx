@@ -44,7 +44,7 @@ function PrimaryHeader() {
           </div>
 
           <Space size={16}>
-            <Link href="/cart">
+            <Link href="/gio-hang">
               <Button
                 type="primary"
                 className="ml-8 hidden h-10 bg-primary-dark shadow-none md:block"
@@ -111,12 +111,12 @@ function PrimaryHeader() {
             <PrimaryHeaderMenuItem label="Chăm sóc trẻ em" />
           </Space>
           <Typography.Text
-            className="mx-4 hidden text-white xl:flex"
+            className="mx-4 hidden text-white lg:flex"
             type="secondary"
           >
             |
           </Typography.Text>
-          <Space className="hidden xl:flex">
+          <Space className="hidden lg:flex">
             <PrimaryHeaderMenuItem
               label="Góc sức khỏe"
               onlyClick
