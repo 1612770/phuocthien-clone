@@ -11,8 +11,8 @@ function PrimaryFooter({}: PrimaryFooterProps) {
     <>
       <footer className="mt-8 bg-primary px-4">
         <div className="container py-8">
-          <Row>
-            <Col xs={24} sm={12} lg={6} className="my-4">
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12} lg={6}>
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                 Nhà thuốc Phước Thiện
               </Typography.Text>
@@ -36,7 +36,7 @@ function PrimaryFooter({}: PrimaryFooterProps) {
               </Space>
             </Col>
 
-            <Col xs={24} sm={12} lg={6} className="my-4">
+            <Col xs={24} sm={12} lg={6}>
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                 Hỗ trợ khách hàng
               </Typography.Text>
@@ -69,7 +69,7 @@ function PrimaryFooter({}: PrimaryFooterProps) {
               </Space>
             </Col>
 
-            <Col xs={24} sm={12} lg={6} className="my-4">
+            <Col xs={24} sm={12} lg={6}>
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                 Hệ thống thuốc
               </Typography.Text>
@@ -111,7 +111,7 @@ function PrimaryFooter({}: PrimaryFooterProps) {
               </Space>
             </Col>
 
-            <Col xs={24} sm={12} lg={6} className="my-4">
+            <Col xs={24} sm={12} lg={6}>
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                 Thông tin chung
               </Typography.Text>
