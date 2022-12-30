@@ -5,10 +5,13 @@ import PrimaryHeaderMenuItem from './PrimaryHeaderMenuItem';
 import IMAGES from 'configs/assests/images';
 import { useState } from 'react';
 import PrimaryheaderMenuDrawer from './PrimaryheaderMenuDrawer';
+import { useFullMenu } from '@providers/FullMenuProvider';
 
 function PrimaryHeader() {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const [openSearchMenu, setOpenSearchMenu] = useState(false);
+  const { fullMenu } = useFullMenu();
+
   return (
     <header>
       <div className="bg-primary py-2">
@@ -103,12 +106,13 @@ function PrimaryHeader() {
       <div className="hidden bg-primary lg:block">
         <div className="container m-auto flex items-center justify-between p-2">
           <Space className="flex flex-1 justify-between">
-            <PrimaryHeaderMenuItem label="Thuốc" />
-            <PrimaryHeaderMenuItem label="Thực phẩm chức năng" />
-            <PrimaryHeaderMenuItem label="Thiết bị, dụng cụ y tế" />
-            <PrimaryHeaderMenuItem label="Mỹ phẩm" />
-            <PrimaryHeaderMenuItem label="Chăm sóc cá nhân" />
-            <PrimaryHeaderMenuItem label="Chăm sóc trẻ em" />
+            {fullMenu.map((menu) => (
+              <PrimaryHeaderMenuItem
+                href={`/${menu.key}`}
+                label={menu.name || ''}
+                key={menu?.key}
+              />
+            ))}
           </Space>
           <Typography.Text
             className="mx-4 hidden text-white lg:flex"
@@ -118,11 +122,13 @@ function PrimaryHeader() {
           </Typography.Text>
           <Space className="hidden lg:flex">
             <PrimaryHeaderMenuItem
+              href="/goc-suc-khoe"
               label="Góc sức khỏe"
               onlyClick
               icon={<Book className="text-white" size={16} />}
             />
             <PrimaryHeaderMenuItem
+              href="/chuoi-nha-thuoc"
               label="Chuỗi nhà thuốc"
               onlyClick
               icon={<MapPin className="text-white" size={16} />}

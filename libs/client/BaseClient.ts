@@ -32,6 +32,7 @@ class BaseClient {
     let req: any = {
       method: method,
     };
+
     req.headers = {
       ...req.headers,
       'Content-Type': this.contentType || 'application/json',
@@ -60,7 +61,7 @@ class BaseClient {
           `${process.env.API_HOST}/${process.env.API_VERSION}/${url}`,
           data
         )
-      : await this.makeRequest(method, '/backend' + url, data);
+      : await this.makeRequest(method, '/backend/' + url, data);
   }
 }
 

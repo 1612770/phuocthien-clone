@@ -1,5 +1,5 @@
 import Menu from '@configs/models/menu.model';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const FullMenuContext = React.createContext<{
   fullMenu: Menu[];
@@ -14,8 +14,16 @@ function FullMenuProvider({
   fullMenu: Menu[];
   children: React.ReactNode;
 }) {
+  const [fullMenuPassDown, setFullMenuPassDown] = useState(fullMenu);
+
+  useEffect(() => {
+    if (fullMenu.length > 0) {
+      setFullMenuPassDown(fullMenu);
+    }
+  }, [fullMenu]);
+
   return (
-    <FullMenuContext.Provider value={{ fullMenu }}>
+    <FullMenuContext.Provider value={{ fullMenu: fullMenuPassDown }}>
       {children}
     </FullMenuContext.Provider>
   );

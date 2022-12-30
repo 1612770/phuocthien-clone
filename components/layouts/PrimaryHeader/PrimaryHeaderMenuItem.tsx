@@ -7,13 +7,15 @@ function PrimaryHeaderMenuItem({
   label,
   icon,
   onlyClick,
+  href,
 }: {
   label: string;
+  href: string;
   onlyClick?: boolean;
   icon?: React.ReactNode;
 }) {
   return (
-    <Link href="/" style={{ color: 'white' }}>
+    <Link href={href} style={{ color: 'white' }}>
       <Popover
         placement="bottomLeft"
         content={<PrimaryHeaderMenuList />}
