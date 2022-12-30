@@ -8,7 +8,8 @@ import 'antd/dist/reset.css';
 import { NextPageWithLayout } from './page';
 import COLORS from 'configs/colors';
 import { GeneralClient } from 'libs/client/General';
-import { getLogger } from '@libs/pino';
+import Menu from '@configs/models/menu.model';
+import FullMenuProvider from '@providers/FullMenuProvider';
 interface AppPropsWithLayout extends AppProps {
   Component: NextPageWithLayout;
   props?: any;
@@ -29,24 +30,33 @@ function App({ Component, pageProps, props }: AppPropsWithLayout) {
           },
         }}
       >
-        {getLayout(<Component {...pageProps} {...props} />)}{' '}
+        <FullMenuProvider fullMenu={props.fullMenu}>
+          {getLayout(<Component {...pageProps} {...props} />)}{' '}
+        </FullMenuProvider>
       </ConfigProvider>
     </>
   );
 }
 
 App.getInitialProps = async (ctx: any) => {
-  let returnObject: { props: any } = { props: {} };
+  let initialProps: { props: { allMenu: Menu[] } } = {
+    props: {
+      allMenu: [],
+    },
+  };
+
   const generalClient = new GeneralClient(ctx, {});
+
   try {
-    const _res = await generalClient.getAllMenu();
-    if (_res.success) {
-      returnObject.props.fullMenu = _res.data;
-    }
+    const allMenu = await generalClient.getMenu();
+    console.log('file: _app.tsx:44 | allMenu', allMenu);
+
+    initialProps.props.allMenu = allMenu.data;
   } catch (error) {
-    getLogger('production').error(error);
+    console.log('file: _app.tsx:50 | error', error);
   }
-  return returnObject;
+
+  return initialProps;
 };
 
 export default App;

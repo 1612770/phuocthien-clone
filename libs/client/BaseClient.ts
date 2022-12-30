@@ -1,4 +1,5 @@
 /* eslint-disable no-prototype-builtins */
+import APIResponse from '@configs/types/api-response.type';
 import { getSessionToken } from 'libs/helpers';
 
 export function serialize(obj: any) {
@@ -23,7 +24,11 @@ class BaseClient {
     this.data.props = data.props || {};
     this.session = data.session || getSessionToken(ctx)?.toString();
   }
-  async makeRequest(method: string, url: string, data: any) {
+  async makeRequest(
+    method: string,
+    url: string,
+    data: any
+  ): Promise<APIResponse> {
     let req: any = {
       method: method,
     };
@@ -48,7 +53,7 @@ class BaseClient {
     return result;
   }
 
-  async call(method: string, url: string, data: any) {
+  async call(method: string, url: string, data: any): Promise<APIResponse> {
     return typeof window === 'undefined'
       ? await this.makeRequest(
           method,
