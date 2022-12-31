@@ -1,5 +1,5 @@
 import { ConfigProvider } from 'antd';
-import type { AppProps } from 'next/app';
+import type { AppContext, AppProps } from 'next/app';
 import Head from 'next/head';
 
 import '../styles/style.scss';
@@ -8,14 +8,25 @@ import 'antd/dist/reset.css';
 import { NextPageWithLayout } from './page';
 import COLORS from 'configs/colors';
 import { GeneralClient } from 'libs/client/General';
-import { getLogger } from '@libs/pino';
-interface AppPropsWithLayout extends AppProps {
-  Component: NextPageWithLayout;
-  props?: any;
+import Menu from '@configs/models/menu.model';
+import FullMenuProvider from '@providers/FullMenuProvider';
+import App from 'next/app';
+import React from 'react';
+
+interface AppPropsWithLayout<T> extends AppProps<T> {
+  Component: NextPageWithLayout<T>;
 }
 
-function App({ Component, pageProps, props }: AppPropsWithLayout) {
+function MyApp({
+  Component,
+  pageProps,
+}: AppPropsWithLayout<{
+  fullMenu?: Menu[];
+}>) {
+  console.log('file: _app.tsx:25 | pageProps', pageProps);
+
   const getLayout = Component.getLayout || ((page) => page);
+
   return (
     <>
       <Head>
@@ -29,24 +40,41 @@ function App({ Component, pageProps, props }: AppPropsWithLayout) {
           },
         }}
       >
-        {getLayout(<Component {...pageProps} {...props} />)}{' '}
+        <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
+          {getLayout(<Component {...pageProps} />)}
+        </FullMenuProvider>
       </ConfigProvider>
     </>
   );
 }
 
-App.getInitialProps = async (ctx: any) => {
-  let returnObject: { props: any } = { props: {} };
-  const generalClient = new GeneralClient(ctx, {});
+MyApp.getInitialProps = async (ctx: AppContext) => {
+  let initalProps = await App.getInitialProps(ctx);
+
+  let appInitalProps: { props: { fullMenu: Menu[] } } = {
+    props: {
+      fullMenu: [],
+    },
+  };
+
+  let generalClient = new GeneralClient(ctx, {});
   try {
-    const _res = await generalClient.getAllMenu();
-    if (_res.success) {
-      returnObject.props.fullMenu = _res.data;
-    }
+    let fullMenu = await generalClient.getMenu();
+    console.log('file: _app.tsx:63 | fullMenu', fullMenu);
+
+    appInitalProps.props.fullMenu = fullMenu.data;
   } catch (error) {
-    getLogger('production').error(error);
+    console.log('file: _app.tsx:68 | error', error);
+
+    appInitalProps.props.fullMenu = [];
   }
-  return returnObject;
+
+  initalProps.pageProps = {
+    ...initalProps.pageProps,
+    ...appInitalProps.props,
+  };
+
+  return initalProps;
 };
 
-export default App;
+export default MyApp;

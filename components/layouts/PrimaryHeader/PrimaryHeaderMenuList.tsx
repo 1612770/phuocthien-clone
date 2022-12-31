@@ -1,33 +1,38 @@
-import { List, Typography } from 'antd';
-import Link from 'next/link';
+import ProductGroup from '@configs/models/product-group';
+import UrlUtils from '@libs/utils/url.utils';
+import ProductChildGroup from '@modules/products/ProductChildGroup';
+import { Empty, Space, Typography } from 'antd';
 
-function PrimaryHeaderMenuList() {
+function PrimaryHeaderMenuList({
+  productGroups,
+  parentHref,
+}: {
+  productGroups: ProductGroup[];
+  parentHref: string;
+}) {
   return (
-    <List
-      size="small"
-      itemLayout="horizontal"
-      dataSource={['Cơ xương khớp, gút', 'Da liễu, dị ứng']}
-      header={
-        <List.Item className="py-1">
-          <Link href="/duoc-my-pham">
-            <a>
-              <Typography.Text className="font-medium uppercase text-primary">
-                Xem tất cả dược, mỹ phẩm
-              </Typography.Text>
-            </a>
-          </Link>
-        </List.Item>
-      }
-      renderItem={(item) => (
-        <List.Item className="min-w-32">
-          <Link href="/duoc-my-pham/co-xuong-khop-gut">
-            <a>
-              <Typography.Text>{item}</Typography.Text>
-            </a>
-          </Link>
-        </List.Item>
+    <div className="w-full py-4">
+      <Space size={[12, 8]} wrap className="p-2 px-4">
+        {!!productGroups?.length &&
+          productGroups?.map((productGroup) => (
+            <ProductChildGroup
+              href={`${parentHref}/${UrlUtils.generateSlug(
+                productGroup?.name,
+                productGroup?.key
+              )}`}
+              key={productGroup?.key}
+              label={productGroup?.name || ''}
+            />
+          ))}
+      </Space>
+      {!productGroups?.length && (
+        <div className="mb-4 flex h-full w-full items-center justify-center">
+          <Empty
+            description={<Typography>Không có danh mục nào</Typography>}
+          ></Empty>
+        </div>
       )}
-    />
+    </div>
   );
 }
 
