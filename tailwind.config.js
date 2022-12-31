@@ -13,6 +13,8 @@ module.exports = {
         primary: '#038f63',
         'primary-light': '#0ebd8c',
         'primary-dark': '#006747',
+        'primary-background': '#f5f9f6',
+        'primary-border': '#98afa8',
       },
     },
     container: {
