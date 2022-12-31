@@ -6,6 +6,9 @@ import IMAGES from 'configs/assests/images';
 import { useState } from 'react';
 import PrimaryheaderMenuDrawer from './PrimaryheaderMenuDrawer';
 import { useFullMenu } from '@providers/FullMenuProvider';
+import UrlUtils from '@libs/utils/url.utils';
+import PrimaryHeaderMenuAll from './PrimaryHeaderMenuAll';
+import IMPORTANT_MENUS from '@configs/constants/important-menus';
 
 function PrimaryHeader() {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
@@ -18,15 +21,13 @@ function PrimaryHeader() {
         <div className="container m-auto flex items-center justify-between py-2">
           <div className="flex flex-1 items-center">
             <Link href="/" style={{ color: 'white' }}>
-              <img
-                src={IMAGES.logo}
-                alt="Nhà thuốc Phước Thiện"
-                className="aspect-square h-8 w-16 object-contain"
-              />
-            </Link>
+              <a className="flex items-center">
+                <img
+                  src={IMAGES.logo}
+                  alt="Nhà thuốc Phước Thiện"
+                  className="mr-2 h-8 object-contain"
+                />
 
-            <Link href="/">
-              <a>
                 <Space direction="vertical" size={0} className="mr-4 w-[92px]">
                   <Typography.Text className="m-0 -mb-2 inline-block text-base text-white">
                     Nhà thuốc
@@ -104,15 +105,20 @@ function PrimaryHeader() {
       </div>
 
       <div className="hidden bg-primary lg:block">
-        <div className="container m-auto flex items-center justify-between p-2">
+        <div className="container m-auto flex items-center justify-between py-2">
           <Space className="flex flex-1 justify-between">
-            {fullMenu.map((menu) => (
-              <PrimaryHeaderMenuItem
-                href={`/${menu.key}`}
-                label={menu.name || ''}
-                key={menu?.key}
-              />
-            ))}
+            <PrimaryHeaderMenuAll />
+
+            {fullMenu.map((menu) =>
+              menu?.name && IMPORTANT_MENUS.includes(menu?.name) ? (
+                <PrimaryHeaderMenuItem
+                  productGroups={menu?.productGroups}
+                  href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}
+                  label={menu.name || ''}
+                  key={menu?.key}
+                />
+              ) : null
+            )}
           </Space>
           <Typography.Text
             className="mx-4 hidden text-white lg:flex"

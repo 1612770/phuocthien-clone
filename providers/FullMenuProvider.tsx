@@ -17,7 +17,7 @@ function FullMenuProvider({
   const [fullMenuPassDown, setFullMenuPassDown] = useState(fullMenu);
 
   useEffect(() => {
-    if (fullMenu.length > 0) {
+    if (fullMenu.length) {
       setFullMenuPassDown(fullMenu);
     }
   }, [fullMenu]);

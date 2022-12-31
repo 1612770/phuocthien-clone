@@ -16,3 +16,14 @@
     padding-bottom: 0 !important;
   }
 }
+
+.ant-popover-inner {
+  padding: 0 !important;
+}
+
+.primary-header-menu-item {
+  .ant-popover-content {
+    max-height: 200px !important;
+    overflow-y: auto !important;
+  }
+}

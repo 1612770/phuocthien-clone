@@ -14,13 +14,13 @@ const ProductGroupPage: NextPageWithLayout = () => {
       </Breadcrumb>
 
       <Space size={[8, 8]} wrap>
-        <ProductChildGroup />
-        <ProductChildGroup />
-        <ProductChildGroup />
-        <ProductChildGroup />
-        <ProductChildGroup />
-        <ProductChildGroup />
-        <ProductChildGroup />
+        <ProductChildGroup href="" label="" />
+        <ProductChildGroup href="" label="" />
+        <ProductChildGroup href="" label="" />
+        <ProductChildGroup href="" label="" />
+        <ProductChildGroup href="" label="" />
+        <ProductChildGroup href="" label="" />
+        <ProductChildGroup href="" label="" />
       </Space>
 
       <div className="pl-2 lg:container lg:pl-0">

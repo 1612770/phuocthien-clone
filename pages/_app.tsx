@@ -11,6 +11,7 @@ import { GeneralClient } from 'libs/client/General';
 import Menu from '@configs/models/menu.model';
 import FullMenuProvider from '@providers/FullMenuProvider';
 import App from 'next/app';
+import React from 'react';
 
 interface AppPropsWithLayout<T> extends AppProps<T> {
   Component: NextPageWithLayout<T>;
@@ -20,7 +21,7 @@ function MyApp({
   Component,
   pageProps,
 }: AppPropsWithLayout<{
-  fullMenu: Menu[];
+  fullMenu?: Menu[];
 }>) {
   console.log('file: _app.tsx:25 | pageProps', pageProps);
 
@@ -39,7 +40,7 @@ function MyApp({
           },
         }}
       >
-        <FullMenuProvider fullMenu={pageProps.fullMenu}>
+        <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
           {getLayout(<Component {...pageProps} />)}
         </FullMenuProvider>
       </ConfigProvider>
@@ -56,17 +57,16 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
     },
   };
 
-  if (typeof window === 'undefined') {
-    let generalClient = new GeneralClient(ctx, {});
-    try {
-      let fullMenu = await generalClient.getMenu();
-      console.log('file: _app.tsx:44 | fullMenu', fullMenu);
+  let generalClient = new GeneralClient(ctx, {});
+  try {
+    let fullMenu = await generalClient.getMenu();
+    console.log('file: _app.tsx:63 | fullMenu', fullMenu);
 
-      appInitalProps.props.fullMenu = fullMenu.data;
-    } catch (error) {
-      appInitalProps.props.fullMenu = [];
-      console.log('file: _app.tsx:50 | error', error);
-    }
+    appInitalProps.props.fullMenu = fullMenu.data;
+  } catch (error) {
+    console.log('file: _app.tsx:68 | error', error);
+
+    appInitalProps.props.fullMenu = [];
   }
 
   initalProps.pageProps = {
