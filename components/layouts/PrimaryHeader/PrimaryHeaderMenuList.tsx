@@ -7,8 +7,8 @@ function PrimaryHeaderMenuList({
   productGroups,
   parentHref,
 }: {
-  productGroups: ProductGroup[];
-  parentHref: string;
+  productGroups?: ProductGroup[];
+  parentHref?: string;
 }) {
   return (
     <div className="w-full py-4">
