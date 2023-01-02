@@ -10,6 +10,7 @@ const nextConfig = {
   },
   env: {
     API_HOST: process.env.API_HOST,
+    API_VERSION: process.env.API_VERSION,
   },
   rewrites() {
     return [
