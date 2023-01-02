@@ -11,7 +11,12 @@ const nextConfig = {
   env: {
     API_HOST: process.env.API_HOST,
     API_VERSION: process.env.API_VERSION,
+    HOST_IMAGE: process.env.HOST_IMAGE,
   },
+  images: {
+    domains: [`${process.env.HOST_IMAGE}`],
+  },
+
   rewrites() {
     return [
       {
