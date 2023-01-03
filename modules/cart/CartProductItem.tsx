@@ -4,6 +4,7 @@ import CartProductItemCollapse from './CartProductItemCollapse';
 import Product from '@configs/models/product.model';
 import { useCart } from '@providers/CartProvider';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
+import ImageUtils from '@libs/utils/image.utils';
 
 function CartProductItem({
   cartProduct,
@@ -19,6 +20,9 @@ function CartProductItem({
           <ImageWithFallback
             src={cartProduct.product.detail?.image || ''}
             alt="product image"
+            getMockImage={() => {
+              return ImageUtils.getRandomMockProductImageUrl();
+            }}
             layout="fill"
           />
         </div>
