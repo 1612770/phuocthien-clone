@@ -9,6 +9,7 @@ import { useFullMenu } from '@providers/FullMenuProvider';
 import UrlUtils from '@libs/utils/url.utils';
 import PrimaryHeaderMenuAll from './PrimaryHeaderMenuAll';
 import IMPORTANT_MENUS from '@configs/constants/important-menus';
+import ProductGroupModel from '@configs/models/product-group.model';
 
 function PrimaryHeader() {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
@@ -109,16 +110,18 @@ function PrimaryHeader() {
           <Space className="flex flex-1 justify-between">
             <PrimaryHeaderMenuAll />
 
-            {/* {fullMenu.map((menu) =>
+            {fullMenu.map((menu) =>
               menu?.name && IMPORTANT_MENUS.includes(menu?.name) ? (
                 <PrimaryHeaderMenuItem
-                  productGroups={menu?.productGroups}
                   href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}
                   label={menu.name || ''}
                   key={menu?.key}
+                  productGroups={
+                    (menu?.productGroups as ProductGroupModel[]) || []
+                  }
                 />
               ) : null
-            )} */}
+            )}
           </Space>
           <Typography.Text
             className="mx-4 hidden text-white lg:flex"
@@ -127,26 +130,18 @@ function PrimaryHeader() {
             |
           </Typography.Text>
           <Space className="hidden lg:flex">
-            <Link href={'/goc-suc-khoe'} style={{ color: 'white' }}>
-              <a>
-                <Space align="center">
-                  <Book className="text-white" size={16} />
-                  <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
-                    Góc sức khỏe
-                  </Typography.Text>
-                </Space>
-              </a>
-            </Link>
-            <Link href={'/chuoi-nha-thuoc'} style={{ color: 'white' }}>
-              <a>
-                <Space align="center">
-                  <MapPin className="text-white" size={16} />
-                  <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
-                    Chuỗi nhà thuốc
-                  </Typography.Text>
-                </Space>
-              </a>
-            </Link>
+            <PrimaryHeaderMenuItem
+              href="/goc-suc-khoe"
+              label="Góc sức khỏe"
+              onlyClick
+              icon={<Book className="text-white" size={16} />}
+            />
+            <PrimaryHeaderMenuItem
+              href="/chuoi-nha-thuoc"
+              label="Chuỗi nhà thuốc"
+              onlyClick
+              icon={<MapPin className="text-white" size={16} />}
+            />
           </Space>
         </div>
       </div>
