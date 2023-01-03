@@ -17,6 +17,9 @@ const nextConfig = {
       },
     ];
   },
+  images: {
+    domains: ['phuocthien.net'],
+  },
 };
 
 module.exports = nextConfig;
