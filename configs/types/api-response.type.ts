@@ -1,6 +1,9 @@
 type APIResponse<T = any> = {
   data: T;
-  error: unknown;
+  error: Partial<{
+    code: string;
+    msg: string;
+  }> | null;
   success: boolean;
 };
 

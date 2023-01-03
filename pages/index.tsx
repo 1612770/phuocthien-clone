@@ -1,14 +1,20 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout/PrimaryLayout';
 import ProductCard from 'components/templates/ProductCard';
 import { NextPageWithLayout } from './page';
-import { Button, Col, Row, Space, Typography } from 'antd';
-import HomepageCarousel from 'modules/homepage/HomepageCarousel';
-import { ChevronRight } from 'react-feather';
+import { Col, Row, Typography } from 'antd';
+import { GetServerSidePropsContext } from 'next';
+import { ProductClient } from '@libs/client/Product';
+import Menu from '@configs/models/menu.model';
+import Product from '@configs/models/product.model';
+import { Fragment } from 'react';
+import UrlUtils from '@libs/utils/url.utils';
 
-const Home: NextPageWithLayout = () => {
+const Home: NextPageWithLayout<{
+  featureProductsLists: { products: Product[]; productType: Menu }[];
+}> = ({ featureProductsLists }) => {
   return (
     <>
-      <img
+      {/* <img
         className="block h-[50vh] w-full object-cover"
         src="https://cdn.tgdd.vn/2022/12/banner/Big-banner-desktop-1920x450-5.webp"
         alt="carousel image"
@@ -16,51 +22,58 @@ const Home: NextPageWithLayout = () => {
 
       <div className="container -mt-20">
         <HomepageCarousel />
-      </div>
-      <div className="pl-2 lg:container lg:pl-0">
-        <Typography.Title
-          level={3}
-          className="mb-0 mt-6 uppercase lg:mb-4 lg:mt-12"
-        >
-          Sản phẩm bán chạy
-        </Typography.Title>
-      </div>
-      <div className="lg:container">
-        <Row gutter={16} className="hidden lg:flex">
-          <Col sm={24} md={12} lg={6} className="w-full">
-            <ProductCard title="Hỗn dịch uống Phosphalugel 20% trị trào ngược dạ dày, thực quản" />
-          </Col>
-          <Col sm={24} md={12} lg={6} className="w-full">
-            <ProductCard title="Khẩu trang y tế Khánh An 4 lớp màu trắng" />
-          </Col>
-          <Col sm={24} md={12} lg={6} className="w-full">
-            <ProductCard title="Nước muối Safin giúp sát khuẩn, súc miệng" />
-          </Col>
-          <Col sm={24} md={12} lg={6} className="w-full">
-            <ProductCard title="Cao dán Salonpas giảm đau, kháng viêm" />
-          </Col>
-        </Row>
-        <div className="-mx-2 flex w-full overflow-auto pl-2 lg:hidden">
-          <ProductCard
-            title="Hỗn dịch uống Phosphalugel 20% trị trào ngược dạ dày, thực quản"
-            className="m-2 min-w-[240px] max-w-[240px]"
-          />
-          <ProductCard
-            title="Khẩu trang y tế Khánh An 4 lớp màu trắng"
-            className="m-2 min-w-[240px] max-w-[240px]"
-          />
-          <ProductCard
-            title="Nước muối Safin giúp sát khuẩn, súc miệng"
-            className="m-2 min-w-[240px] max-w-[240px]"
-          />
-          <ProductCard
-            title="Cao dán Salonpas giảm đau, kháng viêm"
-            className="m-2 min-w-[240px] max-w-[240px]"
-          />
-        </div>
-      </div>
+      </div> */}
 
-      <img
+      {featureProductsLists.map((featureProductsList, index) =>
+        featureProductsList.products?.length ? (
+          <Fragment key={index}>
+            <div className="pl-2 lg:container lg:pl-0">
+              <Typography.Title
+                level={3}
+                className="mb-0 mt-6 uppercase lg:mb-4 lg:mt-12"
+              >
+                {featureProductsList.productType?.name}
+              </Typography.Title>
+            </div>
+            <div className="lg:container">
+              <Row gutter={[16, 16]} className="hidden lg:flex">
+                {featureProductsList.products.map((product, index) => (
+                  <Col sm={24} md={12} lg={6} className="w-full" key={index}>
+                    <ProductCard
+                      href={`/${UrlUtils.generateSlug(
+                        product.productType?.name,
+                        product.productType?.key
+                      )}/${UrlUtils.generateSlug(
+                        product.productGroup?.name,
+                        product.productGroup?.key
+                      )}/${UrlUtils.generateSlug(product?.name, product?.key)}`}
+                      product={product}
+                    />
+                  </Col>
+                ))}
+              </Row>
+              <div className="-mx-2 flex w-full overflow-auto pl-2 lg:hidden">
+                {featureProductsList.products.map((product, index) => (
+                  <ProductCard
+                    href={`/${UrlUtils.generateSlug(
+                      product.productType?.name,
+                      product.productType?.key
+                    )}/${UrlUtils.generateSlug(
+                      product.productGroup?.name,
+                      product.productGroup?.key
+                    )}/${UrlUtils.generateSlug(product?.name, product?.key)}`}
+                    key={index}
+                    product={product}
+                    className="m-2 min-w-[240px] max-w-[240px]"
+                  />
+                ))}
+              </div>
+            </div>
+          </Fragment>
+        ) : null
+      )}
+
+      {/* <img
         className="mt-8 mb-2 block aspect-video max-h-[240px] w-full object-cover"
         src="https://phuocthien.vn/Images/ImageUpload/2022-11/TOCDE.png"
         alt="banner image"
@@ -137,7 +150,7 @@ const Home: NextPageWithLayout = () => {
             <ChevronRight size={16} className="align-middle" />
           </Button>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };
@@ -146,4 +159,52 @@ export default Home;
 
 Home.getLayout = (page) => {
   return <PrimaryLayout>{page}</PrimaryLayout>;
+};
+
+// get server side props
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  let serverSideProps: {
+    props: {
+      featureProductsLists: { products: Product[]; productType: Menu }[];
+    };
+  } = {
+    props: {
+      featureProductsLists: [],
+    },
+  };
+
+  let productClient = new ProductClient(context, {});
+
+  if ((context.req as any)._fromAppData) {
+    let { fullMenu }: { fullMenu: Menu[] } = (context.req as any)._fromAppData;
+
+    // get first 3 menu keys
+    let featureProductTypes = fullMenu.slice(0, 3);
+
+    try {
+      const featureProductsLists = await Promise.all(
+        featureProductTypes.map((featureProductType) =>
+          productClient.getProducts({
+            page: 1,
+            pageSize: 10,
+            isPrescripted: false,
+            productTypeKey: featureProductType?.key,
+          })
+        )
+      );
+
+      serverSideProps.props.featureProductsLists = featureProductsLists.map(
+        (featureProductsLists, index) => ({
+          products: featureProductsLists.data.data,
+          productType: featureProductTypes[index],
+        })
+      );
+    } catch (error) {
+      console.log('file: index.tsx:181 | error', error);
+    }
+  }
+
+  return serverSideProps;
 };

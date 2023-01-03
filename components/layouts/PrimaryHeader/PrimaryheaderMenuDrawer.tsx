@@ -75,12 +75,12 @@ function PrimaryheaderMenuDrawer({ open, onClose }: DrawerProps) {
       >
         <Collapse.Panel header="Thuốc" key="1">
           <div className="-mt-6">
-            <PrimaryHeaderMenuList />
+            <PrimaryHeaderMenuList parentHref="" productGroups={[]} />
           </div>
         </Collapse.Panel>
         <Collapse.Panel header="Thực phẩm chức năng" key="Thực phẩm chức năng">
           <div className="-mt-6">
-            <PrimaryHeaderMenuList />
+            <PrimaryHeaderMenuList parentHref="" productGroups={[]} />
           </div>
         </Collapse.Panel>
         <Collapse.Panel
@@ -88,22 +88,22 @@ function PrimaryheaderMenuDrawer({ open, onClose }: DrawerProps) {
           key="Thiết bị, dụng cụ y tế"
         >
           <div className="-mt-6">
-            <PrimaryHeaderMenuList />
+            <PrimaryHeaderMenuList parentHref="" productGroups={[]} />
           </div>
         </Collapse.Panel>
         <Collapse.Panel header="Mỹ phẩm" key="Mỹ phẩm">
           <div className="-mt-6">
-            <PrimaryHeaderMenuList />
+            <PrimaryHeaderMenuList parentHref="" productGroups={[]} />
           </div>
         </Collapse.Panel>
         <Collapse.Panel header="Chăm sóc cá nhân" key="Chăm sóc cá nhân">
           <div className="-mt-6">
-            <PrimaryHeaderMenuList />
+            <PrimaryHeaderMenuList parentHref="" productGroups={[]} />
           </div>
         </Collapse.Panel>
         <Collapse.Panel header="Chăm sóc trẻ em" key="Chăm sóc trẻ em">
           <div className="-mt-6">
-            <PrimaryHeaderMenuList />
+            <PrimaryHeaderMenuList parentHref="" productGroups={[]} />
           </div>
         </Collapse.Panel>
       </Collapse>

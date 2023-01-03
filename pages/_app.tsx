@@ -23,8 +23,6 @@ function MyApp({
 }: AppPropsWithLayout<{
   fullMenu?: Menu[];
 }>) {
-  console.log('file: _app.tsx:25 | pageProps', pageProps);
-
   const getLayout = Component.getLayout || ((page) => page);
 
   return (
@@ -60,12 +58,9 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
   let generalClient = new GeneralClient(ctx, {});
   try {
     let fullMenu = await generalClient.getMenu();
-    console.log('file: _app.tsx:63 | fullMenu', fullMenu);
 
     appInitalProps.props.fullMenu = fullMenu.data;
   } catch (error) {
-    console.log('file: _app.tsx:68 | error', error);
-
     appInitalProps.props.fullMenu = [];
   }
 
@@ -73,6 +68,12 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
     ...initalProps.pageProps,
     ...appInitalProps.props,
   };
+
+  if (ctx.ctx.req) {
+    (ctx.ctx.req as any)._fromAppData = {
+      fullMenu: appInitalProps.props.fullMenu,
+    };
+  }
 
   return initalProps;
 };

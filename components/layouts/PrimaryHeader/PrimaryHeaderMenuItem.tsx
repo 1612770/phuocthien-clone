@@ -2,7 +2,7 @@ import { Popover, Space, Typography } from 'antd';
 import Link from 'next/link';
 import { ChevronDown } from 'react-feather';
 import PrimaryHeaderMenuList from './PrimaryHeaderMenuList';
-import ProductGroup from '@configs/models/product-group';
+import ProductGroupModel from '@configs/models/product-group.model';
 
 function PrimaryHeaderMenuItem({
   label,
@@ -16,7 +16,7 @@ function PrimaryHeaderMenuItem({
   href: string;
   onlyClick?: boolean;
   icon?: React.ReactNode;
-  productGroups?: ProductGroup[];
+  productGroups?: ProductGroupModel[];
 }) {
   return (
     <Link href={href} style={{ color: 'white' }}>

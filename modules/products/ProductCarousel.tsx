@@ -1,0 +1,60 @@
+import { Carousel } from 'antd';
+import ImageUtils from '@libs/utils/image.utils';
+import ImageWithFallback from '@components/templates/ImageWithFallback';
+import React, { useMemo, useRef } from 'react';
+import { CarouselRef } from 'antd/es/carousel';
+
+function ProductCarousel({ images }: { images: string[] }) {
+  const carouselRef = useRef<CarouselRef | null>();
+
+  let mockImages = useMemo(
+    () =>
+      [...images, ...images, ...images, ...images].map(() =>
+        ImageUtils.getRandomMockProductImageUrl()
+      ),
+    [images]
+  );
+
+  return (
+    <div>
+      <Carousel
+        className="overflow-hidden rounded-lg border border-solid border-primary-border"
+        autoplay
+        dots={false}
+        ref={(ref) => (carouselRef.current = ref)}
+      >
+        {mockImages.map((image, index) => {
+          return (
+            <div key={index} className="relative h-[400px] w-full">
+              <ImageWithFallback
+                src={image}
+                alt="product"
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
+          );
+        })}
+      </Carousel>
+
+      <div className="mt-4 grid grid-cols-4 gap-4">
+        {mockImages.map((image, index) => (
+          <div
+            key={index}
+            className="relative h-[80px] w-full cursor-pointer overflow-hidden rounded-lg border border-solid border-primary-border"
+          >
+            <ImageWithFallback
+              src={image}
+              alt="product"
+              layout="fill"
+              onClick={() => carouselRef.current?.goTo(index)}
+              objectFit="cover"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default ProductCarousel;

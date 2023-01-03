@@ -1,4 +1,4 @@
-import ProductGroup from '@configs/models/product-group';
+import ProductGroupModel from '@configs/models/product-group.model';
 import UrlUtils from '@libs/utils/url.utils';
 import ProductChildGroup from '@modules/products/ProductChildGroup';
 import { Empty, Space, Typography } from 'antd';
@@ -7,7 +7,7 @@ function PrimaryHeaderMenuList({
   productGroups,
   parentHref,
 }: {
-  productGroups: ProductGroup[];
+  productGroups: ProductGroupModel[];
   parentHref: string;
 }) {
   return (

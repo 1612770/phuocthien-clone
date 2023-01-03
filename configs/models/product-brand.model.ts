@@ -1,4 +1,4 @@
-type ProductGroup = Partial<{
+type ProductBrand = Partial<{
   key: string;
   index: number;
   code: string;
@@ -7,4 +7,4 @@ type ProductGroup = Partial<{
   visible: boolean;
 }>;
 
-export default ProductGroup;
+export default ProductBrand;
