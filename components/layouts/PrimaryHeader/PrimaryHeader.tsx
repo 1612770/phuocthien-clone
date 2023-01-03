@@ -134,18 +134,26 @@ function PrimaryHeader() {
             |
           </Typography.Text>
           <Space className="hidden lg:flex">
-            <PrimaryHeaderMenuItem
-              href="/goc-suc-khoe"
-              label="Góc sức khỏe"
-              onlyClick
-              icon={<Book className="text-white" size={16} />}
-            />
-            <PrimaryHeaderMenuItem
-              href="/chuoi-nha-thuoc"
-              label="Chuỗi nhà thuốc"
-              onlyClick
-              icon={<MapPin className="text-white" size={16} />}
-            />
+            <Link href={'/goc-suc-khoe'} style={{ color: 'white' }}>
+              <a>
+                <Space align="center">
+                  <Book className="text-white" size={16} />
+                  <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
+                    Góc sức khỏe
+                  </Typography.Text>
+                </Space>
+              </a>
+            </Link>
+            <Link href={'/chuoi-nha-thuoc'} style={{ color: 'white' }}>
+              <a>
+                <Space align="center">
+                  <MapPin className="text-white" size={16} />
+                  <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
+                    Chuỗi nhà thuốc
+                  </Typography.Text>
+                </Space>
+              </a>
+            </Link>
           </Space>
         </div>
       </div>
