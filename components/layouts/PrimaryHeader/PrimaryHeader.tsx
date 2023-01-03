@@ -109,7 +109,7 @@ function PrimaryHeader() {
           <Space className="flex flex-1 justify-between">
             <PrimaryHeaderMenuAll />
 
-            {fullMenu.map((menu) =>
+            {/* {fullMenu.map((menu) =>
               menu?.name && IMPORTANT_MENUS.includes(menu?.name) ? (
                 <PrimaryHeaderMenuItem
                   productGroups={menu?.productGroups}
@@ -118,7 +118,7 @@ function PrimaryHeader() {
                   key={menu?.key}
                 />
               ) : null
-            )}
+            )} */}
           </Space>
           <Typography.Text
             className="mx-4 hidden text-white lg:flex"
