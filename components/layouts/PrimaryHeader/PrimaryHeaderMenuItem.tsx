@@ -28,6 +28,7 @@ function PrimaryHeaderMenuItem({
             width: 1200,
             overflow: 'auto',
           }}
+          open={false}
           content={
             <PrimaryHeaderMenuList
               productGroups={productGroups || []}
