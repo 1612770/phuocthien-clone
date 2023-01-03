@@ -19,7 +19,7 @@ function CartProductItemCollapse() {
 
         <Typography className="text-xs">
           Cơ hội trúng 10 Iphone 14 Pro Max 128GB màu ngẫu nhiên cho đơn hàng từ
-          100.000đ (16/12/2022 - 15/01/2023)
+          100.000đ (16/12/2022 - 15/01/2023){' '}
           <Link href="">
             <a>(Click để xem chi tiết)</a>
           </Link>

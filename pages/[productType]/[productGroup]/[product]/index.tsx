@@ -19,12 +19,14 @@ import ProductCard from '@components/templates/ProductCard';
 import ProductCarousel from '@modules/products/ProductCarousel';
 import { Minus, Plus } from 'react-feather';
 import React, { useMemo, useState } from 'react';
+import { useCart } from '@providers/CartProvider';
 
 const ProductPage: NextPageWithLayout<{
   product?: Product;
   otherProducts: Product[];
 }> = ({ product, otherProducts }) => {
   const [quantity, setQuantity] = useState(1);
+  const { addToCart } = useCart();
 
   let carouselImages: string[] = useMemo(() => {
     let memoCarouselImages: string[] = [];
@@ -133,6 +135,9 @@ const ProductPage: NextPageWithLayout<{
                 className="h-[60px] w-full px-10 shadow-none"
                 shape="round"
                 type="primary"
+                onClick={() => {
+                  addToCart({ product, quantity });
+                }}
               >
                 <Typography className="font-semibold uppercase text-white">
                   Thêm vào giỏ hàng

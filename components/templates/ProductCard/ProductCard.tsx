@@ -1,9 +1,11 @@
 import Product from '@configs/models/product.model';
-import ImageUtils from '@libs/utils/image.utils';
 import { Button, Card, Space, Tag, Typography } from 'antd';
-import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import ImageWithFallback from '../ImageWithFallback';
+import ImageUtils from '@libs/utils/image.utils';
+import COLORS from '@configs/colors';
+import { useCart } from '@providers/CartProvider';
 
 type ProductCardProps = {
   product: Product;
@@ -12,40 +14,37 @@ type ProductCardProps = {
 };
 
 function ProductCard({ product, className, href }: ProductCardProps) {
-  const [imageSource, setImageSource] = useState('');
-
-  useEffect(() => {
-    setImageSource(ImageUtils.getFullImageUrl(product?.detail?.image));
-  }, [product]);
+  const { addToCart } = useCart();
 
   return (
     <Link href={href}>
-      <a>
+      <a className="group">
         <Card
           cover={
-            <div className="relative h-[240px] w-full bg-gray-100">
-              <Image
+            <div className="relative h-[240px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
+              <ImageWithFallback
                 alt={product?.name || ''}
-                src={imageSource}
+                src={product?.detail?.image || ''}
                 layout="fill"
                 objectFit="cover"
-                onError={() => {
-                  setImageSource(ImageUtils.getRandomMockProductImageUrl());
-                }}
+                loading="lazy"
+                getMockImage={() => ImageUtils.getRandomMockProductImageUrl()}
               />
             </div>
           }
           bodyStyle={{
             padding: '12px',
           }}
-          className={`${className} relative overflow-hidden`}
+          className={`${className} relative overflow-hidden transition duration-300 group-hover:border-primary-light`}
         >
-          {/* <Tag
-        color={COLORS.red}
-        className="absolute top-0 left-0 rounded-tr-none rounded-bl-none rounded-br-none"
-      >
-        -30%
-      </Tag> */}
+          {product.detail?.isSaleOff && (
+            <Tag
+              color={COLORS.red}
+              className="absolute top-0 left-0 rounded-tr-none rounded-bl-none rounded-br-none"
+            >
+              Giảm giá
+            </Tag>
+          )}
 
           <div className="relative flex flex-col">
             <Space direction="vertical" size={0}>
@@ -69,9 +68,13 @@ function ProductCard({ product, className, href }: ProductCardProps) {
               </Typography.Text>
 
               <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  addToCart({ product, quantity: 1 });
+                }}
                 key="add-to-cart"
                 block
-                className="mt-2 bg-primary-light shadow-none"
+                className="mt-2 border border-solid border-gray-200 bg-white text-black shadow-none transition duration-300 group-hover:border-primary-light group-hover:bg-primary-light group-hover:text-white"
                 type="primary"
               >
                 Thêm vào giỏ hàng

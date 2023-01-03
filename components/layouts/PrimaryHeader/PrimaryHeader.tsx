@@ -1,4 +1,4 @@
-import { Button, Input, Space, Typography } from 'antd';
+import { Badge, Button, Input, Space, Typography } from 'antd';
 import Link from 'next/link';
 import { Book, MapPin, Menu, Search, ShoppingCart, User } from 'react-feather';
 import PrimaryHeaderMenuItem from './PrimaryHeaderMenuItem';
@@ -10,11 +10,13 @@ import UrlUtils from '@libs/utils/url.utils';
 import PrimaryHeaderMenuAll from './PrimaryHeaderMenuAll';
 import IMPORTANT_MENUS from '@configs/constants/important-menus';
 import ProductGroupModel from '@configs/models/product-group.model';
+import { useCart } from '@providers/CartProvider';
 
 function PrimaryHeader() {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const [openSearchMenu, setOpenSearchMenu] = useState(false);
   const { fullMenu } = useFullMenu();
+  const { cartProducts } = useCart();
 
   return (
     <header>
@@ -50,17 +52,19 @@ function PrimaryHeader() {
 
           <Space size={16}>
             <Link href="/gio-hang">
-              <Button
-                type="primary"
-                className="ml-8 hidden h-10 bg-primary-dark shadow-none md:block"
-              >
-                <Space align="center" className="h-full w-full">
-                  <ShoppingCart className="text-white" size={20} />
-                  <Typography.Text className="text-white">
-                    Giỏ hàng
-                  </Typography.Text>
-                </Space>
-              </Button>
+              <Badge count={cartProducts.length}>
+                <Button
+                  type="primary"
+                  className="ml-8 hidden h-10 bg-primary-dark shadow-none md:block"
+                >
+                  <Space align="center" className="h-full w-full">
+                    <ShoppingCart className="text-white" size={20} />
+                    <Typography.Text className="text-white">
+                      Giỏ hàng
+                    </Typography.Text>
+                  </Space>
+                </Button>
+              </Badge>
             </Link>
             <Button
               type="primary"

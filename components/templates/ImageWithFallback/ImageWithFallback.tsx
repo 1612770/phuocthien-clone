@@ -2,7 +2,11 @@ import ImageUtils from '@libs/utils/image.utils';
 import Image, { ImageProps } from 'next/image';
 import { useEffect, useState } from 'react';
 
-function ImageWithFallback(props: ImageProps) {
+function ImageWithFallback(
+  props: ImageProps & {
+    getMockImage?: () => string;
+  }
+) {
   const [src, setSrc] = useState<any>();
 
   useEffect(() => {
@@ -11,12 +15,16 @@ function ImageWithFallback(props: ImageProps) {
 
   return (
     <Image
-      {...props}
       alt={props.alt}
-      src={src}
       onError={() => {
-        setSrc(ImageUtils.getRandomMockMenuUrl());
+        setSrc(
+          props.getMockImage
+            ? props.getMockImage()
+            : ImageUtils.getRandomMockMenuUrl()
+        );
       }}
+      {...props}
+      src={src}
     />
   );
 }

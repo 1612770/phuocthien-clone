@@ -4,6 +4,7 @@ import Head from 'next/head';
 
 import '../styles/style.scss';
 import 'antd/dist/reset.css';
+import 'nprogress/nprogress.css';
 
 import { NextPageWithLayout } from './page';
 import COLORS from 'configs/colors';
@@ -12,6 +13,8 @@ import Menu from '@configs/models/menu.model';
 import FullMenuProvider from '@providers/FullMenuProvider';
 import App from 'next/app';
 import React from 'react';
+import NProgress from '@components/templates/NProgress';
+import CartProvider from '@providers/CartProvider';
 
 interface AppPropsWithLayout<T> extends AppProps<T> {
   Component: NextPageWithLayout<T>;
@@ -30,18 +33,22 @@ function MyApp({
       <Head>
         <title>Nhà thuốc Phước Thiện</title>
       </Head>
-      <ConfigProvider
-        theme={{
-          token: {
-            fontFamily: 'Roboto',
-            colorPrimary: COLORS.primary,
-          },
-        }}
-      >
-        <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
-          {getLayout(<Component {...pageProps} />)}
-        </FullMenuProvider>
-      </ConfigProvider>
+      <NProgress>
+        <ConfigProvider
+          theme={{
+            token: {
+              fontFamily: 'Roboto',
+              colorPrimary: COLORS.primary,
+            },
+          }}
+        >
+          <CartProvider>
+            <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
+              {getLayout(<Component {...pageProps} />)}
+            </FullMenuProvider>
+          </CartProvider>
+        </ConfigProvider>
+      </NProgress>
     </>
   );
 }

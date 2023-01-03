@@ -13,27 +13,50 @@ import {
 } from 'antd';
 import { ChevronLeft } from 'react-feather';
 import CartProductItem from '@modules/cart/CartProductItem';
+import { useCart } from '@providers/CartProvider';
+import Link from 'next/link';
 
 const CartPage: NextPageWithLayout = () => {
+  const { cartProducts } = useCart();
+
+  let totalPrice = cartProducts.reduce(
+    (total, cartProduct) =>
+      total + (cartProduct.product.retailPrice || 0) * cartProduct.quantity,
+    0
+  );
+
   return (
     <div className="container max-w-[720px] pb-4">
       <Breadcrumb className="mt-4 mb-2">
-        <Breadcrumb.Item href="/">
-          <div className="flex items-center">
-            <ChevronLeft size={20} />
-            <span>Mua thêm sản phẩm khác</span>
-          </div>
+        <Breadcrumb.Item>
+          <Link href="/">
+            <a>
+              <div className="flex items-center">
+                <ChevronLeft size={20} />
+                <span>Mua thêm sản phẩm khác</span>
+              </div>
+            </a>
+          </Link>
         </Breadcrumb.Item>
       </Breadcrumb>
 
       <Card className="md:border-1 border-none shadow-none md:rounded-lg md:border-solid md:border-gray-200 md:shadow-lg">
-        <CartProductItem />
-        <CartProductItem />
+        {cartProducts.map((cartProduct) => (
+          <CartProductItem
+            key={cartProduct.product.key}
+            cartProduct={cartProduct}
+          />
+        ))}
 
         <div className="mt-4 flex justify-between">
-          <Typography.Text>Tạm tính (1 sản phẩm):</Typography.Text>
+          <Typography.Text>
+            Tạm tính ({cartProducts.length} sản phẩm):
+          </Typography.Text>
           <Typography.Text className="font-bold text-primary-light">
-            40.000đ
+            {totalPrice.toLocaleString('it-IT', {
+              style: 'currency',
+              currency: 'VND',
+            })}
           </Typography.Text>
         </div>
 
