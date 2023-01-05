@@ -55,7 +55,7 @@ const ProductPage: NextPageWithLayout<{
   if (typeof product?.visible === 'boolean' && !product?.visible) return null;
 
   return (
-    <div className="container pb-4">
+    <div className="pb-4 lg:container">
       <Breadcrumb className="mt-4 mb-2">
         <Breadcrumb.Item>
           <Link href="/">
@@ -322,12 +322,6 @@ const ProductPage: NextPageWithLayout<{
   );
 };
 
-export default ProductPage;
-
-ProductPage.getLayout = (page) => {
-  return <PrimaryLayout hideFooter>{page}</PrimaryLayout>;
-};
-
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
@@ -346,17 +340,23 @@ export const getServerSideProps = async (
   let product = await productClient.getProduct({
     key: UrlUtils.getKeyFromParam(context.params?.product as string),
   });
-  serverSideProps.props.product = product.data;
+  serverSideProps.props.product = product.data || null;
 
   let products = await productClient.getProducts({
     page: 1,
     pageSize: 10,
-    productTypeKey: product.data.productTypeKey,
-    productGroupKey: product.data.productGroupKey,
+    productTypeKey: context.params?.productTypeKey as string,
+    productGroupKey: context.params?.productGroupKey as string,
     isPrescripted: false,
   });
 
   serverSideProps.props.otherProducts = products.data.data.slice(0, 4);
 
   return serverSideProps;
+};
+
+export default ProductPage;
+
+ProductPage.getLayout = (page) => {
+  return <PrimaryLayout hideFooter>{page}</PrimaryLayout>;
 };

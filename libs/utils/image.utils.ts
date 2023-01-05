@@ -22,6 +22,13 @@ class ImageUtils {
     '/mock/product-mock-10.jpg',
   ];
 
+  static CAPAIGN_MOCKs = [
+    '/mock/campaign-mock-1.png',
+    '/mock/campaign-mock-2.jpeg',
+    '/mock/campaign-mock-3.jpeg',
+    '/mock/campaign-mock-4.png',
+  ];
+
   static getFullImageUrl(path?: string) {
     if (!path) return '';
     if (path.startsWith('http')) return path;
@@ -46,6 +53,12 @@ class ImageUtils {
   static getRandomMockProductImageUrl() {
     return ImageUtils.PRODUCT_MOCKS[
       Math.floor(Math.random() * ImageUtils.PRODUCT_MOCKS.length)
+    ];
+  }
+
+  static getRandomMockCampaignImageUrl() {
+    return ImageUtils.CAPAIGN_MOCKs[
+      Math.floor(Math.random() * ImageUtils.CAPAIGN_MOCKs.length)
     ];
   }
 }

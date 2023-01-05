@@ -42,11 +42,11 @@ function PrimaryHeaderMenuItem({
         >
           <Space align="center">
             {icon}
-            <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
+            <Typography.Text className="whitespace-nowrap font-medium uppercase">
               {label}
             </Typography.Text>
             {!onlyClick && (
-              <ChevronDown className="-ml-1 text-white" size={16} />
+              <ChevronDown className="-ml-1 text-stone-800" size={16} />
             )}
           </Space>
         </Popover>

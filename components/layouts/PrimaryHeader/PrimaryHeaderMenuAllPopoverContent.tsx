@@ -1,60 +1,129 @@
-import { Empty, List, Space, Typography } from 'antd';
+import { Card, Empty, List, Skeleton, Space, Typography } from 'antd';
 import { useFullMenu } from '@providers/FullMenuProvider';
-import ImageUtils from '@libs/utils/image.utils';
-import { useEffect, useState } from 'react';
-import Menu from '@configs/models/menu.model';
+import { useCallback, useEffect, useState } from 'react';
+import MenuModel from '@configs/models/menu.model';
 import ProductChildGroup from '@modules/products/ProductChildGroup';
 import UrlUtils from '@libs/utils/url.utils';
+import ProductGroupModel from '@configs/models/product-group.model';
+import { ProductClient } from '@libs/client/Product';
+import Product from '@configs/models/product.model';
+import ProductCard from '@components/templates/ProductCard';
+import PrimaryHeaderMenuAllPopoverContentLeftItem from './PrimaryHeaderMenuAllPopoverContentLeftItem';
+import { useDebounce } from '@libs/utils/hooks';
 import Link from 'next/link';
 
-function PrimaryHeaderMenuAllPopoverContent() {
-  const { fullMenu } = useFullMenu();
-  const [currentFocusMenu, setCurrentFocusMenu] = useState<Menu>();
+function PrimaryHeaderMenuAllPopoverContent({
+  currentMenu,
+  mode,
+}: {
+  currentMenu?: MenuModel;
+  mode: 'all' | 'menu';
+}) {
+  const [currentFocusMenu, setCurrentFocusMenu] = useState<MenuModel>();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loadingProduct, setLoadingProduct] = useState(false);
+  const [currentFocusGroup, setCurrentFocusGroup] =
+    useState<ProductGroupModel>();
 
+  const { fullMenu } = useFullMenu();
+  const debouncedCurrentFocusGroup = useDebounce(currentFocusGroup, 500);
+
+  const getFocusGroupProducts = useCallback(async () => {
+    let productClient = new ProductClient(null, {});
+
+    setLoadingProduct(true);
+    let products = await productClient.getProducts({
+      page: 1,
+      pageSize: 10,
+      isPrescripted: false,
+      productGroupKey: debouncedCurrentFocusGroup?.key,
+      productTypeKey: currentMenu?.key,
+    });
+    setLoadingProduct(false);
+
+    setProducts(products.data.data);
+  }, [debouncedCurrentFocusGroup, currentMenu]);
+
+  /**
+   * Mode: all
+   * Set default current focus menu
+   */
   useEffect(() => {
     if (fullMenu.length) {
       setCurrentFocusMenu(fullMenu[0]);
     }
   }, [fullMenu]);
 
+  /**
+   * Mode: menu
+   * Set default current focus group
+   */
+  useEffect(() => {
+    if (currentMenu) {
+      setCurrentFocusGroup(currentMenu.productGroups?.[0]);
+    }
+  }, [currentMenu]);
+
+  /**
+   * Mode: menu
+   * Get products when current focus group changed
+   */
+  useEffect(() => {
+    if (debouncedCurrentFocusGroup?.key && mode === 'menu') {
+      getFocusGroupProducts();
+    }
+  }, [debouncedCurrentFocusGroup, getFocusGroupProducts, mode]);
+
+  /**
+   * Reset products
+   */
+  useEffect(() => {
+    setProducts([]);
+  }, [currentFocusGroup, currentFocusMenu, currentMenu]);
+
   return (
     <div className="flex bg-primary-background">
-      <List className="min-w-[320px] bg-white">
-        {fullMenu.map((menu) => (
-          <Link
-            href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}
-            key={menu?.key}
-          >
-            <a
-              className={
-                menu?.key === currentFocusMenu?.key
-                  ? `border-b-1 border-t-1 block cursor-pointer border-l-0 border-solid border-t-green-200 border-b-green-200 border-r-primary-background bg-primary-background first:border-t-primary-background last:border-b-primary-background hover:border-r-primary-background hover:border-t-green-200 hover:border-b-green-200 hover:bg-primary-background first:hover:border-t-primary-background last:hover:border-b-primary-background`
-                  : `border-b-1 border-t-1 block cursor-pointer border-l-0 border-solid border-t-white border-b-white border-r-green-200 hover:border-r-primary-background hover:border-t-green-200 hover:border-b-green-200 hover:bg-primary-background first:hover:border-t-primary-background last:hover:border-b-primary-background`
-              }
-            >
-              <List.Item
+      {(mode === 'all' ||
+        (mode === 'menu' && !!currentMenu?.productGroups?.length)) && (
+        <List className="max-h-[72vh] min-w-[320px] overflow-auto bg-white">
+          {mode === 'menu' &&
+            currentMenu &&
+            currentMenu.productGroups?.map((productGroup) => (
+              <PrimaryHeaderMenuAllPopoverContentLeftItem
+                href={`/${UrlUtils.generateSlug(
+                  productGroup?.name,
+                  productGroup?.key
+                )}`}
+                key={productGroup?.key}
+                active={productGroup?.key === currentFocusGroup?.key}
+                onMouseEnter={() => {
+                  setCurrentFocusGroup(productGroup as ProductGroupModel);
+                }}
+                label={productGroup?.name || ''}
+                image={productGroup?.image || ''}
+              />
+            ))}
+
+          {mode === 'all' &&
+            fullMenu.map((menu) => (
+              <PrimaryHeaderMenuAllPopoverContentLeftItem
+                href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}
+                key={menu?.key}
+                active={menu?.key === currentFocusMenu?.key}
                 onMouseEnter={() => {
                   setCurrentFocusMenu(menu);
                 }}
-              >
-                <img
-                  src={ImageUtils.getFullMenuImageUrl(menu?.image)}
-                  alt={menu?.name}
-                  onError={(e) => {
-                    e.currentTarget.src = ImageUtils.getRandomMockMenuUrl();
-                  }}
-                  className="mr-2 aspect-square w-8"
-                />
-                {menu?.name}
-              </List.Item>
-            </a>
-          </Link>
-        ))}
-      </List>
-      <div className="w-full">
-        <Space size={[12, 8]} wrap className="p-4">
-          {!!currentFocusMenu?.productGroups?.length &&
-            currentFocusMenu?.productGroups?.map((productGroup) => (
+                label={menu?.name || ''}
+                image={menu?.image || ''}
+              />
+            ))}
+        </List>
+      )}
+
+      <div className="max-h-[72vh] w-full overflow-auto">
+        {mode === 'all' && !!currentFocusMenu?.productGroups?.length && (
+          <Space size={[12, 8]} wrap className="p-4">
+            {currentFocusMenu?.productGroups?.map((productGroup) => (
               <ProductChildGroup
                 href={`/${UrlUtils.generateSlug(
                   currentFocusMenu?.name,
@@ -68,11 +137,143 @@ function PrimaryHeaderMenuAllPopoverContent() {
                 image={productGroup?.image}
               />
             ))}
-        </Space>
-        {!currentFocusMenu?.productGroups?.length && (
-          <div className="flex h-full w-full items-center justify-center">
+          </Space>
+        )}
+
+        {mode === 'menu' && (
+          <div className="p-4">
+            {!!currentMenu?.productGroups?.length && (
+              <Space className="w-full items-center justify-between" size={20}>
+                <Typography.Title level={4}>Sản phẩm nổi bật</Typography.Title>
+                <Link
+                  href={`/${UrlUtils.generateSlug(
+                    currentFocusMenu?.name,
+                    currentFocusMenu?.key
+                  )}/${UrlUtils.generateSlug(
+                    currentFocusGroup?.name,
+                    currentFocusGroup?.key
+                  )}`}
+                >
+                  <a>
+                    <Typography className="pr-3 text-blue-500">
+                      Xem tất cả
+                    </Typography>
+                  </a>
+                </Link>
+              </Space>
+            )}
+
+            {products.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {products.slice(0, 10).map((product) => (
+                  <div key={product.key}>
+                    <ProductCard
+                      href={`/${UrlUtils.generateSlug(
+                        product.productType?.name,
+                        product.productType?.key
+                      )}/${UrlUtils.generateSlug(
+                        product.productGroup?.name,
+                        product.productGroup?.key
+                      )}/${UrlUtils.generateSlug(product?.name, product?.key)}`}
+                      product={product}
+                      className="min-w-[204px] max-w-[204px]"
+                      size="small"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {!!currentMenu?.productGroups?.length &&
+              (loadingProduct ||
+                debouncedCurrentFocusGroup?.key !== currentFocusGroup?.key) && (
+                <div className="flex flex-wrap gap-2">
+                  <Card
+                    cover={
+                      <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
+                        <Skeleton.Image className="h-full w-full" />
+                      </div>
+                    }
+                    bodyStyle={{
+                      padding: '12px',
+                    }}
+                    className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
+                  >
+                    <Skeleton.Button active shape="square" />
+                    <Skeleton.Input active block className="mt-1" />
+                    <Skeleton.Button active shape="square" className="mt-2" />
+                  </Card>
+                  <Card
+                    cover={
+                      <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
+                        <Skeleton.Image className="h-full w-full" />
+                      </div>
+                    }
+                    bodyStyle={{
+                      padding: '12px',
+                    }}
+                    className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
+                  >
+                    <Skeleton.Button active shape="square" />
+                    <Skeleton.Input active block className="mt-1" />
+                    <Skeleton.Button active shape="square" className="mt-2" />
+                  </Card>
+                  <Card
+                    cover={
+                      <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
+                        <Skeleton.Image className="h-full w-full" />
+                      </div>
+                    }
+                    bodyStyle={{
+                      padding: '12px',
+                    }}
+                    className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
+                  >
+                    <Skeleton.Button active shape="square" />
+                    <Skeleton.Input active block className="mt-1" />
+                    <Skeleton.Button active shape="square" className="mt-2" />
+                  </Card>
+                  <Card
+                    cover={
+                      <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
+                        <Skeleton.Image className="h-full w-full" />
+                      </div>
+                    }
+                    bodyStyle={{
+                      padding: '12px',
+                    }}
+                    className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
+                  >
+                    <Skeleton.Button active shape="square" />
+                    <Skeleton.Input active block className="mt-1" />
+                    <Skeleton.Button active shape="square" className="mt-2" />
+                  </Card>
+                </div>
+              )}
+          </div>
+        )}
+
+        {((mode === 'all' && !currentFocusMenu?.productGroups?.length) ||
+          (mode === 'menu' &&
+            (!currentFocusGroup ||
+              (currentFocusGroup &&
+                !products.length &&
+                !(
+                  !!currentMenu?.productGroups?.length &&
+                  (loadingProduct ||
+                    debouncedCurrentFocusGroup?.key !== currentFocusGroup?.key)
+                ))))) && (
+          <div className="flex w-full items-center justify-center py-8">
             <Empty
-              description={<Typography>Không có danh mục nào</Typography>}
+              description={
+                <Typography>
+                  Không có{' '}
+                  {mode === 'menu' && currentFocusGroup && !products.length
+                    ? 'sản phẩm'
+                    : 'danh mục'}{' '}
+                  nào
+                </Typography>
+              }
             ></Empty>
           </div>
         )}

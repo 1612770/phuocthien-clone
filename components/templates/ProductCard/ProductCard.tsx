@@ -11,17 +11,27 @@ type ProductCardProps = {
   product: Product;
   className?: string;
   href: string;
+  size?: 'small' | 'default';
 };
 
-function ProductCard({ product, className, href }: ProductCardProps) {
+function ProductCard({
+  product,
+  className,
+  href,
+  size = 'default',
+}: ProductCardProps) {
   const { addToCart } = useCart();
 
   return (
     <Link href={href}>
-      <a className="group">
+      <a className="group inline-block w-full">
         <Card
           cover={
-            <div className="relative h-[240px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
+            <div
+              className={`relative ${
+                size !== 'small' ? 'h-[240px]' : 'h-[160px]'
+              } w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110`}
+            >
               <ImageWithFallback
                 alt={product?.name || ''}
                 src={product?.detail?.image || ''}
@@ -48,10 +58,16 @@ function ProductCard({ product, className, href }: ProductCardProps) {
 
           <div className="relative flex flex-col">
             <Space direction="vertical" size={0}>
-              <Tag color="blue" className="capitalize">
-                {product?.unit}
-              </Tag>
-              <Typography.Text className="mt-1 block min-h-[48px]">
+              {product?.unit && (
+                <Tag color="blue" className="capitalize">
+                  {product?.unit}
+                </Tag>
+              )}
+              <Typography.Text
+                className={`mt-1 block ${
+                  size !== 'small' ? 'min-h-[48px]' : 'min-h-[68px]'
+                }`}
+              >
                 {product?.name}
               </Typography.Text>
               <Typography.Text className="mt-1 block">
@@ -62,23 +78,27 @@ function ProductCard({ product, className, href }: ProductCardProps) {
                   })}
                   <sup className="text-sups font-semibold">đ</sup>
                 </Typography.Text>
-                <Typography.Text className="text-base">
-                  /{product?.unit}
-                </Typography.Text>
+                {product?.unit && (
+                  <Typography.Text className="text-base">
+                    /{product?.unit}
+                  </Typography.Text>
+                )}
               </Typography.Text>
 
-              <Button
-                onClick={(e) => {
-                  e.preventDefault();
-                  addToCart({ product, quantity: 1 });
-                }}
-                key="add-to-cart"
-                block
-                className="mt-2 border border-solid border-gray-200 bg-white text-black shadow-none transition duration-300 group-hover:border-primary-light group-hover:bg-primary-light group-hover:text-white"
-                type="primary"
-              >
-                Thêm vào giỏ hàng
-              </Button>
+              {size !== 'small' && (
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    addToCart({ product, quantity: 1 });
+                  }}
+                  key="add-to-cart"
+                  block
+                  className="mt-2 border border-solid border-gray-200 bg-white text-black shadow-none transition duration-300 group-hover:border-primary-light group-hover:bg-primary-light group-hover:text-white"
+                  type="primary"
+                >
+                  Thêm vào giỏ hàng
+                </Button>
+              )}
             </Space>
           </div>
         </Card>

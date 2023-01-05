@@ -10,7 +10,7 @@ function PrimaryFooter({}: PrimaryFooterProps) {
   return (
     <>
       <footer className="mt-8 bg-primary px-4">
-        <div className="container py-8">
+        <div className="py-8 lg:container">
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12} lg={6}>
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">

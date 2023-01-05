@@ -1,28 +1,130 @@
-import { Badge, Button, Input, Space, Typography } from 'antd';
+import { Badge, Button, Input, Popover, Space, Typography } from 'antd';
 import Link from 'next/link';
-import { Book, MapPin, Menu, Search, ShoppingCart, User } from 'react-feather';
-import PrimaryHeaderMenuItem from './PrimaryHeaderMenuItem';
+import {
+  Book,
+  ChevronDown,
+  MapPin,
+  Menu,
+  Search,
+  ShoppingCart,
+  User,
+} from 'react-feather';
 import IMAGES from 'configs/assests/images';
 import { useState } from 'react';
 import PrimaryheaderMenuDrawer from './PrimaryheaderMenuDrawer';
-import { useFullMenu } from '@providers/FullMenuProvider';
-import UrlUtils from '@libs/utils/url.utils';
-import PrimaryHeaderMenuAll from './PrimaryHeaderMenuAll';
+import { useCart } from '@providers/CartProvider';
+import { useRouter } from 'next/router';
 import IMPORTANT_MENUS from '@configs/constants/important-menus';
 import ProductGroupModel from '@configs/models/product-group.model';
-import { useCart } from '@providers/CartProvider';
+import UrlUtils from '@libs/utils/url.utils';
+import { useFullMenu } from '@providers/FullMenuProvider';
+import PrimaryHeaderMenuAllPopoverContent from './PrimaryHeaderMenuAllPopoverContent';
+import PrimaryHeaderMenuItem from './PrimaryHeaderMenuItem';
+import MenuModel from '@configs/models/menu.model';
+
+function PrimaryHeaderMenu() {
+  const { fullMenu } = useFullMenu();
+
+  const [mode, setMode] = useState<'all' | 'menu'>('all');
+  const [currentMenu, setCurrentMenu] = useState<MenuModel>();
+
+  return (
+    <Popover
+      align={{
+        offset: [0, 2],
+      }}
+      content={
+        <PrimaryHeaderMenuAllPopoverContent
+          currentMenu={currentMenu}
+          mode={mode}
+        />
+      }
+      placement="bottom"
+      destroyTooltipOnHide
+      showArrow={false}
+      overlayClassName="primary-header xl:w-[1200px] lg:w-[1000px]"
+    >
+      <div className="relative z-10 hidden bg-white shadow-lg lg:block">
+        <div className="m-auto flex items-center justify-between py-2 lg:container">
+          <Space
+            align="center"
+            className="cursor-pointer"
+            onMouseEnter={() => {
+              setMode('all');
+            }}
+          >
+            <Typography.Text className="whitespace-nowrap font-medium uppercase">
+              Tất cả danh mục
+            </Typography.Text>
+            <ChevronDown className="-ml-1" size={16} />
+          </Space>
+
+          {fullMenu.map((menu) =>
+            menu?.name && IMPORTANT_MENUS.includes(menu?.name) ? (
+              <span
+                onMouseEnter={() => {
+                  setCurrentMenu(menu);
+                  setMode('menu');
+                }}
+                key={menu?.key}
+              >
+                <PrimaryHeaderMenuItem
+                  href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}
+                  label={menu.name || ''}
+                  productGroups={
+                    (menu?.productGroups as ProductGroupModel[]) || []
+                  }
+                />
+              </span>
+            ) : null
+          )}
+
+          <Typography.Text className="mx-4 hidden xl:flex" type="secondary">
+            |
+          </Typography.Text>
+          <Link href={'/goc-suc-khoe'} style={{ color: 'white' }}>
+            <a className="hidden xl:flex">
+              <Space align="center">
+                <Book className="text-stone-800" size={16} />
+                <Typography.Text className="whitespace-nowrap font-medium uppercase ">
+                  Góc sức khỏe
+                </Typography.Text>
+              </Space>
+            </a>
+          </Link>
+          <Link href={'/chuoi-nha-thuoc'} style={{ color: 'white' }}>
+            <a className="hidden xl:flex">
+              <Space align="center">
+                <MapPin className="text-stone-800" size={16} />
+                <Typography.Text className="whitespace-nowrap font-medium uppercase ">
+                  Chuỗi nhà thuốc
+                </Typography.Text>
+              </Space>
+            </a>
+          </Link>
+        </div>
+      </div>
+    </Popover>
+  );
+}
 
 function PrimaryHeader() {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
-  const [openSearchMenu, setOpenSearchMenu] = useState(false);
-  const { fullMenu } = useFullMenu();
+
   const { cartProducts } = useCart();
+  const router = useRouter();
 
   return (
     <header>
-      <div className="bg-primary py-2">
-        <div className="container m-auto flex items-center justify-between py-2">
+      <div className="bg-primary py-4">
+        <div className="m-auto flex items-center justify-between px-2  lg:container lg:px-0">
           <div className="flex flex-1 items-center">
+            <Menu
+              size={40}
+              className="mr-2 cursor-pointer text-white lg:hidden"
+              onClick={() => setOpenMobileMenu(!openMobileMenu)}
+            />
+
             <Link href="/" style={{ color: 'white' }}>
               <a className="flex items-center">
                 <img
@@ -42,30 +144,43 @@ function PrimaryHeader() {
               </a>
             </Link>
 
-            <Input
-              placeholder="Tìm kiếm sản phẩm..."
-              size="large"
-              className="ml-2 hidden h-10 w-full flex-1 lg:flex"
-              suffix={<Search size={20} />}
-            />
+            {router.asPath !== '/' && (
+              <Input
+                placeholder="Tìm kiếm sản phẩm..."
+                size="large"
+                className="ml-2 hidden h-10 w-full flex-1 lg:flex"
+                suffix={<Search size={20} />}
+              />
+            )}
           </div>
 
-          <Space size={16}>
-            <Link href="/gio-hang">
+          <Link href="/gio-hang">
+            <a className="mr-2 block md:hidden">
               <Badge count={cartProducts.length}>
-                <Button
-                  type="primary"
-                  className="ml-8 hidden h-10 bg-primary-dark shadow-none md:block"
-                >
-                  <Space align="center" className="h-full w-full">
-                    <ShoppingCart className="text-white" size={20} />
-                    <Typography.Text className="text-white">
-                      Giỏ hàng
-                    </Typography.Text>
-                  </Space>
-                </Button>
+                <ShoppingCart className="text-white" size={32} />
               </Badge>
+            </a>
+          </Link>
+
+          <Space size={16} className="hidden md:flex">
+            <Link href="/gio-hang">
+              <a className="hidden md:block">
+                <Badge count={cartProducts.length}>
+                  <Button
+                    type="primary"
+                    className="ml-8 h-10 bg-primary-dark shadow-none "
+                  >
+                    <Space align="center" className="h-full w-full">
+                      <ShoppingCart className="text-white" size={20} />
+                      <Typography.Text className="text-white">
+                        Giỏ hàng
+                      </Typography.Text>
+                    </Space>
+                  </Button>
+                </Badge>
+              </a>
             </Link>
+
             <Button
               type="primary"
               className="hidden h-10 bg-primary-dark shadow-none md:block"
@@ -77,6 +192,7 @@ function PrimaryHeader() {
                 </Typography.Text>
               </Space>
             </Button>
+
             <Space
               align="center"
               direction="vertical"
@@ -90,73 +206,20 @@ function PrimaryHeader() {
                 1800599964
               </Typography.Text>
             </Space>
-
-            <Button
-              shape="circle"
-              type="primary"
-              onClick={() => setOpenSearchMenu(!openSearchMenu)}
-              className="flex h-10 w-[40px] items-center justify-center shadow-none lg:hidden"
-              icon={<Search size={20} className="cursor-pointer text-white" />}
-            />
-            <Button
-              shape="circle"
-              type="primary"
-              onClick={() => setOpenMobileMenu(!openMobileMenu)}
-              className="flex h-10 w-[40px] items-center justify-center shadow-none lg:hidden"
-              icon={<Menu size={20} className="cursor-pointer text-white" />}
-            />
           </Space>
+        </div>
+
+        <div className="block px-2 lg:container lg:hidden">
+          <Input
+            placeholder="Tìm kiếm sản phẩm..."
+            size="large"
+            className="mt-2 h-10 w-full flex-1 rounded-full"
+            suffix={<Search size={20} />}
+          />
         </div>
       </div>
 
-      <div className="hidden bg-primary lg:block">
-        <div className="container m-auto flex items-center justify-between py-2">
-          <Space className="flex flex-1 justify-between">
-            <PrimaryHeaderMenuAll />
-
-            {fullMenu.map((menu) =>
-              menu?.name && IMPORTANT_MENUS.includes(menu?.name) ? (
-                <PrimaryHeaderMenuItem
-                  href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}
-                  label={menu.name || ''}
-                  key={menu?.key}
-                  productGroups={
-                    (menu?.productGroups as ProductGroupModel[]) || []
-                  }
-                />
-              ) : null
-            )}
-          </Space>
-          <Typography.Text
-            className="mx-4 hidden text-white lg:flex"
-            type="secondary"
-          >
-            |
-          </Typography.Text>
-          <Space className="hidden lg:flex">
-            <Link href={'/goc-suc-khoe'} style={{ color: 'white' }}>
-              <a>
-                <Space align="center">
-                  <Book className="text-white" size={16} />
-                  <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
-                    Góc sức khỏe
-                  </Typography.Text>
-                </Space>
-              </a>
-            </Link>
-            <Link href={'/chuoi-nha-thuoc'} style={{ color: 'white' }}>
-              <a>
-                <Space align="center">
-                  <MapPin className="text-white" size={16} />
-                  <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
-                    Chuỗi nhà thuốc
-                  </Typography.Text>
-                </Space>
-              </a>
-            </Link>
-          </Space>
-        </div>
-      </div>
+      <PrimaryHeaderMenu></PrimaryHeaderMenu>
 
       <PrimaryheaderMenuDrawer
         open={openMobileMenu}

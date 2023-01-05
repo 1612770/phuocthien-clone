@@ -4,25 +4,23 @@ import { NextPageWithLayout } from './page';
 import { Col, Row, Typography } from 'antd';
 import { GetServerSidePropsContext } from 'next';
 import { ProductClient } from '@libs/client/Product';
-import Menu from '@configs/models/menu.model';
+import MenuModel from '@configs/models/menu.model';
 import Product from '@configs/models/product.model';
 import { Fragment } from 'react';
 import UrlUtils from '@libs/utils/url.utils';
+import HomepageCarousel from '@modules/homepage/HomepageCarousel';
+import HomepageSearch from '@modules/homepage/HomepageSearch';
 
 const Home: NextPageWithLayout<{
-  featureProductsLists: { products: Product[]; productType: Menu }[];
+  featureProductsLists: { products: Product[]; productType: MenuModel }[];
 }> = ({ featureProductsLists }) => {
   return (
     <>
-      {/* <img
-        className="block h-[50vh] w-full object-cover"
-        src="https://cdn.tgdd.vn/2022/12/banner/Big-banner-desktop-1920x450-5.webp"
-        alt="carousel image"
-      />
+      <HomepageCarousel />
 
-      <div className="container -mt-20">
-        <HomepageCarousel />
-      </div> */}
+      <div className="-mt-20 hidden lg:block">
+        <HomepageSearch />
+      </div>
 
       {featureProductsLists.map((featureProductsList, index) =>
         featureProductsList.products?.length ? (
@@ -167,7 +165,7 @@ export const getServerSideProps = async (
 ) => {
   let serverSideProps: {
     props: {
-      featureProductsLists: { products: Product[]; productType: Menu }[];
+      featureProductsLists: { products: Product[]; productType: MenuModel }[];
     };
   } = {
     props: {
@@ -178,7 +176,8 @@ export const getServerSideProps = async (
   let productClient = new ProductClient(context, {});
 
   if ((context.req as any)._fromAppData) {
-    let { fullMenu }: { fullMenu: Menu[] } = (context.req as any)._fromAppData;
+    let { fullMenu }: { fullMenu: MenuModel[] } = (context.req as any)
+      ._fromAppData;
 
     // get first 3 menu keys
     let featureProductTypes = fullMenu.slice(0, 3);

@@ -4,17 +4,15 @@ import { NextPageWithLayout } from 'pages/page';
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next';
 import { GeneralClient } from '@libs/client/General';
 import UrlUtils from '@libs/utils/url.utils';
-import Menu from '@configs/models/menu.model';
+import MenuModel from '@configs/models/menu.model';
 import ProductGroup from '@modules/categories/ProductGroup';
 import Link from 'next/link';
 
 const ProductTypesPage: NextPageWithLayout<{
-  productType?: Menu;
+  productType?: MenuModel;
 }> = ({ productType }) => {
-  console.log('file: index.tsx:13 | productType', productType);
-
   return (
-    <div className="container pb-4">
+    <div className="grid px-4 pb-2 lg:container lg:px-0">
       <Breadcrumb className="mt-4 mb-2">
         <Breadcrumb.Item>
           <Link href="/">
@@ -75,7 +73,7 @@ export const getStaticProps: GetStaticProps = async (
 ) => {
   let staticProps: {
     props: {
-      productType?: Menu;
+      productType?: MenuModel;
     };
   } = {
     props: {},

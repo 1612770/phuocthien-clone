@@ -18,7 +18,7 @@ function ProductGroup({
 
   return (
     <Link href={href}>
-      <a className="group">
+      <a className="group w-full">
         <div className="flex min-h-[164px] w-[160px] flex-col items-center justify-center rounded-lg border border-solid border-gray-200 px-2 py-4 transition duration-300 group-hover:border-primary-light">
           <div className="transition-transform duration-300 group-hover:scale-110">
             <ImageWithFallback

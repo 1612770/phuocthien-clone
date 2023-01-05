@@ -1,4 +1,4 @@
-type Menu = Partial<{
+type MenuModel = Partial<{
   key: string;
   index: number;
   code: string;
@@ -15,4 +15,4 @@ type Menu = Partial<{
   >;
 }>;
 
-export default Menu;
+export default MenuModel;

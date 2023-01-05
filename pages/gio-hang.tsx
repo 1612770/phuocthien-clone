@@ -26,7 +26,7 @@ const CartPage: NextPageWithLayout = () => {
   );
 
   return (
-    <div className="container max-w-[720px] pb-4">
+    <div className="max-w-[720px] pb-4 lg:container">
       <Breadcrumb className="mt-4 mb-2">
         <Breadcrumb.Item>
           <Link href="/">

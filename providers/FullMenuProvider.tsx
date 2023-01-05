@@ -1,8 +1,8 @@
-import Menu from '@configs/models/menu.model';
+import MenuModel from '@configs/models/menu.model';
 import React, { useEffect, useState } from 'react';
 
 const FullMenuContext = React.createContext<{
-  fullMenu: Menu[];
+  fullMenu: MenuModel[];
 }>({
   fullMenu: [],
 });
@@ -11,7 +11,7 @@ function FullMenuProvider({
   fullMenu,
   children,
 }: {
-  fullMenu: Menu[];
+  fullMenu: MenuModel[];
   children: React.ReactNode;
 }) {
   const [fullMenuPassDown, setFullMenuPassDown] = useState(fullMenu);

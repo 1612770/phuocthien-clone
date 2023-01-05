@@ -15,31 +15,32 @@ import Link from 'next/link';
 function PrimaryheaderMenuDrawer({ open, onClose }: DrawerProps) {
   return (
     <Drawer
+      rootClassName="primary-header-menu-drawer"
       title={
-        <div className="flex flex-1 items-center">
-          <Link href="/" style={{ color: 'white' }}>
+        <Link href="/" style={{ color: 'white' }}>
+          <a className="flex items-center">
             <img
               src={IMAGES.logo}
               alt="Nhà thuốc Phước Thiện"
-              className="aspect-square h-8 w-16 object-contain"
+              className="mr-2 h-8 object-contain"
             />
-          </Link>
 
-          <Space direction="vertical" size={0} className="mr-4 w-[92px]">
-            <Typography.Text className="m-0 -mb-2 inline-block text-base text-white">
-              Nhà thuốc
-            </Typography.Text>
-            <Typography.Text strong className="uppercase text-white">
-              Phước Thiện
-            </Typography.Text>
-          </Space>
-        </div>
+            <Space direction="vertical" size={0} className="mr-4 w-[92px]">
+              <Typography.Text className="m-0 -mb-2 inline-block text-base font-normal text-white">
+                Nhà thuốc
+              </Typography.Text>
+              <Typography.Text strong className="uppercase text-white">
+                Phước Thiện
+              </Typography.Text>
+            </Space>
+          </a>
+        </Link>
       }
-      placement="right"
+      placement="left"
       onClose={onClose}
       open={open}
       closable
-      closeIcon={<X size={16} />}
+      closeIcon={<X size={40} className="mr-0 text-white" />}
     >
       <Space size={16} direction="vertical" className="w-full">
         <Button

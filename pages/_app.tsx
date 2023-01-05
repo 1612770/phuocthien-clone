@@ -9,7 +9,7 @@ import 'nprogress/nprogress.css';
 import { NextPageWithLayout } from './page';
 import COLORS from 'configs/colors';
 import { GeneralClient } from 'libs/client/General';
-import Menu from '@configs/models/menu.model';
+import MenuModel from '@configs/models/menu.model';
 import FullMenuProvider from '@providers/FullMenuProvider';
 import App from 'next/app';
 import React from 'react';
@@ -24,7 +24,7 @@ function MyApp({
   Component,
   pageProps,
 }: AppPropsWithLayout<{
-  fullMenu?: Menu[];
+  fullMenu?: MenuModel[];
 }>) {
   const getLayout = Component.getLayout || ((page) => page);
 
@@ -56,7 +56,7 @@ function MyApp({
 MyApp.getInitialProps = async (ctx: AppContext) => {
   let initalProps = await App.getInitialProps(ctx);
 
-  let appInitalProps: { props: { fullMenu: Menu[] } } = {
+  let appInitalProps: { props: { fullMenu: MenuModel[] } } = {
     props: {
       fullMenu: [],
     },

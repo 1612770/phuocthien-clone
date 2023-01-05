@@ -17,13 +17,33 @@
   }
 }
 
-.ant-popover-inner {
-  padding: 0 !important;
+.primary-header {
+  &.ant-popover {
+    padding-top: 0 !important;
+  }
+
+  .ant-popover-inner {
+    padding: 0 !important;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    overflow: hidden;
+  }
 }
 
-.primary-header-menu-item {
-  .ant-popover-content {
-    max-height: 200px !important;
-    overflow-y: auto !important;
+.primary-header-menu-drawer {
+  .ant-drawer-content-wrapper {
+    width: 100vw !important;
+  }
+
+  .ant-drawer-header {
+    background-color: #038f63;
+    padding: 16px 8px;
+  }
+
+  .ant-drawer-close {
+    margin-right: 0;
+    padding: 0;
   }
 }
