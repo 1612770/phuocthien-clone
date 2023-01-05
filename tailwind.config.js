@@ -16,6 +16,11 @@ module.exports = {
         'primary-background': '#f5f9f6',
         'primary-border': '#98afa8',
       },
+      aspectRatio: {
+        '16/9': [16, 9],
+        '4/3': '4 / 3',
+        '21/9': '21 / 9',
+      },
     },
     container: {
       center: true,
