@@ -41,7 +41,9 @@ function PrimaryHeaderMenuAllPopoverContent({
     });
     setLoadingProduct(false);
 
-    setProducts(products.data.data);
+    if (products.data) {
+      setProducts(products.data.data);
+    }
   }, [debouncedCurrentFocusGroup, currentMenu]);
 
   /**
@@ -91,6 +93,9 @@ function PrimaryHeaderMenuAllPopoverContent({
             currentMenu.productGroups?.map((productGroup) => (
               <PrimaryHeaderMenuAllPopoverContentLeftItem
                 href={`/${UrlUtils.generateSlug(
+                  currentMenu?.name,
+                  currentMenu?.key
+                )}/${UrlUtils.generateSlug(
                   productGroup?.name,
                   productGroup?.key
                 )}`}
