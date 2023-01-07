@@ -3,6 +3,7 @@ import BaseClient from './BaseClient';
 import MenuModel from '@configs/models/menu.model';
 import ProductType from '@configs/models/product-type.model';
 import ProductGroupModel from '@configs/models/product-group.model';
+import BrandModel from '@configs/models/brand.model';
 
 export class GeneralClient extends BaseClient {
   constructor(ctx: any, data: any) {
@@ -11,6 +12,10 @@ export class GeneralClient extends BaseClient {
 
   async getMenu(): Promise<APIResponse<MenuModel[]>> {
     return await super.call('GET', `full-menu`, {});
+  }
+
+  async getProductionBrands(): Promise<APIResponse<BrandModel[]>> {
+    return await super.call('GET', `production-brand/all`, {});
   }
 
   async getProductTypeDetail({
