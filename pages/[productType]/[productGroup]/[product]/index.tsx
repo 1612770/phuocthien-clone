@@ -55,7 +55,7 @@ const ProductPage: NextPageWithLayout<{
   if (typeof product?.visible === 'boolean' && !product?.visible) return null;
 
   return (
-    <div className="pb-4 lg:container">
+    <div className="px-4 pb-4 lg:container">
       <Breadcrumb className="mt-4 mb-2">
         <Breadcrumb.Item>
           <Link href="/">
@@ -130,9 +130,9 @@ const ProductPage: NextPageWithLayout<{
               </Input.Group>
             </div>
 
-            <Space size={[12, 12]} className="mt-4 w-full">
+            <Space className="mt-4 w-full gap-2 lg:gap-4" wrap>
               <Button
-                className="h-[60px] w-full px-10 shadow-none"
+                className="px:4 h-[40px] w-full shadow-none lg:h-[60px] lg:px-10"
                 shape="round"
                 type="primary"
                 onClick={() => {
@@ -144,7 +144,7 @@ const ProductPage: NextPageWithLayout<{
                 </Typography>
               </Button>
               <Button
-                className="h-[60px] bg-orange-500 shadow-none"
+                className="h-[40px] bg-orange-500 shadow-none lg:h-[60px]"
                 shape="round"
                 type="primary"
               >
@@ -270,12 +270,18 @@ const ProductPage: NextPageWithLayout<{
 
       <div className="grid grid-cols-1">
         <div className="grid grid-cols-1">
-          <div className="pl-2 lg:container lg:pl-0">
+          <div className=" lg:container lg:pl-0">
             <Typography.Title
               level={3}
-              className="mb-0 mt-6 uppercase lg:mb-4 lg:mt-12"
+              className="mb-0 mt-6 inline-block uppercase lg:mb-4 lg:mt-12"
             >
-              Các sản phẩm khác trong nhóm {product?.productGroup?.name}
+              Các sản phẩm khác{' '}
+            </Typography.Title>
+            <Typography.Title
+              level={3}
+              className="hidden uppercase lg:inline-block"
+            >
+              trong nhóm {product?.productGroup?.name}
             </Typography.Title>
           </div>
 
@@ -299,7 +305,7 @@ const ProductPage: NextPageWithLayout<{
                 </Col>
               ))}
             </Row>
-            <div className="-mx-2 flex w-full overflow-auto pl-2 lg:hidden">
+            <div className="-mx-2 flex w-full overflow-auto lg:hidden">
               {otherProducts.map((product, index) => (
                 <ProductCard
                   href={`/${UrlUtils.generateSlug(
@@ -340,7 +346,9 @@ export const getServerSideProps = async (
   let product = await productClient.getProduct({
     key: UrlUtils.getKeyFromParam(context.params?.product as string),
   });
-  serverSideProps.props.product = product.data || null;
+  if (product.data) {
+    serverSideProps.props.product = product.data;
+  }
 
   let products = await productClient.getProducts({
     page: 1,
@@ -350,7 +358,9 @@ export const getServerSideProps = async (
     isPrescripted: false,
   });
 
-  serverSideProps.props.otherProducts = products.data.data.slice(0, 4);
+  if (products.data) {
+    serverSideProps.props.otherProducts = products.data.data.slice(0, 4);
+  }
 
   return serverSideProps;
 };

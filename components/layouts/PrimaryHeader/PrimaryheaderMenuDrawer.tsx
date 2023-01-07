@@ -4,15 +4,19 @@ import {
   Divider,
   Drawer,
   DrawerProps,
+  Empty,
   Space,
   Typography,
 } from 'antd';
-import { ChevronDown, ShoppingCart, User, X } from 'react-feather';
-import PrimaryHeaderMenuList from './PrimaryHeaderMenuList';
+import { ChevronDown, User, X } from 'react-feather';
 import IMAGES from '@configs/assests/images';
 import Link from 'next/link';
+import { useFullMenu } from '@providers/FullMenuProvider';
+import UrlUtils from '@libs/utils/url.utils';
 
-function PrimaryheaderMenuDrawer({ open, onClose }: DrawerProps) {
+function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
+  const { fullMenu } = useFullMenu();
+
   return (
     <Drawer
       rootClassName="primary-header-menu-drawer"
@@ -48,15 +52,6 @@ function PrimaryheaderMenuDrawer({ open, onClose }: DrawerProps) {
           className="h-10 w-full bg-primary-dark shadow-none"
         >
           <Space align="center" className="h-full w-full">
-            <ShoppingCart className="text-white" size={20} />
-            <Typography.Text className="text-white">Giỏ hàng</Typography.Text>
-          </Space>
-        </Button>
-        <Button
-          type="primary"
-          className="h-10 w-full bg-primary-dark shadow-none"
-        >
-          <Space align="center" className="h-full w-full">
             <User className="text-white" width={20} height={20} />
             <Typography.Text className="text-white">
               Lịch sử đơn hàng
@@ -64,52 +59,53 @@ function PrimaryheaderMenuDrawer({ open, onClose }: DrawerProps) {
           </Space>
         </Button>
       </Space>
-      <Divider />
+      <Divider className="mt-4 mb-0" />
       <Collapse
         accordion
         bordered={false}
         ghost
-        expandIconPosition="right"
+        expandIconPosition="end"
         expandIcon={({ isActive }) => (
           <ChevronDown size={16} className={isActive ? 'rotate-180' : ''} />
         )}
       >
-        <Collapse.Panel header="Thuốc" key="1">
-          <div className="-mt-6">
-            <PrimaryHeaderMenuList parentHref="" productGroups={[]} />
-          </div>
-        </Collapse.Panel>
-        <Collapse.Panel header="Thực phẩm chức năng" key="Thực phẩm chức năng">
-          <div className="-mt-6">
-            <PrimaryHeaderMenuList parentHref="" productGroups={[]} />
-          </div>
-        </Collapse.Panel>
-        <Collapse.Panel
-          header="Thiết bị, dụng cụ y tế"
-          key="Thiết bị, dụng cụ y tế"
-        >
-          <div className="-mt-6">
-            <PrimaryHeaderMenuList parentHref="" productGroups={[]} />
-          </div>
-        </Collapse.Panel>
-        <Collapse.Panel header="Mỹ phẩm" key="Mỹ phẩm">
-          <div className="-mt-6">
-            <PrimaryHeaderMenuList parentHref="" productGroups={[]} />
-          </div>
-        </Collapse.Panel>
-        <Collapse.Panel header="Chăm sóc cá nhân" key="Chăm sóc cá nhân">
-          <div className="-mt-6">
-            <PrimaryHeaderMenuList parentHref="" productGroups={[]} />
-          </div>
-        </Collapse.Panel>
-        <Collapse.Panel header="Chăm sóc trẻ em" key="Chăm sóc trẻ em">
-          <div className="-mt-6">
-            <PrimaryHeaderMenuList parentHref="" productGroups={[]} />
-          </div>
-        </Collapse.Panel>
+        {fullMenu.map((menu, idx) => (
+          <Collapse.Panel
+            header={<Typography className="text-base">{menu.name}</Typography>}
+            key={idx}
+          >
+            <div
+              className="-mt-6"
+              onClick={(e) => {
+                onClose?.(e);
+              }}
+            >
+              {!!menu.productGroups?.length &&
+                menu.productGroups?.map((group, idx) => (
+                  <Link
+                    key={idx}
+                    href={`/${UrlUtils.generateSlug(
+                      menu?.name,
+                      menu?.key
+                    )}/${UrlUtils.generateSlug(group?.name, group?.key)}`}
+                  >
+                    <a>
+                      <Typography className="my-2">{group?.name}</Typography>
+                    </a>
+                  </Link>
+                ))}
+
+              {!menu.productGroups?.length && (
+                <Empty
+                  description={<Typography>Không có danh mục nào</Typography>}
+                ></Empty>
+              )}
+            </div>
+          </Collapse.Panel>
+        ))}
       </Collapse>
     </Drawer>
   );
 }
 
-export default PrimaryheaderMenuDrawer;
+export default PrimaryHeaderMenuDrawer;
