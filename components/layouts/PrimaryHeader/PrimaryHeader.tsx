@@ -11,7 +11,7 @@ import {
 } from 'react-feather';
 import IMAGES from 'configs/assests/images';
 import { useState } from 'react';
-import PrimaryheaderMenuDrawer from './PrimaryheaderMenuDrawer';
+import PrimaryHeaderMenuDrawer from './PrimaryHeaderMenuDrawer';
 import { useCart } from '@providers/CartProvider';
 import { useRouter } from 'next/router';
 import IMPORTANT_MENUS from '@configs/constants/important-menus';
@@ -221,7 +221,7 @@ function PrimaryHeader() {
 
       <PrimaryHeaderMenu></PrimaryHeaderMenu>
 
-      <PrimaryheaderMenuDrawer
+      <PrimaryHeaderMenuDrawer
         open={openMobileMenu}
         onClose={() => {
           setOpenMobileMenu(false);
