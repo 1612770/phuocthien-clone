@@ -19,9 +19,10 @@ function PrimaryHeaderMenuAllPopoverContentLeftItem({
     <Link href={href}>
       <a
         className={
-          active
-            ? `border-b-1 border-t-1 block cursor-pointer border-l-0 border-solid border-t-green-200 border-b-green-200 border-r-primary-background bg-primary-background first:border-t-primary-background last:border-b-primary-background hover:border-r-primary-background hover:border-t-green-200 hover:border-b-green-200 hover:bg-primary-background first:hover:border-t-primary-background last:hover:border-b-primary-background`
-            : `border-b-1 border-t-1 block cursor-pointer border-l-0 border-solid border-t-white border-b-white border-r-green-200 hover:border-r-primary-background hover:border-t-green-200 hover:border-b-green-200 hover:bg-primary-background first:hover:border-t-primary-background last:hover:border-b-primary-background`
+          'primary-popover-menu-item block cursor-pointer ' +
+          (active
+            ? `active bg-primary-background hover:bg-primary-background `
+            : `hover:bg-primary-background`)
         }
       >
         <List.Item onMouseEnter={onMouseEnter}>
