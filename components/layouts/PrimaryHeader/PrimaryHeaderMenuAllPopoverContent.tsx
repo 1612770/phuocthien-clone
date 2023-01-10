@@ -25,7 +25,7 @@ function PrimaryHeaderMenuAllPopoverContent({
   const [currentFocusGroup, setCurrentFocusGroup] =
     useState<ProductGroupModel>();
 
-  const { fullMenu } = useFullMenu();
+  const { fullMenu, setIntoPopover, setOpen } = useFullMenu();
   const debouncedCurrentFocusGroup = useDebounce(currentFocusGroup, 500);
 
   const getFocusGroupProducts = useCallback(async () => {
@@ -84,63 +84,85 @@ function PrimaryHeaderMenuAllPopoverContent({
   }, [currentFocusGroup, currentFocusMenu, currentMenu]);
 
   return (
-    <div className="flex bg-primary-background">
+    <div
+      className="flex bg-primary-background"
+      onMouseEnter={() => {
+        setIntoPopover(true);
+      }}
+      onMouseLeave={() => {
+        setIntoPopover(false);
+      }}
+    >
       {(mode === 'all' ||
         (mode === 'menu' && !!currentMenu?.productGroups?.length)) && (
-        <List className="max-h-[72vh] min-w-[320px] overflow-auto bg-white">
-          {mode === 'menu' &&
-            currentMenu &&
-            currentMenu.productGroups?.map((productGroup) => (
-              <PrimaryHeaderMenuAllPopoverContentLeftItem
-                href={`/${UrlUtils.generateSlug(
-                  currentMenu?.name,
-                  currentMenu?.key
-                )}/${UrlUtils.generateSlug(
-                  productGroup?.name,
-                  productGroup?.key
-                )}`}
-                key={productGroup?.key}
-                active={productGroup?.key === currentFocusGroup?.key}
-                onMouseEnter={() => {
-                  setCurrentFocusGroup(productGroup as ProductGroupModel);
-                }}
-                label={productGroup?.name || ''}
-                image={productGroup?.image || ''}
-              />
-            ))}
+        <div
+          onClick={() => {
+            setOpen(false);
+            setIntoPopover(false);
+          }}
+        >
+          <List className="max-h-[500px] min-w-[320px] overflow-auto bg-white">
+            {mode === 'menu' &&
+              currentMenu &&
+              currentMenu.productGroups?.map((productGroup) => (
+                <PrimaryHeaderMenuAllPopoverContentLeftItem
+                  href={`/${UrlUtils.generateSlug(
+                    currentMenu?.name,
+                    currentMenu?.key
+                  )}/${UrlUtils.generateSlug(
+                    productGroup?.name,
+                    productGroup?.key
+                  )}`}
+                  key={productGroup?.key}
+                  active={productGroup?.key === currentFocusGroup?.key}
+                  onMouseEnter={() => {
+                    setCurrentFocusGroup(productGroup as ProductGroupModel);
+                  }}
+                  label={productGroup?.name || ''}
+                  image={productGroup?.image || ''}
+                />
+              ))}
 
-          {mode === 'all' &&
-            fullMenu.map((menu) => (
-              <PrimaryHeaderMenuAllPopoverContentLeftItem
-                href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}
-                key={menu?.key}
-                active={menu?.key === currentFocusMenu?.key}
-                onMouseEnter={() => {
-                  setCurrentFocusMenu(menu);
-                }}
-                label={menu?.name || ''}
-                image={menu?.image || ''}
-              />
-            ))}
-        </List>
+            {mode === 'all' &&
+              fullMenu.map((menu) => (
+                <PrimaryHeaderMenuAllPopoverContentLeftItem
+                  href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}
+                  key={menu?.key}
+                  active={menu?.key === currentFocusMenu?.key}
+                  onMouseEnter={() => {
+                    setCurrentFocusMenu(menu);
+                  }}
+                  label={menu?.name || ''}
+                  image={menu?.image || ''}
+                />
+              ))}
+          </List>
+        </div>
       )}
 
-      <div className="max-h-[72vh] w-full overflow-auto">
+      <div className="max-h-[500px] w-full overflow-auto">
         {mode === 'all' && !!currentFocusMenu?.productGroups?.length && (
           <Space size={[12, 8]} wrap className="p-4">
             {currentFocusMenu?.productGroups?.map((productGroup) => (
-              <ProductChildGroup
-                href={`/${UrlUtils.generateSlug(
-                  currentFocusMenu?.name,
-                  currentFocusMenu?.key
-                )}/${UrlUtils.generateSlug(
-                  productGroup?.name,
-                  productGroup?.key
-                )}`}
+              <div
+                onClick={() => {
+                  setOpen(false);
+                  setIntoPopover(false);
+                }}
                 key={productGroup?.key}
-                label={productGroup?.name || ''}
-                image={productGroup?.image}
-              />
+              >
+                <ProductChildGroup
+                  href={`/${UrlUtils.generateSlug(
+                    currentFocusMenu?.name,
+                    currentFocusMenu?.key
+                  )}/${UrlUtils.generateSlug(
+                    productGroup?.name,
+                    productGroup?.key
+                  )}`}
+                  label={productGroup?.name || ''}
+                  image={productGroup?.image}
+                />
+              </div>
             ))}
           </Space>
         )}
@@ -150,28 +172,41 @@ function PrimaryHeaderMenuAllPopoverContent({
             {!!currentMenu?.productGroups?.length && (
               <Space className="w-full items-center justify-between" size={20}>
                 <Typography.Title level={4}>Sản phẩm nổi bật</Typography.Title>
-                <Link
-                  href={`/${UrlUtils.generateSlug(
-                    currentFocusMenu?.name,
-                    currentFocusMenu?.key
-                  )}/${UrlUtils.generateSlug(
-                    currentFocusGroup?.name,
-                    currentFocusGroup?.key
-                  )}`}
+                <div
+                  onClick={() => {
+                    setOpen(false);
+                    setIntoPopover(false);
+                  }}
                 >
-                  <a>
-                    <Typography className="pr-3 text-blue-500">
-                      Xem tất cả
-                    </Typography>
-                  </a>
-                </Link>
+                  <Link
+                    href={`/${UrlUtils.generateSlug(
+                      currentFocusMenu?.name,
+                      currentFocusMenu?.key
+                    )}/${UrlUtils.generateSlug(
+                      currentFocusGroup?.name,
+                      currentFocusGroup?.key
+                    )}`}
+                  >
+                    <a>
+                      <Typography className="pr-3 text-blue-500">
+                        Xem tất cả
+                      </Typography>
+                    </a>
+                  </Link>
+                </div>
               </Space>
             )}
 
             {products.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {products.slice(0, 10).map((product) => (
-                  <div key={product.key}>
+                  <div
+                    key={product.key}
+                    onClick={() => {
+                      setOpen(false);
+                      setIntoPopover(false);
+                    }}
+                  >
                     <ProductCard
                       href={`/${UrlUtils.generateSlug(
                         product.productType?.name,

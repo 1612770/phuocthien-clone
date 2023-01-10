@@ -60,7 +60,6 @@ function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addToCart = useCallback(
     (payload: { product: Product; quantity: number }) => {
-      openNotification();
       if (
         cartProducts.find(
           (cartProduct) => cartProduct.product.key === payload.product.key
@@ -70,7 +69,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
           if (cartProduct.product.key === payload.product.key) {
             return {
               ...cartProduct,
-              quantity: cartProduct.quantity + payload.quantity,
+              quantity: payload.quantity,
             };
           }
           return cartProduct;
@@ -82,6 +81,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         );
         return;
       } else {
+        openNotification();
         const newCartProducts = [...cartProducts, payload];
         setCartProducts(newCartProducts);
         LocalStorageUtils.setItem(

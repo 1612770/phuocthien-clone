@@ -47,17 +47,22 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
       closeIcon={<X size={40} className="mr-0 text-white" />}
     >
       <Space size={16} direction="vertical" className="w-full">
-        <Button
-          type="primary"
-          className="h-10 w-full bg-primary-dark shadow-none"
-        >
-          <Space align="center" className="h-full w-full">
-            <User className="text-white" width={20} height={20} />
-            <Typography.Text className="text-white">
-              Lịch sử đơn hàng
-            </Typography.Text>
-          </Space>
-        </Button>
+        <Link href={'/lich-su-don-hang'}>
+          <a>
+            <Button
+              onClick={onClose}
+              type="primary"
+              className="h-10 w-full bg-primary-dark shadow-none"
+            >
+              <Space align="center" className="h-full w-full">
+                <User className="text-white" width={20} height={20} />
+                <Typography.Text className="text-white">
+                  Lịch sử đơn hàng
+                </Typography.Text>
+              </Space>
+            </Button>
+          </a>
+        </Link>
       </Space>
       <Divider className="mt-4 mb-0" />
       <Collapse

@@ -3,7 +3,6 @@ import { NextPageWithLayout } from './page';
 import {
   AutoComplete,
   Breadcrumb,
-  Card,
   Col,
   Divider,
   Input,
@@ -26,7 +25,7 @@ const CartPage: NextPageWithLayout = () => {
   );
 
   return (
-    <div className="max-w-[720px] pb-4 lg:container">
+    <div className="container max-w-[720px] pb-4">
       <Breadcrumb className="mt-4 mb-2">
         <Breadcrumb.Item>
           <Link href="/">
@@ -40,7 +39,7 @@ const CartPage: NextPageWithLayout = () => {
         </Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card className="md:border-1 border-none shadow-none md:rounded-lg md:border-solid md:border-gray-200 md:shadow-lg">
+      <div className="md:border-1 border-none px-4 py-0 shadow-none md:rounded-lg md:border-solid md:border-gray-200 md:py-4 md:shadow-lg">
         {cartProducts.map((cartProduct) => (
           <CartProductItem
             key={cartProduct.product.key}
@@ -107,11 +106,11 @@ const CartPage: NextPageWithLayout = () => {
           placeholder="Nhập ghi chú (nếu có)"
           className="mt-2"
         />
-      </Card>
+      </div>
 
       <Typography className="my-4 text-center text-xs text-gray-500">
-        Bằng cách đặt hàng, bạn đồng ý với Điều khoản sử dụng của Nhà thuốc An
-        khang
+        Bằng cách đặt hàng, bạn đồng ý với Điều khoản sử dụng của Nhà thuốc
+        Phước Thiện
       </Typography>
     </div>
   );

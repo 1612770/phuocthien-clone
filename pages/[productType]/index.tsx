@@ -47,7 +47,7 @@ const ProductTypesPage: NextPageWithLayout<{
 export default ProductTypesPage;
 
 ProductTypesPage.getLayout = (page) => {
-  return <PrimaryLayout hideFooter>{page}</PrimaryLayout>;
+  return <PrimaryLayout >{page}</PrimaryLayout>;
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -82,7 +82,7 @@ export const getStaticProps: GetStaticProps = async (
   let generalClient = new GeneralClient(null, {});
   try {
     let fullMenu = await generalClient.getMenu();
-    let productType = fullMenu.data.find((menu) => {
+    let productType = (fullMenu.data||[]).find((menu) => {
       return (
         UrlUtils.generateSlug(menu?.name, menu?.key) ===
         context.params?.productType

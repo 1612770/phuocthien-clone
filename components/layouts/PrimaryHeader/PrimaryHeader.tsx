@@ -23,15 +23,16 @@ import PrimaryHeaderMenuItem from './PrimaryHeaderMenuItem';
 import MenuModel from '@configs/models/menu.model';
 
 function PrimaryHeaderMenu() {
-  const { fullMenu } = useFullMenu();
+  const { fullMenu, open, setOpen, intoPopover } = useFullMenu();
 
   const [mode, setMode] = useState<'all' | 'menu'>('all');
   const [currentMenu, setCurrentMenu] = useState<MenuModel>();
 
   return (
     <Popover
+      open={open || intoPopover}
       align={{
-        offset: [0, 2],
+        offset: [0, 0],
       }}
       content={
         <PrimaryHeaderMenuAllPopoverContent
@@ -42,14 +43,19 @@ function PrimaryHeaderMenu() {
       placement="bottom"
       destroyTooltipOnHide
       showArrow={false}
+      popupVisible={true}
       overlayClassName="primary-header xl:w-[1200px] lg:w-[1000px]"
     >
       <div className="relative z-10 hidden bg-white shadow-lg lg:block">
-        <div className="m-auto flex items-center justify-between py-2 lg:container">
+        <div className="m-auto flex items-center justify-between lg:container">
           <Space
             align="center"
-            className="cursor-pointer"
+            className="inline-flex cursor-pointer py-2"
+            onMouseLeave={() => {
+              setOpen(false);
+            }}
             onMouseEnter={() => {
+              setOpen(true);
               setMode('all');
             }}
           >
@@ -62,7 +68,12 @@ function PrimaryHeaderMenu() {
           {fullMenu.map((menu) =>
             menu?.name && IMPORTANT_MENUS.includes(menu?.name) ? (
               <span
+                className="inline-block py-2"
+                onMouseLeave={() => {
+                  setOpen(false);
+                }}
                 onMouseEnter={() => {
+                  setOpen(true);
                   setCurrentMenu(menu);
                   setMode('menu');
                 }}
@@ -181,17 +192,21 @@ function PrimaryHeader() {
               </a>
             </Link>
 
-            <Button
-              type="primary"
-              className="hidden h-10 bg-primary-dark shadow-none md:block"
-            >
-              <Space align="center" className="h-full w-full">
-                <User className="text-white" width={20} height={20} />
-                <Typography.Text className="text-white">
-                  Lịch sử đơn hàng
-                </Typography.Text>
-              </Space>
-            </Button>
+            <Link href={'/lich-su-don-hang'}>
+              <a>
+                <Button
+                  type="primary"
+                  className="hidden h-10 bg-primary-dark shadow-none md:block"
+                >
+                  <Space align="center" className="h-full w-full">
+                    <User className="text-white" width={20} height={20} />
+                    <Typography.Text className="text-white">
+                      Lịch sử đơn hàng
+                    </Typography.Text>
+                  </Space>
+                </Button>
+              </a>
+            </Link>
 
             <Space
               align="center"

@@ -1,11 +1,11 @@
 import Product from '@configs/models/product.model';
-import { Button, Card, Space, Tag, Typography } from 'antd';
+import { Card, Space, Tag, Typography } from 'antd';
 import Link from 'next/link';
 import React from 'react';
 import ImageWithFallback from '../ImageWithFallback';
 import ImageUtils from '@libs/utils/image.utils';
 import COLORS from '@configs/colors';
-import { useCart } from '@providers/CartProvider';
+import AddToCartButton from '@modules/products/AddToCartButton';
 
 type ProductCardProps = {
   product: Product;
@@ -20,8 +20,6 @@ function ProductCard({
   href,
   size = 'default',
 }: ProductCardProps) {
-  const { addToCart } = useCart();
-
   return (
     <Link href={href}>
       <a className="group inline-block w-full">
@@ -86,18 +84,12 @@ function ProductCard({
               </Typography.Text>
 
               {size !== 'small' && (
-                <Button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    addToCart({ product, quantity: 1 });
-                  }}
-                  key="add-to-cart"
-                  block
-                  className="mt-2 border border-solid border-gray-200 bg-white text-black shadow-none transition duration-300 group-hover:border-primary-light group-hover:bg-primary-light group-hover:text-white"
-                  type="primary"
-                >
-                  Thêm vào giỏ hàng
-                </Button>
+                <div className="mt-2">
+                  <AddToCartButton
+                    className="w-full border border-solid border-gray-200 bg-white text-black shadow-none transition duration-300 group-hover:border-primary-light group-hover:bg-primary-light group-hover:text-white"
+                    product={product}
+                  />
+                </div>
               )}
             </Space>
           </div>

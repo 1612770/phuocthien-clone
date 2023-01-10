@@ -14,7 +14,7 @@ function CartProductItem({
   const { removeFromCart, changeProductQuantity } = useCart();
 
   return (
-    <div className="my-8 flex justify-between ">
+    <div className="my-4 flex justify-between ">
       <div className="flex flex-col">
         <div className="relative mr-4 h-[80px] w-[80px]">
           <ImageWithFallback

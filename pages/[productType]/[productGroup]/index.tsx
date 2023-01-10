@@ -124,8 +124,8 @@ const ProductGroupPage: NextPageWithLayout<{
         <Breadcrumb.Item>{productGroup?.name}</Breadcrumb.Item>
       </Breadcrumb>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[300px_minmax(900px,_1fr)]">
-        <div className="hidden grid-flow-row lg:block">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[300px_minmax(600px,_1fr)]">
+        <div className="sticky top-0 hidden h-[100vh] grid-flow-row lg:block">
           <FilterOptions productBrands={productBrands || []} />
         </div>
         <div>
@@ -138,7 +138,7 @@ const ProductGroupPage: NextPageWithLayout<{
                 {productGroup?.name}
               </Typography.Title>
 
-              <Space wrap size={4}>
+              <Space wrap size={4} className="my-2">
                 <Tag.CheckableTag
                   onClick={() => setOpenFilterDrawer(true)}
                   checked={false}
@@ -194,7 +194,14 @@ const ProductGroupPage: NextPageWithLayout<{
           <div className="lg:container">
             <Row gutter={[16, 16]} className="hidden lg:flex">
               {products.map((product, index) => (
-                <Col sm={24} md={12} lg={6} className="w-full" key={index}>
+                <Col
+                  sm={24}
+                  md={12}
+                  lg={8}
+                  xl={6}
+                  className="w-full"
+                  key={index}
+                >
                   <ProductCard
                     href={`/${UrlUtils.generateSlug(
                       product.productType?.name,
@@ -242,7 +249,7 @@ const ProductGroupPage: NextPageWithLayout<{
 export default ProductGroupPage;
 
 ProductGroupPage.getLayout = (page) => {
-  return <PrimaryLayout hideFooter>{page}</PrimaryLayout>;
+  return <PrimaryLayout>{page}</PrimaryLayout>;
 };
 
 // export const getStaticPaths: GetStaticPaths = async () => {

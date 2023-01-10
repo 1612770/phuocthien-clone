@@ -28,7 +28,7 @@ function ProductGroup({
               height={48}
             />
           </div>
-          <Typography className="mb-1 mt-3 text-center">
+          <Typography className="mb-1 mt-3 max-h-[20px] overflow-visible text-center">
             {productGroup?.name}
           </Typography>
         </div>

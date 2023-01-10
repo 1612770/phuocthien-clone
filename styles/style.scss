@@ -33,7 +33,6 @@
 }
 
 .primary-header-menu-drawer {
-
   .ant-drawer-header {
     background-color: #038f63;
     padding: 16px 8px;
@@ -50,7 +49,6 @@
     font-weight: 500;
   }
 }
-
 
 .primary-popover-menu-item {
   position: relative;
@@ -71,7 +69,7 @@
     &:first-child::before {
       height: 0px;
     }
- 
+
     &:not(:last-child)::after {
       content: '';
       position: absolute;
@@ -94,5 +92,11 @@
     width: 2px;
     display: block;
     background-color: #bbf7d0;
+  }
+}
+
+#input-code {
+  input {
+    text-align: center;
   }
 }

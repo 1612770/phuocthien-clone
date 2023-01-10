@@ -1,14 +1,5 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout/PrimaryLayout';
-import {
-  Breadcrumb,
-  Button,
-  Col,
-  Divider,
-  Input,
-  Row,
-  Space,
-  Typography,
-} from 'antd';
+import { Breadcrumb, Col, List, Row, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
@@ -17,17 +8,18 @@ import UrlUtils from '@libs/utils/url.utils';
 import Product from '@configs/models/product.model';
 import ProductCard from '@components/templates/ProductCard';
 import ProductCarousel from '@modules/products/ProductCarousel';
-import { Minus, Plus } from 'react-feather';
-import React, { useMemo, useState } from 'react';
-import { useCart } from '@providers/CartProvider';
+import { MapPin, Phone } from 'react-feather';
+import React, { useMemo } from 'react';
+import { DrugstoreClient } from '@libs/client/DrugStore';
+import DrugStore from '@configs/models/drug-store.model';
+import AddToCartButton from '@modules/products/AddToCartButton';
+import ProductBonusSection from '@modules/products/ProductBonusSection';
 
 const ProductPage: NextPageWithLayout<{
   product?: Product;
   otherProducts: Product[];
-}> = ({ product, otherProducts }) => {
-  const [quantity, setQuantity] = useState(1);
-  const { addToCart } = useCart();
-
+  drugStores: DrugStore[];
+}> = ({ product, otherProducts, drugStores }) => {
   let carouselImages: string[] = useMemo(() => {
     let memoCarouselImages: string[] = [];
 
@@ -55,7 +47,7 @@ const ProductPage: NextPageWithLayout<{
   if (typeof product?.visible === 'boolean' && !product?.visible) return null;
 
   return (
-    <div className="px-4 pb-4 lg:container">
+    <div className="px-4 pb-4 lg:container lg:px-0">
       <Breadcrumb className="mt-4 mb-2">
         <Breadcrumb.Item>
           <Link href="/">
@@ -88,96 +80,62 @@ const ProductPage: NextPageWithLayout<{
         <Breadcrumb.Item>{product?.name}</Breadcrumb.Item>
       </Breadcrumb>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
-        <div className="h-[500px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 xl:grid-cols-[400px_minmax(200px,_1fr)_300px]">
+        <div className="col-span-2 h-[500px] xl:sticky xl:top-[32px] xl:col-span-1">
           <ProductCarousel images={carouselImages} />
         </div>
-        <div>
+        <div className="xl:sticky xl:top-[32px]">
           <div className="flex flex-col">
-            {product?.productionBrand?.name && (
-              <Typography>
-                Thương hiệu: {product?.productionBrand?.name}
-              </Typography>
-            )}
-            <Typography.Title className="my-2 mx-0 text-2xl font-bold text-primary">
+            <Typography.Title className="mx-0 mt-2 text-2xl font-bold text-primary">
               {product?.name}
             </Typography.Title>
 
-            <div>
-              <Typography>Số lượng:</Typography>
-              <Input.Group className="max-w-[160px]" compact>
-                <Button
-                  icon={<Minus size={20} />}
-                  onClick={() => {
-                    if (quantity > 1) {
-                      setQuantity(quantity - 1);
-                    }
-                  }}
-                />
-                <Input
-                  className="max-w-[40px]"
-                  value={quantity}
-                  onChange={(e) => {
-                    setQuantity(+e.target.value);
-                  }}
-                />
-                <Button
-                  icon={<Plus size={20} />}
-                  onClick={() => {
-                    setQuantity(quantity + 1);
-                  }}
-                />
-              </Input.Group>
-            </div>
+            <ProductBonusSection />
 
-            <Space className="mt-4 w-full gap-2 lg:gap-4" wrap>
-              <Button
-                className="px:4 h-[40px] w-full shadow-none lg:h-[60px] lg:px-10"
-                shape="round"
-                type="primary"
-                onClick={() => {
-                  addToCart({ product, quantity });
-                }}
-              >
-                <Typography className="font-semibold uppercase text-white">
-                  Thêm vào giỏ hàng
-                </Typography>
-              </Button>
-              <Button
-                className="h-[40px] bg-orange-500 shadow-none lg:h-[60px]"
-                shape="round"
-                type="primary"
-              >
-                <Typography className="font-semibold uppercase text-white">
-                  Tìm nhà thuốc
-                </Typography>
-              </Button>
-            </Space>
+            <div className="flex w-full items-center justify-between gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg lg:gap-4">
+              <div className="flex items-end">
+                <Typography.Title
+                  level={2}
+                  className="m-0 -mb-[2px] font-bold text-primary-dark"
+                >
+                  {product?.retailPrice?.toLocaleString('it-IT', {
+                    style: 'currency',
+                    currency: 'VND',
+                  })}
+                </Typography.Title>
 
-            <Divider />
-            <div className="flex items-end">
-              <Typography.Title
-                level={2}
-                className="m-0 -mb-[2px] font-bold text-primary-dark"
-              >
-                {product?.retailPrice?.toLocaleString('it-IT', {
-                  style: 'currency',
-                  currency: 'VND',
-                })}
-              </Typography.Title>
-
-              {product?.unit && (
-                <Typography.Text className="text-xl">
-                  &nbsp;/&nbsp;{product?.unit}
-                </Typography.Text>
+                {product?.unit && (
+                  <Typography.Text className="text-xl">
+                    &nbsp;/&nbsp;{product?.unit}
+                  </Typography.Text>
+                )}
+              </div>
+              {product && (
+                <div className="w-[140px]">
+                  <AddToCartButton
+                    product={product}
+                    className="w-full uppercase"
+                  />
+                </div>
               )}
             </div>
           </div>
 
-          <div className="my-2">
+          <div className="mb-2 mt-8">
+            {!!product?.productionBrand?.name && (
+              <div className="flex items-center">
+                <Typography className="my-0.5 font-medium ">
+                  Thương hiệu
+                </Typography>
+                <Typography.Text className="ml-2">
+                  {product?.productionBrand?.name}
+                </Typography.Text>
+              </div>
+            )}
+
             {!!product?.ingredient && (
               <div className="flex items-center">
-                <Typography className="my-0.5 min-w-[160px] font-semibold">
+                <Typography className="my-0.5 font-medium ">
                   Hoạt chất
                 </Typography>
                 <Typography.Text className="ml-2">
@@ -188,7 +146,7 @@ const ProductPage: NextPageWithLayout<{
 
             {!!product?.drugContent && (
               <div className="flex items-center">
-                <Typography className="my-0.5 min-w-[160px] font-semibold">
+                <Typography className="my-0.5 font-medium ">
                   Hàm lượng
                 </Typography>
                 <Typography.Text className="ml-2">
@@ -199,7 +157,7 @@ const ProductPage: NextPageWithLayout<{
 
             {!!product?.packagingProcess && (
               <div className="flex items-center">
-                <Typography className="my-0.5 min-w-[160px] font-semibold">
+                <Typography className="my-0.5 font-medium ">
                   Quy cách đóng gói
                 </Typography>
                 <Typography.Text className="ml-2">
@@ -209,7 +167,7 @@ const ProductPage: NextPageWithLayout<{
             )}
 
             <div className="flex items-center">
-              <Typography className="my-0.5 min-w-[160px] font-semibold">
+              <Typography className="my-0.5 font-medium ">
                 Là thuốc kê đơn
               </Typography>
               <Typography.Text className="ml-2">
@@ -219,7 +177,7 @@ const ProductPage: NextPageWithLayout<{
 
             {product?.isSpecial && (
               <div className="flex items-center">
-                <Typography className="my-0.5 min-w-[160px] font-semibold">
+                <Typography className="my-0.5 font-medium ">
                   Là thuốc đặc biệt
                 </Typography>
                 <Typography.Text className="ml-2">
@@ -230,7 +188,7 @@ const ProductPage: NextPageWithLayout<{
 
             {product?.isMental && (
               <div className="flex items-center">
-                <Typography className="my-0.5 min-w-[160px] font-semibold">
+                <Typography className="my-0.5 font-medium ">
                   Là thuốc tâm thần
                 </Typography>
                 <Typography.Text className="ml-2">
@@ -241,7 +199,7 @@ const ProductPage: NextPageWithLayout<{
 
             {!!product?.registrationNumber && (
               <div className="flex items-center">
-                <Typography className="my-0.5 min-w-[160px] font-semibold">
+                <Typography className="my-0.5 font-medium ">
                   Số đăng ký
                 </Typography>
                 <Typography.Text className="ml-2">
@@ -250,6 +208,43 @@ const ProductPage: NextPageWithLayout<{
               </div>
             )}
           </div>
+        </div>
+
+        <div className="w-full rounded-lg border border-solid border-gray-200 p-4">
+          <Typography.Title level={4} className="text-center">
+            Có {drugStores.length} nhà thuốc
+          </Typography.Title>
+          <List>
+            {drugStores.map((drugStore) => (
+              <List.Item className="py-2 px-0" key={drugStore.key}>
+                <div>
+                  <Typography className=" font-medium">
+                    {drugStore.name}
+                  </Typography>
+                  {drugStore.tel && (
+                    <a href={`tel:${drugStore.tel}`}>
+                      <Typography className="text-gray-500">
+                        <Phone
+                          className="mr-2 align-text-bottom text-sm"
+                          size={14}
+                        />
+                        {drugStore.tel}
+                      </Typography>
+                    </a>
+                  )}
+                  {drugStore.address && (
+                    <Typography className="text-gray-500">
+                      <MapPin
+                        className="mr-2  align-text-bottom text-sm"
+                        size={14}
+                      />
+                      {drugStore.address}
+                    </Typography>
+                  )}
+                </div>
+              </List.Item>
+            ))}
+          </List>
         </div>
       </div>
 
@@ -335,19 +330,28 @@ export const getServerSideProps = async (
     props: {
       product?: Product;
       otherProducts: Product[];
+      drugStores: DrugStore[];
     };
   } = {
     props: {
       otherProducts: [],
+      drugStores: [],
     },
   };
 
   let productClient = new ProductClient(context, {});
+  let drugClient = new DrugstoreClient(context, {});
   let product = await productClient.getProduct({
     key: UrlUtils.getKeyFromParam(context.params?.product as string),
   });
   if (product.data) {
     serverSideProps.props.product = product.data;
+  }
+
+  let drugStores = await drugClient.getAllDrugStores();
+
+  if (drugStores.data) {
+    serverSideProps.props.drugStores = drugStores.data;
   }
 
   let products = await productClient.getProducts({
@@ -368,5 +372,5 @@ export const getServerSideProps = async (
 export default ProductPage;
 
 ProductPage.getLayout = (page) => {
-  return <PrimaryLayout hideFooter>{page}</PrimaryLayout>;
+  return <PrimaryLayout>{page}</PrimaryLayout>;
 };
