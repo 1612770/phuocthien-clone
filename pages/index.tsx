@@ -196,7 +196,7 @@ export const getServerSideProps = async (
 
       serverSideProps.props.featureProductsLists = featureProductsLists.map(
         (featureProductsLists, index) => ({
-          products: featureProductsLists.data.data,
+          products: featureProductsLists.data?.data || [],
           productType: featureProductTypes[index],
         })
       );

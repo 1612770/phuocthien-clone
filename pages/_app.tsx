@@ -66,7 +66,9 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
   try {
     let fullMenu = await generalClient.getMenu();
 
-    appInitalProps.props.fullMenu = fullMenu.data;
+    if (fullMenu.data) {
+      appInitalProps.props.fullMenu = fullMenu.data;
+    }
   } catch (error) {
     appInitalProps.props.fullMenu = [];
   }
