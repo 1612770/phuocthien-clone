@@ -7,10 +7,10 @@ function ImageWithFallback(
     getMockImage?: () => string;
   }
 ) {
-  const [src, setSrc] = useState<any>();
+  const [src, setSrc] = useState('');
 
   useEffect(() => {
-    setSrc(props.src);
+    setSrc(props.src as string);
   }, [props.src]);
 
   return (
