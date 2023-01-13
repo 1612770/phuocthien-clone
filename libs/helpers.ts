@@ -1,26 +1,19 @@
-import { getCookie, setCookie } from 'cookies-next';
+import { getCookie as _getCookie, setCookie as _setCookie } from 'cookies-next';
 
-export const getSessionToken = (
-  ctx: any,
-  cookieName: any = 'session_token'
-) => {
-  if (ctx) {
-    // get from server side
-    return getCookie(cookieName, ctx);
-  } else {
-    // client side
-    return getCookie(cookieName);
-  }
+export enum COOKIE_KEYS {
+  TOKEN = 'token',
+}
+
+export const getCookie = (ctx: unknown, cookieName = COOKIE_KEYS.TOKEN) => {
+  if (ctx) return _getCookie(cookieName, ctx);
+  else return _getCookie(cookieName);
 };
 
-export const setSessionToken = (
-  ctx: any,
-  value: any,
-  cookieName: any = 'session_token'
+export const setCookie = (
+  ctx: unknown,
+  value: unknown,
+  cookieName = COOKIE_KEYS.TOKEN
 ) => {
-  if (ctx) {
-    setCookie(cookieName, value, ctx);
-  } else {
-    setCookie(cookieName, value);
-  }
+  if (ctx) _setCookie(cookieName, value, ctx);
+  else _setCookie(cookieName, value);
 };

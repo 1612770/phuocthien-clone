@@ -163,7 +163,7 @@ Home.getLayout = (page) => {
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  let serverSideProps: {
+  const serverSideProps: {
     props: {
       featureProductsLists: { products: Product[]; productType: MenuModel }[];
     };
@@ -173,14 +173,16 @@ export const getServerSideProps = async (
     },
   };
 
-  let productClient = new ProductClient(context, {});
+  const productClient = new ProductClient(context, {});
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if ((context.req as any)._fromAppData) {
-    let { fullMenu }: { fullMenu: MenuModel[] } = (context.req as any)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { fullMenu }: { fullMenu: MenuModel[] } = (context.req as any)
       ._fromAppData;
 
     // get first 3 menu keys
-    let featureProductTypes = fullMenu.slice(0, 3);
+    const featureProductTypes = fullMenu.slice(0, 3);
 
     try {
       const featureProductsLists = await Promise.all(

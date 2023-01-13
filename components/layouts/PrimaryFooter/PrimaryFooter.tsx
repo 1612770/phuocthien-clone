@@ -3,10 +3,7 @@ import Link from 'next/link';
 import { Facebook, Mail, MapPin, Phone, Twitter, Youtube } from 'react-feather';
 import IMAGES from 'configs/assests/images';
 
-type PrimaryFooterProps = {};
-
-// eslint-disable-next-line no-empty-pattern
-function PrimaryFooter({}: PrimaryFooterProps) {
+function PrimaryFooter() {
   return (
     <>
       <footer className="mt-8 bg-primary px-4">

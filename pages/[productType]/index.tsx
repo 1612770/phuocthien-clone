@@ -47,14 +47,14 @@ const ProductTypesPage: NextPageWithLayout<{
 export default ProductTypesPage;
 
 ProductTypesPage.getLayout = (page) => {
-  return <PrimaryLayout >{page}</PrimaryLayout>;
+  return <PrimaryLayout>{page}</PrimaryLayout>;
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  let generalClient = new GeneralClient(null, {});
+  const generalClient = new GeneralClient(null, {});
 
-  let fullMenu = await generalClient.getMenu();
-  let paths = (fullMenu.data || []).map((menu) => {
+  const fullMenu = await generalClient.getMenu();
+  const paths = (fullMenu.data || []).map((menu) => {
     return {
       params: {
         productType: UrlUtils.generateSlug(menu?.name, menu?.key),
@@ -71,7 +71,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (
   context: GetStaticPropsContext
 ) => {
-  let staticProps: {
+  const staticProps: {
     props: {
       productType?: MenuModel;
     };
@@ -79,10 +79,10 @@ export const getStaticProps: GetStaticProps = async (
     props: {},
   };
 
-  let generalClient = new GeneralClient(null, {});
+  const generalClient = new GeneralClient(null, {});
   try {
-    let fullMenu = await generalClient.getMenu();
-    let productType = (fullMenu.data||[]).find((menu) => {
+    const fullMenu = await generalClient.getMenu();
+    const productType = (fullMenu.data || []).find((menu) => {
       return (
         UrlUtils.generateSlug(menu?.name, menu?.key) ===
         context.params?.productType

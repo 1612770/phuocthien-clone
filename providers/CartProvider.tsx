@@ -8,17 +8,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 const CartContext = React.createContext<{
   cartProducts: { product: Product; quantity: number }[];
-  // eslint-disable-next-line no-unused-vars
   addToCart: (payload: { product: Product; quantity: number }) => void;
-  // eslint-disable-next-line no-unused-vars
   removeFromCart: (product: Product) => void;
-  // eslint-disable-next-line no-unused-vars
   changeProductQuantity: (product: Product, newQuantity: number) => void;
 }>({
   cartProducts: [],
-  addToCart: () => {},
-  removeFromCart: () => {},
-  changeProductQuantity: () => {},
+  addToCart: () => undefined,
+  removeFromCart: () => undefined,
+  changeProductQuantity: () => undefined,
 });
 
 function CartProvider({ children }: { children: React.ReactNode }) {
@@ -55,7 +52,6 @@ function CartProvider({ children }: { children: React.ReactNode }) {
       placement: 'bottomRight',
       key,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const addToCart = useCallback(

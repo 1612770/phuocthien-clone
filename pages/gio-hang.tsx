@@ -18,7 +18,7 @@ import Link from 'next/link';
 const CartPage: NextPageWithLayout = () => {
   const { cartProducts } = useCart();
 
-  let totalPrice = cartProducts.reduce(
+  const totalPrice = cartProducts.reduce(
     (total, cartProduct) =>
       total + (cartProduct.product.retailPrice || 0) * cartProduct.quantity,
     0

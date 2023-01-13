@@ -4,17 +4,15 @@ import React, { useEffect, useState } from 'react';
 const FullMenuContext = React.createContext<{
   fullMenu: MenuModel[];
   open: boolean;
-  // eslint-disable-next-line no-unused-vars
   setOpen: (open: boolean) => void;
   intoPopover: boolean;
-  // eslint-disable-next-line no-unused-vars
   setIntoPopover: (intoPopover: boolean) => void;
 }>({
   fullMenu: [],
   open: false,
-  setOpen: () => {},
+  setOpen: () => undefined,
   intoPopover: false,
-  setIntoPopover: () => {},
+  setIntoPopover: () => undefined,
 });
 
 function FullMenuProvider({

@@ -29,10 +29,10 @@ function PrimaryHeaderMenuAllPopoverContent({
   const debouncedCurrentFocusGroup = useDebounce(currentFocusGroup, 500);
 
   const getFocusGroupProducts = useCallback(async () => {
-    let productClient = new ProductClient(null, {});
+    const productClient = new ProductClient(null, {});
 
     setLoadingProduct(true);
-    let products = await productClient.getProducts({
+    const products = await productClient.getProducts({
       page: 1,
       pageSize: 10,
       isPrescripted: false,

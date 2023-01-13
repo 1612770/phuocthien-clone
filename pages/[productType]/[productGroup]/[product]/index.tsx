@@ -20,15 +20,15 @@ const ProductPage: NextPageWithLayout<{
   otherProducts: Product[];
   drugStores: DrugStore[];
 }> = ({ product, otherProducts, drugStores }) => {
-  let carouselImages: string[] = useMemo(() => {
+  const carouselImages: string[] = useMemo(() => {
     let memoCarouselImages: string[] = [];
 
     if (product?.detail?.image) {
       memoCarouselImages.push(product?.detail?.image);
     }
     if (product?.images) {
-      let imageUrls = product?.images.reduce((images, currentImage) => {
-        let url = currentImage?.url;
+      const imageUrls = product?.images.reduce((images, currentImage) => {
+        const url = currentImage?.url;
         if (url) {
           images.push(url);
         }
@@ -326,7 +326,7 @@ const ProductPage: NextPageWithLayout<{
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  let serverSideProps: {
+  const serverSideProps: {
     props: {
       product?: Product;
       otherProducts: Product[];
@@ -339,22 +339,22 @@ export const getServerSideProps = async (
     },
   };
 
-  let productClient = new ProductClient(context, {});
-  let drugClient = new DrugstoreClient(context, {});
-  let product = await productClient.getProduct({
+  const productClient = new ProductClient(context, {});
+  const drugClient = new DrugstoreClient(context, {});
+  const product = await productClient.getProduct({
     key: UrlUtils.getKeyFromParam(context.params?.product as string),
   });
   if (product.data) {
     serverSideProps.props.product = product.data;
   }
 
-  let drugStores = await drugClient.getAllDrugStores();
+  const drugStores = await drugClient.getAllDrugStores();
 
   if (drugStores.data) {
     serverSideProps.props.drugStores = drugStores.data;
   }
 
-  let products = await productClient.getProducts({
+  const products = await productClient.getProducts({
     page: 1,
     pageSize: 10,
     productTypeKey: context.params?.productTypeKey as string,

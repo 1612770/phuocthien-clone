@@ -37,7 +37,7 @@ function FilterOptions({
   //   .split(',')
   //   .filter((brand) => !!brand);
 
-  let currentBrand = router.query.brand as string;
+  const currentBrand = router.query.brand as string;
 
   return (
     <div className="py-4">
@@ -48,7 +48,7 @@ function FilterOptions({
         {productBrands.map((brand) => {
           // const isActive =
           //   !!brand?.code && selectedBrands.includes(brand?.code);
-          let isActive = currentBrand === brand.key;
+          const isActive = currentBrand === brand.key;
 
           return (
             <div key={brand.key}>
@@ -338,7 +338,7 @@ ProductGroupPage.getLayout = (page) => {
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  let staticProps: {
+  const staticProps: {
     props: {
       productType?: ProductType;
       productGroup?: ProductGroupModel;
@@ -351,10 +351,10 @@ export const getServerSideProps: GetServerSideProps = async (
     },
   };
 
-  let generalClient = new GeneralClient(null, {});
-  let productClient = new ProductClient(null, {});
+  const generalClient = new GeneralClient(null, {});
+  const productClient = new ProductClient(null, {});
 
-  let [productType, productGroup, productBrands] = await Promise.all([
+  const [productType, productGroup, productBrands] = await Promise.all([
     generalClient.getProductTypeDetail({
       key: UrlUtils.getKeyFromParam(String(context.params?.productType)),
     }),
@@ -368,7 +368,7 @@ export const getServerSideProps: GetServerSideProps = async (
   staticProps.props.productGroup = productGroup.data;
   staticProps.props.productBrands = productBrands.data;
 
-  let products = await productClient.getProducts({
+  const products = await productClient.getProducts({
     page: 1,
     pageSize: 20,
     isPrescripted: false,
