@@ -32,6 +32,10 @@ export class ProductClient extends BaseClient {
       }[]
     >
   > {
-    return await super.call('GET', `product/${key}`, {});
+    return await super.call(
+      'GET',
+      `product/${key}/inventory-at-drugstores`,
+      {}
+    );
   }
 }
