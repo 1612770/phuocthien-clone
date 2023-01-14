@@ -3,8 +3,48 @@ import { NextPageWithLayout } from './page';
 import { Button, Card, Form, Input, Typography } from 'antd';
 import { Key, Phone } from 'react-feather';
 import Link from 'next/link';
+import { useState } from 'react';
+import { AuthClient } from '@libs/client/Auth';
+import { useAppMessage } from '@providers/AppMessageProvider\b';
+import { useAuth } from '@providers/AuthProvider';
+import { COOKIE_KEYS, setCookie } from '@libs/helpers';
+import { useRouter } from 'next/router';
 
 const LoginPage: NextPageWithLayout = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [logining, setLogining] = useState(false);
+
+  const { toastError } = useAppMessage();
+  const { setUserData } = useAuth();
+  const router = useRouter();
+
+  const login = async () => {
+    try {
+      setLogining(true);
+
+      const auth = new AuthClient(null, {});
+      const signInResult = await auth.signIn({
+        phoneNumber: username,
+        password,
+      });
+
+      if (signInResult.data?.token) {
+        setCookie(null, signInResult.data?.token, COOKIE_KEYS.TOKEN);
+      }
+
+      if (signInResult.data?.user) {
+        setUserData(signInResult.data?.user);
+      }
+
+      router.replace('/');
+    } catch (error) {
+      toastError({ data: error });
+    } finally {
+      setLogining(false);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-[420px] pb-8 lg:container">
       <Card className="mt-8 flex flex-col items-center">
@@ -19,34 +59,42 @@ const LoginPage: NextPageWithLayout = () => {
         <Form
           className="flex flex-col items-center"
           initialValues={{ remember: true }}
+          onFinish={login}
         >
           <Form.Item
-            noStyle
             name="username"
+            className="w-full"
             rules={[
               {
                 required: true,
-                message: 'Vui lòng điền số điện thoại đăng nhập!',
+                message: 'Vui lòng nhập số điện thoại đăng nhập!',
               },
             ]}
           >
             <Input
+              autoFocus
               size="large"
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+              }}
               className="mt-4"
               prefix={<Phone size={20} />}
               placeholder="Số điện thoại đăng nhập"
             />
           </Form.Item>
           <Form.Item
-            noStyle
             name="password"
-            rules={[{ required: true, message: 'Vui lòng điền mật khẩu!' }]}
+            className="w-full"
+            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
           >
-            <Input
+            <Input.Password
               size="large"
-              className="mt-4"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
               prefix={<Key size={20} />}
-              type="password"
               placeholder="Mật khẩu"
             />
           </Form.Item>
@@ -59,6 +107,7 @@ const LoginPage: NextPageWithLayout = () => {
           <Form.Item className="w-full">
             <Button
               type="primary"
+              loading={logining}
               htmlType="submit"
               className="uppercase shadow-none"
               block

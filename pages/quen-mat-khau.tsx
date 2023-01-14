@@ -1,23 +1,90 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout/PrimaryLayout';
 import { NextPageWithLayout } from './page';
 import { Button, Card, Form, Input, Typography } from 'antd';
-import { Key, Phone } from 'react-feather';
+import { Check, Key, Phone, User } from 'react-feather';
 import { useState } from 'react';
 import Link from 'next/link';
+import OtpUtils from '@libs/utils/otp.utils';
+import { useAppMessage } from '@providers/AppMessageProvider\b';
+import { AuthClient } from '@libs/client/Auth';
+import OTPInput from '@components/templates/OTPInput';
 
 export enum ForgotPasswordSteps {
-  // eslint-disable-next-line no-unused-vars
   EnterPhoneNumber = 'EnterPhoneNumber',
-  // eslint-disable-next-line no-unused-vars
   EnterOTP = 'EnterOTP',
-  // eslint-disable-next-line no-unused-vars
   EnterNewPassword = 'EnterNewPassword',
-  // eslint-disable-next-line no-unused-vars
   Finish = 'Finish',
 }
 
 const LoginPage: NextPageWithLayout = () => {
   const [step, setStep] = useState(ForgotPasswordSteps.EnterPhoneNumber);
+
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [retypePassword, setRetypePassword] = useState('');
+
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [submittingOtp, setSubmittingOtp] = useState(false);
+  const [updatingPassword, setUpdatingPassword] = useState(false);
+
+  const { toastError } = useAppMessage();
+
+  const sendOtp = async () => {
+    // TODO: Check phone number
+
+    if (!OtpUtils.checkOtpNeedSending(phone)) {
+      setStep(ForgotPasswordSteps.EnterOTP);
+
+      return;
+    }
+
+    try {
+      setSendingOtp(true);
+
+      const auth = new AuthClient(null, {});
+      await auth.sendOtp({ phoneNumber: phone });
+
+      OtpUtils.addPhoneToLocalStorage(phone);
+
+      setStep(ForgotPasswordSteps.EnterOTP);
+    } catch (error) {
+      toastError({ data: error });
+    } finally {
+      setSendingOtp(false);
+    }
+  };
+
+  const submitOtp = async (otp: string) => {
+    try {
+      setSubmittingOtp(true);
+
+      const auth = new AuthClient(null, {});
+      await auth.verifyOtp({ phoneNumber: phone, otpCode: otp });
+
+      OtpUtils.removePhoneOutOfLocalStorage(phone);
+
+      setStep(ForgotPasswordSteps.EnterNewPassword);
+    } catch (error) {
+      toastError({ data: error });
+    } finally {
+      setSubmittingOtp(false);
+    }
+  };
+
+  const createAccount = async () => {
+    try {
+      setUpdatingPassword(true);
+
+      const auth = new AuthClient(null, {});
+      await auth.createAccount({ phoneNumber: phone, password });
+
+      setStep(ForgotPasswordSteps.Finish);
+    } catch (error) {
+      toastError({ data: error });
+    } finally {
+      setUpdatingPassword(false);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-[420px] pb-8 lg:container">
@@ -38,34 +105,41 @@ const LoginPage: NextPageWithLayout = () => {
             <Form
               className="flex flex-col items-center"
               initialValues={{ remember: true }}
+              scrollToFirstError
+              onFinish={sendOtp}
             >
               <Form.Item
-                noStyle
-                name="username"
+                hasFeedback
+                className="w-full"
+                name="phone"
                 rules={[
                   {
-                    required: true,
-                    message: 'Vui lòng điền số điện thoại đăng nhập!',
+                    pattern: new RegExp(process.env.NEXT_PUBLIC_REGEX_PHONE),
+                    message: 'Vui lòng kiểm tra lại số điện thoại',
                   },
+                  { required: true, message: 'Vui lòng điền số điện thoại!' },
                 ]}
               >
                 <Input
                   size="large"
+                  value={phone}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                  }}
                   className="mt-4"
                   prefix={<Phone size={20} />}
-                  placeholder="Số điện thoại của bạn"
+                  placeholder="Số điện thoại"
                 />
               </Form.Item>
 
-              <Form.Item className="mt-4 w-full">
+              <Form.Item className="w-full">
                 <Button
                   type="primary"
-                  onClick={() => {
-                    setStep(ForgotPasswordSteps.EnterOTP);
-                  }}
                   htmlType="submit"
-                  className="uppercase shadow-none"
+                  className="mt-4 uppercase shadow-none"
                   block
+                  loading={sendingOtp}
+                  icon={<User size={20} className="mr-1 align-text-bottom" />}
                 >
                   Lấy mã
                 </Button>
@@ -83,37 +157,14 @@ const LoginPage: NextPageWithLayout = () => {
               level={3}
               className="mt-2 mb-4 text-center text-primary"
             >
-              033333333
+              {phone}
             </Typography.Title>
 
-            <Form className="flex flex-col items-center">
-              <div id="input-code" className="mb-4 flex gap-4">
-                <Input autoFocus size="large" className="h-[40px] w-[40px]" />
-                <Input size="large" className="h-[40px] w-[40px]" />
-                <Input size="large" className="h-[40px] w-[40px]" />
-                <Input size="large" className="h-[40px] w-[40px]" />
-              </div>
-              <Typography className="text-center">
-                Chưa nhận được mã ?{' '}
-                <Typography className="inline-block cursor-pointer font-semibold text-primary">
-                  Gửi lại mã
-                </Typography>
-              </Typography>
-
-              <Form.Item className="mt-4 w-full">
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    setStep(ForgotPasswordSteps.EnterNewPassword);
-                  }}
-                  htmlType="submit"
-                  className="uppercase shadow-none"
-                  block
-                >
-                  Xác nhận
-                </Button>
-              </Form.Item>
-            </Form>
+            <OTPInput
+              onSubmit={submitOtp}
+              loading={submittingOtp}
+              phoneNumber={phone}
+            />
           </>
         )}
 
@@ -126,51 +177,68 @@ const LoginPage: NextPageWithLayout = () => {
             <Form
               className="flex flex-col items-center"
               initialValues={{ remember: true }}
+              scrollToFirstError
+              onFinish={createAccount}
             >
               <Form.Item
-                noStyle
+                hasFeedback
+                className="w-full"
                 name="password"
                 rules={[
-                  {
-                    required: true,
-                    message: 'Vui lòng điền mật khẩu mới!',
-                  },
+                  { required: true, message: 'Vui lòng nhập mật khẩu!' },
+                  { len: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' },
                 ]}
               >
-                <Input
+                <Input.Password
                   size="large"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
                   className="mt-4"
                   prefix={<Key size={20} />}
                   placeholder="Mật khẩu"
                 />
               </Form.Item>
               <Form.Item
-                noStyle
-                name="password"
+                hasFeedback
+                className="w-full"
+                name="retypePassword"
                 rules={[
-                  {
-                    required: true,
-                    message: 'Vui lòng nhập khớp mật khẩu!',
-                  },
+                  { required: true, message: 'Vui lòng nhập lại mật khẩu!' },
+                  { len: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' },
+                  ({ getFieldValue }) => ({
+                    validator(rule, value) {
+                      if (!value || getFieldValue('password') === value) {
+                        return Promise.resolve();
+                      }
+
+                      return Promise.reject(
+                        'Mật khẩu nhập lại không trùng khớp!'
+                      );
+                    },
+                  }),
                 ]}
               >
-                <Input
+                <Input.Password
                   size="large"
-                  className="mt-4"
+                  value={retypePassword}
+                  onChange={(e) => {
+                    setRetypePassword(e.target.value);
+                  }}
                   prefix={<Key size={20} />}
                   placeholder="Nhập lại mật khẩu"
                 />
               </Form.Item>
 
-              <Form.Item className="mt-4 w-full">
+              <Form.Item className="w-full">
                 <Button
                   type="primary"
-                  onClick={() => {
-                    setStep(ForgotPasswordSteps.Finish);
-                  }}
                   htmlType="submit"
-                  className="uppercase shadow-none"
+                  className="mt-4 uppercase shadow-none"
                   block
+                  loading={updatingPassword}
+                  icon={<Check size={20} className="mr-1 align-text-bottom" />}
                 >
                   Xác nhận
                 </Button>
@@ -181,22 +249,26 @@ const LoginPage: NextPageWithLayout = () => {
 
         {step === ForgotPasswordSteps.Finish && (
           <>
-            <Typography.Title level={3} className="text-center text-primary">
-              Cập nhật thành công
+            <Typography.Title
+              level={3}
+              className="mt-2 mb-4 text-center text-primary"
+            >
+              Thành công
             </Typography.Title>
-            <Typography className="mb-4 text-center">
-              Hãy quay trở về trang đăng nhập để tiếp tục
+            <Typography className="text-center">
+              Bạn đã cập nhật mật khẩu mới cho tài khoản với số {phone} thành
+              công. Vui lòng quay trở lại trang đăng nhập để tiếp tục
             </Typography>
 
             <Link href="/dang-nhap">
               <a>
                 <Button
-                  type="primary"
+                  autoFocus
                   htmlType="submit"
-                  className="uppercase shadow-none"
+                  className="mt-8 uppercase shadow-none"
                   block
                 >
-                  Xác nhận
+                  Về trang đăng nhập
                 </Button>
               </a>
             </Link>

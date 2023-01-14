@@ -15,6 +15,8 @@ import App from 'next/app';
 import React from 'react';
 import NProgress from '@components/templates/NProgress';
 import CartProvider from '@providers/CartProvider';
+import AppMessageProvider from '@providers/AppMessageProvider\b';
+import AuthProvider from '@providers/AuthProvider';
 
 interface AppPropsWithLayout<T> extends AppProps<T> {
   Component: NextPageWithLayout<T>;
@@ -42,11 +44,15 @@ function MyApp({
             },
           }}
         >
-          <CartProvider>
-            <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
-              {getLayout(<Component {...pageProps} />)}
-            </FullMenuProvider>
-          </CartProvider>
+          <AppMessageProvider>
+            <AuthProvider>
+              <CartProvider>
+                <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
+                  {getLayout(<Component {...pageProps} />)}
+                </FullMenuProvider>
+              </CartProvider>
+            </AuthProvider>
+          </AppMessageProvider>
         </ConfigProvider>
       </NProgress>
     </>
@@ -54,17 +60,17 @@ function MyApp({
 }
 
 MyApp.getInitialProps = async (ctx: AppContext) => {
-  let initalProps = await App.getInitialProps(ctx);
+  const initalProps = await App.getInitialProps(ctx);
 
-  let appInitalProps: { props: { fullMenu: MenuModel[] } } = {
+  const appInitalProps: { props: { fullMenu: MenuModel[] } } = {
     props: {
       fullMenu: [],
     },
   };
 
-  let generalClient = new GeneralClient(ctx, {});
+  const generalClient = new GeneralClient(ctx, {});
   try {
-    let fullMenu = await generalClient.getMenu();
+    const fullMenu = await generalClient.getMenu();
 
     if (fullMenu.data) {
       appInitalProps.props.fullMenu = fullMenu.data;
@@ -79,6 +85,7 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
   };
 
   if (ctx.ctx.req) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (ctx.ctx.req as any)._fromAppData = {
       fullMenu: appInitalProps.props.fullMenu,
     };

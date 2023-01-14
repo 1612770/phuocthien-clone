@@ -14,6 +14,7 @@ const LocalStorageUtils = {
 
 export enum LocalStorageKeys {
   CART_PRODUCTS = 'products',
+  OTP_SEND_TIME = 'otp-send-time',
 }
 
 export default LocalStorageUtils;

@@ -1,10 +1,10 @@
 /* eslint-disable no-prototype-builtins */
 import APIResponse from '@configs/types/api-response.type';
-import { getSessionToken } from 'libs/helpers';
+import { COOKIE_KEYS, getCookie } from 'libs/helpers';
 
 export function serialize(obj: any) {
-  let str = [];
-  for (let p in obj)
+  const str = [];
+  for (const p in obj)
     if (obj.hasOwnProperty(p)) {
       str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]));
     }
@@ -15,21 +15,21 @@ export function serialize(obj: any) {
 class BaseClient {
   ctx: any;
   data: any;
-  session: any;
+  token: any;
   contentType: any;
 
   constructor(ctx: any, data: any) {
     this.ctx = ctx || null;
     this.data = data;
     this.data.props = data.props || {};
-    this.session = data.session || getSessionToken(ctx)?.toString();
+    this.token = data.token || getCookie(ctx, COOKIE_KEYS.TOKEN)?.toString();
   }
   async makeRequest(
     method: string,
     url: string,
     data: any
   ): Promise<APIResponse> {
-    let req: any = {
+    const req: any = {
       method: method,
     };
 
@@ -37,6 +37,13 @@ class BaseClient {
       ...req.headers,
       'Content-Type': this.contentType || 'application/json',
     };
+
+    if (this.token) {
+      req.headers = {
+        ...req.headers,
+        'api-tk': this.token,
+      };
+    }
 
     if (data) {
       if (method == 'GET' || method == 'DELETE') {
@@ -47,9 +54,12 @@ class BaseClient {
     }
 
     // make call
-    let resp = await fetch(url, req);
+    const resp = await fetch(url, req);
 
-    let result = await resp.json();
+    const result = await resp.json();
+    if (result.error) {
+      throw result;
+    }
 
     return result;
   }
