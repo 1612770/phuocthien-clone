@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 
 /** @type {import('next').NextConfig} */
@@ -23,9 +24,6 @@ const nextConfig = {
         destination: `${process.env.API_HOST}/${process.env.API_VERSION}/:path*`,
       },
     ];
-  },
-  images: {
-    domains: ['phuocthien.net'],
   },
 };
 
