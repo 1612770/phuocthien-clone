@@ -202,16 +202,7 @@ const ProductGroupPage: NextPageWithLayout<{
                   className="w-full"
                   key={index}
                 >
-                  <ProductCard
-                    href={`/${UrlUtils.generateSlug(
-                      product.productType?.name,
-                      product.productType?.key
-                    )}/${UrlUtils.generateSlug(
-                      product.productGroup?.name,
-                      product.productGroup?.key
-                    )}/${UrlUtils.generateSlug(product.name, product.key)}`}
-                    product={product}
-                  />
+                  <ProductCard product={product} />
                 </Col>
               ))}
             </Row>
@@ -219,13 +210,6 @@ const ProductGroupPage: NextPageWithLayout<{
             <div className="-mx-4 flex w-[100vw] overflow-auto pl-2 lg:hidden">
               {products.map((product, index) => (
                 <ProductCard
-                  href={`/${UrlUtils.generateSlug(
-                    product.productType?.name,
-                    product.productType?.key
-                  )}/${UrlUtils.generateSlug(
-                    product.productGroup?.name,
-                    product.productGroup?.key
-                  )}/${UrlUtils.generateSlug(product.name, product.key)}`}
                   key={index}
                   product={product}
                   className="m-2 min-w-[240px] max-w-[240px]"
