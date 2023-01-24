@@ -1,126 +1,18 @@
-import { Badge, Button, Input, Popover, Space, Typography } from 'antd';
+import { Badge, Button, Input, Space, Typography } from 'antd';
 import Link from 'next/link';
-import {
-  Book,
-  ChevronDown,
-  MapPin,
-  Menu,
-  Search,
-  ShoppingCart,
-  User,
-} from 'react-feather';
+import { Menu, Search, ShoppingCart, User } from 'react-feather';
 import IMAGES from 'configs/assests/images';
 import { useState } from 'react';
 import PrimaryHeaderMenuDrawer from './PrimaryHeaderMenuDrawer';
 import { useCart } from '@providers/CartProvider';
 import { useRouter } from 'next/router';
-import IMPORTANT_MENUS from '@configs/constants/important-menus';
-import ProductGroupModel from '@configs/models/product-group.model';
-import UrlUtils from '@libs/utils/url.utils';
-import { useFullMenu } from '@providers/FullMenuProvider';
-import PrimaryHeaderMenuAllPopoverContent from './PrimaryHeaderMenuAllPopoverContent';
-import PrimaryHeaderMenuItem from './PrimaryHeaderMenuItem';
-import MenuModel from '@configs/models/menu.model';
-
-function PrimaryHeaderMenu() {
-  const { fullMenu, open, setOpen, intoPopover } = useFullMenu();
-
-  const [mode, setMode] = useState<'all' | 'menu'>('all');
-  const [currentMenu, setCurrentMenu] = useState<MenuModel>();
-
-  return (
-    <Popover
-      open={open || intoPopover}
-      align={{
-        offset: [0, 0],
-      }}
-      content={
-        <PrimaryHeaderMenuAllPopoverContent
-          currentMenu={currentMenu}
-          mode={mode}
-        />
-      }
-      placement="bottom"
-      destroyTooltipOnHide
-      showArrow={false}
-      popupVisible={true}
-      overlayClassName="primary-header xl:w-[1200px] lg:w-[1000px]"
-    >
-      <div className="relative z-10 hidden bg-white shadow-lg lg:block">
-        <div className="m-auto flex items-center justify-between lg:container">
-          <Space
-            align="center"
-            className="inline-flex cursor-pointer py-2"
-            onMouseLeave={() => {
-              setOpen(false);
-            }}
-            onMouseEnter={() => {
-              setOpen(true);
-              setMode('all');
-            }}
-          >
-            <Typography.Text className="whitespace-nowrap font-medium uppercase">
-              Tất cả danh mục
-            </Typography.Text>
-            <ChevronDown className="-ml-1" size={16} />
-          </Space>
-
-          {fullMenu.map((menu) =>
-            menu?.name && IMPORTANT_MENUS.includes(menu?.name) ? (
-              <span
-                className="inline-block py-2"
-                onMouseLeave={() => {
-                  setOpen(false);
-                }}
-                onMouseEnter={() => {
-                  setOpen(true);
-                  setCurrentMenu(menu);
-                  setMode('menu');
-                }}
-                key={menu?.key}
-              >
-                <PrimaryHeaderMenuItem
-                  href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}
-                  label={menu.name || ''}
-                  productGroups={
-                    (menu?.productGroups as ProductGroupModel[]) || []
-                  }
-                />
-              </span>
-            ) : null
-          )}
-
-          <Typography.Text className="mx-4 hidden xl:flex" type="secondary">
-            |
-          </Typography.Text>
-          <Link href={'/goc-suc-khoe'} style={{ color: 'white' }}>
-            <a className="hidden xl:flex">
-              <Space align="center">
-                <Book className="text-stone-800" size={16} />
-                <Typography.Text className="whitespace-nowrap font-medium uppercase ">
-                  Góc sức khỏe
-                </Typography.Text>
-              </Space>
-            </a>
-          </Link>
-          <Link href={'/chuoi-nha-thuoc'} style={{ color: 'white' }}>
-            <a className="hidden xl:flex">
-              <Space align="center">
-                <MapPin className="text-stone-800" size={16} />
-                <Typography.Text className="whitespace-nowrap font-medium uppercase ">
-                  Chuỗi nhà thuốc
-                </Typography.Text>
-              </Space>
-            </a>
-          </Link>
-        </div>
-      </div>
-    </Popover>
-  );
-}
+import PrimaryHeaderMenu from './PrimaryHeaderMenu';
+import ProductSearchInput from './ProductSearchInput';
+import ProductSearchInputMobile from './ProductSearchInputMobile';
 
 function PrimaryHeader() {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
+  const [openMobileSearch, setOpenMobileSearch] = useState(false);
 
   const { cartProducts } = useCart();
   const router = useRouter();
@@ -156,12 +48,9 @@ function PrimaryHeader() {
             </Link>
 
             {router.asPath !== '/' && (
-              <Input
-                placeholder="Tìm kiếm sản phẩm..."
-                size="large"
-                className="ml-2 hidden h-10 w-full flex-1 lg:flex"
-                suffix={<Search size={20} />}
-              />
+              <div className="hidden h-10 w-full flex-1 lg:block">
+                <ProductSearchInput />
+              </div>
             )}
           </div>
 
@@ -224,13 +113,25 @@ function PrimaryHeader() {
           </Space>
         </div>
 
-        <div className="block px-2 lg:container lg:hidden">
+        <div className="mt-2 block px-2 lg:container lg:hidden">
           <Input
             placeholder="Tìm kiếm sản phẩm..."
             size="large"
-            className="mt-2 h-10 w-full flex-1 rounded-full"
+            className={`h-10 rounded-tl-md rounded-tr-md rounded-bl-md rounded-br-md px-4`}
             suffix={<Search size={20} />}
+            onClick={() => {
+              setOpenMobileSearch(true);
+            }}
           />
+
+          {openMobileSearch && (
+            <ProductSearchInputMobile
+              onBack={() => {
+                setOpenMobileSearch(false);
+                return undefined;
+              }}
+            />
+          )}
         </div>
       </div>
 
