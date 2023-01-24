@@ -37,7 +37,7 @@ const LoginPage: NextPageWithLayout = () => {
         setUserData(signInResult.data?.user);
       }
 
-      router.replace('/');
+      router.replace('/lich-su-don-hang');
     } catch (error) {
       toastError({ data: error });
     } finally {
