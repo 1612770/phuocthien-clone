@@ -5,7 +5,7 @@ import DrugStore from '@configs/models/drug-store.model';
 import WithPagination from '@configs/types/utils/with-pagination';
 
 export class ProductClient extends BaseClient {
-  constructor(ctx: any, data: any) {
+  constructor(ctx: unknown, data: unknown) {
     super(ctx, data);
   }
 
@@ -16,7 +16,16 @@ export class ProductClient extends BaseClient {
     productTypeKey?: string;
     productGroupKey?: string;
     productionBrandKey?: string;
+    filterByName?: string;
+    sortBy?: 'GIA_BAN_LE';
+    sortOrder?: 'ASC' | 'DESC';
   }): Promise<APIResponse<WithPagination<Product[]>>> {
+    if (!payload.sortBy) {
+      payload.sortBy = 'GIA_BAN_LE';
+    }
+    if (!payload.sortOrder) {
+      payload.sortOrder = 'ASC';
+    }
     return await super.call('POST', `product/filter`, payload);
   }
 
