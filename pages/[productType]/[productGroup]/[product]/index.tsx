@@ -10,7 +10,6 @@ import ProductCard from '@components/templates/ProductCard';
 import ProductCarousel from '@modules/products/ProductCarousel';
 import { MapPin, Phone } from 'react-feather';
 import React, { useMemo } from 'react';
-import { DrugstoreClient } from '@libs/client/DrugStore';
 import DrugStore from '@configs/models/drug-store.model';
 import AddToCartButton from '@modules/products/AddToCartButton';
 import ProductBonusSection from '@modules/products/ProductBonusSection';
@@ -80,13 +79,13 @@ const ProductPage: NextPageWithLayout<{
         <Breadcrumb.Item>{product?.name}</Breadcrumb.Item>
       </Breadcrumb>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 xl:grid-cols-[400px_minmax(200px,_1fr)_300px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6 xl:grid-cols-[400px_minmax(200px,_1fr)_280px]">
         <div className="col-span-2 h-[500px] xl:sticky xl:top-[32px] xl:col-span-1">
           <ProductCarousel images={carouselImages} />
         </div>
         <div className="xl:sticky xl:top-[32px]">
           <div className="flex flex-col">
-            <Typography.Title className="mx-0 mt-2 text-2xl font-bold text-primary">
+            <Typography.Title className="mx-0 mt-2 text-2xl font-medium">
               {product?.name}
             </Typography.Title>
 
@@ -96,7 +95,7 @@ const ProductPage: NextPageWithLayout<{
               <div className="flex items-end">
                 <Typography.Title
                   level={2}
-                  className="m-0 -mb-[2px] font-bold text-primary-dark"
+                  className="m-0 -mb-[2px] font-bold text-primary"
                 >
                   {product?.retailPrice?.toLocaleString('it-IT', {
                     style: 'currency',
@@ -211,19 +210,19 @@ const ProductPage: NextPageWithLayout<{
         </div>
 
         <div className="w-full rounded-lg border border-solid border-gray-200 p-4">
-          <Typography.Title level={4} className="text-center">
+          <Typography.Title level={4} className="text-center text-sm">
             Có {drugStores.length} nhà thuốc
           </Typography.Title>
           <List>
             {drugStores.map((drugStore) => (
               <List.Item className="py-2 px-0" key={drugStore.key}>
                 <div>
-                  <Typography className=" font-medium">
+                  <Typography className="my-1 text-xs font-medium">
                     {drugStore.name}
                   </Typography>
                   {drugStore.tel && (
                     <a href={`tel:${drugStore.tel}`}>
-                      <Typography className="text-gray-500">
+                      <Typography className="my-1 text-xs text-gray-500">
                         <Phone
                           className="mr-2 align-text-bottom text-sm"
                           size={14}
@@ -233,7 +232,7 @@ const ProductPage: NextPageWithLayout<{
                     </a>
                   )}
                   {drugStore.address && (
-                    <Typography className="text-gray-500">
+                    <Typography className="my-1 text-xs text-gray-500">
                       <MapPin
                         className="mr-2  align-text-bottom text-sm"
                         size={14}
@@ -287,29 +286,13 @@ const ProductPage: NextPageWithLayout<{
             <Row gutter={[16, 16]} className="hidden lg:flex">
               {otherProducts.map((product, index) => (
                 <Col sm={24} md={12} lg={6} className="w-full" key={index}>
-                  <ProductCard
-                    href={`/${UrlUtils.generateSlug(
-                      product.productType?.name,
-                      product.productType?.key
-                    )}/${UrlUtils.generateSlug(
-                      product.productGroup?.name,
-                      product.productGroup?.key
-                    )}/${UrlUtils.generateSlug(product?.name, product?.key)}`}
-                    product={product}
-                  />
+                  <ProductCard product={product} />
                 </Col>
               ))}
             </Row>
             <div className="-mx-2 flex w-full overflow-auto lg:hidden">
               {otherProducts.map((product, index) => (
                 <ProductCard
-                  href={`/${UrlUtils.generateSlug(
-                    product.productType?.name,
-                    product.productType?.key
-                  )}/${UrlUtils.generateSlug(
-                    product.productGroup?.name,
-                    product.productGroup?.key
-                  )}/${UrlUtils.generateSlug(product?.name, product?.key)}`}
                   key={index}
                   product={product}
                   className="m-2 min-w-[240px] max-w-[240px]"
@@ -340,7 +323,6 @@ export const getServerSideProps = async (
   };
 
   const productClient = new ProductClient(context, {});
-  const drugClient = new DrugstoreClient(context, {});
   const product = await productClient.getProduct({
     key: UrlUtils.getKeyFromParam(context.params?.product as string),
   });
@@ -348,10 +330,14 @@ export const getServerSideProps = async (
     serverSideProps.props.product = product.data;
   }
 
-  const drugStores = await drugClient.getAllDrugStores();
+  const drugStores = await productClient.checkInventoryAtDrugStores({
+    key: UrlUtils.getKeyFromParam(context.params?.product as string),
+  });
 
   if (drugStores.data) {
-    serverSideProps.props.drugStores = drugStores.data;
+    serverSideProps.props.drugStores = drugStores.data.map(
+      (drugStore) => drugStore.drugstore
+    );
   }
 
   const products = await productClient.getProducts({
