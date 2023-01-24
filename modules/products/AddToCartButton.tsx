@@ -13,7 +13,7 @@ function AddToCartButton({
 }) {
   const { addToCart, cartProducts, removeFromCart } = useCart();
 
-  let productIncart = cartProducts.find(
+  const productIncart = cartProducts.find(
     (cartProduct) => cartProduct.product.key === product.key
   );
 
@@ -23,7 +23,7 @@ function AddToCartButton({
         <div className="flex w-full items-center justify-between">
           <Input.Group className="flex w-full justify-between" compact>
             <Button
-              className="z-10 min-w-[32px] rounded-lg border-none bg-green-50 disabled:bg-gray-50"
+              className="min-w-[32px] rounded-lg border-none bg-green-50 disabled:bg-gray-50"
               icon={<Minus size={20} className="text-primary" />}
               disabled={productIncart.quantity <= 1}
               onClick={(e) => {
