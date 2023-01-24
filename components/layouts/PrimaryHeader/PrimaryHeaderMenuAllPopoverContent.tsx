@@ -208,13 +208,6 @@ function PrimaryHeaderMenuAllPopoverContent({
                     }}
                   >
                     <ProductCard
-                      href={`/${UrlUtils.generateSlug(
-                        product.productType?.name,
-                        product.productType?.key
-                      )}/${UrlUtils.generateSlug(
-                        product.productGroup?.name,
-                        product.productGroup?.key
-                      )}/${UrlUtils.generateSlug(product?.name, product?.key)}`}
                       product={product}
                       className="min-w-[204px] max-w-[204px]"
                       size="small"
