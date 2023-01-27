@@ -149,6 +149,8 @@ function HomepageSearchSection() {
                 key={tag}
                 className="cursor-pointer rounded-full border-none bg-primary-background p-2 text-base"
                 onClick={() => {
+                  setSearchFocus(true);
+                  scrollSectionIntoView();
                   setSearchValue(tag);
                   searchInput.current?.focus();
                 }}
