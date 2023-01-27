@@ -33,11 +33,9 @@ function FilterOptions({
   onFilterClick?: () => void;
 }) {
   const router = useRouter();
-  // const selectedBrands = ((router.query.brands as string) || '')
-  //   .split(',')
-  //   .filter((brand) => !!brand);
-
-  const currentBrand = router.query.brand as string;
+  const selectedBrands = ((router.query.brands as string) || '')
+    .split(',')
+    .filter((brand) => !!brand);
 
   return (
     <div className="py-4">
@@ -46,43 +44,33 @@ function FilterOptions({
       </div>
       <div className="mt-2 flex flex-col">
         {productBrands.map((brand) => {
-          // const isActive =
-          //   !!brand?.code && selectedBrands.includes(brand?.code);
-          const isActive = currentBrand === brand.key;
+          const isActive = !!brand?.key && selectedBrands.includes(brand?.key);
 
           return (
             <div key={brand.key}>
               <Checkbox
                 className="my-2 cursor-pointer"
                 checked={isActive}
-                // onClick={() => {
-                //   if (isActive) {
-                //     const newBrands = selectedBrands.filter(
-                //       (selectedBrand) => selectedBrand !== brand.code
-                //     );
-                //     router.push({
-                //       query: {
-                //         ...router.query,
-                //         brands: newBrands.join(','),
-                //       },
-                //     });
-                //   } else {
-                //     router.push({
-                //       query: {
-                //         ...router.query,
-                //         brands: [...selectedBrands, brand.code].join(','),
-                //       },
-                //     });
-                //   }
-                // }}
                 onClick={() => {
-                  router.push({
-                    query: {
-                      ...router.query,
-                      brand: brand.key,
-                    },
-                  });
                   onFilterClick?.();
+                  if (isActive) {
+                    const newBrands = selectedBrands.filter(
+                      (selectedBrand) => selectedBrand !== brand.key
+                    );
+                    router.push({
+                      query: {
+                        ...router.query,
+                        brands: newBrands.join(','),
+                      },
+                    });
+                  } else {
+                    router.push({
+                      query: {
+                        ...router.query,
+                        brands: [...selectedBrands, brand.key].join(','),
+                      },
+                    });
+                  }
                 }}
               >
                 {brand.name}
@@ -352,13 +340,19 @@ export const getServerSideProps: GetServerSideProps = async (
   staticProps.props.productGroup = productGroup.data;
   staticProps.props.productBrands = productBrands.data;
 
+  console.log(
+    'file: index.tsx:353 | context.query.brands',
+    context.query.brands
+  );
   const products = await productClient.getProducts({
     page: 1,
     pageSize: 20,
     isPrescripted: false,
     productTypeKey: productType.data?.key,
     productGroupKey: productGroup.data?.key,
-    productionBrandKey: (context.query.brand as string) || undefined,
+    productionBrandKeys: context.query.brands
+      ? (context.query.brands as string).split(',')
+      : undefined,
   });
 
   if (products.data) {

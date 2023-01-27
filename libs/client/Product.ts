@@ -15,7 +15,7 @@ export class ProductClient extends BaseClient {
     isPrescripted: boolean;
     productTypeKey?: string;
     productGroupKey?: string;
-    productionBrandKey?: string;
+    productionBrandKeys?: string[];
     filterByName?: string;
     sortBy?: 'GIA_BAN_LE';
     sortOrder?: 'ASC' | 'DESC';
