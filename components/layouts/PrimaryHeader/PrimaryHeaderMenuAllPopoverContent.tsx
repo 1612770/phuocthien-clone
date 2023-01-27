@@ -1,4 +1,4 @@
-import { Card, Empty, List, Skeleton, Space, Typography } from 'antd';
+import { Card, Col, Empty, List, Row, Skeleton, Space, Typography } from 'antd';
 import { useFullMenu } from '@providers/FullMenuProvider';
 import { useCallback, useEffect, useState } from 'react';
 import MenuModel from '@configs/models/menu.model';
@@ -142,9 +142,10 @@ function PrimaryHeaderMenuAllPopoverContent({
 
       <div className="max-h-[500px] w-full overflow-auto">
         {mode === 'all' && !!currentFocusMenu?.productGroups?.length && (
-          <Space size={[12, 8]} wrap className="p-4">
+          <Row gutter={[12, 8]} className="p-4">
             {currentFocusMenu?.productGroups?.map((productGroup) => (
-              <div
+              <Col
+                md={6}
                 onClick={() => {
                   setOpen(false);
                   setIntoPopover(false);
@@ -162,9 +163,9 @@ function PrimaryHeaderMenuAllPopoverContent({
                   label={productGroup?.name || ''}
                   image={productGroup?.image}
                 />
-              </div>
+              </Col>
             ))}
-          </Space>
+          </Row>
         )}
 
         {mode === 'menu' && (
