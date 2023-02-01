@@ -17,3 +17,28 @@ export const setCookie = (
   if (ctx) _setCookie(cookieName, value, ctx);
   else _setCookie(cookieName, value);
 };
+
+export function getErrorMessage(
+  error: unknown,
+  message = 'Lỗi không xác định'
+) {
+  if (typeof error === 'string') {
+    message = error;
+  } else if (typeof error !== 'string') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (typeof (error as any)?.error?.msg === 'string') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      message = (error as any).error.msg;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } else if (Array.isArray((error as any)?.message)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      message = (error as any)?.message.join(', ');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } else if (typeof (error as any)?.message === 'string') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      message = (error as any).message;
+    }
+  }
+
+  return message;
+}

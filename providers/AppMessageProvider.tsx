@@ -1,3 +1,4 @@
+import { getErrorMessage } from '@libs/helpers';
 import { message } from 'antd';
 import { ArgsProps } from 'antd/es/message';
 import React, { useCallback } from 'react';
@@ -5,20 +6,7 @@ import React, { useCallback } from 'react';
 type MessageType = Partial<ArgsProps> & { data: unknown };
 
 function processPayloadContent(payload: MessageType, defaultContent: string) {
-  if (typeof payload.data === 'string') {
-    payload.content = payload.data;
-  } else if (typeof payload.data !== 'string') {
-    if (typeof (payload.data as any)?.error?.msg === 'string') {
-      payload.content = (payload.data as any).error.msg;
-    } else if (Array.isArray((payload.data as any)?.message)) {
-      payload.content = (payload.data as any)?.message.join(', ');
-    } else if (typeof (payload.data as any)?.message === 'string') {
-      payload.content = (payload.data as any).message;
-    } else {
-      payload.content = defaultContent;
-    }
-  }
-
+  payload.content = getErrorMessage(payload.data, defaultContent);
   return payload;
 }
 
