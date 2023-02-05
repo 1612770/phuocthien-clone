@@ -15,8 +15,9 @@ import App from 'next/app';
 import React from 'react';
 import NProgress from '@components/templates/NProgress';
 import CartProvider from '@providers/CartProvider';
-import AppMessageProvider from '@providers/AppMessageProvider\b';
+import AppMessageProvider from '@providers/AppMessageProvider';
 import AuthProvider from '@providers/AuthProvider';
+import AppConfirmDialogProvider from '@providers/AppConfirmDialogProvider';
 
 interface AppPropsWithLayout<T> extends AppProps<T> {
   Component: NextPageWithLayout<T>;
@@ -45,13 +46,15 @@ function MyApp({
           }}
         >
           <AppMessageProvider>
-            <AuthProvider>
-              <CartProvider>
-                <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
-                  {getLayout(<Component {...pageProps} />)}
-                </FullMenuProvider>
-              </CartProvider>
-            </AuthProvider>
+            <AppConfirmDialogProvider>
+              <AuthProvider>
+                <CartProvider>
+                  <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
+                    {getLayout(<Component {...pageProps} />)}
+                  </FullMenuProvider>
+                </CartProvider>
+              </AuthProvider>
+            </AppConfirmDialogProvider>
           </AppMessageProvider>
         </ConfigProvider>
       </NProgress>
