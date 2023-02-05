@@ -5,7 +5,7 @@ import { Check, Key, Phone, User } from 'react-feather';
 import { useState } from 'react';
 import Link from 'next/link';
 import OtpUtils from '@libs/utils/otp.utils';
-import { useAppMessage } from '@providers/AppMessageProvider\b';
+import { useAppMessage } from '@providers/AppMessageProvider';
 import { AuthClient } from '@libs/client/Auth';
 import OTPInput from '@components/templates/OTPInput';
 

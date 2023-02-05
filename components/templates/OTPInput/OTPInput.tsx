@@ -1,6 +1,6 @@
 import { AuthClient } from '@libs/client/Auth';
 import OtpUtils from '@libs/utils/otp.utils';
-import { useAppMessage } from '@providers/AppMessageProvider\b';
+import { useAppMessage } from '@providers/AppMessageProvider';
 import { Button, Form, Input, Typography } from 'antd';
 import { useState } from 'react';
 

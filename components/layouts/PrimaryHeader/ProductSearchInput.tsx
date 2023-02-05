@@ -13,7 +13,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDebounce } from '@libs/utils/hooks';
 import { ProductClient } from '@libs/client/Product';
 import Product from '@configs/models/product.model';
-import { useAppMessage } from '@providers/AppMessageProvider\b';
+import { useAppMessage } from '@providers/AppMessageProvider';
 import ProductCard from '@components/templates/ProductCard';
 
 function ProductSearchInput() {

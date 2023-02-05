@@ -2,7 +2,7 @@ import ProfileModel from '@configs/models/profile.model';
 import { AuthClient } from '@libs/client/Auth';
 import { COOKIE_KEYS, getCookie, setCookie } from '@libs/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useAppMessage } from './AppMessageProvider\b';
+import { useAppMessage } from './AppMessageProvider';
 import { useRouter } from 'next/router';
 
 const AuthContext = React.createContext<{

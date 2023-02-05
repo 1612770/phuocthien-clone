@@ -5,7 +5,7 @@ import { Key, Phone } from 'react-feather';
 import Link from 'next/link';
 import { useState } from 'react';
 import { AuthClient } from '@libs/client/Auth';
-import { useAppMessage } from '@providers/AppMessageProvider\b';
+import { useAppMessage } from '@providers/AppMessageProvider';
 import { useAuth } from '@providers/AuthProvider';
 import { COOKIE_KEYS, setCookie } from '@libs/helpers';
 import { useRouter } from 'next/router';
