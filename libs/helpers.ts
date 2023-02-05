@@ -42,3 +42,21 @@ export function getErrorMessage(
 
   return message;
 }
+
+/**
+ * Remove dấu câu from string
+ * @param string
+ * @returns
+ */
+export function convertStringToASCII(string: string) {
+  string = string || ''.toLowerCase();
+
+  return (string || '')
+    .replace(/[àáảãạâầấẩẫậăằắẳẵặ]/g, 'a')
+    .replace(/[èéẻẽẹêềếểễệ]/g, 'e')
+    .replace(/[đ]/g, 'd')
+    .replace(/[ìíỉĩị]/g, 'i')
+    .replace(/[òóỏõọôồốổỗộơờớởỡợ]/g, 'o')
+    .replace(/[ùúủũụưừứửữự]/g, 'u')
+    .replace(/[ỳýỷỹỵ]/g, 'y');
+}

@@ -5,6 +5,7 @@ import LocalStorageUtils, {
 import { Button, notification } from 'antd';
 import Link from 'next/link';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useAppConfirmDialog } from './AppConfirmDialogProvider';
 
 const CartContext = React.createContext<{
   cartProducts: { product: Product; quantity: number }[];
@@ -24,6 +25,8 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartProducts, setCartProducts] = useState<
     { product: Product; quantity: number }[]
   >([]);
+
+  const { setConfirmData } = useAppConfirmDialog();
 
   useEffect(() => {
     const cartProducts = JSON.parse(
@@ -92,14 +95,20 @@ function CartProvider({ children }: { children: React.ReactNode }) {
 
   const removeFromCart = useCallback(
     (product: Product) => {
-      const newCartProducts = cartProducts.filter(
-        (cartProduct) => cartProduct.product.key !== product.key
-      );
-      setCartProducts(newCartProducts);
-      LocalStorageUtils.setItem(
-        LocalStorageKeys.CART_PRODUCTS,
-        JSON.stringify(newCartProducts)
-      );
+      setConfirmData({
+        title: 'Xóa khỏi giỏ hàng',
+        content: 'Sản phẩm này sẽ được loại bỏ khỏi giỏ hàng của bạn',
+        onOk: () => {
+          const newCartProducts = cartProducts.filter(
+            (cartProduct) => cartProduct.product.key !== product.key
+          );
+          setCartProducts(newCartProducts);
+          LocalStorageUtils.setItem(
+            LocalStorageKeys.CART_PRODUCTS,
+            JSON.stringify(newCartProducts)
+          );
+        },
+      });
     },
     [cartProducts]
   );

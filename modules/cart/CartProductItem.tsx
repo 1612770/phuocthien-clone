@@ -1,6 +1,5 @@
 import { Button, Input, Space, Typography } from 'antd';
-import { Minus, Plus, X } from 'react-feather';
-import CartProductItemCollapse from './CartProductItemCollapse';
+import { Edit, Minus, Plus } from 'react-feather';
 import Product from '@configs/models/product.model';
 import { useCart } from '@providers/CartProvider';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
@@ -15,32 +14,38 @@ function CartProductItem({
 
   return (
     <div className="my-4 flex justify-between ">
-      <div className="flex flex-col">
-        <div className="relative mr-4 h-[80px] w-[80px]">
-          <ImageWithFallback
-            src={cartProduct.product.detail?.image || ''}
-            alt="product image"
-            getMockImage={() => {
-              return ImageUtils.getRandomMockProductImageUrl();
-            }}
-            layout="fill"
-          />
-        </div>
-        <Button
-          onClick={() => removeFromCart(cartProduct.product)}
-          size="small"
-          type="ghost"
-          icon={<X size={16} className="mb-[2px] align-middle" />}
-          className="mt-2 bg-gray-200 p-0"
-        >
-          Xóa
-        </Button>
+      <div className="relative mr-4 flex h-[60px] w-[60px] flex-col">
+        <ImageWithFallback
+          src={cartProduct.product.detail?.image || ''}
+          alt="product image"
+          getMockImage={() => {
+            return ImageUtils.getRandomMockProductImageUrl();
+          }}
+          layout="fill"
+        />
       </div>
       <div className="flex flex-grow flex-wrap gap-2">
-        <div className="flex flex-grow basis-[300px] flex-col">
-          <Typography.Text>{cartProduct.product.name}</Typography.Text>
+        <div className="flex flex-grow basis-[300px] flex-col items-start">
+          <Typography.Text className="font-medium">
+            {cartProduct.product.name}
+          </Typography.Text>
 
-          <CartProductItemCollapse />
+          <Button
+            type="link"
+            className="p-0 text-gray-500"
+            icon={<Edit size={12} />}
+          >
+            &nbsp;Thêm ghi chú
+          </Button>
+
+          <Button
+            onClick={() => removeFromCart(cartProduct.product)}
+            size="small"
+            type="link"
+            className="inline-block p-0 text-red-400"
+          >
+            Xóa khỏi giỏ hàng
+          </Button>
         </div>
         <div className="meta flex flex-col">
           <Typography.Text className="text-right">
