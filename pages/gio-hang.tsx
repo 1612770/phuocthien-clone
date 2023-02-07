@@ -20,11 +20,14 @@ import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
 import PaymentMethodModel from '@configs/models/payment-method.model';
 import { GeneralClient } from '@libs/client/General';
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { convertStringToASCII, getErrorMessage } from '@libs/helpers';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import ShippingTypes from '@configs/enums/shipping-types.enum';
 import DrugStorePicker from '@modules/cart/DrugStorePicker';
+import { ProductClient } from '@libs/client/Product';
+import { OrderClient } from '@libs/client/Order';
+import { useRouter } from 'next/router';
 
 const provincesOfVietNamJSON: {
   [key: string]: {
@@ -48,6 +51,9 @@ const CartPage: NextPageWithLayout<{
 }> = ({ paymentMethods }) => {
   const [name, setName] = useState('');
   const [tel, setTel] = useState('');
+
+  const router = useRouter();
+
   const [paymentMethodKey, setPaymentMethodKey] = useState('');
   const [shippingType, setShippingType] = useState<ShippingTypes>(
     ShippingTypes.DELIVERY
@@ -91,7 +97,12 @@ const CartPage: NextPageWithLayout<{
 
   const checkout = async () => {
     try {
-      console.log({
+      if (!(totalPrice > 10000)) {
+        throw new Error('Giá trị đơn hàng phải lớn hơn 10.000đ');
+      }
+
+      const order = new OrderClient(null, {});
+      const orderResponse = await order.order({
         customerInfo: {
           name,
           tel,
@@ -105,24 +116,25 @@ const CartPage: NextPageWithLayout<{
         deliveryAddressInfo:
           shippingType === ShippingTypes.DELIVERY
             ? {
-                province: currentProvince?.name,
-                district: currentDistrict?.name,
+                province: currentProvince?.name || '',
+                district: currentDistrict?.name || '',
                 ward:
-                  currentWardKey &&
-                  currentDistrict?.['xa-phuong'][currentWardKey].name,
+                  (currentWardKey &&
+                    currentDistrict?.['xa-phuong'][currentWardKey].name) ||
+                  '',
                 detail: address,
               }
             : undefined,
         items: cartProducts.map((cartProduct) => ({
-          productKey: cartProduct.product.key,
-          quantity: cartProduct.quantity,
-          note: '',
+          productKey: cartProduct.product.key || '',
+          quantity: cartProduct.quantity || 0,
+          note: cartProduct.note || '',
         })),
       });
-      if (!(totalPrice > 10000)) {
-        throw new Error('Giá trị đơn hàng phải lớn hơn 10.000đ');
-      }
+
+      router.push(`/don-hang/${orderResponse.data?.key}`);
     } catch (error) {
+      router.push(`/don-hang/123`);
       setCheckoutError(getErrorMessage(error));
     }
   };
@@ -150,11 +162,13 @@ const CartPage: NextPageWithLayout<{
       {cartProducts.length > 0 && (
         <Form onFinish={checkout} scrollToFirstError>
           <div className="md:border-1 border-none px-4 py-0 shadow-none md:rounded-lg md:border-solid md:border-gray-200 md:py-4 md:shadow-lg">
-            {cartProducts.map((cartProduct) => (
-              <CartProductItem
-                key={cartProduct.product.key}
-                cartProduct={cartProduct}
-              />
+            {cartProducts.map((cartProduct, index) => (
+              <Fragment key={cartProduct.product.key}>
+                <CartProductItem cartProduct={cartProduct} />
+                {index !== cartProducts.length - 1 && (
+                  <Divider className="my-2" />
+                )}
+              </Fragment>
             ))}
 
             <div className="mt-4 flex justify-between">

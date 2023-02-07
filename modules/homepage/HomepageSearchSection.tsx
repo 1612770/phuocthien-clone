@@ -1,9 +1,19 @@
 import ProductCard from '@components/templates/ProductCard';
 import Product from '@configs/models/product.model';
+import WithPagination from '@configs/types/utils/with-pagination';
 import { ProductClient } from '@libs/client/Product';
 import { useDebounce } from '@libs/utils/hooks';
-import { useAppMessage } from '@providers/AppMessageProvider\b';
-import { Button, Input, InputRef, Space, Spin, Tag, Typography } from 'antd';
+import { useAppMessage } from '@providers/AppMessageProvider';
+import {
+  Button,
+  Empty,
+  Input,
+  InputRef,
+  Space,
+  Spin,
+  Tag,
+  Typography,
+} from 'antd';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Search } from 'react-feather';
@@ -13,7 +23,8 @@ function HomepageSearchSection() {
   const [searchValue, setSearchValue] = useState('');
 
   const [searching, setSearching] = useState(false);
-  const [searchedProducts, setSearchedProducts] = useState<Product[]>([]);
+  const [searchedProducts, setSearchedProducts] =
+    useState<WithPagination<Product[]>>();
 
   const debouncedCurrentFocusGroup = useDebounce(searchValue, 500);
   const ignoreFirstCall = useRef(false);
@@ -37,7 +48,7 @@ function HomepageSearchSection() {
         filterByName: debouncedCurrentFocusGroup,
       });
 
-      setSearchedProducts(searchProducts.data?.data || []);
+      setSearchedProducts(searchProducts.data);
     } catch (error) {
       toastError({ data: error });
     } finally {
@@ -57,7 +68,7 @@ function HomepageSearchSection() {
    */
   useEffect(() => {
     if (!searchFocus) {
-      setSearchedProducts([]);
+      setSearchedProducts(undefined);
     }
   }, [searchFocus]);
 
@@ -161,24 +172,21 @@ function HomepageSearchSection() {
           </Space>
         </div>
 
-        {searchedProducts.length > 0 && (
+        {(searchedProducts?.data.length || 0) > 0 && (
           <div className="mt-4">
-            <div className="mb-2 flex w-full items-end justify-between">
-              <Typography.Title
-                level={4}
-                className="mb-1 font-normal text-neutral-600"
-              >
-                Tìm thấy {searchedProducts.length} kết quả
-              </Typography.Title>
+            <Typography.Title
+              level={4}
+              className="mb-2 font-normal text-neutral-600"
+            >
+              {debouncedCurrentFocusGroup ? (
+                <>Tìm thấy {searchedProducts?.total || 0} kết quả</>
+              ) : (
+                <>Các sản phẩm gợi ý</>
+              )}
+            </Typography.Title>
 
-              <Link href="/tim-kiem">
-                <a className=" ">
-                  <Typography className="text-blue-500">Xem tất cả</Typography>
-                </a>
-              </Link>
-            </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {searchedProducts.slice(0, 8).map((product) => (
+              {searchedProducts?.data.slice(0, 8).map((product) => (
                 <ProductCard
                   className="w-full"
                   key={product.key}
@@ -186,7 +194,27 @@ function HomepageSearchSection() {
                 />
               ))}
             </div>
+
+            {(searchedProducts?.data.length || 0) <
+              (searchedProducts?.total || 0) && (
+              <Link href={`/tim-kiem?tu-khoa=${searchValue}`}>
+                <Button block className="mt-4" type="link">
+                  Xem tất cả
+                </Button>
+              </Link>
+            )}
           </div>
+        )}
+
+        {searchedProducts?.data.length === 0 && debouncedCurrentFocusGroup && (
+          <Empty
+            description={
+              <Typography className=" text-base">
+                Không tìm thấy kết quả nào cho từ khóa{' '}
+                <b>{debouncedCurrentFocusGroup}</b>
+              </Typography>
+            }
+          ></Empty>
         )}
       </div>
     </>

@@ -1,60 +1,136 @@
-import { Button, Input, Space, Typography } from 'antd';
-import { Edit, Minus, Plus } from 'react-feather';
+import { Button, Form, Input, Modal, Space, Typography } from 'antd';
+import { Edit, Minus, Plus, X } from 'react-feather';
 import Product from '@configs/models/product.model';
 import { useCart } from '@providers/CartProvider';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import ImageUtils from '@libs/utils/image.utils';
+import { useEffect, useRef, useState } from 'react';
+import { TextAreaRef } from 'antd/es/input/TextArea';
+
+function CartProductItemNoteInput({
+  cartProduct,
+}: {
+  cartProduct: { product: Product; quantity: number; note: string };
+}) {
+  const [form] = Form.useForm();
+  const inputRef = useRef<TextAreaRef | null>(null);
+
+  const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+
+  const { changeProductData } = useCart();
+
+  useEffect(() => {
+    setInputValue(cartProduct.note || '');
+  }, [cartProduct]);
+
+  useEffect(() => {
+    if (open && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [open]);
+
+  return (
+    <>
+      <Button
+        type="link"
+        className={`p-0 text-gray-500`}
+        icon={<Edit size={14} className=" align-text-top" />}
+        onClick={() => {
+          inputRef.current?.focus();
+          setOpen(true);
+        }}
+      >
+        <Typography.Text
+          className={`${cartProduct.note ? 'text-black-100' : 'text-gray-500'}`}
+        >
+          &nbsp;{cartProduct.note || 'Thêm ghi chú'}
+        </Typography.Text>
+      </Button>
+
+      <Modal
+        open={open}
+        onOk={form.submit}
+        onCancel={() => {
+          setOpen(false);
+        }}
+        focusTriggerAfterClose={false}
+        title={`Nhập ghi chú cho sản phẩm ${cartProduct.product.name}`}
+      >
+        <Form
+          form={form}
+          onFinish={() => {
+            console.log('inputValue', inputValue);
+            changeProductData(cartProduct.product, {
+              field: 'note',
+              value: inputValue,
+            });
+            setOpen(false);
+          }}
+        >
+          <Input.TextArea
+            rows={4}
+            ref={(ref) => {
+              inputRef.current = ref;
+            }}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+          ></Input.TextArea>
+        </Form>
+      </Modal>
+    </>
+  );
+}
 
 function CartProductItem({
   cartProduct,
 }: {
-  cartProduct: { product: Product; quantity: number };
+  cartProduct: { product: Product; quantity: number; note: string };
 }) {
-  const { removeFromCart, changeProductQuantity } = useCart();
+  const { removeFromCart, changeProductData } = useCart();
 
   return (
     <div className="my-4 flex justify-between ">
-      <div className="relative mr-4 flex h-[60px] w-[60px] flex-col">
-        <ImageWithFallback
-          src={cartProduct.product.detail?.image || ''}
-          alt="product image"
-          getMockImage={() => {
-            return ImageUtils.getRandomMockProductImageUrl();
-          }}
-          layout="fill"
-        />
+      <div className="mr-4 flex flex-col items-center ">
+        <div className="relative flex h-[60px] w-[60px] flex-col">
+          <ImageWithFallback
+            src={cartProduct.product.detail?.image || ''}
+            alt="product image"
+            getMockImage={() => {
+              return ImageUtils.getRandomMockProductImageUrl();
+            }}
+            layout="fill"
+          />
+        </div>
+        <Button
+          onClick={() => removeFromCart(cartProduct.product)}
+          size="small"
+          type="ghost"
+          className="mt-2 inline-block bg-gray-200 px-2 py-0 text-xs "
+          icon={<X size={14} className=" align-text-top" />}
+        >
+          &nbsp;Xóa
+        </Button>
       </div>
       <div className="flex flex-grow flex-wrap gap-2">
         <div className="flex flex-grow basis-[300px] flex-col items-start">
-          <Typography.Text className="font-medium">
+          <Typography.Text className="mt-2">
             {cartProduct.product.name}
           </Typography.Text>
 
-          <Button
-            type="link"
-            className="p-0 text-gray-500"
-            icon={<Edit size={12} />}
-          >
-            &nbsp;Thêm ghi chú
-          </Button>
-
-          <Button
-            onClick={() => removeFromCart(cartProduct.product)}
-            size="small"
-            type="link"
-            className="inline-block p-0 text-red-400"
-          >
-            Xóa khỏi giỏ hàng
-          </Button>
+          <CartProductItemNoteInput cartProduct={cartProduct} />
         </div>
         <div className="meta flex flex-col">
           <Typography.Text className="text-right">
             <Typography.Text className="text-sm font-semibold">
-              {cartProduct.product.retailPrice?.toLocaleString('it-IT', {
-                style: 'currency',
-                currency: 'VND',
-              })}
+              {cartProduct.product.retailPrice
+                ?.toLocaleString('it-IT', {
+                  style: 'currency',
+                  currency: 'VND',
+                })
+                .slice(0, -3)}
             </Typography.Text>
+            VND
             {cartProduct.product.unit && (
               <Typography.Text className="text-sm">
                 /{cartProduct.product.unit}
@@ -68,26 +144,29 @@ function CartProductItem({
               disabled={cartProduct.quantity <= 1}
               onClick={() => {
                 if (cartProduct.quantity > 1)
-                  changeProductQuantity(
-                    cartProduct.product,
-                    cartProduct.quantity - 1
-                  );
+                  changeProductData(cartProduct.product, {
+                    field: 'quantity',
+                    value: cartProduct.quantity - 1,
+                  });
               }}
             ></Button>
             <Input
               className="w-[40px]"
               value={cartProduct.quantity || ''}
               onChange={(e) => {
-                changeProductQuantity(cartProduct.product, +e.target.value);
+                changeProductData(cartProduct.product, {
+                  field: 'quantity',
+                  value: +e.target.value,
+                });
               }}
             ></Input>
             <Button
               icon={<Plus size={20} />}
               onClick={() =>
-                changeProductQuantity(
-                  cartProduct.product,
-                  cartProduct.quantity + 1
-                )
+                changeProductData(cartProduct.product, {
+                  field: 'quantity',
+                  value: cartProduct.quantity + 1,
+                })
               }
             ></Button>
           </Space>

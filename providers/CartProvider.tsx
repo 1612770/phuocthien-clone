@@ -8,22 +8,29 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useAppConfirmDialog } from './AppConfirmDialogProvider';
 
 const CartContext = React.createContext<{
-  cartProducts: { product: Product; quantity: number }[];
-  addToCart: (payload: { product: Product; quantity: number }) => void;
+  cartProducts: { product: Product; quantity: number; note: string }[];
+  addToCart: (payload: {
+    product: Product;
+    quantity: number;
+    note: string;
+  }) => void;
   removeFromCart: (product: Product) => void;
-  changeProductQuantity: (product: Product, newQuantity: number) => void;
+  changeProductData: (
+    product: Product,
+    payload: { field: 'quantity' | 'note'; value: number | string }
+  ) => void;
 }>({
   cartProducts: [],
   addToCart: () => undefined,
   removeFromCart: () => undefined,
-  changeProductQuantity: () => undefined,
+  changeProductData: () => undefined,
 });
 
 function CartProvider({ children }: { children: React.ReactNode }) {
   const [api, contextHolder] = notification.useNotification();
 
   const [cartProducts, setCartProducts] = useState<
-    { product: Product; quantity: number }[]
+    { product: Product; quantity: number; note: string }[]
   >([]);
 
   const { setConfirmData } = useAppConfirmDialog();
@@ -58,7 +65,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const addToCart = useCallback(
-    (payload: { product: Product; quantity: number }) => {
+    (payload: { product: Product; quantity: number; note: string }) => {
       if (
         cartProducts.find(
           (cartProduct) => cartProduct.product.key === payload.product.key
@@ -113,13 +120,16 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     [cartProducts]
   );
 
-  const changeProductQuantity = useCallback(
-    (product: Product, newQuantity: number) => {
+  const changeProductData = useCallback(
+    (
+      product: Product,
+      payload: { field: 'quantity' | 'note'; value: number | string }
+    ) => {
       const newCartProducts = cartProducts.map((cartProduct) => {
         if (cartProduct.product.key === product.key) {
           return {
             ...cartProduct,
-            quantity: newQuantity,
+            [payload.field]: payload.value,
           };
         }
         return cartProduct;
@@ -135,7 +145,12 @@ function CartProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ cartProducts, addToCart, removeFromCart, changeProductQuantity }}
+      value={{
+        cartProducts,
+        addToCart,
+        removeFromCart,
+        changeProductData,
+      }}
     >
       {contextHolder}
       {children}
