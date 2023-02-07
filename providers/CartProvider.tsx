@@ -8,11 +8,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useAppConfirmDialog } from './AppConfirmDialogProvider';
 
 const CartContext = React.createContext<{
-  cartProducts: { product: Product; quantity: number; note: string }[];
+  cartProducts: { product: Product; quantity: number; note?: string }[];
   addToCart: (payload: {
     product: Product;
     quantity: number;
-    note: string;
+    note?: string;
   }) => void;
   removeFromCart: (product: Product) => void;
   changeProductData: (
@@ -30,7 +30,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   const [api, contextHolder] = notification.useNotification();
 
   const [cartProducts, setCartProducts] = useState<
-    { product: Product; quantity: number; note: string }[]
+    { product: Product; quantity: number; note?: string }[]
   >([]);
 
   const { setConfirmData } = useAppConfirmDialog();
@@ -65,7 +65,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const addToCart = useCallback(
-    (payload: { product: Product; quantity: number; note: string }) => {
+    (payload: { product: Product; quantity: number; note?: string }) => {
       if (
         cartProducts.find(
           (cartProduct) => cartProduct.product.key === payload.product.key

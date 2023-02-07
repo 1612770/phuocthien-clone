@@ -10,7 +10,7 @@ import { TextAreaRef } from 'antd/es/input/TextArea';
 function CartProductItemNoteInput({
   cartProduct,
 }: {
-  cartProduct: { product: Product; quantity: number; note: string };
+  cartProduct: { product: Product; quantity: number; note?: string };
 }) {
   const [form] = Form.useForm();
   const inputRef = useRef<TextAreaRef | null>(null);
@@ -85,7 +85,7 @@ function CartProductItemNoteInput({
 function CartProductItem({
   cartProduct,
 }: {
-  cartProduct: { product: Product; quantity: number; note: string };
+  cartProduct: { product: Product; quantity: number; note?: string };
 }) {
   const { removeFromCart, changeProductData } = useCart();
 
