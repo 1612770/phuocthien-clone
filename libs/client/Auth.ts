@@ -7,14 +7,23 @@ export class AuthClient extends BaseClient {
     super(ctx, data);
   }
 
+  async verifyPhone(payload: { phoneNumber: string }): Promise<
+    APIResponse<{
+      code: string;
+      msg: string;
+    }>
+  > {
+    return await super.call('PUT', `auth/verify-phone`, payload);
+  }
+
   async sendOtp(payload: {
     phoneNumber: string;
-  }): Promise<APIResponse<string>> {
+  }): Promise<APIResponse<{ verifyToken: string }>> {
     return await super.call('POST', `auth/otp`, payload);
   }
 
   async verifyOtp(payload: {
-    phoneNumber: string;
+    verifyToken: string;
     otpCode: string;
   }): Promise<APIResponse<string>> {
     return await super.call('POST', `auth/verify-otp`, payload);
@@ -22,6 +31,7 @@ export class AuthClient extends BaseClient {
 
   async createAccount(payload: {
     phoneNumber: string;
+    verifyToken: string;
     password: string;
   }): Promise<APIResponse<string>> {
     return await super.call('POST', `auth/create`, payload);

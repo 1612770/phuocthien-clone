@@ -2,12 +2,13 @@ import PrimaryLayout from 'components/layouts/PrimaryLayout/PrimaryLayout';
 import { NextPageWithLayout } from './page';
 import { Button, Card, Form, Input, Typography } from 'antd';
 import { Check, Key, Phone, User } from 'react-feather';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import OtpUtils from '@libs/utils/otp.utils';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import { AuthClient } from '@libs/client/Auth';
 import OTPInput from '@components/templates/OTPInput';
+import ErrorCodes from '@configs/enums/error-codes.enum';
 
 export enum ForgotPasswordSteps {
   EnterPhoneNumber = 'EnterPhoneNumber',
@@ -28,21 +29,34 @@ const LoginPage: NextPageWithLayout = () => {
   const [updatingPassword, setUpdatingPassword] = useState(false);
 
   const { toastError } = useAppMessage();
+  const verifyTokenRef = useRef<string | undefined>();
 
   const sendOtp = async () => {
-    // TODO: Check phone number
-
-    if (!OtpUtils.checkOtpNeedSending(phone)) {
-      setStep(ForgotPasswordSteps.EnterOTP);
-
-      return;
-    }
-
     try {
+      const auth = new AuthClient(null, {});
+
+      const verifyPhoneResponse = await auth.verifyPhone({
+        phoneNumber: phone,
+      });
+
+      if (
+        verifyPhoneResponse.data?.code !== ErrorCodes.PHONE_EXISTED_IN_SYSTEM
+      ) {
+        throw new Error('Số điện thoại không tồn tại trong hệ thống');
+      }
+
+      // if (!OtpUtils.checkOtpNeedSending(phone)) {
+      //   setStep(ForgotPasswordSteps.EnterOTP);
+
+      //   return;
+      // }
+
       setSendingOtp(true);
 
-      const auth = new AuthClient(null, {});
-      await auth.sendOtp({ phoneNumber: phone });
+      const sendOtpResponse = await auth.sendOtp({ phoneNumber: phone });
+
+      // save token to ref hold for next step
+      verifyTokenRef.current = sendOtpResponse.data?.verifyToken;
 
       OtpUtils.addPhoneToLocalStorage(phone);
 
@@ -56,10 +70,17 @@ const LoginPage: NextPageWithLayout = () => {
 
   const submitOtp = async (otp: string) => {
     try {
+      if (!verifyTokenRef.current) {
+        throw new Error('Vui lòng xác nhận số điện thoại trước khi tiếp tục');
+      }
+
       setSubmittingOtp(true);
 
       const auth = new AuthClient(null, {});
-      await auth.verifyOtp({ phoneNumber: phone, otpCode: otp });
+      await auth.verifyOtp({
+        verifyToken: verifyTokenRef.current,
+        otpCode: otp,
+      });
 
       OtpUtils.removePhoneOutOfLocalStorage(phone);
 
@@ -73,10 +94,18 @@ const LoginPage: NextPageWithLayout = () => {
 
   const createAccount = async () => {
     try {
+      if (!verifyTokenRef.current) {
+        throw new Error('Vui lòng xác nhận số điện thoại trước khi tiếp tục');
+      }
+
       setUpdatingPassword(true);
 
       const auth = new AuthClient(null, {});
-      await auth.createAccount({ phoneNumber: phone, password });
+      await auth.createAccount({
+        phoneNumber: phone,
+        verifyToken: verifyTokenRef.current,
+        password,
+      });
 
       setStep(ForgotPasswordSteps.Finish);
     } catch (error) {
