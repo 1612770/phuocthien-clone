@@ -1,5 +1,5 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout/PrimaryLayout';
-import { Breadcrumb, Button, Result, Typography } from 'antd';
+import { Breadcrumb, Button, Result } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import Link from 'next/link';
 import { ChevronLeft } from 'react-feather';
@@ -60,7 +60,6 @@ export const getServerSideProps = async (
     props: {},
   };
 
-  console.log(context.params?.['order']);
   const order = new OrderClient(context, {});
   const orderResponse = await order.getOrder({
     key: context.params?.['order'] as string,

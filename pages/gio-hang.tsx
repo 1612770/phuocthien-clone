@@ -10,7 +10,6 @@ import {
   Input,
   Radio,
   Row,
-  Select,
   Typography,
 } from 'antd';
 import { ChevronLeft } from 'react-feather';
@@ -20,124 +19,44 @@ import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
 import PaymentMethodModel from '@configs/models/payment-method.model';
 import { GeneralClient } from '@libs/client/General';
-import { Fragment, useMemo, useState } from 'react';
-import { convertStringToASCII, getErrorMessage } from '@libs/helpers';
+import { Fragment } from 'react';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import ShippingTypes from '@configs/enums/shipping-types.enum';
 import DrugStorePicker from '@modules/cart/DrugStorePicker';
-import { ProductClient } from '@libs/client/Product';
-import { OrderClient } from '@libs/client/Order';
-import { useRouter } from 'next/router';
-
-const provincesOfVietNamJSON: {
-  [key: string]: {
-    name: string;
-    'quan-huyen': {
-      [key: string]: {
-        name: string;
-        'xa-phuong': {
-          [key: string]: {
-            name: string;
-          };
-        };
-      };
-    };
-  };
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-} = require('../public/assets/vn.json');
+import CheckoutProvider, { useCheckout } from '@providers/CheckoutProvider';
+import AddressInput from '@modules/cart/AddressInput';
 
 const CartPage: NextPageWithLayout<{
   paymentMethods: PaymentMethodModel[];
 }> = ({ paymentMethods }) => {
-  const [name, setName] = useState('');
-  const [tel, setTel] = useState('');
-
-  const router = useRouter();
-
-  const [paymentMethodKey, setPaymentMethodKey] = useState('');
-  const [shippingType, setShippingType] = useState<ShippingTypes>(
-    ShippingTypes.DELIVERY
-  );
-
-  const [currentProvinceKey, setCurrentProvinceKey] = useState<string | null>(
-    null
-  );
-  const [currentDistrictKey, setCurrentDistrictKey] = useState<string | null>(
-    null
-  );
-  const [currentWardKey, setCurrentWardKey] = useState<string | null>();
-
-  const [address, setAddress] = useState('');
-  const [currentDrugStoreKey, setCurrentDrugStoreKey] = useState('');
-
-  const currentProvince = useMemo(() => {
-    if (!currentProvinceKey) {
-      return undefined;
-    }
-
-    return provincesOfVietNamJSON[currentProvinceKey];
-  }, [currentProvinceKey]);
-
-  const currentDistrict = useMemo(() => {
-    if (!currentDistrictKey) {
-      return undefined;
-    }
-    return currentProvince?.['quan-huyen'][currentDistrictKey];
-  }, [currentDistrictKey, currentProvince]);
-
-  const [checkoutError, setCheckoutError] = useState('');
-
   const { cartProducts } = useCart();
+  const {
+    name,
+    setName,
+
+    tel,
+    setTel,
+
+    shippingType,
+    setShippingType,
+
+    currentDrugStoreKey,
+    setCurrentDrugStoreKey,
+
+    setPaymentMethodKey,
+
+    checkoutError,
+
+    checkingOut,
+
+    checkout,
+  } = useCheckout();
 
   const totalPrice = cartProducts.reduce(
     (total, cartProduct) =>
       total + (cartProduct.product.retailPrice || 0) * cartProduct.quantity,
     0
   );
-
-  const checkout = async () => {
-    try {
-      if (!(totalPrice > 10000)) {
-        throw new Error('Giá trị đơn hàng phải lớn hơn 10.000đ');
-      }
-
-      const order = new OrderClient(null, {});
-      const orderResponse = await order.order({
-        customerInfo: {
-          name,
-          tel,
-        },
-        paymentMethodKey,
-        shippingType,
-        drugstoreKey:
-          shippingType === ShippingTypes.AT_STORE
-            ? currentDrugStoreKey
-            : undefined,
-        deliveryAddressInfo:
-          shippingType === ShippingTypes.DELIVERY
-            ? {
-                province: currentProvince?.name || '',
-                district: currentDistrict?.name || '',
-                ward:
-                  (currentWardKey &&
-                    currentDistrict?.['xa-phuong'][currentWardKey].name) ||
-                  '',
-                detail: address,
-              }
-            : undefined,
-        items: cartProducts.map((cartProduct) => ({
-          productKey: cartProduct.product.key || '',
-          quantity: cartProduct.quantity || 0,
-          note: cartProduct.note || '',
-        })),
-      });
-
-      router.push(`/don-hang/${orderResponse.data?.key}`);
-    } catch (error) {
-      router.push(`/don-hang/123`);
-      setCheckoutError(getErrorMessage(error));
-    }
-  };
 
   const totalProducts = cartProducts.reduce(
     (total, cartProduct) => total + (Number(cartProduct.quantity) || 0),
@@ -248,147 +167,7 @@ const CartPage: NextPageWithLayout<{
               </Radio>
             </Radio.Group>
 
-            {shippingType === ShippingTypes.DELIVERY && (
-              <div className="my-4 rounded-lg bg-gray-50 p-4">
-                <Typography.Text className="text-sm">
-                  Chọn địa chỉ để biết thời gian nhận hàng và phí vận chuyển
-                  (nếu có)
-                </Typography.Text>
-
-                <Row className="my-2" gutter={[8, 8]}>
-                  <Col xs={24} md={12}>
-                    <Select
-                      showSearch
-                      className="w-full"
-                      placeholder="Nhập tỉnh/thành phố"
-                      allowClear
-                      value={currentProvinceKey}
-                      onChange={(value) => {
-                        setCurrentProvinceKey(value);
-                        setCurrentDistrictKey(null);
-                        setCurrentWardKey(null);
-                      }}
-                      filterOption={(inputValue, currentOption) => {
-                        const option =
-                          provincesOfVietNamJSON[currentOption?.key];
-
-                        return (
-                          convertStringToASCII(
-                            option?.name.toLowerCase()
-                          ).indexOf(
-                            convertStringToASCII(inputValue.toLowerCase())
-                          ) !== -1
-                        );
-                      }}
-                    >
-                      {Object.entries(provincesOfVietNamJSON).map(
-                        ([key, province]) => {
-                          return (
-                            <Select.Option key={key} value={key}>
-                              {province.name}
-                            </Select.Option>
-                          );
-                        }
-                      )}
-                    </Select>
-                  </Col>
-                  <Col xs={24} md={12}>
-                    <Select
-                      showSearch
-                      className="w-full"
-                      disabled={!currentProvinceKey}
-                      value={currentDistrictKey}
-                      placeholder="Nhập huyện/quận"
-                      onChange={(value) => {
-                        setCurrentDistrictKey(value);
-                        setCurrentWardKey(null);
-                      }}
-                      filterOption={(inputValue, currentOption) => {
-                        if (!currentProvinceKey) return false;
-
-                        const option =
-                          provincesOfVietNamJSON[currentProvinceKey][
-                            'quan-huyen'
-                          ][currentOption?.key];
-
-                        return (
-                          convertStringToASCII(
-                            option?.name.toLowerCase()
-                          ).indexOf(
-                            convertStringToASCII(inputValue.toLowerCase())
-                          ) !== -1
-                        );
-                      }}
-                    >
-                      {currentProvinceKey &&
-                        Object.entries(
-                          currentProvince?.['quan-huyen'] || {}
-                        ).map(([key, district]) => {
-                          return (
-                            <Select.Option key={key} value={key}>
-                              {district.name}
-                            </Select.Option>
-                          );
-                        })}
-                    </Select>
-                  </Col>
-                  <Col xs={24} md={12}>
-                    <Select
-                      showSearch
-                      className="w-full"
-                      disabled={!currentDistrictKey}
-                      value={currentWardKey}
-                      placeholder="Nhập xã/phường"
-                      onChange={setCurrentWardKey}
-                      filterOption={(inputValue, currentOption) => {
-                        if (!currentProvinceKey) return false;
-
-                        const option =
-                          currentDistrict?.['xa-phuong'][currentOption?.key];
-
-                        return (
-                          convertStringToASCII(
-                            (option?.name || '').toLowerCase()
-                          ).indexOf(
-                            convertStringToASCII(inputValue.toLowerCase())
-                          ) !== -1
-                        );
-                      }}
-                    >
-                      {currentProvinceKey &&
-                        Object.entries(
-                          currentDistrict?.['xa-phuong'] || {}
-                        ).map(([key, ward]) => {
-                          return (
-                            <Select.Option key={key} value={key}>
-                              {ward.name}
-                            </Select.Option>
-                          );
-                        })}
-                    </Select>
-                  </Col>
-                  <Col xs={24} md={12}>
-                    <Form.Item
-                      style={{ marginBottom: 0 }}
-                      name="address"
-                      className="w-full"
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Vui lòng nhập địa chỉ',
-                        },
-                      ]}
-                    >
-                      <Input
-                        placeholder="Nhập địa chỉ"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </div>
-            )}
+            {shippingType === ShippingTypes.DELIVERY && <AddressInput />}
 
             {shippingType === ShippingTypes.AT_STORE && (
               <DrugStorePicker
@@ -409,35 +188,46 @@ const CartPage: NextPageWithLayout<{
             <Typography.Title level={4}>
               Chọn phương thức thanh toán
             </Typography.Title>
-            <Radio.Group>
-              {paymentMethods.map((paymentMethod) => (
-                <Radio
-                  value={paymentMethod.key}
-                  onChange={() => {
-                    if (paymentMethod.key)
-                      setPaymentMethodKey(paymentMethod.key);
-                  }}
-                  key={paymentMethod.key}
-                  className="my-2 w-full"
-                >
-                  <div className="flex items-center">
-                    <ImageWithFallback
-                      src={paymentMethod.image || ''}
-                      width={40}
-                      height={40}
-                      layout="fixed"
-                      getMockImage={() => '/mock/checkout.png'}
-                    />
-                    <div className="ml-2">
-                      <Typography className="font-medium">
-                        {paymentMethod.name}
-                      </Typography>
-                      <Typography>{paymentMethod.description}</Typography>
+            <Form.Item
+              name="paymentMethod"
+              className="w-full"
+              rules={[
+                {
+                  required: true,
+                  message: 'Hãy chọn một phương thức thanh toán',
+                },
+              ]}
+            >
+              <Radio.Group>
+                {paymentMethods.map((paymentMethod) => (
+                  <Radio
+                    value={paymentMethod.key}
+                    onChange={() => {
+                      if (paymentMethod.key)
+                        setPaymentMethodKey(paymentMethod.key);
+                    }}
+                    key={paymentMethod.key}
+                    className="my-2 w-full"
+                  >
+                    <div className="flex items-center">
+                      <ImageWithFallback
+                        src={paymentMethod.image || ''}
+                        width={40}
+                        height={40}
+                        layout="fixed"
+                        getMockImage={() => '/mock/checkout.png'}
+                      />
+                      <div className="ml-2">
+                        <Typography className="font-medium">
+                          {paymentMethod.name}
+                        </Typography>
+                        <Typography>{paymentMethod.description}</Typography>
+                      </div>
                     </div>
-                  </div>
-                </Radio>
-              ))}
-            </Radio.Group>
+                  </Radio>
+                ))}
+              </Radio.Group>
+            </Form.Item>
 
             <Divider />
             <div className="flex items-center justify-between gap-4">
@@ -462,6 +252,7 @@ const CartPage: NextPageWithLayout<{
             <Button
               type="primary"
               htmlType="submit"
+              loading={checkingOut}
               size="large"
               block
               className="mt-2 h-[52px] bg-primary-light font-bold shadow-none"
@@ -496,7 +287,11 @@ const CartPage: NextPageWithLayout<{
 export default CartPage;
 
 CartPage.getLayout = (page) => {
-  return <PrimaryLayout hideFooter>{page}</PrimaryLayout>;
+  return (
+    <PrimaryLayout hideFooter>
+      <CheckoutProvider>{page}</CheckoutProvider>
+    </PrimaryLayout>
+  );
 };
 
 // get server side props

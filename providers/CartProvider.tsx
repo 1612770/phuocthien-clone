@@ -19,11 +19,13 @@ const CartContext = React.createContext<{
     product: Product,
     payload: { field: 'quantity' | 'note'; value: number | string }
   ) => void;
+  resetCart: () => void;
 }>({
   cartProducts: [],
   addToCart: () => undefined,
   removeFromCart: () => undefined,
   changeProductData: () => undefined,
+  resetCart: () => undefined,
 });
 
 function CartProvider({ children }: { children: React.ReactNode }) {
@@ -143,6 +145,11 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     [cartProducts]
   );
 
+  const resetCart = useCallback(() => {
+    setCartProducts([]);
+    LocalStorageUtils.removeItem(LocalStorageKeys.CART_PRODUCTS);
+  }, []);
+
   return (
     <CartContext.Provider
       value={{
@@ -150,6 +157,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         addToCart,
         removeFromCart,
         changeProductData,
+        resetCart,
       }}
     >
       {contextHolder}
