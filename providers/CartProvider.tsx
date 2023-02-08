@@ -14,7 +14,12 @@ const CartContext = React.createContext<{
     quantity: number;
     note?: string;
   }) => void;
-  removeFromCart: (product: Product) => void;
+  removeFromCart: (
+    product: Product,
+    options?: {
+      isShowConfirm?: boolean;
+    }
+  ) => void;
   changeProductData: (
     product: Product,
     payload: { field: 'quantity' | 'note'; value: number | string }
@@ -105,21 +110,39 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const removeFromCart = useCallback(
-    (product: Product) => {
-      setConfirmData({
-        title: 'Xóa khỏi giỏ hàng',
-        content: 'Sản phẩm này sẽ được loại bỏ khỏi giỏ hàng của bạn',
-        onOk: () => {
-          const newCartProducts = cartProducts.filter(
-            (cartProduct) => cartProduct.product.key !== product.key
-          );
-          setCartProducts(newCartProducts);
-          LocalStorageUtils.setItem(
-            LocalStorageKeys.CART_PRODUCTS,
-            JSON.stringify(newCartProducts)
-          );
-        },
-      });
+    (
+      product: Product,
+      options: {
+        isShowConfirm?: boolean;
+      } = {
+        isShowConfirm: true,
+      }
+    ) => {
+      if (options?.isShowConfirm) {
+        setConfirmData({
+          title: 'Xóa khỏi giỏ hàng',
+          content: 'Sản phẩm này sẽ được loại bỏ khỏi giỏ hàng của bạn',
+          onOk: () => {
+            const newCartProducts = cartProducts.filter(
+              (cartProduct) => cartProduct.product.key !== product.key
+            );
+            setCartProducts(newCartProducts);
+            LocalStorageUtils.setItem(
+              LocalStorageKeys.CART_PRODUCTS,
+              JSON.stringify(newCartProducts)
+            );
+          },
+        });
+      } else {
+        const newCartProducts = cartProducts.filter(
+          (cartProduct) => cartProduct.product.key !== product.key
+        );
+        setCartProducts(newCartProducts);
+        LocalStorageUtils.setItem(
+          LocalStorageKeys.CART_PRODUCTS,
+          JSON.stringify(newCartProducts)
+        );
+      }
     },
     [cartProducts]
   );
