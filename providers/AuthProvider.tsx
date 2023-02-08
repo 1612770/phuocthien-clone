@@ -4,6 +4,7 @@ import { COOKIE_KEYS, getCookie, setCookie } from '@libs/helpers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useAppMessage } from './AppMessageProvider';
 import { useRouter } from 'next/router';
+import { useAppConfirmDialog } from './AppConfirmDialogProvider';
 
 const AuthContext = React.createContext<{
   userData?: ProfileModel;
@@ -20,11 +21,18 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const { toastError } = useAppMessage();
   const router = useRouter();
+  const { setConfirmData } = useAppConfirmDialog();
 
   const logOut = useCallback(() => {
-    setUserData(undefined);
-    setCookie(null, '', COOKIE_KEYS.TOKEN);
-    router.replace('/dang-nhap');
+    setConfirmData({
+      title: 'Đăng xuất',
+      content: 'Bạn có chắc chắn muốn đăng xuất?',
+      onOk: () => {
+        setUserData(undefined);
+        setCookie(null, '', COOKIE_KEYS.TOKEN);
+        router.replace('/dang-nhap');
+      },
+    });
   }, [router]);
 
   const getAuthProfile = async () => {
