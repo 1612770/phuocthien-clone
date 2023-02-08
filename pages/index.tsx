@@ -14,7 +14,7 @@ const Home: NextPageWithLayout<{
   featureProductsLists: { products: Product[]; productType: MenuModel }[];
 }> = ({ featureProductsLists }) => {
   return (
-    <>
+    <div className='mb-8'>
       <HomepageCarousel />
 
       <div className="-mt-20 hidden lg:block">
@@ -53,7 +53,7 @@ const Home: NextPageWithLayout<{
           </Fragment>
         ) : null
       )}
-    </>
+    </div>
   );
 };
 

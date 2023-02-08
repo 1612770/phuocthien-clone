@@ -6,7 +6,7 @@ import IMAGES from 'configs/assests/images';
 function PrimaryFooter() {
   return (
     <>
-      <footer className="mt-8 bg-primary px-4">
+      <footer className="bg-primary px-4">
         <div className="py-8 lg:container">
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12} lg={6}>
