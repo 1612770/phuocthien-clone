@@ -29,7 +29,9 @@ const CartContext = React.createContext<{
 });
 
 function CartProvider({ children }: { children: React.ReactNode }) {
-  const [api, contextHolder] = notification.useNotification();
+  const [api, contextHolder] = notification.useNotification({
+    maxCount: 1,
+  });
 
   const [cartProducts, setCartProducts] = useState<
     { product: Product; quantity: number; note?: string }[]
