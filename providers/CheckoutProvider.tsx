@@ -1,9 +1,10 @@
 import ShippingTypes from '@configs/enums/shipping-types.enum';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useCart } from './CartProvider';
 import { getErrorMessage } from '@libs/helpers';
 import { useRouter } from 'next/router';
 import { OrderClient } from '@libs/client/Order';
+import Product from '@configs/models/product.model';
 
 const provincesOfVietNamJSON: {
   [key: string]: {
@@ -49,6 +50,23 @@ const CheckoutContext = React.createContext<{
 
   currentDrugStoreKey: string;
   setCurrentDrugStoreKey: (currentDrugStoreKey: string) => void;
+
+  productStatuses: {
+    product: Product;
+    statusData: {
+      isStillAvailable: boolean;
+      drugstoreQuantity?: number;
+    };
+  }[];
+  setProductStatuses: (
+    productStatuses: {
+      product: Product;
+      statusData: {
+        isStillAvailable: boolean;
+        drugstoreQuantity?: number;
+      };
+    }[]
+  ) => void;
 
   checkoutError: string;
   setCheckoutError: (checkoutError: string) => void;
@@ -112,6 +130,9 @@ const CheckoutContext = React.createContext<{
   currentDrugStoreKey: '',
   setCurrentDrugStoreKey: () => undefined,
 
+  productStatuses: [],
+  setProductStatuses: () => undefined,
+
   checkoutError: '',
   setCheckoutError: () => undefined,
 
@@ -146,6 +167,16 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
   const [address, setAddress] = useState('');
   const [currentDrugStoreKey, setCurrentDrugStoreKey] = useState('');
+
+  const [productStatuses, setProductStatuses] = useState<
+    {
+      product: Product;
+      statusData: {
+        isStillAvailable: boolean;
+        drugstoreQuantity?: number;
+      };
+    }[]
+  >([]);
 
   const [checkingOut, setCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
@@ -219,6 +250,15 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  /**
+   * If shippingType is changed, reset currentDrugStoreKey
+   */
+  useEffect(() => {
+    if (shippingType === ShippingTypes.DELIVERY) {
+      setCurrentDrugStoreKey('');
+    }
+  }, [shippingType]);
+
   return (
     <CheckoutContext.Provider
       value={{
@@ -251,6 +291,9 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
         currentProvince,
         currentDistrict,
+
+        productStatuses,
+        setProductStatuses,
 
         checkoutError,
         setCheckoutError,

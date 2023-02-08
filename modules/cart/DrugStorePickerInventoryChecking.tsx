@@ -7,6 +7,7 @@ import DrugStore from '@configs/models/drug-store.model';
 import { ProductClient } from '@libs/client/Product';
 import Product from '@configs/models/product.model';
 import ImageUtils from '@libs/utils/image.utils';
+import { useCheckout } from '@providers/CheckoutProvider';
 
 function DrugStorePickerInventoryChecking({
   drugStoreKey,
@@ -15,17 +16,8 @@ function DrugStorePickerInventoryChecking({
 }) {
   const [checking, setChecking] = useState(false);
 
-  const [productStatuses, setProductStatuses] = useState<
-    {
-      product: Product;
-      statusData: {
-        isStillAvailable: boolean;
-        drugstoreQuantity?: number;
-      };
-    }[]
-  >([]);
-
   const { cartProducts, changeProductData, removeFromCart } = useCart();
+  const { productStatuses, setProductStatuses } = useCheckout();
   const { toastError, toastSuccess } = useAppMessage();
 
   const checkProductStillAvailableAtDrugStore = (
@@ -128,6 +120,15 @@ function DrugStorePickerInventoryChecking({
       checkAllProducts();
     }
   }, [drugStoreKey]);
+
+  /**
+   * Clear product statuses when unmount
+   */
+  useEffect(() => {
+    return () => {
+      setProductStatuses([]);
+    };
+  }, []);
 
   const notAvailableProducts = productStatuses.filter(
     (productStatus) => !productStatus.statusData.isStillAvailable

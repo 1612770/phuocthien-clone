@@ -18,7 +18,8 @@ function CartProductItem({
   const [quantity, setQuantity] = useState<number>(0);
 
   const { removeFromCart, changeProductData } = useCart();
-  const { currentDrugStoreKey } = useCheckout();
+  const { currentDrugStoreKey, productStatuses, setProductStatuses } =
+    useCheckout();
   const { setConfirmData } = useAppConfirmDialog();
   const quantityInputRef = useRef(1);
 
@@ -40,9 +41,19 @@ function CartProductItem({
         content:
           'Sản phẩm này không còn trong kho của nhà thuốc này. Xác nhận loại bỏ khỏi giỏ hàng sản phẩm này?',
         onOk: () => {
+          // filter out the product that has been updated
+          setProductStatuses(
+            productStatuses.filter((productStatus) => {
+              return productStatus.product.key !== cartProduct.product.key;
+            })
+          );
+
           removeFromCart(cartProduct.product, {
             isShowConfirm: false,
           });
+        },
+        onCancel: () => {
+          setQuantity(quantityInputRef.current);
         },
       });
 
@@ -54,17 +65,43 @@ function CartProductItem({
         title: 'Số lượng sản phẩm không đủ',
         content: `Số lượng sản phẩm này không đủ trong kho của nhà thuốc này. Số lượng sản phẩm trong kho là ${foundDrugstore.quantity}. Xác nhận cập nhật lại giỏ hàng?`,
         onOk: () => {
+          // filter out the product that has been updated
+          setProductStatuses(
+            productStatuses.filter(
+              (productStatus) =>
+                productStatus.product.key !== cartProduct.product.key
+            )
+          );
+
           changeProductData(cartProduct.product, {
             field: 'quantity',
             value: foundDrugstore.quantity,
           });
+        },
+        onCancel: () => {
+          setQuantity(quantityInputRef.current);
         },
       });
 
       return false;
     }
 
+    changeProductData(cartProduct.product, {
+      field: 'quantity',
+      value: newQuantity,
+    });
     return true;
+  };
+
+  const processWhenChangeQuantity = (newQuantity: number) => {
+    if (currentDrugStoreKey) {
+      checkNewQuantityFitDrugstoreQuantity(newQuantity);
+    } else {
+      changeProductData(cartProduct.product, {
+        field: 'quantity',
+        value: newQuantity,
+      });
+    }
   };
 
   useEffect(() => {
@@ -125,11 +162,10 @@ function CartProductItem({
               icon={<Minus size={20} />}
               disabled={cartProduct.quantity <= 1}
               onClick={() => {
-                if (cartProduct.quantity > 1)
-                  changeProductData(cartProduct.product, {
-                    field: 'quantity',
-                    value: cartProduct.quantity - 1,
-                  });
+                if (cartProduct.quantity > 1) {
+                  quantityInputRef.current = cartProduct.quantity;
+                  processWhenChangeQuantity(cartProduct.quantity - 1);
+                }
               }}
             ></Button>
             <Input
@@ -144,14 +180,7 @@ function CartProductItem({
                   newQuantity = quantityInputRef.current;
                 }
 
-                if (currentDrugStoreKey) {
-                  checkNewQuantityFitDrugstoreQuantity(newQuantity);
-                } else {
-                  changeProductData(cartProduct.product, {
-                    field: 'quantity',
-                    value: newQuantity,
-                  });
-                }
+                processWhenChangeQuantity(newQuantity);
               }}
               onChange={(e) => {
                 setQuantity(+e.target.value);
@@ -159,12 +188,10 @@ function CartProductItem({
             ></Input>
             <Button
               icon={<Plus size={20} />}
-              onClick={() =>
-                changeProductData(cartProduct.product, {
-                  field: 'quantity',
-                  value: cartProduct.quantity + 1,
-                })
-              }
+              onClick={() => {
+                quantityInputRef.current = cartProduct.quantity;
+                processWhenChangeQuantity(cartProduct.quantity + 1);
+              }}
             ></Button>
           </Space>
         </div>
