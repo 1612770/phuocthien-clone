@@ -56,9 +56,13 @@ class BaseClient {
     // make call
     const resp = await fetch(url, req);
 
+    if (!resp.ok) {
+      throw resp.statusText;
+    }
+
     const result = await resp.json();
 
-    if (result.error || result.statusCode === 500) {
+    if (result.error) {
       throw result;
     }
 
