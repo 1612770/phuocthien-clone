@@ -117,7 +117,7 @@ const LoginPage: NextPageWithLayout = () => {
 
   return (
     <div className="mx-auto max-w-[420px] pb-8 lg:container">
-      <Card className="mt-8 flex flex-col items-center">
+      <Card className="mt-8 flex flex-col items-center shadow-xl">
         {step === ForgotPasswordSteps.EnterPhoneNumber && (
           <>
             <Typography.Title level={3} className="text-center text-primary">
