@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Space, Typography } from 'antd';
+import { Button, Form, Input, InputRef, Modal, Space, Typography } from 'antd';
 import { Edit, Minus, Plus, X } from 'react-feather';
 import Product from '@configs/models/product.model';
 import { useCart } from '@providers/CartProvider';
@@ -87,7 +87,14 @@ function CartProductItem({
 }: {
   cartProduct: { product: Product; quantity: number; note?: string };
 }) {
+  const [quantity, setQuantity] = useState<number>(0);
+
   const { removeFromCart, changeProductData } = useCart();
+  const quantityInputRef = useRef(1);
+
+  useEffect(() => {
+    setQuantity(cartProduct.quantity);
+  }, [cartProduct]);
 
   return (
     <div className="my-4 flex justify-between ">
@@ -152,12 +159,23 @@ function CartProductItem({
             ></Button>
             <Input
               className="w-[40px]"
-              value={cartProduct.quantity || ''}
-              onChange={(e) => {
+              value={quantity || ''}
+              onFocus={(e) => {
+                quantityInputRef.current = +e.target.value || 1;
+              }}
+              onBlur={(e) => {
+                let newQuantity = +e.target.value;
+                if (newQuantity < 1) {
+                  newQuantity = quantityInputRef.current;
+                }
+
                 changeProductData(cartProduct.product, {
                   field: 'quantity',
-                  value: +e.target.value,
+                  value: newQuantity,
                 });
+              }}
+              onChange={(e) => {
+                setQuantity(+e.target.value);
               }}
             ></Input>
             <Button
