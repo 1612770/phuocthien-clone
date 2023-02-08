@@ -1,4 +1,4 @@
-import { Divider, Spin, Typography } from 'antd';
+import { Button, Checkbox, Form, Spin, Typography } from 'antd';
 import { useCart } from '@providers/CartProvider';
 import { useEffect, useState } from 'react';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
@@ -16,11 +16,17 @@ function DrugStorePickerInventoryChecking({
   const [checking, setChecking] = useState(false);
 
   const [productStatuses, setProductStatuses] = useState<
-    { product: Product; status: boolean }[]
+    {
+      product: Product;
+      statusData: {
+        isStillAvailable: boolean;
+        drugstoreQuantity?: number;
+      };
+    }[]
   >([]);
 
-  const { cartProducts } = useCart();
-  const { toastError } = useAppMessage();
+  const { cartProducts, changeProductData, removeFromCart } = useCart();
+  const { toastError, toastSuccess } = useAppMessage();
 
   const checkProductStillAvailableAtDrugStore = (
     drugStoreKey: string,
@@ -31,16 +37,26 @@ function DrugStorePickerInventoryChecking({
         }[]
       | undefined,
     productCart: { product: Product; quantity: number }
-  ) => {
+  ): {
+    isStillAvailable: boolean;
+    drugstoreQuantity?: number;
+  } => {
     const foundDrugstore = (inventoryAtDrugStores || []).find(
       (inventoryAtDrugStore) =>
         inventoryAtDrugStore?.drugstore.key === drugStoreKey
     );
-    if (!foundDrugstore) return false;
+    if (!foundDrugstore)
+      return {
+        isStillAvailable: false,
+      };
 
-    if (foundDrugstore.quantity < productCart.quantity) return false;
+    if (foundDrugstore.quantity < productCart.quantity)
+      return {
+        isStillAvailable: false,
+        drugstoreQuantity: foundDrugstore.quantity,
+      };
 
-    return true;
+    return { isStillAvailable: true };
   };
 
   const checkAllProducts = async () => {
@@ -60,25 +76,44 @@ function DrugStorePickerInventoryChecking({
         (inventoryAtDrugStoresResponse) => inventoryAtDrugStoresResponse.data
       );
 
-      const productStatuses: { product: Product; status: boolean }[] =
-        inventoryAtDrugStores.reduce(
-          (currentProductStatuses, inventoryAtDrugStore, index) => {
-            const productStatus: { product: Product; status: boolean } = {
-              product: {},
-              status: false,
+      const productStatuses: {
+        product: Product;
+        statusData: {
+          isStillAvailable: boolean;
+          drugstoreQuantity?: number;
+        };
+      }[] = inventoryAtDrugStores.reduce(
+        (currentProductStatuses, inventoryAtDrugStore, index) => {
+          const productStatus: {
+            product: Product;
+            statusData: {
+              isStillAvailable: boolean;
+              drugstoreQuantity?: number;
             };
+          } = {
+            product: {},
+            statusData: {
+              isStillAvailable: false,
+            },
+          };
 
-            productStatus.product = cartProducts[index].product;
-            productStatus.status = checkProductStillAvailableAtDrugStore(
-              drugStoreKey,
-              inventoryAtDrugStore,
-              cartProducts[index]
-            );
+          productStatus.product = cartProducts[index].product;
+          productStatus.statusData = checkProductStillAvailableAtDrugStore(
+            drugStoreKey,
+            inventoryAtDrugStore,
+            cartProducts[index]
+          );
 
-            return currentProductStatuses.concat(productStatus);
-          },
-          [] as { product: Product; status: boolean }[]
-        );
+          return currentProductStatuses.concat(productStatus);
+        },
+        [] as {
+          product: Product;
+          statusData: {
+            isStillAvailable: boolean;
+            drugstoreQuantity?: number;
+          };
+        }[]
+      );
 
       setProductStatuses(productStatuses);
     } catch (error) {
@@ -94,53 +129,129 @@ function DrugStorePickerInventoryChecking({
     }
   }, [drugStoreKey]);
 
+  const notAvailableProducts = productStatuses.filter(
+    (productStatus) => !productStatus.statusData.isStillAvailable
+  );
+
   return (
     <>
       {productStatuses.length > 0 && (
         <>
-          <Typography className="mt-2 font-medium">
-            Tình trạng các sản phẩm tại nhà thuốc
-          </Typography>
-          <Divider className="my-2 h-[4px]"></Divider>
+          <Spin spinning={checking}>
+            <div className="bg-white">
+              {notAvailableProducts.length > 0 && (
+                <>
+                  <Form.Item
+                    className="m-0 h-1 w-0 overflow-hidden"
+                    name={`action-message`}
+                    rules={[{ required: true, message: '' }]}
+                  >
+                    <Checkbox></Checkbox>
+                  </Form.Item>
+                  <Typography className="font-medium text-red-500">
+                    Hãy kiểm tra lại các hành động bên dưới
+                  </Typography>
+                </>
+              )}
 
-          <div className="pb-[20px]">
-            <Spin spinning={checking}>
-              <div className="bg-white">
-                {productStatuses.map(
-                  (productStatus, index) =>
-                    !productStatus.status && (
-                      <div
-                        key={index}
-                        className="mx-2 flex items-center rounded-lg border-b py-2"
-                      >
-                        <div className="relative mr-4 flex h-[60px] w-[60px] flex-col">
-                          <ImageWithFallback
-                            src={productStatus.product.detail?.image || ''}
-                            alt="product image"
-                            getMockImage={() => {
-                              return ImageUtils.getRandomMockProductImageUrl();
-                            }}
-                            layout="fill"
-                          />
-                        </div>
-                        <div key={productStatus.product.key} className="  p-2">
-                          <Typography>{productStatus.product.name}</Typography>
-                          <Typography
-                            className={
-                              productStatus.status
-                                ? 'text-green-500'
-                                : 'text-red-500'
-                            }
-                          >
-                            {productStatus.status ? 'Còn hàng' : 'Hết hàng'}
-                          </Typography>
-                        </div>
-                      </div>
-                    )
-                )}
-              </div>
-            </Spin>
-          </div>
+              {notAvailableProducts.map((productStatus, index) => (
+                <div
+                  key={index}
+                  className="mx-2 flex items-center rounded-lg border-b py-2"
+                >
+                  <div className="relative mr-4 flex h-[60px] w-[60px] flex-col">
+                    <ImageWithFallback
+                      src={productStatus.product.detail?.image || ''}
+                      alt="product image"
+                      getMockImage={() => {
+                        return ImageUtils.getRandomMockProductImageUrl();
+                      }}
+                      layout="fill"
+                    />
+                  </div>
+                  <div key={productStatus.product.key} className="  p-2">
+                    <Typography className="font-medium">
+                      {productStatus.product.name}
+                    </Typography>
+                    {!productStatus.statusData.isStillAvailable && (
+                      <>
+                        {(productStatus.statusData.drugstoreQuantity ||
+                          0 > 0) && (
+                          <>
+                            <Typography className={'text-red-500'}>
+                              Hiện tại, nhà thuốc này chỉ còn{' '}
+                              {productStatus.statusData.drugstoreQuantity}{' '}
+                              {(productStatus.product.unit || '').toLowerCase()}
+                            </Typography>
+                            <Button
+                              type="primary"
+                              ghost
+                              className="mt-2"
+                              onClick={() => {
+                                changeProductData(productStatus.product, {
+                                  field: 'quantity',
+                                  value:
+                                    productStatus.statusData
+                                      .drugstoreQuantity || 1,
+                                });
+
+                                setProductStatuses(
+                                  productStatuses.filter(
+                                    (productStatus) =>
+                                      productStatus.product.key !==
+                                      productStatus.product.key
+                                  )
+                                );
+
+                                toastSuccess({
+                                  data: 'Cập nhật số lượng thành công',
+                                });
+                              }}
+                            >
+                              Cập nhật giỏ hàng
+                            </Button>
+                          </>
+                        )}
+
+                        {!productStatus.statusData.drugstoreQuantity && (
+                          <>
+                            <Typography className={'text-red-500'}>
+                              Hiện tại, nhà thuốc này đã hết hàng
+                            </Typography>
+                            <Button
+                              type="primary"
+                              ghost
+                              danger
+                              className="mt-2"
+                              onClick={() => {
+                                removeFromCart(productStatus.product, {
+                                  isShowConfirm: false,
+                                });
+
+                                setProductStatuses(
+                                  productStatuses.filter(
+                                    (productStatus) =>
+                                      productStatus.product.key !==
+                                      productStatus.product.key
+                                  )
+                                );
+
+                                toastSuccess({
+                                  data: 'Bỏ khỏi giỏ hàng thành công',
+                                });
+                              }}
+                            >
+                              Bỏ khỏi giỏ hàng
+                            </Button>
+                          </>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Spin>
         </>
       )}
     </>

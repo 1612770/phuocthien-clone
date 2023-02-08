@@ -25,6 +25,7 @@ import ShippingTypes from '@configs/enums/shipping-types.enum';
 import DrugStorePicker from '@modules/cart/DrugStorePicker';
 import CheckoutProvider, { useCheckout } from '@providers/CheckoutProvider';
 import AddressInput from '@modules/cart/AddressInput';
+import ImageUtils from '@libs/utils/image.utils';
 
 const CartPage: NextPageWithLayout<{
   paymentMethods: PaymentMethodModel[];
@@ -153,18 +154,18 @@ const CartPage: NextPageWithLayout<{
               Chọn cách thức nhận hàng
             </Typography.Title>
             <Radio.Group value={shippingType}>
-              <Radio
+              <Radio.Button
                 value={ShippingTypes.DELIVERY}
                 onChange={(e) => setShippingType(e.target.value)}
               >
                 Giao tận nơi
-              </Radio>
-              <Radio
+              </Radio.Button>
+              <Radio.Button
                 value={ShippingTypes.AT_STORE}
                 onChange={(e) => setShippingType(e.target.value)}
               >
                 Nhận tại nhà thuốc
-              </Radio>
+              </Radio.Button>
             </Radio.Group>
 
             {shippingType === ShippingTypes.DELIVERY && <AddressInput />}
@@ -215,9 +216,11 @@ const CartPage: NextPageWithLayout<{
                         width={40}
                         height={40}
                         layout="fixed"
-                        getMockImage={() => '/mock/checkout.png'}
+                        getMockImage={() =>
+                          ImageUtils.getRandomMockCheckoutUrl()
+                        }
                       />
-                      <div className="ml-2">
+                      <div className="ml-4">
                         <Typography className="font-medium">
                           {paymentMethod.name}
                         </Typography>
@@ -255,7 +258,7 @@ const CartPage: NextPageWithLayout<{
               loading={checkingOut}
               size="large"
               block
-              className="mt-2 h-[52px] bg-primary-light font-bold shadow-none"
+              className="mt-4 mb-2 h-[52px] bg-primary-light font-bold shadow-none"
             >
               ĐẶT HÀNG
             </Button>

@@ -1,85 +1,14 @@
-import { Button, Form, Input, InputRef, Modal, Space, Typography } from 'antd';
-import { Edit, Minus, Plus, X } from 'react-feather';
+import { Button, Input, Space, Typography } from 'antd';
+import { Minus, Plus, X } from 'react-feather';
 import Product from '@configs/models/product.model';
 import { useCart } from '@providers/CartProvider';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import ImageUtils from '@libs/utils/image.utils';
 import { useEffect, useRef, useState } from 'react';
-import { TextAreaRef } from 'antd/es/input/TextArea';
-
-function CartProductItemNoteInput({
-  cartProduct,
-}: {
-  cartProduct: { product: Product; quantity: number; note?: string };
-}) {
-  const [form] = Form.useForm();
-  const inputRef = useRef<TextAreaRef | null>(null);
-
-  const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-
-  const { changeProductData } = useCart();
-
-  useEffect(() => {
-    setInputValue(cartProduct.note || '');
-  }, [cartProduct]);
-
-  useEffect(() => {
-    if (open && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [open]);
-
-  return (
-    <>
-      <Button
-        type="link"
-        className={`p-0 text-gray-500`}
-        icon={<Edit size={14} className=" align-text-top" />}
-        onClick={() => {
-          inputRef.current?.focus();
-          setOpen(true);
-        }}
-      >
-        <Typography.Text
-          className={`${cartProduct.note ? 'text-black-100' : 'text-gray-500'}`}
-        >
-          &nbsp;{cartProduct.note || 'Thêm ghi chú'}
-        </Typography.Text>
-      </Button>
-
-      <Modal
-        open={open}
-        onOk={form.submit}
-        onCancel={() => {
-          setOpen(false);
-        }}
-        focusTriggerAfterClose={false}
-        title={`Nhập ghi chú cho sản phẩm ${cartProduct.product.name}`}
-      >
-        <Form
-          form={form}
-          onFinish={() => {
-            changeProductData(cartProduct.product, {
-              field: 'note',
-              value: inputValue,
-            });
-            setOpen(false);
-          }}
-        >
-          <Input.TextArea
-            rows={4}
-            ref={(ref) => {
-              inputRef.current = ref;
-            }}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-          ></Input.TextArea>
-        </Form>
-      </Modal>
-    </>
-  );
-}
+import CartProductItemNoteInput from './CartProductItemNoteInput';
+import { useCheckout } from '@providers/CheckoutProvider';
+import { ProductClient } from '@libs/client/Product';
+import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
 
 function CartProductItem({
   cartProduct,
@@ -89,7 +18,54 @@ function CartProductItem({
   const [quantity, setQuantity] = useState<number>(0);
 
   const { removeFromCart, changeProductData } = useCart();
+  const { currentDrugStoreKey } = useCheckout();
+  const { setConfirmData } = useAppConfirmDialog();
   const quantityInputRef = useRef(1);
+
+  const checkNewQuantityFitDrugstoreQuantity = async (newQuantity: number) => {
+    const product = new ProductClient(null, {});
+    const checkInventoryAtDrugStoresResponse =
+      await product.checkInventoryAtDrugStores({
+        key: cartProduct.product.key || '',
+      });
+
+    const foundDrugstore = (checkInventoryAtDrugStoresResponse.data || []).find(
+      (inventoryAtDrugStore) =>
+        inventoryAtDrugStore?.drugstore.key === currentDrugStoreKey
+    );
+
+    if (!foundDrugstore) {
+      setConfirmData({
+        title: 'Sản phẩm không còn ở nhà thuốc',
+        content:
+          'Sản phẩm này không còn trong kho của nhà thuốc này. Xác nhận loại bỏ khỏi giỏ hàng sản phẩm này?',
+        onOk: () => {
+          removeFromCart(cartProduct.product, {
+            isShowConfirm: false,
+          });
+        },
+      });
+
+      return false;
+    }
+
+    if (foundDrugstore.quantity < newQuantity) {
+      setConfirmData({
+        title: 'Số lượng sản phẩm không đủ',
+        content: `Số lượng sản phẩm này không đủ trong kho của nhà thuốc này. Số lượng sản phẩm trong kho là ${foundDrugstore.quantity}. Xác nhận cập nhật lại giỏ hàng?`,
+        onOk: () => {
+          changeProductData(cartProduct.product, {
+            field: 'quantity',
+            value: foundDrugstore.quantity,
+          });
+        },
+      });
+
+      return false;
+    }
+
+    return true;
+  };
 
   useEffect(() => {
     setQuantity(cartProduct.quantity);
@@ -168,10 +144,14 @@ function CartProductItem({
                   newQuantity = quantityInputRef.current;
                 }
 
-                changeProductData(cartProduct.product, {
-                  field: 'quantity',
-                  value: newQuantity,
-                });
+                if (currentDrugStoreKey) {
+                  checkNewQuantityFitDrugstoreQuantity(newQuantity);
+                } else {
+                  changeProductData(cartProduct.product, {
+                    field: 'quantity',
+                    value: newQuantity,
+                  });
+                }
               }}
               onChange={(e) => {
                 setQuantity(+e.target.value);
