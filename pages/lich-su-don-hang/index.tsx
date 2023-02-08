@@ -25,7 +25,7 @@ const OrdersPage: NextPageWithLayout = () => {
             <Link href="/">
               <a>
                 <div className="flex items-center">
-                  <ChevronLeft size={20} />
+                  <ChevronLeft size={14} />
                   <span>Trang chủ</span>
                 </div>
               </a>
