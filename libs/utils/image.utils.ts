@@ -22,11 +22,27 @@ class ImageUtils {
     '/mock/product-mock-10.jpg',
   ];
 
-  static CAPAIGN_MOCKs = [
+  static CAPAIGN_MOCKS = [
     '/mock/campaign-mock-1.png',
     '/mock/campaign-mock-2.jpeg',
     '/mock/campaign-mock-3.jpeg',
     '/mock/campaign-mock-4.png',
+  ];
+
+  static CHECKOUT_MOCKS = [
+    '/mock/checkout-1.png',
+    '/mock/checkout-2.png',
+    '/mock/checkout-3.png',
+    '/mock/checkout-4.png',
+    '/mock/checkout-5.png',
+  ];
+
+  static DRUGSTORE_MOCKS = [
+    '/mock/drug-store-1.png',
+    '/mock/drug-store-2.png',
+    '/mock/drug-store-3.png',
+    '/mock/drug-store-4.png',
+    '/mock/drug-store-5.png',
   ];
 
   static getFullImageUrl(path?: string) {
@@ -57,8 +73,20 @@ class ImageUtils {
   }
 
   static getRandomMockCampaignImageUrl() {
-    return ImageUtils.CAPAIGN_MOCKs[
-      Math.floor(Math.random() * ImageUtils.CAPAIGN_MOCKs.length)
+    return ImageUtils.CAPAIGN_MOCKS[
+      Math.floor(Math.random() * ImageUtils.CAPAIGN_MOCKS.length)
+    ];
+  }
+
+  static getRandomMockCheckoutUrl() {
+    return ImageUtils.CHECKOUT_MOCKS[
+      Math.floor(Math.random() * ImageUtils.CHECKOUT_MOCKS.length)
+    ];
+  }
+
+  static getRandomMockDrugstoreUrl() {
+    return ImageUtils.DRUGSTORE_MOCKS[
+      Math.floor(Math.random() * ImageUtils.DRUGSTORE_MOCKS.length)
     ];
   }
 }
