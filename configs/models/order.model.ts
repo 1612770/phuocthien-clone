@@ -1,3 +1,8 @@
+import OrderStatuses from '@configs/enums/order-statuses.enum';
+import DrugStore from './drug-store.model';
+import OrderDetailModel from './order-detail.model';
+import PaymentMethodModel from './payment-method.model';
+
 type OrderModel = Partial<{
   key: string;
   clientKey: string;
@@ -17,40 +22,11 @@ type OrderModel = Partial<{
   deliveryDistrict: string;
   deliveryWard: string;
   deliveryDetail: string;
-  status: number;
+  status: OrderStatuses;
   image: string;
-  details: [
-    {
-      key: string;
-      orderKey: string;
-      productKey: string;
-      index: number;
-      inventoryQuantity: number;
-      quantity: number;
-      price: number;
-      totalAmount: number;
-      note: string;
-    }
-  ];
-  paymentMethod: {
-    key: string;
-    index: number;
-    name: string;
-    description: string;
-    image: string;
-    visible: boolean;
-  };
-  drugstore: {
-    key: string;
-    code: string;
-    name: string;
-    address: string;
-    tel: string;
-    image: string;
-    isPrimary: boolean;
-    isActived: boolean;
-    visible: boolean;
-  };
+  details: OrderDetailModel[];
+  paymentMethod: PaymentMethodModel;
+  drugstore: DrugStore;
 }>;
 
 export default OrderModel;
