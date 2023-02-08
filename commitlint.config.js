@@ -45,6 +45,8 @@ module.exports = {
         'security',
         'changeset',
         'add',
+        'update',
+        'package',
       ],
     ],
   },
