@@ -41,7 +41,7 @@ export class OrderClient extends BaseClient {
     pageSize: number;
     drugstoreKey?: string;
     orderCode?: string;
-  }): Promise<APIResponse<WithPagination<OrderModel>[]>> {
+  }): Promise<APIResponse<WithPagination<OrderModel[]>>> {
     return await super.call('POST', `order/filter`, payload);
   }
 }
