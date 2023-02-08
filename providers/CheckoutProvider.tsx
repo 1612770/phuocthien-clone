@@ -211,7 +211,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
       });
 
       resetCart();
-      router.push(`/don-hang/${orderResponse.data?.key}`);
+      router.push(`/dat-hang-thanh-cong/${orderResponse.data?.key}`);
     } catch (error) {
       setCheckoutError(getErrorMessage(error));
     } finally {
