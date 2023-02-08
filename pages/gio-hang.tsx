@@ -109,7 +109,7 @@ const CartPage: NextPageWithLayout<{
               <Col xs={24} md={12}>
                 <Form.Item
                   name="name"
-                  className="w-full"
+                  className="mb-0 w-full"
                   rules={[
                     {
                       required: true,
@@ -127,7 +127,7 @@ const CartPage: NextPageWithLayout<{
               <Col xs={24} md={12}>
                 <Form.Item
                   name="tel"
-                  className="w-full"
+                  className="mb-0 w-full"
                   rules={[
                     {
                       required: true,
