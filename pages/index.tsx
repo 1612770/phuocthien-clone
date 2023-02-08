@@ -1,4 +1,4 @@
-import PrimaryLayout from 'components/layouts/PrimaryLayout/PrimaryLayout';
+import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import ProductCard from 'components/templates/ProductCard';
 import { NextPageWithLayout } from './page';
 import { Col, Row, Typography } from 'antd';
@@ -14,7 +14,7 @@ const Home: NextPageWithLayout<{
   featureProductsLists: { products: Product[]; productType: MenuModel }[];
 }> = ({ featureProductsLists }) => {
   return (
-    <div className='mb-8'>
+    <div className="mb-8">
       <HomepageCarousel />
 
       <div className="-mt-20 hidden lg:block">
@@ -107,7 +107,7 @@ export const getServerSideProps = async (
         })
       );
     } catch (error) {
-      console.log('file: index.tsx:181 | error', error);
+      console.error('file: index.tsx:181 | error', error);
     }
   }
 

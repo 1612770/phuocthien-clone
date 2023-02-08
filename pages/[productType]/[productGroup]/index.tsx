@@ -1,4 +1,4 @@
-import PrimaryLayout from 'components/layouts/PrimaryLayout/PrimaryLayout';
+import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import {
   Breadcrumb,
   Checkbox,
@@ -340,10 +340,6 @@ export const getServerSideProps: GetServerSideProps = async (
   staticProps.props.productGroup = productGroup.data;
   staticProps.props.productBrands = productBrands.data;
 
-  console.log(
-    'file: index.tsx:353 | context.query.brands',
-    context.query.brands
-  );
   const products = await productClient.getProducts({
     page: 1,
     pageSize: 20,

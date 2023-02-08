@@ -1,4 +1,4 @@
-import PrimaryLayout from 'components/layouts/PrimaryLayout/PrimaryLayout';
+import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { NextPageWithLayout } from './page';
 import { Button, Card, Form, Input, Typography } from 'antd';
 import { Check, Key, Phone, User } from 'react-feather';

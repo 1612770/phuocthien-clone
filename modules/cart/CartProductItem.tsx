@@ -60,7 +60,6 @@ function CartProductItemNoteInput({
         <Form
           form={form}
           onFinish={() => {
-            console.log('inputValue', inputValue);
             changeProductData(cartProduct.product, {
               field: 'note',
               value: inputValue,

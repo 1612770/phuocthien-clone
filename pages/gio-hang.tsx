@@ -1,4 +1,4 @@
-import PrimaryLayout from 'components/layouts/PrimaryLayout/PrimaryLayout';
+import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { NextPageWithLayout } from './page';
 import {
   Breadcrumb,
