@@ -3,17 +3,27 @@ import { NextPageWithLayout } from './page';
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import Product from '@configs/models/product.model';
 import { ProductClient } from '@libs/client/Product';
-import { Col, Row, Space, Tag, Typography } from 'antd';
+import { Pagination, Space, Tag, Typography } from 'antd';
 import Link from 'next/link';
 import ProductCard from '@components/templates/ProductCard';
+import WithPagination from '@configs/types/utils/with-pagination';
+import { useRouter } from 'next/router';
 
 const SearchPage: NextPageWithLayout<{
-  searchedProducts: Product[];
+  searchedProducts?: WithPagination<Product[]>;
 }> = ({ searchedProducts }) => {
+  const router = useRouter();
+
   return (
-    <div className="mx-auto  pb-8 lg:container">
-      <Typography.Title level={1} className="mt-8">
-        Tìm thấy {searchedProducts.length} sản phẩm
+    <div className="mx-auto  px-4 pb-8 lg:container lg:px-0">
+      <Typography.Title level={1} className="mt-8 font-medium">
+        {router.query['tu-khoa'] ? (
+          <>
+            Tìm thấy <b>{searchedProducts?.total || 0}</b> sản phẩm
+          </>
+        ) : (
+          <>Các sản phẩm phổ biến</>
+        )}
       </Typography.Title>
 
       <div className="mt-4">
@@ -39,31 +49,36 @@ const SearchPage: NextPageWithLayout<{
         </Space>
       </div>
 
-      {searchedProducts.length > 0 && (
+      {(searchedProducts?.total || 0) > 0 && (
         <div className="mt-4">
-          <Typography.Title
-            level={4}
-            className="mb-1 font-normal text-neutral-600"
-          >
-            Tìm thấy {searchedProducts.length} kết quả
-          </Typography.Title>
-
-          <Row gutter={[8, 8]} className="w-full">
-            {searchedProducts.map((product) => (
-              <Col
-                sm={24}
-                md={12}
-                lg={8}
-                xl={6}
-                className="w-full"
-                key={product.key}
-              >
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {searchedProducts?.data.map((product) => (
+              <div key={product.key}>
                 <ProductCard product={product} />
-              </Col>
+              </div>
             ))}
-          </Row>
+          </div>
         </div>
       )}
+
+      <div className="flex justify-center">
+        <Pagination
+          defaultCurrent={searchedProducts?.page}
+          pageSize={20}
+          onChange={(page) => {
+            router.replace({
+              pathname: '/tim-kiem',
+              query: {
+                ...router.query,
+                trang: page,
+              },
+            });
+          }}
+          total={searchedProducts?.total}
+          className="mt-4"
+          showSizeChanger={false}
+        />
+      </div>
     </div>
   );
 };
@@ -79,11 +94,11 @@ export const getServerSideProps: GetServerSideProps = async (
 ) => {
   const serverSideProps: {
     props: {
-      searchedProducts: Product[];
+      searchedProducts?: WithPagination<Product[]>;
     };
   } = {
     props: {
-      searchedProducts: [],
+      searchedProducts: undefined,
     },
   };
 
@@ -94,13 +109,13 @@ export const getServerSideProps: GetServerSideProps = async (
   const product = new ProductClient(null, {});
   const searchProducts = await product.getProducts({
     page: page ? parseInt(page) : 1,
-    pageSize: pageSize ? parseInt(pageSize) : 10,
+    pageSize: pageSize ? parseInt(pageSize) : 20,
     isPrescripted: false,
     filterByName: query,
   });
 
-  if (searchProducts.data?.data) {
-    serverSideProps.props.searchedProducts = searchProducts.data?.data || [];
+  if (searchProducts.data) {
+    serverSideProps.props.searchedProducts = searchProducts.data;
   }
 
   return serverSideProps;

@@ -62,7 +62,7 @@ function PrimaryHeader() {
             </a>
           </Link>
 
-          <Space size={16} className="hidden md:flex">
+          <Space size={0} className="hidden md:flex">
             <Link href="/gio-hang">
               <a className="hidden md:block">
                 <Badge count={cartProducts.length}>
@@ -82,7 +82,7 @@ function PrimaryHeader() {
             </Link>
 
             <Link href={'/lich-su-don-hang'}>
-              <a>
+              <a className="ml-4 inline-block">
                 <Button
                   type="primary"
                   className="hidden h-10 bg-primary-dark shadow-none md:block"
@@ -103,12 +103,17 @@ function PrimaryHeader() {
               size={0}
               className="hidden lg:flex"
             >
-              <Typography.Text className="text-center text-sm text-white">
-                Hotline (08h00 - 20h30)
-              </Typography.Text>
-              <Typography.Text className="text-center text-base font-semibold text-yellow-500">
-                1800599964
-              </Typography.Text>
+              <a
+                href="tel:1800599964"
+                className="ml-4 inline-flex flex-col text-center"
+              >
+                <Typography.Text className="text-center text-sm text-white">
+                  Hotline (08h00 - 20h30)
+                </Typography.Text>
+                <Typography.Text className="text-center text-base font-semibold text-yellow-500">
+                  1800599964
+                </Typography.Text>
+              </a>
             </Space>
           </Space>
         </div>
@@ -117,6 +122,7 @@ function PrimaryHeader() {
           <Input
             placeholder="Tìm kiếm sản phẩm..."
             size="large"
+            value={router.query['tu-khoa'] || ''}
             className={`h-10 rounded-tl-md rounded-tr-md rounded-bl-md rounded-br-md px-4`}
             suffix={<Search size={20} />}
             onClick={() => {

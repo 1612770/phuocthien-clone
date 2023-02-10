@@ -16,11 +16,14 @@ import { ProductClient } from '@libs/client/Product';
 import Product from '@configs/models/product.model';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import ProductCard from '@components/templates/ProductCard';
+import WithPagination from '@configs/types/utils/with-pagination';
+import Link from 'next/link';
 
 function ProductSearchInputMobile({ onBack = () => undefined }) {
   const [searchValue, setSearchValue] = useState('');
   const [searching, setSearching] = useState(false);
-  const [searchedProducts, setSearchedProducts] = useState<Product[]>([]);
+  const [searchedProducts, setSearchedProducts] =
+    useState<WithPagination<Product[]>>();
 
   const debouncedCurrentFocusGroup = useDebounce(searchValue, 500);
   const ignoreFirstCall = useRef(false);
@@ -44,7 +47,7 @@ function ProductSearchInputMobile({ onBack = () => undefined }) {
         filterByName: debouncedCurrentFocusGroup,
       });
 
-      setSearchedProducts(searchProducts.data?.data || []);
+      setSearchedProducts(searchProducts.data);
     } catch (error) {
       toastError({ data: error });
     } finally {
@@ -61,7 +64,7 @@ function ProductSearchInputMobile({ onBack = () => undefined }) {
 
   return (
     <div className="fixed top-0 left-0 bottom-0 right-0 z-10 h-full w-full overflow-auto overscroll-contain bg-white px-4">
-      <div className="my-4 flex items-center gap-2">
+      <div className="my-4 -mx-2 flex items-center gap-2">
         <Button
           shape="circle"
           type="default"
@@ -113,28 +116,51 @@ function ProductSearchInputMobile({ onBack = () => undefined }) {
         </Space>
       </div>
 
-      {searchedProducts.length > 0 && (
+      {(searchedProducts?.total || 0) > 0 && (
         <>
           {searchValue ? (
             <Typography className="my-4 text-lg">
-              Tìm thấy <b>{searchedProducts.length}</b> sản phẩm
+              Tìm thấy <b>{searchedProducts?.total || 0}</b> sản phẩm
             </Typography>
           ) : (
             <Typography className="my-4 text-lg">
               Các sản phẩm phổ biến
             </Typography>
           )}
+
           <List className="-mt-2">
-            {searchedProducts.map((searchedProduct) => (
-              <List.Item className="px-0" key={searchedProduct.key}>
+            {searchedProducts?.data.map((searchedProduct) => (
+              <List.Item
+                className="px-0"
+                key={searchedProduct.key}
+                onClick={() => {
+                  onBack();
+                }}
+              >
                 <ProductCard variant="list" product={searchedProduct} />
               </List.Item>
             ))}
           </List>
+
+          {(searchedProducts?.data.length || 0) <
+            (searchedProducts?.total || 0) && (
+            <Link href={`/tim-kiem?tu-khoa=${searchValue}`}>
+              <Button
+                block
+                className="mt-4 mb-4"
+                type="link"
+                onClick={() => {
+                  onBack();
+                }}
+              >
+                Xem tất cả
+              </Button>
+            </Link>
+          )}
         </>
       )}
 
-      {!searchedProducts.length && (
+      {!searchedProducts?.total && (
         <div className="my-4">
           <Empty
             description={
