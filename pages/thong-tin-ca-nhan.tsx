@@ -156,7 +156,7 @@ const ProfileInformationPage: NextPageWithLayout = () => {
               className="mb-4"
               rules={[
                 { required: true, message: 'Vui lòng nhập lại mật khẩu!' },
-                { len: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' },
+                { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' },
                 ({ getFieldValue }) => ({
                   validator(rule, value) {
                     if (!value || getFieldValue('password') === value) {

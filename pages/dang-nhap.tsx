@@ -47,7 +47,7 @@ const LoginPage: NextPageWithLayout = () => {
 
   return (
     <div className="mx-auto max-w-[420px] pb-8 lg:container">
-      <Card className="mt-8 flex flex-col items-center shadow-xl">
+      <Card className="mt-0 flex flex-col items-center border-0 border-solid border-gray-200 shadow-none md:mt-8 md:border md:shadow-xl">
         <Typography.Title level={3} className="text-center text-primary">
           Đăng nhập
         </Typography.Title>

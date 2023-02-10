@@ -3,7 +3,7 @@ import { NextPageWithLayout } from './page';
 import { Button, Card, Form, Input, Typography } from 'antd';
 import { Check, Key, Phone, User } from 'react-feather';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import OTPInput from '@components/templates/OTPInput';
 import { AuthClient } from '@libs/client/Auth';
 import { useAppMessage } from '@providers/AppMessageProvider';
@@ -29,11 +29,12 @@ const SignUpPage: NextPageWithLayout = () => {
   const [creatingAccount, setCreatingAccount] = useState(false);
 
   const { toastError } = useAppMessage();
-  const verifyTokenRef = useRef<string | undefined>();
 
   const submitOtp = async (otp: string) => {
+    const verifyToken = OtpUtils.getVerifyTokenFromLocalStorage(phone);
+
     try {
-      if (!verifyTokenRef.current) {
+      if (!verifyToken) {
         throw new Error('Vui lòng xác nhận số điện thoại trước khi tiếp tục');
       }
 
@@ -41,11 +42,9 @@ const SignUpPage: NextPageWithLayout = () => {
 
       const auth = new AuthClient(null, {});
       await auth.verifyOtp({
-        verifyToken: verifyTokenRef.current,
+        verifyToken,
         otpCode: otp,
       });
-
-      OtpUtils.removePhoneOutOfLocalStorage(phone);
 
       setStep(SignUpSteps.EnterUsernamePassword);
     } catch (error) {
@@ -59,6 +58,8 @@ const SignUpPage: NextPageWithLayout = () => {
     try {
       const auth = new AuthClient(null, {});
 
+      setSendingOtp(true);
+
       const verifyPhoneResponse = await auth.verifyPhone({
         phoneNumber: phone,
       });
@@ -69,13 +70,11 @@ const SignUpPage: NextPageWithLayout = () => {
         throw new Error(verifyPhoneResponse.data?.msg);
       }
 
-      // if (!OtpUtils.checkOtpNeedSending(phone)) {
-      //   setStep(SignUpSteps.EnterOTP);
+      if (!OtpUtils.checkOtpNeedSending(phone)) {
+        setStep(SignUpSteps.EnterOTP);
 
-      //   return;
-      // }
-
-      setSendingOtp(true);
+        return;
+      }
 
       const sendOtpResponse = await auth.sendOtp({ phoneNumber: phone });
 
@@ -85,10 +84,10 @@ const SignUpPage: NextPageWithLayout = () => {
         );
       }
 
-      // save token to ref hold for next step
-      verifyTokenRef.current = sendOtpResponse.data?.verifyToken;
-
-      OtpUtils.addPhoneToLocalStorage(phone);
+      OtpUtils.addPhoneToLocalStorage({
+        phone,
+        verifyToken: sendOtpResponse.data?.verifyToken,
+      });
 
       setStep(SignUpSteps.EnterOTP);
     } catch (error) {
@@ -99,8 +98,10 @@ const SignUpPage: NextPageWithLayout = () => {
   };
 
   const createAccount = async () => {
+    const verifyToken = OtpUtils.getVerifyTokenFromLocalStorage(phone);
+
     try {
-      if (!verifyTokenRef.current) {
+      if (!verifyToken) {
         throw new Error('Vui lòng xác nhận số điện thoại trước khi tiếp tục');
       }
 
@@ -109,9 +110,11 @@ const SignUpPage: NextPageWithLayout = () => {
       const auth = new AuthClient(null, {});
       await auth.createAccount({
         phoneNumber: phone,
-        verifyToken: verifyTokenRef.current,
+        verifyToken,
         password,
       });
+
+      OtpUtils.removePhoneOutOfLocalStorage(phone);
 
       setStep(SignUpSteps.Finish);
     } catch (error) {
@@ -123,7 +126,7 @@ const SignUpPage: NextPageWithLayout = () => {
 
   return (
     <div className="mx-auto max-w-[420px] pb-8 lg:container">
-      <Card className="mt-8 flex flex-col items-center shadow-xl">
+      <Card className="mt-0 flex flex-col items-center border-0 border-solid border-gray-200 shadow-none md:mt-8 md:border md:shadow-xl">
         {step === SignUpSteps.EnterPhone && (
           <>
             <Typography.Title level={3} className="text-center text-primary">
@@ -233,7 +236,7 @@ const SignUpPage: NextPageWithLayout = () => {
                 name="password"
                 rules={[
                   { required: true, message: 'Vui lòng nhập mật khẩu!' },
-                  { len: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' },
+                  { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' },
                 ]}
               >
                 <Input.Password
@@ -253,7 +256,7 @@ const SignUpPage: NextPageWithLayout = () => {
                 name="retypePassword"
                 rules={[
                   { required: true, message: 'Vui lòng nhập lại mật khẩu!' },
-                  { len: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' },
+                  { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' },
                   ({ getFieldValue }) => ({
                     validator(rule, value) {
                       if (!value || getFieldValue('password') === value) {

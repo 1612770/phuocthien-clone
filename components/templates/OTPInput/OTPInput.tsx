@@ -34,9 +34,18 @@ function OTPInput({
     try {
       setResendingOtp(true);
       const auth = new AuthClient(null, {});
-      await auth.sendOtp({ phoneNumber });
+      const sendOtpResponse = await auth.sendOtp({ phoneNumber });
 
-      OtpUtils.addPhoneToLocalStorage(phoneNumber);
+      if (!sendOtpResponse.data?.verifyToken) {
+        throw new Error(
+          'Chúng tôi không thể kết nối server, vui lòng thử lại sau ít phút'
+        );
+      }
+
+      OtpUtils.addPhoneToLocalStorage({
+        phone: phoneNumber,
+        verifyToken: sendOtpResponse.data?.verifyToken,
+      });
 
       toastSuccess({ data: 'Đã gửi lại mã OTP' });
     } catch (error) {

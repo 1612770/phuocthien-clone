@@ -1,18 +1,30 @@
 import LocalStorageUtils, { LocalStorageKeys } from './local-storage.utils';
 
+type LocalOTP = {
+  [key: string]: DateData;
+};
+
+type DateData = {
+  date?: number;
+  token?: string;
+};
+
 // 10 minutes
 const EXPIRED_TIME = 10 * 60 * 1000;
 
 const OtpUtils = {
-  addPhoneToLocalStorage: (phone: string) => {
+  addPhoneToLocalStorage: (payload: { phone: string; verifyToken: string }) => {
     const oldValuesString = LocalStorageUtils.getItem(
       LocalStorageKeys.OTP_SEND_TIME
     );
-    const oldValues = JSON.parse(oldValuesString || '{}');
+    const oldValues: LocalOTP = JSON.parse(oldValuesString || '{}');
 
     const values = {
       ...oldValues,
-      [phone]: new Date().getTime(),
+      [payload.phone]: {
+        date: new Date().getTime(),
+        token: payload.verifyToken,
+      },
     };
 
     LocalStorageUtils.setItem(
@@ -25,7 +37,7 @@ const OtpUtils = {
     const oldValuesString = LocalStorageUtils.getItem(
       LocalStorageKeys.OTP_SEND_TIME
     );
-    const oldValues = JSON.parse(oldValuesString || '{}');
+    const oldValues: LocalOTP = JSON.parse(oldValuesString || '{}');
 
     const values = {
       ...oldValues,
@@ -43,12 +55,17 @@ const OtpUtils = {
     const oldValuesString = LocalStorageUtils.getItem(
       LocalStorageKeys.OTP_SEND_TIME
     );
-    const oldValues = JSON.parse(oldValuesString || '{}');
+    const oldValues: LocalOTP = JSON.parse(oldValuesString || '{}');
 
-    const lastSendTime = oldValues[phone];
+    const phoneData = oldValues[phone];
+    const lastSendTime = phoneData?.date;
     if (lastSendTime) {
       const now = new Date().getTime();
       if (now - EXPIRED_TIME > lastSendTime) {
+        if (!phoneData?.token) {
+          return false;
+        }
+
         return true;
       }
 
@@ -56,6 +73,15 @@ const OtpUtils = {
     }
 
     return true;
+  },
+
+  getVerifyTokenFromLocalStorage: (phone: string) => {
+    const oldValuesString = LocalStorageUtils.getItem(
+      LocalStorageKeys.OTP_SEND_TIME
+    );
+    const oldValues: LocalOTP = JSON.parse(oldValuesString || '{}');
+
+    return oldValues[phone].token;
   },
 };
 
