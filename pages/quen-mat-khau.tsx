@@ -9,6 +9,7 @@ import { useAppMessage } from '@providers/AppMessageProvider';
 import { AuthClient } from '@libs/client/Auth';
 import OTPInput from '@components/templates/OTPInput';
 import ErrorCodes from '@configs/enums/error-codes.enum';
+import { REGEX_PHONE } from '@configs/env';
 
 export enum ForgotPasswordSteps {
   EnterPhoneNumber = 'EnterPhoneNumber',
@@ -152,10 +153,7 @@ const LoginPage: NextPageWithLayout = () => {
                 name="phone"
                 rules={[
                   {
-                    pattern: new RegExp(
-                      process.env?.NEXT_PUBLIC_REGEX_PHONE ||
-                        '([+84|84|0]+[3|5|7|8|9])+([0-9]{8})\b'
-                    ),
+                    pattern: new RegExp(REGEX_PHONE),
                     message: 'Vui lòng kiểm tra lại số điện thoại',
                   },
                   { required: true, message: 'Vui lòng điền số điện thoại!' },
