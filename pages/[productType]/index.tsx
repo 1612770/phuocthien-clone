@@ -1,5 +1,5 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Space } from 'antd';
+import { Breadcrumb, Empty, Space, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next';
 import { GeneralClient } from '@libs/client/General';
@@ -12,7 +12,7 @@ const ProductTypesPage: NextPageWithLayout<{
   productType?: MenuModel;
 }> = ({ productType }) => {
   return (
-    <div className="grid px-4 pb-2 lg:container lg:px-0">
+    <div className="grid px-4 pb-4 lg:container lg:px-0">
       <Breadcrumb className="mt-4 mb-2">
         <Breadcrumb.Item>
           <Link href="/">
@@ -22,13 +22,7 @@ const ProductTypesPage: NextPageWithLayout<{
         <Breadcrumb.Item>{productType?.name}</Breadcrumb.Item>
       </Breadcrumb>
 
-      {/* <img
-        className="mb-4 block aspect-video max-h-[240px] w-full object-cover"
-        src="https://phuocthien.vn/Images/ImageUpload/2022-11/TOCDE.png"
-        alt="banner image"
-      /> */}
-
-      <Space size={[12, 12]} wrap>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6 md:gap-4 lg:grid-cols-6 xl:grid-cols-8">
         {productType?.productGroups?.map((productGroup) => (
           <ProductGroup
             key={productGroup?.key}
@@ -39,7 +33,15 @@ const ProductTypesPage: NextPageWithLayout<{
             )}/${UrlUtils.generateSlug(productGroup?.name, productGroup?.key)}`}
           />
         ))}
-      </Space>
+      </div>
+
+      {!productType?.productGroups?.length && (
+        <div className="flex min-h-[400px] w-full items-center justify-center py-8">
+          <Empty
+            description={<Typography>Không tìm thấy danh mục nào</Typography>}
+          ></Empty>
+        </div>
+      )}
     </div>
   );
 };
