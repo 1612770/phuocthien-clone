@@ -38,3 +38,6 @@ next-env.d.ts
 # editor
 .vscode
 .env
+
+sshbash.sh
+deploy.sh
