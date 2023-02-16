@@ -10,10 +10,12 @@ const AuthContext = React.createContext<{
   userData?: ProfileModel;
   setUserData: (payload: ProfileModel) => void;
   logOut: () => void;
+  isUserLoggedIn: boolean;
 }>({
   userData: undefined,
   setUserData: () => undefined,
   logOut: () => undefined,
+  isUserLoggedIn: false,
 });
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -55,8 +57,12 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const isUserLoggedIn = !!userData?.id;
+
   return (
-    <AuthContext.Provider value={{ userData, setUserData, logOut }}>
+    <AuthContext.Provider
+      value={{ userData, setUserData, logOut, isUserLoggedIn }}
+    >
       {children}
     </AuthContext.Provider>
   );

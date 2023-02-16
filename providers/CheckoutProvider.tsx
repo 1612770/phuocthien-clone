@@ -5,6 +5,10 @@ import { getErrorMessage } from '@libs/helpers';
 import { useRouter } from 'next/router';
 import { OrderClient } from '@libs/client/Order';
 import Product from '@configs/models/product.model';
+import { useAuth } from './AuthProvider';
+import SessionStorageUtils, {
+  SessionStorageKeys,
+} from '@libs/utils/session-storage.utils';
 
 const provincesOfVietNamJSON: {
   [key: string]: {
@@ -148,6 +152,7 @@ const CheckoutContext = React.createContext<{
 function CheckoutProvider({ children }: { children: React.ReactNode }) {
   const { cartProducts, resetCart } = useCart();
   const router = useRouter();
+  const { isUserLoggedIn } = useAuth();
 
   const [name, setName] = useState('');
   const [tel, setTel] = useState('');
@@ -242,6 +247,14 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
       });
 
       resetCart();
+
+      if (!isUserLoggedIn) {
+        SessionStorageUtils.setItem(
+          SessionStorageKeys.NON_AUTHENTICATED_CHECKED_OUT_CART_PRODUCTS,
+          JSON.stringify(orderResponse.data)
+        );
+      }
+
       router.push(`/dat-hang-thanh-cong/${orderResponse.data?.key}`);
     } catch (error) {
       setCheckoutError(getErrorMessage(error));
