@@ -13,6 +13,7 @@ import IMAGES from '@configs/assests/images';
 import Link from 'next/link';
 import { useFullMenu } from '@providers/FullMenuProvider';
 import UrlUtils from '@libs/utils/url.utils';
+import ImageWithFallback from '@components/templates/ImageWithFallback';
 
 function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
   const { fullMenu } = useFullMenu();
@@ -76,7 +77,13 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
       >
         {fullMenu.map((menu, idx) => (
           <Collapse.Panel
-            header={<Typography className="text-base">{menu.name}</Typography>}
+            header={
+              <span className=" flex items-center">
+                <Typography className=" text-base font-medium uppercase text-gray-700">
+                  {menu.name}
+                </Typography>
+              </span>
+            }
             key={idx}
           >
             <div
@@ -85,6 +92,19 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
                 onClose?.(e);
               }}
             >
+              <Link href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}>
+                <a className="my-2 -mx-4 flex items-center">
+                  <ImageWithFallback
+                    src={menu?.image || ''}
+                    width={32}
+                    height={32}
+                  />
+                  <Typography className="ml-2 font-medium">
+                    Tất cả {menu?.name}
+                  </Typography>
+                </a>
+              </Link>
+
               {!!menu.productGroups?.length &&
                 menu.productGroups?.map((group, idx) => (
                   <Link
@@ -94,8 +114,13 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
                       menu?.key
                     )}/${UrlUtils.generateSlug(group?.name, group?.key)}`}
                   >
-                    <a>
-                      <Typography className="my-2">{group?.name}</Typography>
+                    <a className="my-2 -mx-4 flex items-center">
+                      <ImageWithFallback
+                        src={group?.image || ''}
+                        width={32}
+                        height={32}
+                      />
+                      <Typography className="ml-2">{group?.name}</Typography>
                     </a>
                   </Link>
                 ))}
