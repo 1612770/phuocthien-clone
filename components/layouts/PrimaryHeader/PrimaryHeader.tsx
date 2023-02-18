@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import PrimaryHeaderMenu from './PrimaryHeaderMenu';
 import ProductSearchInput from './ProductSearchInput';
 import ProductSearchInputMobile from './ProductSearchInputMobile';
-import PrimaryHeaderMenuDrawer from './PrimaryheaderMenuDrawer';
+import PrimaryHeaderMenuDrawer from './PrimaryHeaderMenuDrawer';
 
 function PrimaryHeader() {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
