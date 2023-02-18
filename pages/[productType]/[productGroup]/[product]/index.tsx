@@ -1,5 +1,5 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Col, List, Row, Typography } from 'antd';
+import { Breadcrumb, Button, Col, List, Modal, Row, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
@@ -8,11 +8,68 @@ import UrlUtils from '@libs/utils/url.utils';
 import Product from '@configs/models/product.model';
 import ProductCard from '@components/templates/ProductCard';
 import ProductCarousel from '@modules/products/ProductCarousel';
-import { MapPin, Phone } from 'react-feather';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import DrugStore from '@configs/models/drug-store.model';
 import AddToCartButton from '@modules/products/AddToCartButton';
 import ProductBonusSection from '@modules/products/ProductBonusSection';
+import ImageWithFallback from '@components/templates/ImageWithFallback';
+import ImageUtils from '@libs/utils/image.utils';
+import { OfferClient } from '@libs/client/Offer';
+import OfferModel from '@configs/models/offer.model';
+
+function ProductCardDetail(
+  props: React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  >
+) {
+  const divRef = useRef<HTMLDivElement | null>(null);
+  const [showViewMoreButton, setShowViewMoreButton] = useState(false);
+  const [openFullModal, setOpenFullModal] = useState(false);
+
+  useEffect(() => {
+    setShowViewMoreButton((divRef.current?.scrollHeight || 0) > 500);
+  }, [props.dangerouslySetInnerHTML?.__html]);
+
+  return (
+    <div className="relative pb-12">
+      <div
+        {...props}
+        className=" max-h-[500px] overflow-hidden"
+        ref={(ref) => {
+          divRef.current = ref;
+        }}
+      ></div>
+      {showViewMoreButton && (
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white to-transparent">
+          <div className="flex h-full w-full items-center justify-center py-4">
+            <Button
+              type="primary"
+              ghost
+              onClick={() => {
+                setOpenFullModal(true);
+              }}
+            >
+              Xem thêm
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <Modal
+        title="Modal 1000px width"
+        footer={null}
+        style={{ top: 20, bottom: 20 }}
+        open={openFullModal}
+        onOk={() => setOpenFullModal(false)}
+        onCancel={() => setOpenFullModal(false)}
+        width={1000}
+      >
+        <div {...props}></div>
+      </Modal>
+    </div>
+  );
+}
 
 const ProductPage: NextPageWithLayout<{
   product?: Product;
@@ -79,11 +136,12 @@ const ProductPage: NextPageWithLayout<{
         <Breadcrumb.Item>{product?.name}</Breadcrumb.Item>
       </Breadcrumb>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6 xl:grid-cols-[400px_minmax(200px,_1fr)_280px]">
-        <div className="col-span-2 h-[500px] xl:sticky xl:top-[32px] xl:col-span-1">
+      <div className="grid  grid-cols-1 gap-4 lg:grid-cols-[minmax(200px,_1fr)_280px] lg:gap-6 xl:grid-cols-[400px_minmax(200px,_1fr)_280px]">
+        <div className="h-[500px] lg:col-span-2 xl:sticky xl:top-[32px] xl:col-span-1">
           <ProductCarousel images={carouselImages} />
         </div>
-        <div className="xl:sticky xl:top-[32px]">
+
+        <div className="relative xl:sticky xl:top-[32px]">
           <div className="flex flex-col">
             <Typography.Title className="mx-0 mt-2 text-2xl font-medium">
               {product?.name}
@@ -209,47 +267,52 @@ const ProductPage: NextPageWithLayout<{
           </div>
         </div>
 
-        <div className="w-full rounded-lg border border-solid border-gray-200 p-4">
-          <Typography.Title level={4} className="text-center text-sm">
-            Có {drugStores.length} nhà thuốc
-          </Typography.Title>
-          <List>
-            {drugStores.map((drugStore) => (
-              <List.Item className="py-2 px-0" key={drugStore.key}>
-                <div>
-                  <Typography className="my-1 text-xs font-medium">
-                    {drugStore.name}
-                  </Typography>
-                  {drugStore.tel && (
-                    <a href={`tel:${drugStore.tel}`}>
-                      <Typography className="my-1 text-xs text-gray-500">
-                        <Phone
-                          className="mr-2 align-text-bottom text-sm"
-                          size={14}
-                        />
-                        {drugStore.tel}
+        <div className="w-full ">
+          <div className=" rounded-lg border border-solid  border-gray-200">
+            <Typography.Title
+              level={5}
+              className="px-4 pt-6 font-medium uppercase"
+            >
+              Có <b className="text-primary">{drugStores.length}</b> nhà thuốc
+              có sẵn
+            </Typography.Title>
+            <List className="max-h-[440px] overflow-y-scroll px-4">
+              {drugStores.map((drugStore) => (
+                <List.Item className="py-4 px-0" key={drugStore.key}>
+                  <div className="flex items-center">
+                    <ImageWithFallback
+                      src={drugStore.image || ''}
+                      width={32}
+                      height={32}
+                      layout="fixed"
+                      getMockImage={() =>
+                        ImageUtils.getRandomMockDrugstoreUrl()
+                      }
+                    />
+                    <div className="ml-2">
+                      <Typography className=" text-xs font-medium">
+                        {drugStore.name}
                       </Typography>
-                    </a>
-                  )}
-                  {drugStore.address && (
-                    <Typography className="my-1 text-xs text-gray-500">
-                      <MapPin
-                        className="mr-2  align-text-bottom text-sm"
-                        size={14}
-                      />
-                      {drugStore.address}
-                    </Typography>
-                  )}
-                </div>
-              </List.Item>
-            ))}
-          </List>
+                      <Typography className="text-xs text-gray-600">
+                        {drugStore.address}
+                      </Typography>
+                      <a href={`tel:${drugStore.tel}`}>
+                        <Typography className="text-xs text-gray-600">
+                          {drugStore.tel}
+                        </Typography>
+                      </a>
+                    </div>
+                  </div>
+                </List.Item>
+              ))}
+            </List>
+          </div>
         </div>
       </div>
 
       {product.detail?.description && (
         <div className="grid grid-cols-1">
-          <div className="pl-2 lg:container lg:pl-0">
+          <div className="lg:container lg:pl-0">
             <Typography.Title
               level={3}
               className="mb-0 mt-6 uppercase lg:mb-4 lg:mt-12"
@@ -258,7 +321,11 @@ const ProductPage: NextPageWithLayout<{
             </Typography.Title>
           </div>
 
-          {product.detail?.description}
+          <ProductCardDetail
+            dangerouslySetInnerHTML={{
+              __html: product.detail?.description,
+            }}
+          />
         </div>
       )}
 
@@ -278,8 +345,6 @@ const ProductPage: NextPageWithLayout<{
               trong nhóm {product?.productGroup?.name}
             </Typography.Title>
           </div>
-
-          {product.detail?.description}
         </div>
         {otherProducts.length > 0 && (
           <div className="lg:container">
@@ -314,42 +379,58 @@ export const getServerSideProps = async (
       product?: Product;
       otherProducts: Product[];
       drugStores: DrugStore[];
+      offers: OfferModel[];
     };
   } = {
     props: {
       otherProducts: [],
       drugStores: [],
+      offers: [],
     },
   };
 
   const productClient = new ProductClient(context, {});
-  const product = await productClient.getProduct({
-    key: UrlUtils.getKeyFromParam(context.params?.product as string),
-  });
-  if (product.data) {
-    serverSideProps.props.product = product.data;
-  }
+  const offerClient = new OfferClient(context, {});
 
-  const drugStores = await productClient.checkInventoryAtDrugStores({
-    key: UrlUtils.getKeyFromParam(context.params?.product as string),
-  });
+  try {
+    const product = await productClient.getProduct({
+      key: UrlUtils.getKeyFromParam(context.params?.product as string),
+    });
 
-  if (drugStores.data) {
-    serverSideProps.props.drugStores = drugStores.data.map(
-      (drugStore) => drugStore.drugstore
-    );
-  }
+    if (product.data) {
+      serverSideProps.props.product = product.data;
+    }
 
-  const products = await productClient.getProducts({
-    page: 1,
-    pageSize: 10,
-    productTypeKey: context.params?.productTypeKey as string,
-    productGroupKey: context.params?.productGroupKey as string,
-    isPrescripted: false,
-  });
+    const drugStores = await productClient.checkInventoryAtDrugStores({
+      key: UrlUtils.getKeyFromParam(context.params?.product as string),
+    });
 
-  if (products.data) {
-    serverSideProps.props.otherProducts = products.data.data.slice(0, 4);
+    if (drugStores.data) {
+      serverSideProps.props.drugStores = drugStores.data.map(
+        (drugStore) => drugStore.drugstore
+      );
+    }
+
+    const [products, offers] = await Promise.all([
+      productClient.getProducts({
+        page: 1,
+        pageSize: 10,
+        productTypeKey: context.params?.productTypeKey as string,
+        productGroupKey: context.params?.productGroupKey as string,
+        isPrescripted: false,
+      }),
+      offerClient.getAllActiveOffers(),
+    ]);
+
+    if (offers.data) {
+      serverSideProps.props.offers = offers.data;
+    }
+
+    if (products.data) {
+      serverSideProps.props.otherProducts = products.data.data.slice(0, 4);
+    }
+  } catch (error) {
+    console.error(error);
   }
 
   return serverSideProps;
