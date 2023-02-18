@@ -19,8 +19,8 @@ const OrdersPage: NextPageWithLayout = () => {
 
   return (
     <div className="min-h-screen min-w-full bg-primary-background">
-      <div className="container grid pt-4 ">
-        <Breadcrumb className="mb-2">
+      <div className="container grid pt-4">
+        <Breadcrumb className="mb-2 px-2">
           <Breadcrumb.Item>
             <Link href="/">
               <a>
