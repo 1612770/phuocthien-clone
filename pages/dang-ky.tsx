@@ -9,6 +9,7 @@ import { AuthClient } from '@libs/client/Auth';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import OtpUtils from '@libs/utils/otp.utils';
 import ErrorCodes from '@configs/enums/error-codes.enum';
+import { REGEX_PHONE } from '@configs/env';
 
 enum SignUpSteps {
   EnterPhone = 'EnterPhone',
@@ -149,7 +150,7 @@ const SignUpPage: NextPageWithLayout = () => {
                 name="phone"
                 rules={[
                   {
-                    pattern: new RegExp(process.env.NEXT_PUBLIC_REGEX_PHONE),
+                    pattern: new RegExp(REGEX_PHONE),
                     message: 'Vui lòng kiểm tra lại số điện thoại',
                   },
                   { required: true, message: 'Vui lòng điền số điện thoại!' },

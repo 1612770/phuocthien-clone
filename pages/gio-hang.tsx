@@ -26,6 +26,7 @@ import DrugStorePicker from '@modules/cart/DrugStorePicker';
 import CheckoutProvider, { useCheckout } from '@providers/CheckoutProvider';
 import AddressInput from '@modules/cart/AddressInput';
 import ImageUtils from '@libs/utils/image.utils';
+import { REGEX_PHONE } from '@configs/env';
 
 const CartPage: NextPageWithLayout<{
   paymentMethods: PaymentMethodModel[];
@@ -135,7 +136,7 @@ const CartPage: NextPageWithLayout<{
                       message: 'Số điện thoại không được để trống',
                     },
                     {
-                      pattern: new RegExp(process.env.NEXT_PUBLIC_REGEX_PHONE),
+                      pattern: new RegExp(REGEX_PHONE),
                       message: 'Vui lòng kiểm tra lại số điện thoại',
                     },
                   ]}

@@ -3,12 +3,12 @@ import Link from 'next/link';
 import { Menu, Search, ShoppingCart, User } from 'react-feather';
 import IMAGES from 'configs/assests/images';
 import { useState } from 'react';
-import PrimaryHeaderMenuDrawer from './PrimaryHeaderMenuDrawer';
 import { useCart } from '@providers/CartProvider';
 import { useRouter } from 'next/router';
 import PrimaryHeaderMenu from './PrimaryHeaderMenu';
 import ProductSearchInput from './ProductSearchInput';
 import ProductSearchInputMobile from './ProductSearchInputMobile';
+import PrimaryHeaderMenuDrawer from './PrimaryheaderMenuDrawer';
 
 function PrimaryHeader() {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
