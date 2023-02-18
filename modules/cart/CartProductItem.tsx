@@ -9,6 +9,8 @@ import CartProductItemNoteInput from './CartProductItemNoteInput';
 import { useCheckout } from '@providers/CheckoutProvider';
 import { ProductClient } from '@libs/client/Product';
 import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
+import Link from 'next/link';
+import UrlUtils from '@libs/utils/url.utils';
 
 function CartProductItem({
   cartProduct,
@@ -133,9 +135,24 @@ function CartProductItem({
       </div>
       <div className="flex flex-grow flex-wrap gap-2">
         <div className="flex flex-grow basis-[300px] flex-col items-start">
-          <Typography.Text className="mt-2">
-            {cartProduct.product.name}
-          </Typography.Text>
+          <Link
+            href={`/${UrlUtils.generateSlug(
+              cartProduct.product.productType?.name,
+              cartProduct.product.productType?.key
+            )}/${UrlUtils.generateSlug(
+              cartProduct.product.productGroup?.name,
+              cartProduct.product.productGroup?.key
+            )}/${UrlUtils.generateSlug(
+              cartProduct.product.name,
+              cartProduct.product.key
+            )}`}
+          >
+            <a>
+              <Typography.Text className="mt-2">
+                {cartProduct.product.name}
+              </Typography.Text>
+            </a>
+          </Link>
 
           <CartProductItemNoteInput cartProduct={cartProduct} />
         </div>
