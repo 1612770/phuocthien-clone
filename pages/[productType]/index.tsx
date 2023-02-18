@@ -1,5 +1,5 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Empty, Space, Typography } from 'antd';
+import { Breadcrumb, Empty, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next';
 import { GeneralClient } from '@libs/client/General';
