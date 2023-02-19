@@ -8,15 +8,17 @@ import {
   Space,
   Typography,
 } from 'antd';
-import { ChevronDown, User, X } from 'react-feather';
+import { Book, ChevronDown, LogOut, User, X } from 'react-feather';
 import IMAGES from '@configs/assests/images';
 import Link from 'next/link';
 import { useFullMenu } from '@providers/FullMenuProvider';
 import UrlUtils from '@libs/utils/url.utils';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
+import { useAuth } from '@providers/AuthProvider';
 
 function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
   const { fullMenu } = useFullMenu();
+  const { logOut } = useAuth();
 
   return (
     <Drawer
@@ -64,6 +66,39 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
             </Button>
           </a>
         </Link>
+
+        <Link href="/thong-tin-ca-nhan">
+          <Button
+            onClick={onClose}
+            type="primary"
+            className="h-10 w-full bg-primary-dark shadow-none"
+          >
+            <div className="flex items-center gap-2">
+              <Space align="center" className="h-full w-full">
+                <Book className="text-white" width={20} height={20} />
+                <Typography.Text className="text-white">
+                  Thông tin cá nhân
+                </Typography.Text>
+              </Space>
+            </div>
+          </Button>
+        </Link>
+
+        <Button
+          onClick={logOut}
+          ghost
+          type="primary"
+          className="h-10 w-full shadow-none"
+        >
+          <div className="flex items-center gap-2">
+            <Space align="center" className="h-full w-full">
+              <LogOut className="" width={20} height={20} />
+              <Typography.Text className="text-primary">
+                Đăng xuất
+              </Typography.Text>
+            </Space>
+          </div>
+        </Button>
       </Space>
       <Divider className="mt-4 mb-0" />
       <Collapse
