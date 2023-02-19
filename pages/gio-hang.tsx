@@ -27,10 +27,14 @@ import CheckoutProvider, { useCheckout } from '@providers/CheckoutProvider';
 import AddressInput from '@modules/cart/AddressInput';
 import ImageUtils from '@libs/utils/image.utils';
 import { REGEX_PHONE } from '@configs/env';
+import { OfferClient } from '@libs/client/Offer';
+import OfferModel from '@configs/models/offer.model';
+import PromotionCodeInput from '@modules/cart/PromotionCodeInput';
 
 const CartPage: NextPageWithLayout<{
   paymentMethods: PaymentMethodModel[];
-}> = ({ paymentMethods }) => {
+  offers: OfferModel[];
+}> = ({ paymentMethods, offers }) => {
   const { cartProducts } = useCart();
   const {
     name,
@@ -52,13 +56,10 @@ const CartPage: NextPageWithLayout<{
     checkingOut,
 
     checkout,
-  } = useCheckout();
 
-  const totalPrice = cartProducts.reduce(
-    (total, cartProduct) =>
-      total + (cartProduct.product.retailPrice || 0) * cartProduct.quantity,
-    0
-  );
+    totalRawPrice,
+    totalPrice,
+  } = useCheckout();
 
   const totalProducts = cartProducts.reduce(
     (total, cartProduct) => total + (Number(cartProduct.quantity) || 0),
@@ -97,7 +98,7 @@ const CartPage: NextPageWithLayout<{
                 Tạm tính ({totalProducts} sản phẩm):
               </Typography.Text>
               <Typography.Text className="font-bold text-primary-light">
-                {totalPrice.toLocaleString('it-IT', {
+                {totalRawPrice.toLocaleString('it-IT', {
                   style: 'currency',
                   currency: 'VND',
                 })}
@@ -234,7 +235,10 @@ const CartPage: NextPageWithLayout<{
             </Form.Item>
 
             <Divider />
-            <div className="flex items-center justify-between gap-4">
+
+            <PromotionCodeInput offers={offers} />
+
+            <div className="mt-4 flex items-center justify-between gap-4">
               <Typography.Title className="m-0" level={4}>
                 Tổng tiền
               </Typography.Title>
@@ -305,15 +309,26 @@ export const getServerSideProps = async (
   const serverSideProps: {
     props: {
       paymentMethods: PaymentMethodModel[];
+      offers: OfferModel[];
     };
   } = {
     props: {
       paymentMethods: [],
+      offers: [],
     },
   };
 
   const general = new GeneralClient(context, {});
-  const paymentMethods = await general.getPaymentMethods();
+  const offerClient = new OfferClient(context, {});
+
+  const [paymentMethods, offers] = await Promise.all([
+    general.getPaymentMethods(),
+    offerClient.getAllActiveOffers(),
+  ]);
+
+  if (offers.data) {
+    serverSideProps.props.offers = offers.data;
+  }
 
   serverSideProps.props.paymentMethods =
     paymentMethods.data?.filter(

@@ -9,6 +9,7 @@ import { useAuth } from './AuthProvider';
 import SessionStorageUtils, {
   SessionStorageKeys,
 } from '@libs/utils/session-storage.utils';
+import OfferModel from '@configs/models/offer.model';
 
 const provincesOfVietNamJSON: {
   [key: string]: {
@@ -106,6 +107,12 @@ const CheckoutContext = React.createContext<{
     | undefined;
 
   checkout: () => void;
+
+  offers: OfferModel[];
+  setOffers: (offers: OfferModel[]) => void;
+
+  totalRawPrice: number;
+  totalPrice: number;
 }>({
   name: '',
   setName: () => undefined,
@@ -147,6 +154,12 @@ const CheckoutContext = React.createContext<{
   currentDistrict: undefined,
 
   checkout: () => undefined,
+
+  offers: [],
+  setOffers: () => undefined,
+
+  totalRawPrice: 0,
+  totalPrice: 0,
 });
 
 function CheckoutProvider({ children }: { children: React.ReactNode }) {
@@ -186,6 +199,8 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
   const [checkingOut, setCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
 
+  const [offers, setOffers] = useState<OfferModel[]>([]);
+
   const currentProvince = useMemo(() => {
     if (!currentProvinceKey) {
       return undefined;
@@ -201,10 +216,31 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
     return currentProvince?.['quan-huyen'][currentDistrictKey];
   }, [currentDistrictKey, currentProvince]);
 
-  const totalPrice = cartProducts.reduce(
-    (total, cartProduct) =>
-      total + (cartProduct.product.retailPrice || 0) * cartProduct.quantity,
-    0
+  const totalRawPrice = useMemo(
+    () =>
+      cartProducts.reduce(
+        (total, cartProduct) =>
+          total + (cartProduct.product.retailPrice || 0) * cartProduct.quantity,
+        0
+      ),
+    [cartProducts]
+  );
+
+  const totalPrice = useMemo(
+    () =>
+      cartProducts.reduce((total, cartProduct) => {
+        const calculatedTotal =
+          total + (cartProduct.product.retailPrice || 0) * cartProduct.quantity;
+
+        for (const offer of offers) {
+          if ((offer.minAmountOffer || 0) <= calculatedTotal) {
+            return calculatedTotal - (offer?.offerVal || 0);
+          }
+        }
+
+        return calculatedTotal;
+      }, 0),
+    [cartProducts, offers]
   );
 
   const checkout = async () => {
@@ -315,6 +351,12 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         setCheckingOut,
 
         checkout,
+
+        offers,
+        setOffers,
+
+        totalRawPrice,
+        totalPrice,
       }}
     >
       {children}

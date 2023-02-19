@@ -1,5 +1,5 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Button, Col, List, Modal, Row, Typography } from 'antd';
+import { Breadcrumb, Col, List, Row, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
@@ -8,7 +8,7 @@ import UrlUtils from '@libs/utils/url.utils';
 import Product from '@configs/models/product.model';
 import ProductCard from '@components/templates/ProductCard';
 import ProductCarousel from '@modules/products/ProductCarousel';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo } from 'react';
 import DrugStore from '@configs/models/drug-store.model';
 import AddToCartButton from '@modules/products/AddToCartButton';
 import ProductBonusSection from '@modules/products/ProductBonusSection';
@@ -16,66 +16,14 @@ import ImageWithFallback from '@components/templates/ImageWithFallback';
 import ImageUtils from '@libs/utils/image.utils';
 import { OfferClient } from '@libs/client/Offer';
 import OfferModel from '@configs/models/offer.model';
-
-function ProductCardDetail(
-  props: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  >
-) {
-  const divRef = useRef<HTMLDivElement | null>(null);
-  const [showViewMoreButton, setShowViewMoreButton] = useState(false);
-  const [openFullModal, setOpenFullModal] = useState(false);
-
-  useEffect(() => {
-    setShowViewMoreButton((divRef.current?.scrollHeight || 0) > 500);
-  }, [props.dangerouslySetInnerHTML?.__html]);
-
-  return (
-    <div className="relative pb-12">
-      <div
-        {...props}
-        className=" max-h-[500px] overflow-hidden"
-        ref={(ref) => {
-          divRef.current = ref;
-        }}
-      ></div>
-      {showViewMoreButton && (
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white to-transparent">
-          <div className="flex h-full w-full items-center justify-center py-4">
-            <Button
-              type="primary"
-              ghost
-              onClick={() => {
-                setOpenFullModal(true);
-              }}
-            >
-              Xem thêm
-            </Button>
-          </div>
-        </div>
-      )}
-
-      <Modal
-        title="Modal 1000px width"
-        footer={null}
-        style={{ top: 20, bottom: 20 }}
-        open={openFullModal}
-        onOk={() => setOpenFullModal(false)}
-        onCancel={() => setOpenFullModal(false)}
-        width={1000}
-      >
-        <div {...props}></div>
-      </Modal>
-    </div>
-  );
-}
+import ProductCardDetail from '@modules/products/ProductCardDetail';
 
 const ProductPage: NextPageWithLayout<{
   product?: Product;
   otherProducts: Product[];
   drugStores: DrugStore[];
-}> = ({ product, otherProducts, drugStores }) => {
+  offers: OfferModel[];
+}> = ({ product, otherProducts, drugStores, offers }) => {
   const carouselImages: string[] = useMemo(() => {
     let memoCarouselImages: string[] = [];
 
@@ -147,7 +95,7 @@ const ProductPage: NextPageWithLayout<{
               {product?.name}
             </Typography.Title>
 
-            <ProductBonusSection />
+            <ProductBonusSection offers={offers} />
 
             <div className="flex w-full items-center justify-between gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg lg:gap-4">
               <div className="flex items-end">

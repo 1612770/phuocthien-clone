@@ -1,32 +1,59 @@
+import ImageWithFallback from '@components/templates/ImageWithFallback';
+import OfferModel from '@configs/models/offer.model';
+import TimeUtils from '@libs/utils/time.utils';
 import { List, Typography } from 'antd';
-import Link from 'next/link';
 import React from 'react';
 
-function ProductBonusSection() {
+function ProductBonusSection({ offers }: { offers?: OfferModel[] }) {
+  if (!offers?.length) return null;
   return (
-    <div className="my-4 rounded-lg border border-solid border-gray-200 py-2 px-4">
+    <div className="my-4 rounded-lg border border-solid border-blue-500 bg-blue-50 py-2 px-4 ">
       <Typography className="font-medium">Khuyến mãi</Typography>
 
       <List>
-        <List.Item className="py-2 px-0">
-          <Typography className="text-sm">
-            Cơ hội trúng 10 Iphone 14 Pro Max 128GB màu ngẫu nhiên cho đơn hàng
-            từ 100.000đ (16/12/2022 - 15/01/2023){' '}
-            <Link href="">
-              <a>(Click để xem chi tiết)</a>
-            </Link>
-          </Typography>
-        </List.Item>
-
-        <List.Item className="py-2 px-0">
-          <Typography className="text-sm">
-            Cơ hội trúng 10 Iphone 14 Pro Max 128GB màu ngẫu nhiên cho đơn hàng
-            từ 100.000đ (16/12/2022 - 15/01/2023){' '}
-            <Link href="">
-              <a>(Click để xem chi tiết)</a>
-            </Link>
-          </Typography>
-        </List.Item>
+        {offers?.map((offer) => (
+          <List.Item className="py-2 px-0" key={offer.key}>
+            <div className="my-1 flex">
+              <div className="h-[32px] w-[32px]">
+                <ImageWithFallback
+                  src={offer.offerImg || ''}
+                  alt="Khuyen mai"
+                  getMockImage={() => '/promotion.png'}
+                  width={32}
+                  height={32}
+                  layout="fixed"
+                />
+              </div>
+              <div className="ml-2">
+                {offer.offerCode && (
+                  <Typography.Paragraph className="m-0 font-medium">
+                    {offer.offerCode}{' '}
+                  </Typography.Paragraph>
+                )}
+                {offer.offerName && (
+                  <Typography.Paragraph className="m-0 text-sm">
+                    {offer.offerName}{' '}
+                  </Typography.Paragraph>
+                )}
+                {(offer.beginDate || offer.endDate) && (
+                  <Typography.Paragraph className="m-0 text-sm text-gray-600">
+                    Khuyến mãi diễn ra{' '}
+                    {offer.beginDate
+                      ? `từ ${TimeUtils.formatDate(offer.beginDate, {
+                          noTime: true,
+                        })} `
+                      : ''}
+                    {offer.endDate
+                      ? `đến ${TimeUtils.formatDate(offer.endDate, {
+                          noTime: true,
+                        })}`
+                      : ''}
+                  </Typography.Paragraph>
+                )}
+              </div>
+            </div>
+          </List.Item>
+        ))}
       </List>
     </div>
   );
