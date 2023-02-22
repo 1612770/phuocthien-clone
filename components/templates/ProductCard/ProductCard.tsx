@@ -37,14 +37,14 @@ function ProductCard({
             cover={
               <div
                 className={`relative ${
-                  size !== 'small' ? 'h-[240px]' : 'h-[160px]'
-                } w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110`}
+                  size !== 'small' ? 'h-[160px]' : 'h-[140px]'
+                } w-full bg-white transition-transform duration-300 group-hover:scale-110`}
               >
                 <ImageWithFallback
                   alt={product?.name || ''}
                   src={product?.detail?.image || ''}
                   layout="fill"
-                  objectFit="cover"
+                  objectFit="contain"
                   loading="lazy"
                   getMockImage={() => ImageUtils.getRandomMockProductImageUrl()}
                 />
