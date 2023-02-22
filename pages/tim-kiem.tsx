@@ -51,7 +51,7 @@ const SearchPage: NextPageWithLayout<{
 
       {(searchedProducts?.total || 0) > 0 && (
         <div className="mt-4">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {searchedProducts?.data.map((product) => (
               <div key={product.key}>
                 <ProductCard product={product} />
