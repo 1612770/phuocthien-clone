@@ -224,89 +224,6 @@ ProductGroupPage.getLayout = (page) => {
   return <PrimaryLayout>{page}</PrimaryLayout>;
 };
 
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   let generalClient = new GeneralClient(null, {});
-
-//   let fullMenu = await generalClient.getMenu();
-//   let paths = (fullMenu.data || []).reduce(
-//     (
-//       previousPaths: {
-//         params: {
-//           productType: string;
-//           productGroup: string;
-//         };
-//       }[],
-//       menu
-//     ) => {
-//       return [
-//         ...previousPaths,
-//         ...(menu.productGroups || []).map((productGroup) => {
-//           return {
-//             params: {
-//               productType: UrlUtils.generateSlug(menu?.name, menu?.key),
-//               productGroup: UrlUtils.generateSlug(
-//                 productGroup?.name,
-//                 productGroup?.key
-//               ),
-//             },
-//           };
-//         }),
-//       ];
-//     },
-//     []
-//   );
-
-//   return {
-//     paths,
-//     fallback: false,
-//   };
-// };
-
-// export const getStaticProps: GetStaticProps = async (
-//   context: GetStaticPropsContext
-// ) => {
-//   let staticProps: {
-//     props: {
-//       productType?: ProductType;
-//       productGroup?: ProductGroupModel;
-//       productBrands?: BrandModel[];
-//       products: Product[];
-//     };
-//   } = {
-//     props: {
-//       products: [],
-//     },
-//   };
-
-//   let generalClient = new GeneralClient(null, {});
-//   let productClient = new ProductClient(null, {});
-
-//   let [productType, productGroup, productBrands] = await Promise.all([
-//     generalClient.getProductTypeDetail({
-//       key: UrlUtils.getKeyFromParam(String(context.params?.productType)),
-//     }),
-//     generalClient.getProductGroupDetail({
-//       key: UrlUtils.getKeyFromParam(String(context.params?.productGroup)),
-//     }),
-//     generalClient.getProductionBrands(),
-//   ]);
-
-//   staticProps.props.productType = productType.data;
-//   staticProps.props.productGroup = productGroup.data;
-//   staticProps.props.productBrands = productBrands.data;
-
-//   let products = await productClient.getProducts({
-//     page: 1,
-//     pageSize: 20,
-//     isPrescripted: false,
-//     productTypeKey: productType.data?.key,
-//     productGroupKey: productGroup.data?.key,
-//   });
-//   staticProps.props.products = products.data.data;
-
-//   return staticProps;
-// };
-
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
@@ -326,33 +243,37 @@ export const getServerSideProps: GetServerSideProps = async (
   const generalClient = new GeneralClient(null, {});
   const productClient = new ProductClient(null, {});
 
-  const [productType, productGroup, productBrands] = await Promise.all([
-    generalClient.getProductTypeDetail({
-      key: UrlUtils.getKeyFromParam(String(context.params?.productType)),
-    }),
-    generalClient.getProductGroupDetail({
-      key: UrlUtils.getKeyFromParam(String(context.params?.productGroup)),
-    }),
-    generalClient.getProductionBrands(),
-  ]);
+  try {
+    const [productType, productGroup, productBrands] = await Promise.all([
+      generalClient.getProductTypeDetail({
+        key: UrlUtils.getKeyFromParam(String(context.params?.productType)),
+      }),
+      generalClient.getProductGroupDetail({
+        key: UrlUtils.getKeyFromParam(String(context.params?.productGroup)),
+      }),
+      generalClient.getProductionBrands(),
+    ]);
 
-  staticProps.props.productType = productType.data;
-  staticProps.props.productGroup = productGroup.data;
-  staticProps.props.productBrands = productBrands.data;
+    staticProps.props.productType = productType.data;
+    staticProps.props.productGroup = productGroup.data;
+    staticProps.props.productBrands = productBrands.data;
 
-  const products = await productClient.getProducts({
-    page: 1,
-    pageSize: 20,
-    isPrescripted: false,
-    productTypeKey: productType.data?.key,
-    productGroupKey: productGroup.data?.key,
-    productionBrandKeys: context.query.brands
-      ? (context.query.brands as string).split(',')
-      : undefined,
-  });
+    const products = await productClient.getProducts({
+      page: 1,
+      pageSize: 20,
+      isPrescripted: false,
+      productTypeKey: productType.data?.key,
+      productGroupKey: productGroup.data?.key,
+      productionBrandKeys: context.query.brands
+        ? (context.query.brands as string).split(',')
+        : undefined,
+    });
 
-  if (products.data) {
-    staticProps.props.products = products.data.data;
+    if (products.data) {
+      staticProps.props.products = products.data.data;
+    }
+  } catch (error) {
+    console.error(error);
   }
 
   return staticProps;
