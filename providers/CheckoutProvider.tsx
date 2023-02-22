@@ -10,6 +10,8 @@ import SessionStorageUtils, {
   SessionStorageKeys,
 } from '@libs/utils/session-storage.utils';
 import OfferModel from '@configs/models/offer.model';
+import { useAppConfirmDialog } from './AppConfirmDialogProvider';
+import { useAppMessage } from '@providers/AppMessageProvider';
 
 const provincesOfVietNamJSON: {
   [key: string]: {
@@ -108,8 +110,8 @@ const CheckoutContext = React.createContext<{
 
   checkout: () => void;
 
-  offers: OfferModel[];
-  setOffers: (offers: OfferModel[]) => void;
+  offer: OfferModel | undefined;
+  setOffer: (offer: OfferModel | undefined) => void;
 
   totalRawPrice: number;
   totalPrice: number;
@@ -155,8 +157,8 @@ const CheckoutContext = React.createContext<{
 
   checkout: () => undefined,
 
-  offers: [],
-  setOffers: () => undefined,
+  offer: undefined,
+  setOffer: () => undefined,
 
   totalRawPrice: 0,
   totalPrice: 0,
@@ -165,7 +167,9 @@ const CheckoutContext = React.createContext<{
 function CheckoutProvider({ children }: { children: React.ReactNode }) {
   const { cartProducts, resetCart } = useCart();
   const router = useRouter();
+  const { setConfirmData } = useAppConfirmDialog();
   const { isUserLoggedIn } = useAuth();
+  const { toastSuccess } = useAppMessage();
 
   const [name, setName] = useState('');
   const [tel, setTel] = useState('');
@@ -199,7 +203,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
   const [checkingOut, setCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
 
-  const [offers, setOffers] = useState<OfferModel[]>([]);
+  const [offer, setOffer] = useState<OfferModel>();
 
   const currentProvince = useMemo(() => {
     if (!currentProvinceKey) {
@@ -232,15 +236,13 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         const calculatedTotal =
           total + (cartProduct.product.retailPrice || 0) * cartProduct.quantity;
 
-        for (const offer of offers) {
-          if ((offer.minAmountOffer || 0) <= calculatedTotal) {
-            return calculatedTotal - (offer?.offerVal || 0);
-          }
+        if ((offer?.minAmountOffer || 0) <= calculatedTotal) {
+          return calculatedTotal - (offer?.offerVal || 0);
         }
 
         return calculatedTotal;
       }, 0),
-    [cartProducts, offers]
+    [cartProducts, offer]
   );
 
   const checkout = async () => {
@@ -308,6 +310,37 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
     }
   }, [shippingType]);
 
+  /**
+   * Effect trigger when price change to apply offer
+   */
+  useEffect(() => {
+    if (offer) {
+      if (totalRawPrice < (offer.minAmountOffer || 0)) {
+        setOffer(undefined);
+
+        setConfirmData({
+          title: 'Hủy bỏ mã khuyến mãi đã được áp dụng',
+          content: `Bạn đang áp dụng mã khuyến mãi "${
+            offer?.offerCode
+          }" với giá trị giảm là ${offer?.offerVal?.toLocaleString('it-IT', {
+            style: 'currency',
+            currency: 'VND',
+          })}. Tuy nhiên, bạn đã cập nhật giỏ hàng không đủ điều kiện của khuyến mãi. Chúng tôi sẽ loại bỏ mã khuyến mãi đã áp dụng của bạn`,
+          cancelButtonProps: {
+            hidden: true,
+          },
+
+          onOk: () => {
+            toastSuccess({ data: 'Đã hủy bỏ mã khuyến mãi' });
+          },
+          onCancel: () => {
+            toastSuccess({ data: 'Đã hủy bỏ mã khuyến mãi' });
+          },
+        });
+      }
+    }
+  }, [offer, setConfirmData, toastSuccess, totalRawPrice]);
+
   return (
     <CheckoutContext.Provider
       value={{
@@ -352,8 +385,8 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
         checkout,
 
-        offers,
-        setOffers,
+        offer,
+        setOffer,
 
         totalRawPrice,
         totalPrice,

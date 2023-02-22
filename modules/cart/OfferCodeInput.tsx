@@ -7,11 +7,11 @@ import ProductBonusSection from '@modules/products/ProductBonusSection';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
 
-function PromotionCodeInput({ offers }: { offers: OfferModel[] }) {
+function OfferCodeInput({ offers }: { offers: OfferModel[] }) {
   const [openInput, setOpenInput] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
-  const { offers: checkoutOffers, setOffers, totalRawPrice } = useCheckout();
+  const { offer, setOffer, totalRawPrice } = useCheckout();
   const { toastError, toastSuccess } = useAppMessage();
   const { setConfirmData } = useAppConfirmDialog();
 
@@ -29,23 +29,43 @@ function PromotionCodeInput({ offers }: { offers: OfferModel[] }) {
       return offer.offerCode === trimmedInput;
     });
 
-    const offerAlreadyUsed = !!checkoutOffers.find(
-      (offer) => offer.offerCode === trimmedInput
-    );
-
+    const offerAlreadyUsed =
+      offer && foundOffer && foundOffer?.offerCode === offer?.offerCode;
     if (offerAlreadyUsed) {
-      return toastError({ data: 'Mã giảm giá đã được sử dụng' });
+      return toastError({ data: 'Mã giảm giá đang được sử dụng' });
     }
 
     if (foundOffer) {
-      const newOffers = [...checkoutOffers, foundOffer];
-      setOffers(newOffers);
+      if ((foundOffer.minAmountOffer || 0) > totalRawPrice) {
+        return toastError({
+          data: `Mã giảm giá này chỉ áp dụng cho đơn hàng trên ${foundOffer.minAmountOffer?.toLocaleString(
+            'it-IT',
+            {
+              style: 'currency',
+              currency: 'VND',
+            }
+          )}`,
+        });
+      }
 
-      toastSuccess({ data: 'Áp dụng mã giảm giá thành công' });
+      if (offer) {
+        setConfirmData({
+          title: 'Bạn đang áp dụng một mã giảm giá khác',
+          content: 'Bạn có muốn thay đổi mã giảm giá?',
+          onOk: () => {
+            toastSuccess({ data: 'Thay đổi mã giảm giá thành công' });
+            setOffer(foundOffer);
+          },
+        });
+      } else {
+        toastSuccess({ data: 'Áp dụng mã giảm giá thành công' });
+        setOffer(foundOffer);
+      }
     } else {
       toastError({ data: 'Mã giảm giá không hợp lệ' });
     }
   };
+
   return (
     <div>
       <Button
@@ -97,62 +117,42 @@ function PromotionCodeInput({ offers }: { offers: OfferModel[] }) {
             </Input.Group>
           </div>
 
-          {checkoutOffers.length > 0 && (
+          {offer && (
             <div className="mt-4">
               <Typography.Text type="secondary">
                 Mã giảm giá đã áp dụng:
               </Typography.Text>
-              {checkoutOffers.map((offer) => (
-                <div key={offer.key}>
-                  <div className="flex items-center justify-between">
-                    <Typography.Text className="text-base">
-                      {checkoutOffers[0].offerCode}
-                    </Typography.Text>
-                    <Button
-                      className="ml-2"
-                      size="small"
-                      onClick={() => {
-                        setConfirmData({
-                          title: 'Xóa mã giảm giá',
-                          content: 'Bạn có chắc muốn xóa mã giảm giá này?',
-                          onOk: () => {
-                            const newOffers = checkoutOffers.filter(
-                              (filterOffer) =>
-                                filterOffer.offerCode !== offer.offerCode
-                            );
-                            setOffers(newOffers);
-                          },
-                        });
-                      }}
-                    >
-                      Xóa
-                    </Button>
-                  </div>
-                  {totalRawPrice >= (offer.minAmountOffer || 0) && (
-                    <Typography.Text type="secondary" className="text-primary">
-                      -
-                      {offer.offerVal?.toLocaleString('it-IT', {
-                        style: 'currency',
-                        currency: 'VND',
-                      })}
-                    </Typography.Text>
-                  )}
-                  {totalRawPrice < (offer.minAmountOffer || 0) && (
-                    <Typography.Text
-                      type="secondary"
-                      className=" text-blue-500"
-                    >
-                      Chưa đủ điều kiện áp dụng, cần mua thêm{' '}
-                      {(
-                        (offer.minAmountOffer || 0) - totalRawPrice
-                      ).toLocaleString('it-IT', {
-                        style: 'currency',
-                        currency: 'VND',
-                      })}
-                    </Typography.Text>
-                  )}
+              <div>
+                <div className="flex items-center justify-between">
+                  <Typography.Text className="text-base">
+                    {offer.offerCode}
+                  </Typography.Text>
+                  <Button
+                    className="ml-2"
+                    size="small"
+                    onClick={() => {
+                      setConfirmData({
+                        title: 'Xóa mã giảm giá',
+                        content: 'Bạn có chắc muốn xóa mã giảm giá này?',
+                        onOk: () => {
+                          setOffer(undefined);
+                        },
+                      });
+                    }}
+                  >
+                    Xóa
+                  </Button>
                 </div>
-              ))}
+                {totalRawPrice >= (offer.minAmountOffer || 0) && (
+                  <Typography.Text type="secondary" className="text-primary">
+                    -
+                    {offer.offerVal?.toLocaleString('it-IT', {
+                      style: 'currency',
+                      currency: 'VND',
+                    })}
+                  </Typography.Text>
+                )}
+              </div>
             </div>
           )}
         </>
@@ -161,4 +161,4 @@ function PromotionCodeInput({ offers }: { offers: OfferModel[] }) {
   );
 }
 
-export default PromotionCodeInput;
+export default OfferCodeInput;

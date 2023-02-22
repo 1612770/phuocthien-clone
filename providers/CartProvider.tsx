@@ -71,7 +71,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
       placement: 'bottomRight',
       key,
     });
-  }, []);
+  }, [api]);
 
   const addToCart = useCallback(
     (payload: { product: Product; quantity: number; note?: string }) => {
@@ -144,7 +144,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         );
       }
     },
-    [cartProducts]
+    [cartProducts, setConfirmData]
   );
 
   const changeProductData = useCallback(

@@ -29,7 +29,7 @@ import ImageUtils from '@libs/utils/image.utils';
 import { REGEX_PHONE } from '@configs/env';
 import { OfferClient } from '@libs/client/Offer';
 import OfferModel from '@configs/models/offer.model';
-import PromotionCodeInput from '@modules/cart/PromotionCodeInput';
+import OfferCodeInput from '@modules/cart/OfferCodeInput';
 
 const CartPage: NextPageWithLayout<{
   paymentMethods: PaymentMethodModel[];
@@ -236,7 +236,7 @@ const CartPage: NextPageWithLayout<{
 
             <Divider />
 
-            <PromotionCodeInput offers={offers} />
+            <OfferCodeInput offers={offers} />
 
             <div className="mt-4 flex items-center justify-between gap-4">
               <Typography.Title className="m-0" level={4}>
