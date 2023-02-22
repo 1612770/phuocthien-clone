@@ -45,6 +45,15 @@ class ImageUtils {
     '/mock/drug-store-5.png',
   ];
 
+  static FOCUS_MOCKS = [
+    '/mock/focus-mock-1.png',
+    '/mock/focus-mock-2.png',
+    '/mock/focus-mock-3.png',
+    '/mock/focus-mock-4.png',
+    '/mock/focus-mock-5.png',
+    '/mock/focus-mock-6.png',
+  ];
+
   static getFullImageUrl(path?: string) {
     if (!path) return '';
     if (path.startsWith('http')) return path;
@@ -87,6 +96,12 @@ class ImageUtils {
   static getRandomMockDrugstoreUrl() {
     return ImageUtils.DRUGSTORE_MOCKS[
       Math.floor(Math.random() * ImageUtils.DRUGSTORE_MOCKS.length)
+    ];
+  }
+
+  static getFocusMockUrl() {
+    return ImageUtils.FOCUS_MOCKS[
+      Math.floor(Math.random() * ImageUtils.FOCUS_MOCKS.length)
     ];
   }
 }

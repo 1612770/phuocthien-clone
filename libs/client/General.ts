@@ -5,6 +5,7 @@ import ProductType from '@configs/models/product-type.model';
 import ProductGroupModel from '@configs/models/product-group.model';
 import BrandModel from '@configs/models/brand.model';
 import PaymentMethodModel from '@configs/models/payment-method.model';
+import FocusContentModel from '@configs/models/focus-content.model';
 
 export class GeneralClient extends BaseClient {
   constructor(ctx: any, data: any) {
@@ -37,5 +38,9 @@ export class GeneralClient extends BaseClient {
 
   async getPaymentMethods(): Promise<APIResponse<PaymentMethodModel[]>> {
     return await super.call('GET', `payment-methods`, {});
+  }
+
+  async getFocusContent(): Promise<APIResponse<FocusContentModel[]>> {
+    return await super.call('GET', `focus`, {});
   }
 }
