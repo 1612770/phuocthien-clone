@@ -2,6 +2,7 @@ import ProductImage from './product-image.model';
 import ProductGroupModel from './product-group.model';
 import ProductBrand from './product-brand.model';
 import ProductType from './product-type.model';
+import ProductDetailModel from './product-detail.model';
 
 type Product = Partial<{
   key: string;
@@ -33,21 +34,7 @@ type Product = Partial<{
   productType: ProductType;
   productGroup: ProductGroupModel;
   productionBrand: ProductBrand;
-  detail: {
-    key: string;
-    displayName: string;
-    unsignedName: string;
-    oldSellingPrice: number;
-    image: string;
-    description: string;
-    isNew: boolean;
-    isHot: boolean;
-    isTopTen: boolean;
-    isBestSelling: boolean;
-    isExclusive: boolean;
-    isSaleOff: boolean;
-    productKey: string;
-  };
+  detail: ProductDetailModel;
   images: ProductImage[];
 }>;
 

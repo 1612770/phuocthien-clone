@@ -3,6 +3,7 @@ import BaseClient from './BaseClient';
 import Product from '@configs/models/product.model';
 import DrugStore from '@configs/models/drug-store.model';
 import WithPagination from '@configs/types/utils/with-pagination';
+import ViralProductsListModel from '@configs/models/viral-products-list.model';
 
 export class ProductClient extends BaseClient {
   constructor(ctx: unknown, data: unknown) {
@@ -46,5 +47,13 @@ export class ProductClient extends BaseClient {
       `product/${key}/inventory-at-drugstores`,
       {}
     );
+  }
+
+  async getViralProducts(payload: {
+    page: number;
+    pageSize: number;
+    key?: string;
+  }): Promise<APIResponse<ViralProductsListModel[]>> {
+    return await super.call('POST', `product/viral`, payload);
   }
 }
