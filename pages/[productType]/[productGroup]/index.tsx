@@ -2,10 +2,9 @@ import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import {
   Breadcrumb,
   Checkbox,
-  Col,
   Drawer,
   Empty,
-  Row,
+  Pagination,
   Space,
   Tag,
   Typography,
@@ -24,6 +23,8 @@ import BrandModel from '@configs/models/brand.model';
 import { useRouter } from 'next/router';
 import { Filter, X } from 'react-feather';
 import { useState } from 'react';
+import WithPagination from '@configs/types/utils/with-pagination';
+import PRODUCTS_LOAD_PER_TIME from '@configs/constants/products-load-per-time';
 
 function FilterOptions({
   productBrands,
@@ -87,9 +88,10 @@ const ProductGroupPage: NextPageWithLayout<{
   productType?: ProductType;
   productGroup?: ProductGroupModel;
   productBrands?: BrandModel[];
-  products: Product[];
+  products?: WithPagination<Product[]>;
 }> = ({ productType, productGroup, products, productBrands }) => {
   const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="px-4 pb-4 lg:container lg:px-0">
@@ -180,37 +182,38 @@ const ProductGroupPage: NextPageWithLayout<{
             </div>
           </div>
           <div className="lg:container">
-            <Row gutter={[16, 16]} className="hidden lg:flex">
-              {products.map((product, index) => (
-                <Col
-                  sm={24}
-                  md={12}
-                  lg={8}
-                  xl={6}
-                  className="w-full"
-                  key={index}
-                >
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:gap-4">
+              {products?.data.map((product, index) => (
+                <div className="w-full" key={index}>
                   <ProductCard product={product} />
-                </Col>
-              ))}
-            </Row>
-
-            <div className="-mx-4 flex w-[100vw] overflow-auto pl-2 lg:hidden">
-              {products.map((product, index) => (
-                <ProductCard
-                  key={index}
-                  product={product}
-                  className="m-2 min-w-[240px] max-w-[240px]"
-                />
+                </div>
               ))}
             </div>
 
-            {!products.length && (
+            {!products?.data.length && (
               <Empty
-                className="mt-4"
+                className="mt-4 mb-8"
                 description={<Typography>Không có sản phẩm nào</Typography>}
               ></Empty>
             )}
+
+            <div className="flex justify-center">
+              <Pagination
+                pageSize={PRODUCTS_LOAD_PER_TIME}
+                onChange={(page) => {
+                  router.replace({
+                    query: {
+                      ...router.query,
+                      trang: page,
+                    },
+                  });
+                }}
+                total={products?.total || 0}
+                className="mt-4"
+                current={+(router.query?.trang || 1)}
+                showSizeChanger={false}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -232,12 +235,10 @@ export const getServerSideProps: GetServerSideProps = async (
       productType?: ProductType;
       productGroup?: ProductGroupModel;
       productBrands?: BrandModel[];
-      products: Product[];
+      products?: WithPagination<Product[]>;
     };
   } = {
-    props: {
-      products: [],
-    },
+    props: {},
   };
 
   const generalClient = new GeneralClient(null, {});
@@ -259,8 +260,8 @@ export const getServerSideProps: GetServerSideProps = async (
     staticProps.props.productBrands = productBrands.data;
 
     const products = await productClient.getProducts({
-      page: 1,
-      pageSize: 20,
+      page: context.query.trang ? Number(context.query.trang) : 1,
+      pageSize: PRODUCTS_LOAD_PER_TIME,
       isPrescripted: false,
       productTypeKey: productType.data?.key,
       productGroupKey: productGroup.data?.key,
@@ -270,7 +271,7 @@ export const getServerSideProps: GetServerSideProps = async (
     });
 
     if (products.data) {
-      staticProps.props.products = products.data.data;
+      staticProps.props.products = products.data;
     }
   } catch (error) {
     console.error(error);
