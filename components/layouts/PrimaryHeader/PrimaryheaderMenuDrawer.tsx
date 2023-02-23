@@ -18,14 +18,14 @@ import { useAuth } from '@providers/AuthProvider';
 
 function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
   const { fullMenu } = useFullMenu();
-  const { logOut } = useAuth();
+  const { logOut, isUserLoggedIn } = useAuth();
 
   return (
     <Drawer
       rootClassName="primary-header-menu-drawer"
       title={
         <Link href="/" style={{ color: 'white' }}>
-          <a className="flex items-center">
+          <a className="flex items-center" onClick={onClose}>
             <img
               src={IMAGES.logo}
               alt="Nhà thuốc Phước Thiện"
@@ -67,38 +67,42 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
           </a>
         </Link>
 
-        <Link href="/thong-tin-ca-nhan">
+        {isUserLoggedIn && (
+          <Link href="/thong-tin-ca-nhan">
+            <Button
+              onClick={onClose}
+              type="primary"
+              className="h-10 w-full bg-primary-dark shadow-none"
+            >
+              <div className="flex items-center gap-2">
+                <Space align="center" className="h-full w-full">
+                  <Book className="text-white" width={20} height={20} />
+                  <Typography.Text className="text-white">
+                    Thông tin cá nhân
+                  </Typography.Text>
+                </Space>
+              </div>
+            </Button>
+          </Link>
+        )}
+
+        {isUserLoggedIn && (
           <Button
-            onClick={onClose}
+            onClick={logOut}
+            ghost
             type="primary"
-            className="h-10 w-full bg-primary-dark shadow-none"
+            className="h-10 w-full shadow-none"
           >
             <div className="flex items-center gap-2">
               <Space align="center" className="h-full w-full">
-                <Book className="text-white" width={20} height={20} />
-                <Typography.Text className="text-white">
-                  Thông tin cá nhân
+                <LogOut className="" width={20} height={20} />
+                <Typography.Text className="text-primary">
+                  Đăng xuất
                 </Typography.Text>
               </Space>
             </div>
           </Button>
-        </Link>
-
-        <Button
-          onClick={logOut}
-          ghost
-          type="primary"
-          className="h-10 w-full shadow-none"
-        >
-          <div className="flex items-center gap-2">
-            <Space align="center" className="h-full w-full">
-              <LogOut className="" width={20} height={20} />
-              <Typography.Text className="text-primary">
-                Đăng xuất
-              </Typography.Text>
-            </Space>
-          </div>
-        </Button>
+        )}
       </Space>
       <Divider className="mt-4 mb-0" />
       <Collapse
