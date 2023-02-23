@@ -23,25 +23,31 @@ function AppMessageProvider({ children }: { children: React.ReactNode }) {
     maxCount: 3,
   });
 
-  const toastSuccess = useCallback((payload: MessageType) => {
-    payload = processPayloadContent(payload, 'Thành công');
+  const toastSuccess = useCallback(
+    (payload: MessageType) => {
+      payload = processPayloadContent(payload, 'Thành công');
 
-    messageApi.open({
-      type: 'success',
-      ...payload,
-      content: payload.content || 'Thành công',
-    });
-  }, []);
+      messageApi.open({
+        type: 'success',
+        ...payload,
+        content: payload.content || 'Thành công',
+      });
+    },
+    [messageApi]
+  );
 
-  const toastError = useCallback((payload: MessageType) => {
-    payload = processPayloadContent(payload, 'Có lỗi xảy ra');
+  const toastError = useCallback(
+    (payload: MessageType) => {
+      payload = processPayloadContent(payload, 'Có lỗi xảy ra');
 
-    messageApi.open({
-      type: 'error',
-      ...payload,
-      content: payload.content || 'Có lỗi xảy ra',
-    });
-  }, []);
+      messageApi.open({
+        type: 'error',
+        ...payload,
+        content: payload.content || 'Có lỗi xảy ra',
+      });
+    },
+    [messageApi]
+  );
 
   return (
     <>
