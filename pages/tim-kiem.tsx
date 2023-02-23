@@ -86,7 +86,7 @@ const SearchPage: NextPageWithLayout<{
 export default SearchPage;
 
 SearchPage.getLayout = (page) => {
-  return <PrimaryLayout hideFooter>{page}</PrimaryLayout>;
+  return <PrimaryLayout>{page}</PrimaryLayout>;
 };
 
 export const getServerSideProps: GetServerSideProps = async (
