@@ -21,6 +21,9 @@ function AppConfirmDialogProvider({ children }: { children: React.ReactNode }) {
       confirm({
         okText: 'Xác nhận',
         cancelText: 'Hủy',
+        okButtonProps: {
+          className: 'bg-primary',
+        },
         ...confirmData,
       });
     }
