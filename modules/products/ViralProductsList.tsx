@@ -12,8 +12,10 @@ import ImageUtils from '@libs/utils/image.utils';
 
 function ViralProductsList({
   viralProductsList,
+  invertBackground,
 }: {
   viralProductsList?: ViralProductsListModel;
+  invertBackground?: boolean;
 }) {
   const [listViralProducts, setListViralProducts] = useState<
     {
@@ -38,7 +40,9 @@ function ViralProductsList({
 
       setLoadingMore(true);
       const viralProducts = await productClient.getViralProducts({
-        page: 1,
+        page:
+          Math.floor(listViralProducts.length / VIRAL_PRODUCTS_LOAD_PER_TIME) +
+          1,
         pageSize: VIRAL_PRODUCTS_LOAD_PER_TIME,
         key: viralProductsList?.key,
       });
@@ -65,22 +69,38 @@ function ViralProductsList({
   }
 
   return listViralProducts?.length ? (
-    <>
-      <div className="pl-2 lg:container lg:pl-0">
-        <div className="mb-2 mt-6 flex items-center justify-between lg:mb-2 lg:mt-12">
-          <Typography.Title level={3} className="m-0">
+    <div
+      className={
+        'my-2 py-4 ' + (invertBackground ? 'bg-primary-light' : 'bg-white')
+      }
+    >
+      <div className={'px-0 lg:container'}>
+        <div className="mb-2 flex items-center justify-center lg:mb-2 lg:justify-between">
+          <Typography.Title
+            level={3}
+            className={
+              'm-0 my-4 text-center font-medium lg:text-left ' +
+              (invertBackground ? 'text-white' : '')
+            }
+          >
             {viralProductsList?.name}
           </Typography.Title>
           <Link href={`/viral/${viralProductsList?.key}`}>
             <a className="hidden lg:inline-block">
-              <Typography className="pr-3 text-blue-500">Xem tất cả</Typography>
+              <Typography
+                className={
+                  'pr-3 ' + (invertBackground ? 'text-white' : 'text-blue-500')
+                }
+              >
+                Xem tất cả
+              </Typography>
             </a>
           </Link>
         </div>
 
         <Link href={`/viral/${viralProductsList?.key}`}>
           <a>
-            <div className="relative mb-4 h-[200px] w-full">
+            <div className="relative mb-4 aspect-[21/9] h-[200px] w-full">
               <ImageWithFallback
                 src={viralProductsList?.imageUrl || ''}
                 width={'100%'}
@@ -120,7 +140,10 @@ function ViralProductsList({
           {allowLoadMore && (
             <Button
               type="primary"
-              className="hidden lg:inline-block"
+              className={
+                'hidden lg:inline-block ' +
+                (invertBackground ? 'border-white text-white' : '')
+              }
               ghost
               onClick={loadMore}
               loading={loadingMore}
@@ -130,14 +153,21 @@ function ViralProductsList({
           )}
           <Link href={`/viral/${viralProductsList?.key}`}>
             <a>
-              <Button type="primary" className="inline-block lg:hidden" ghost>
+              <Button
+                type="primary"
+                className={
+                  'inline-block lg:hidden ' +
+                  (invertBackground ? 'border-white text-white' : '')
+                }
+                ghost
+              >
                 Xem tất cả
               </Button>
             </a>
           </Link>
         </div>
       </div>
-    </>
+    </div>
   ) : null;
 }
 

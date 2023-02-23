@@ -21,7 +21,7 @@ const Home: NextPageWithLayout<{
   focusContent?: FocusContentModel[];
 }> = ({ viralProductsLists, focusContent }) => {
   return (
-    <div className="mb-8">
+    <div className="mb-0 lg:mb-8">
       <HomepageCarousel />
 
       <div className="-mt-20 hidden lg:block">
@@ -31,10 +31,13 @@ const Home: NextPageWithLayout<{
       <div className="hidden lg:block">
         <FocusContentSection focusContent={focusContent || []} />
       </div>
-      {viralProductsLists?.map((viralProductsList) => (
+      {viralProductsLists?.map((viralProductsList, index) => (
         <ViralProductsList
           key={viralProductsList.key}
           viralProductsList={viralProductsList}
+          invertBackground={
+            index % 2 === 1 && index !== viralProductsLists.length - 1
+          }
         />
       ))}
 

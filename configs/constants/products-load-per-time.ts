@@ -1,0 +1,3 @@
+const PRODUCTS_LOAD_PER_TIME = 20;
+
+export default PRODUCTS_LOAD_PER_TIME;
