@@ -16,7 +16,10 @@ const SearchPage: NextPageWithLayout<{
 
   return (
     <div className="mx-auto  px-4 pb-8 lg:container lg:px-0">
-      <Typography.Title level={1} className="mt-8 font-medium">
+      <Typography.Title
+        level={1}
+        className="mt-8 text-3xl font-medium md:text-4xl"
+      >
         {router.query['tu-khoa'] ? (
           <>
             Tìm thấy <b>{searchedProducts?.total || 0}</b> sản phẩm
@@ -29,7 +32,7 @@ const SearchPage: NextPageWithLayout<{
       <div className="mt-4">
         <Typography.Title
           level={4}
-          className="mb-1 font-normal text-neutral-600"
+          className="mb-1 text-lg font-normal text-neutral-600 md:text-xl"
         >
           Cụm từ khóa nổi bật
         </Typography.Title>
@@ -41,7 +44,7 @@ const SearchPage: NextPageWithLayout<{
             'Thuốc xương khớp',
           ].map((tag) => (
             <Link href={`/tim-kiem?tu-khoa=${tag}`} key={tag}>
-              <Tag className="cursor-pointer rounded-full border-none bg-primary-background p-2 text-base">
+              <Tag className="cursor-pointer rounded-full border-none bg-primary-background p-2 text-sm md:text-base">
                 {tag}
               </Tag>
             </Link>
