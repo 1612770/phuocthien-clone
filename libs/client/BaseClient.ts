@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-prototype-builtins */
 import APIResponse from '@configs/types/api-response.type';
 import { COOKIE_KEYS, getCookie } from 'libs/helpers';
@@ -29,6 +30,9 @@ class BaseClient {
     url: string,
     data: any
   ): Promise<APIResponse> {
+    // eslint-disable-next-line no-console
+    console.log('file: BaseClient.ts:33| method:', url);
+
     const req: any = {
       method: method,
     };
