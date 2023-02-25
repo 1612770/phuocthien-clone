@@ -5,15 +5,19 @@ type LocalOTP = {
 };
 
 type DateData = {
-  date?: number;
-  token?: string;
+  verifyToken: string;
+  remainSeconds: number;
 };
 
 // 10 minutes
-const EXPIRED_TIME = 10 * 60 * 1000;
+// const EXPIRED_TIME = 10 * 60 * 1000;
 
 const OtpUtils = {
-  addPhoneToLocalStorage: (payload: { phone: string; verifyToken: string }) => {
+  addPhoneToLocalStorage: (payload: {
+    phone: string;
+    verifyToken: string;
+    remainSeconds: number;
+  }) => {
     const oldValuesString = LocalStorageUtils.getItem(
       LocalStorageKeys.OTP_SEND_TIME
     );
@@ -23,7 +27,8 @@ const OtpUtils = {
       ...oldValues,
       [payload.phone]: {
         date: new Date().getTime(),
-        token: payload.verifyToken,
+        verifyToken: payload.verifyToken,
+        remainSeconds: payload.remainSeconds,
       },
     };
 
@@ -58,11 +63,10 @@ const OtpUtils = {
     const oldValues: LocalOTP = JSON.parse(oldValuesString || '{}');
 
     const phoneData = oldValues[phone];
-    const lastSendTime = phoneData?.date;
-    if (lastSendTime) {
-      const now = new Date().getTime();
-      if (now - EXPIRED_TIME > lastSendTime) {
-        if (!phoneData?.token) {
+    const remainSeconds = phoneData?.remainSeconds;
+    if (remainSeconds) {
+      if (!remainSeconds) {
+        if (!phoneData?.verifyToken) {
           return false;
         }
 
@@ -81,7 +85,16 @@ const OtpUtils = {
     );
     const oldValues: LocalOTP = JSON.parse(oldValuesString || '{}');
 
-    return oldValues[phone].token;
+    return oldValues[phone].verifyToken;
+  },
+
+  getOTPNumberSecondsRemainingFromLocalStorage: (phone: string) => {
+    const oldValuesString = LocalStorageUtils.getItem(
+      LocalStorageKeys.OTP_SEND_TIME
+    );
+    const oldValues: LocalOTP = JSON.parse(oldValuesString || '{}');
+
+    return +oldValues[phone].remainSeconds;
   },
 };
 

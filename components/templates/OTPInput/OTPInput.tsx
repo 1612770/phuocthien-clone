@@ -1,5 +1,7 @@
 import { AuthClient } from '@libs/client/Auth';
+import { useCountdown } from '@libs/utils/hooks';
 import OtpUtils from '@libs/utils/otp.utils';
+import TimeUtils from '@libs/utils/time.utils';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import { Button, Form, Input, Typography } from 'antd';
 import { useState } from 'react';
@@ -17,6 +19,10 @@ function OTPInput({
   const [resendingOtp, setResendingOtp] = useState(false);
 
   const { toastError, toastSuccess } = useAppMessage();
+  const { countdown } = useCountdown({
+    initialCountdown:
+      OtpUtils.getOTPNumberSecondsRemainingFromLocalStorage(phoneNumber),
+  });
 
   const goTo = (idx: number) => {
     const nextInput = document.getElementById(
@@ -45,6 +51,7 @@ function OTPInput({
       OtpUtils.addPhoneToLocalStorage({
         phone: phoneNumber,
         verifyToken: sendOtpResponse.data?.verifyToken,
+        remainSeconds: sendOtpResponse.data?.remainSeconds,
       });
 
       toastSuccess({ data: 'Đã gửi lại mã OTP' });
@@ -110,19 +117,34 @@ function OTPInput({
         ))}
       </div>
       <Typography className="text-center">
-        Chưa nhận được mã ?{' '}
-        <Typography
-          className={`inline-block font-semibold text-primary ${
-            resendingOtp ? 'cursor-wait' : 'cursor-pointer'
-          }`}
-          onClick={() => {
-            if (resendingOtp) return;
+        {countdown >= 0 && (
+          <>
+            Mã OTP đã được gửi đến số {phoneNumber}
+            <br />
+            Mã OTP của bạn sẽ hết hạn sau{' '}
+            <Typography.Text className="font-semibold">
+              {TimeUtils.formatTimeByNumberSeconds(countdown)}
+            </Typography.Text>{' '}
+          </>
+        )}
 
-            resendOtp();
-          }}
-        >
-          Gửi lại mã
-        </Typography>
+        {countdown < 0 && (
+          <>
+            Thử gửi lại OTP?.{' '}
+            <Typography
+              className={`inline-block font-semibold text-primary ${
+                resendingOtp ? 'cursor-wait' : 'cursor-pointer'
+              }`}
+              onClick={() => {
+                if (resendingOtp) return;
+
+                resendOtp();
+              }}
+            >
+              Gửi lại OTP
+            </Typography>
+          </>
+        )}
       </Typography>
 
       <Form.Item className="mt-4 w-full">

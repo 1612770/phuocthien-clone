@@ -18,7 +18,7 @@ export class AuthClient extends BaseClient {
 
   async sendOtp(payload: {
     phoneNumber: string;
-  }): Promise<APIResponse<{ verifyToken: string }>> {
+  }): Promise<APIResponse<{ verifyToken: string; remainSeconds: number }>> {
     return await super.call('POST', `auth/otp`, payload);
   }
 

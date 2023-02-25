@@ -88,6 +88,7 @@ const SignUpPage: NextPageWithLayout = () => {
       OtpUtils.addPhoneToLocalStorage({
         phone,
         verifyToken: sendOtpResponse.data?.verifyToken,
+        remainSeconds: sendOtpResponse.data?.remainSeconds,
       });
 
       setStep(SignUpSteps.EnterOTP);

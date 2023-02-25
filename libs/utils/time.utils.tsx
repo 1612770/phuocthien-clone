@@ -26,6 +26,18 @@ const TimeUtils = {
 
     return gmtTimeConverted;
   },
+
+  formatTimeByNumberSeconds: (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    seconds = Math.floor(seconds % 60);
+
+    const hoursString = hours < 10 ? `0${hours}` : hours;
+    const minutesString = minutes < 10 ? `0${minutes}` : minutes;
+    const secondsString = seconds < 10 ? `0${seconds}` : seconds;
+
+    return `${hours ? `${hoursString}:` : ''}${minutesString}:${secondsString}`;
+  },
 };
 
 export default TimeUtils;
