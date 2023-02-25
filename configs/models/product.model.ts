@@ -12,10 +12,14 @@ type Product = Partial<{
   unit: string;
   vat: number;
   sellingPriceRatio: number;
+  // Giá mua vào
   purchasePrice: number;
+  // Giá bán lẻ
   retailPrice: number;
+  // Giá bán buôn
   wholePrice: number;
   reducingRatio: number;
+  // Giá vốn
   costPrice: number;
   drugContent: string;
   ingredient: string;
