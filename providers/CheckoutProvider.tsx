@@ -314,7 +314,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
    * Effect trigger when price change to apply offer
    */
   useEffect(() => {
-    if (offer) {
+    if (offer && cartProducts.length > 0) {
       if (totalRawPrice < (offer.minAmountOffer || 0)) {
         setOffer(undefined);
 
@@ -339,7 +339,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         });
       }
     }
-  }, [offer, setConfirmData, toastSuccess, totalRawPrice]);
+  }, [offer, setConfirmData, toastSuccess, totalRawPrice, cartProducts]);
 
   return (
     <CheckoutContext.Provider
