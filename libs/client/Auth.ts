@@ -46,6 +46,14 @@ export class AuthClient extends BaseClient {
     return await super.call('POST', `auth/sign-in`, payload);
   }
 
+  async updatePasswordByPhone(payload: {
+    phoneNumber: string;
+    verifyToken: string;
+    password: string;
+  }): Promise<APIResponse<unknown>> {
+    return await super.call('POST', `auth/update-password-by-phone`, payload);
+  }
+
   async getProfile(): Promise<APIResponse<ProfileModel>> {
     return await super.call('GET', `auth/profile`, {});
   }

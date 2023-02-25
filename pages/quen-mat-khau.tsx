@@ -98,7 +98,7 @@ const LoginPage: NextPageWithLayout = () => {
     }
   };
 
-  const createAccount = async () => {
+  const updatePasswordByPhone = async () => {
     const verifyToken = OtpUtils.getVerifyTokenFromLocalStorage(phone);
 
     try {
@@ -109,7 +109,7 @@ const LoginPage: NextPageWithLayout = () => {
       setUpdatingPassword(true);
 
       const auth = new AuthClient(null, {});
-      await auth.createAccount({
+      await auth.updatePasswordByPhone({
         phoneNumber: phone,
         verifyToken,
         password,
@@ -217,7 +217,7 @@ const LoginPage: NextPageWithLayout = () => {
               className="flex flex-col items-center"
               initialValues={{ remember: true }}
               scrollToFirstError
-              onFinish={createAccount}
+              onFinish={updatePasswordByPhone}
             >
               <Form.Item
                 hasFeedback
