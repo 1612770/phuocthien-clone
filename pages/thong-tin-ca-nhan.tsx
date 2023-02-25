@@ -12,8 +12,8 @@ const ProfileInformationPage: NextPageWithLayout = () => {
 
   return (
     <div className="min-h-screen min-w-full bg-primary-background">
-      <div className="container grid py-4">
-        <Breadcrumb className="mt-4 mb-2">
+      <div className="container grid py-2">
+        <Breadcrumb className="mt-2 mb-2">
           <Breadcrumb.Item>
             <Link href="/">
               <a>
