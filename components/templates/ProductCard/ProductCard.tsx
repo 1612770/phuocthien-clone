@@ -56,21 +56,22 @@ function ProductCard({
             className={`${className} relative overflow-hidden transition duration-300 group-hover:border-primary-light`}
           >
             {product.detail?.isSaleOff && (
-              <Tag
-                color={COLORS.red}
-                className="absolute top-0 left-0 rounded-tr-none rounded-bl-none rounded-br-none"
-              >
+              <Tag color={COLORS.red} className="absolute top-[8px] left-[8px]">
                 Giảm giá
+              </Tag>
+            )}
+
+            {product?.unit && (
+              <Tag
+                color="blue"
+                className="absolute top-[8px] right-[8px] mr-0 capitalize"
+              >
+                {product?.unit}
               </Tag>
             )}
 
             <div className="relative flex flex-col">
               <Space direction="vertical" size={0}>
-                {product?.unit && (
-                  <Tag color="blue" className="capitalize">
-                    {product?.unit}
-                  </Tag>
-                )}
                 <Typography.Text
                   className={`mt-1 block ${
                     size !== 'small' ? 'min-h-[48px]' : 'min-h-[68px]'
@@ -79,7 +80,7 @@ function ProductCard({
                   {product?.name}
                 </Typography.Text>
                 <Typography.Text className="mt-1 block">
-                  <Typography.Text className="text-base font-semibold">
+                  <Typography.Text className="text-base font-semibold text-primary-dark">
                     {product?.retailPrice?.toLocaleString('it-IT', {
                       style: 'currency',
                       currency: 'VND',
@@ -88,7 +89,7 @@ function ProductCard({
                   </Typography.Text>
                   {product?.unit && (
                     <Typography.Text className="text-base">
-                      /{product?.unit}
+                      &nbsp;/&nbsp;{product?.unit}
                     </Typography.Text>
                   )}
                 </Typography.Text>
@@ -142,7 +143,7 @@ function ProductCard({
                     {product?.productGroup?.name} - {product?.productType?.name}
                   </Tag>
                   <Typography.Text className="mt-1 block">
-                    <Typography.Text className="text-base font-semibold text-primary">
+                    <Typography.Text className="text-base font-semibold text-primary-dark">
                       {product?.retailPrice?.toLocaleString('it-IT', {
                         style: 'currency',
                         currency: 'VND',
@@ -151,7 +152,7 @@ function ProductCard({
                     </Typography.Text>
                     {product?.unit && (
                       <Typography.Text className="text-base">
-                        /{product?.unit}
+                        &nbsp;/&nbsp;{product?.unit}
                       </Typography.Text>
                     )}
                   </Typography.Text>
