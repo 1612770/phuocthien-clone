@@ -1,4 +1,4 @@
-import { Col, Divider, Row, Space, Typography } from 'antd';
+import { Divider, Space, Typography } from 'antd';
 import Link from 'next/link';
 import { Facebook, Mail, MapPin, Phone, Twitter, Youtube } from 'react-feather';
 import IMAGES from 'configs/assests/images';
@@ -8,8 +8,8 @@ function PrimaryFooter() {
     <>
       <footer className="bg-primary px-4">
         <div className="py-8 lg:container">
-          <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12} lg={6}>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="w-full">
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                 Nhà thuốc Phước Thiện
               </Typography.Text>
@@ -31,9 +31,9 @@ function PrimaryFooter() {
                   phuocthiendn@yahoo.com
                 </Typography.Text>
               </Space>
-            </Col>
+            </div>
 
-            <Col xs={24} sm={12} lg={6}>
+            <div className="w-full">
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                 Hỗ trợ khách hàng
               </Typography.Text>
@@ -64,9 +64,9 @@ function PrimaryFooter() {
                   </a>
                 </Link>
               </Space>
-            </Col>
+            </div>
 
-            <Col xs={24} sm={12} lg={6}>
+            <div className="w-full">
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                 Hệ thống thuốc
               </Typography.Text>
@@ -106,9 +106,9 @@ function PrimaryFooter() {
                   </a>
                 </Link>
               </Space>
-            </Col>
+            </div>
 
-            <Col xs={24} sm={12} lg={6}>
+            <div className="w-full">
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                 Thông tin chung
               </Typography.Text>
@@ -144,36 +144,52 @@ function PrimaryFooter() {
                   </Typography.Text>
                 </a>
               </Link>
-            </Col>
-          </Row>
-          <div>
-            <img src={IMAGES.logo} alt="logo" className="my-3 block h-10" />
-            <Space className="my-2">
-              <Link
-                href="https://www.facebook.com/PhuocThienPharmacy/"
-                passHref
-              >
-                <a target={'_blank'}>
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
-                    <Facebook color="white" size={16} />
-                  </span>
+            </div>
+          </div>
+          <div className="my-3 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-4 lg:gap-4">
+            <div>
+              <img src={IMAGES.logo} alt="logo" className=" block h-10" />
+              <Space className="mt-2">
+                <Link
+                  href="https://www.facebook.com/PhuocThienPharmacy/"
+                  passHref
+                >
+                  <a target={'_blank'}>
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
+                      <Facebook color="white" size={16} />
+                    </span>
+                  </a>
+                </Link>
+                <Link href="/">
+                  <a>
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
+                      <Youtube color="white" size={16} />
+                    </span>
+                  </a>
+                </Link>
+                <Link href="/">
+                  <a>
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
+                      <Twitter color="white" size={16} />
+                    </span>
+                  </a>
+                </Link>
+              </Space>
+            </div>
+
+            <div>
+              <Typography.Text className=" uppercase text-white">
+                Tải về ứng dụng Phước Thiện
+              </Typography.Text>
+              <div className="mt-2 flex gap-2 lg:gap-4">
+                <a href="https://play.google.com/store/apps/details?id=com.esuspharmacy.phuocthien&hl=en">
+                  <img src="/chplay.png" alt="" className="w-[120px]" />
                 </a>
-              </Link>
-              <Link href="/">
-                <a>
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
-                    <Youtube color="white" size={16} />
-                  </span>
+                <a href="https://apps.apple.com/us/app/nh%C3%A0-thu%E1%BB%91c-ph%C6%B0%E1%BB%9Bc-thi%E1%BB%87n/id1662328703">
+                  <img src="/appstore.png" alt="" className="w-[120px]" />
                 </a>
-              </Link>
-              <Link href="/">
-                <a>
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
-                    <Twitter color="white" size={16} />
-                  </span>
-                </a>
-              </Link>
-            </Space>
+              </div>
+            </div>
           </div>
           <Divider className="bg-white" />
           <div>
