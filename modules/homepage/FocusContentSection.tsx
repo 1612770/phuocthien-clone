@@ -10,7 +10,7 @@ function FocusContentSection({
   focusContent: FocusContentModel[];
 }) {
   return (
-    <div className=" mt-[32px] bg-primary-background py-4">
+    <div className=" bg-primary-background py-4">
       <div className=" p-2 lg:container lg:p-0">
         <Typography.Title
           level={2}

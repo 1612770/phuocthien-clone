@@ -5,11 +5,10 @@ import { ProductClient } from '@libs/client/Product';
 import HomepageCarousel from '@modules/homepage/HomepageCarousel';
 import HomepageSearchSection from '@modules/homepage/HomepageSearchSection';
 import ViralProductsListModel from '@configs/models/viral-products-list.model';
-import { GeneralClient } from '@libs/client/General';
-import FocusContentModel from '@configs/models/focus-content.model';
 import FocusContentSection from '@modules/homepage/FocusContentSection';
 import VIRAL_PRODUCTS_LOAD_PER_TIME from '@configs/constants/viral-products-load-per-time';
 import dynamic from 'next/dynamic';
+import { useFocusContent } from '@providers/FocusContentProvider';
 
 const ViralProductsList = dynamic(
   () => import('@modules/products/ViralProductsList'),
@@ -18,8 +17,9 @@ const ViralProductsList = dynamic(
 
 const Home: NextPageWithLayout<{
   viralProductsLists?: ViralProductsListModel[];
-  focusContent?: FocusContentModel[];
-}> = ({ viralProductsLists, focusContent }) => {
+}> = ({ viralProductsLists }) => {
+  const { focusContent } = useFocusContent();
+
   return (
     <div className="mb-0 lg:mb-8">
       <HomepageCarousel />
@@ -28,7 +28,7 @@ const Home: NextPageWithLayout<{
         <HomepageSearchSection />
       </div>
 
-      <div className="hidden lg:block">
+      <div className="mt-[32px] hidden lg:block">
         <FocusContentSection focusContent={focusContent || []} />
       </div>
       {viralProductsLists?.map((viralProductsList, index) => (
@@ -40,10 +40,6 @@ const Home: NextPageWithLayout<{
           }
         />
       ))}
-
-      <div className="block lg:hidden">
-        <FocusContentSection focusContent={focusContent || []} />
-      </div>
     </div>
   );
 };
@@ -60,32 +56,25 @@ export const getServerSideProps = async (
   const serverSideProps: {
     props: {
       viralProductsLists: ViralProductsListModel[];
-      focusContent: FocusContentModel[];
     };
   } = {
     props: {
       viralProductsLists: [],
-      focusContent: [],
     },
   };
 
   const productClient = new ProductClient(context, {});
-  const generalClient = new GeneralClient(context, {});
 
   try {
-    const [viralProducts, focusContent] = await Promise.all([
+    const [viralProducts] = await Promise.all([
       productClient.getViralProducts({
         page: 1,
         pageSize: VIRAL_PRODUCTS_LOAD_PER_TIME,
       }),
-      generalClient.getFocusContent(),
     ]);
 
     if (viralProducts.data) {
       serverSideProps.props.viralProductsLists = viralProducts.data || [];
-    }
-    if (focusContent.data) {
-      serverSideProps.props.focusContent = focusContent.data || [];
     }
   } catch (error) {
     console.error(error);

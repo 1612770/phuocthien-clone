@@ -18,6 +18,8 @@ import CartProvider from '@providers/CartProvider';
 import AppMessageProvider from '@providers/AppMessageProvider';
 import AuthProvider from '@providers/AuthProvider';
 import AppConfirmDialogProvider from '@providers/AppConfirmDialogProvider';
+import FocusContentModel from '@configs/models/focus-content.model';
+import FocusContentProvider from '@providers/FocusContentProvider';
 
 interface AppPropsWithLayout<T> extends AppProps<T> {
   Component: NextPageWithLayout<T>;
@@ -28,6 +30,7 @@ function MyApp({
   pageProps,
 }: AppPropsWithLayout<{
   fullMenu?: MenuModel[];
+  focusContent?: FocusContentModel[];
 }>) {
   const getLayout = Component.getLayout || ((page) => page);
 
@@ -50,7 +53,11 @@ function MyApp({
               <AuthProvider>
                 <CartProvider>
                   <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
-                    {getLayout(<Component {...pageProps} />)}
+                    <FocusContentProvider
+                      focusContent={pageProps.focusContent || []}
+                    >
+                      {getLayout(<Component {...pageProps} />)}
+                    </FocusContentProvider>
                   </FullMenuProvider>
                 </CartProvider>
               </AuthProvider>
@@ -65,18 +72,28 @@ function MyApp({
 MyApp.getInitialProps = async (ctx: AppContext) => {
   const initalProps = await App.getInitialProps(ctx);
 
-  const appInitalProps: { props: { fullMenu: MenuModel[] } } = {
+  const appInitalProps: {
+    props: { fullMenu: MenuModel[]; focusContent: FocusContentModel[] };
+  } = {
     props: {
       fullMenu: [],
+      focusContent: [],
     },
   };
 
   const generalClient = new GeneralClient(ctx, {});
+
   try {
-    const fullMenu = await generalClient.getMenu();
+    const [fullMenu, focusContent] = await Promise.all([
+      generalClient.getMenu(),
+      generalClient.getFocusContent(),
+    ]);
 
     if (fullMenu.data) {
       appInitalProps.props.fullMenu = fullMenu.data;
+    }
+    if (focusContent.data) {
+      appInitalProps.props.focusContent = focusContent.data || [];
     }
   } catch (error) {
     console.error(error);

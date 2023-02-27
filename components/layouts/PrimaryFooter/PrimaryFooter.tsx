@@ -2,10 +2,19 @@ import { Divider, Space, Typography } from 'antd';
 import Link from 'next/link';
 import { Facebook, Mail, MapPin, Phone, Twitter, Youtube } from 'react-feather';
 import IMAGES from 'configs/assests/images';
+import { useFocusContent } from '@providers/FocusContentProvider';
+import FocusContentSection from '@modules/homepage/FocusContentSection';
+import { useRouter } from 'next/router';
 
 function PrimaryFooter() {
+  const { focusContent } = useFocusContent();
+  const router = useRouter();
+
   return (
     <>
+      <div className={`block ${router.asPath === '/' ? 'lg:hidden' : ''}`}>
+        <FocusContentSection focusContent={focusContent || []} />
+      </div>
       <footer className="bg-primary px-4">
         <div className="py-8 lg:container">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
