@@ -57,6 +57,8 @@ const OtpUtils = {
   },
 
   checkOtpNeedSending: (phone: string) => {
+    return true;
+
     const oldValuesString = LocalStorageUtils.getItem(
       LocalStorageKeys.OTP_SEND_TIME
     );
