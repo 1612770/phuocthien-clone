@@ -10,6 +10,7 @@ import { useAppMessage } from '@providers/AppMessageProvider';
 import OtpUtils from '@libs/utils/otp.utils';
 import ErrorCodes from '@configs/enums/error-codes.enum';
 import { REGEX_PHONE } from '@configs/env';
+import OtpSendAims from '@configs/enums/otp-send-aims.enum';
 
 enum SignUpSteps {
   EnterPhone = 'EnterPhone',
@@ -77,7 +78,10 @@ const SignUpPage: NextPageWithLayout = () => {
         return;
       }
 
-      const sendOtpResponse = await auth.sendOtp({ phoneNumber: phone });
+      const sendOtpResponse = await auth.sendOtp({
+        phoneNumber: phone,
+        aim: OtpSendAims.SIGN_UP,
+      });
 
       if (!sendOtpResponse.data?.verifyToken) {
         throw new Error(
@@ -210,6 +214,7 @@ const SignUpPage: NextPageWithLayout = () => {
               onSubmit={submitOtp}
               loading={submittingOtp}
               phoneNumber={phone}
+              aim={OtpSendAims.SIGN_UP}
             />
           </>
         )}

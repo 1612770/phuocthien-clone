@@ -10,6 +10,7 @@ import { AuthClient } from '@libs/client/Auth';
 import OTPInput from '@components/templates/OTPInput';
 import ErrorCodes from '@configs/enums/error-codes.enum';
 import { REGEX_PHONE } from '@configs/env';
+import OtpSendAims from '@configs/enums/otp-send-aims.enum';
 
 export enum ForgotPasswordSteps {
   EnterPhoneNumber = 'EnterPhoneNumber',
@@ -53,7 +54,10 @@ const LoginPage: NextPageWithLayout = () => {
         return;
       }
 
-      const sendOtpResponse = await auth.sendOtp({ phoneNumber: phone });
+      const sendOtpResponse = await auth.sendOtp({
+        phoneNumber: phone,
+        aim: OtpSendAims.FORGOT_PASSWORD,
+      });
 
       if (!sendOtpResponse.data?.verifyToken) {
         throw new Error(
@@ -204,6 +208,7 @@ const LoginPage: NextPageWithLayout = () => {
               onSubmit={submitOtp}
               loading={submittingOtp}
               phoneNumber={phone}
+              aim={OtpSendAims.FORGOT_PASSWORD}
             />
           </>
         )}

@@ -1,3 +1,4 @@
+import OtpSendAims from '@configs/enums/otp-send-aims.enum';
 import { AuthClient } from '@libs/client/Auth';
 import { useCountdown } from '@libs/utils/hooks';
 import OtpUtils from '@libs/utils/otp.utils';
@@ -10,10 +11,12 @@ function OTPInput({
   onSubmit,
   loading,
   phoneNumber,
+  aim,
 }: {
   onSubmit: (otp: string) => void;
   loading: boolean;
   phoneNumber: string;
+  aim: OtpSendAims;
 }) {
   const [otp, setOtp] = useState(new Array(4).fill(''));
   const [resendingOtp, setResendingOtp] = useState(false);
@@ -40,7 +43,7 @@ function OTPInput({
     try {
       setResendingOtp(true);
       const auth = new AuthClient(null, {});
-      const sendOtpResponse = await auth.sendOtp({ phoneNumber });
+      const sendOtpResponse = await auth.sendOtp({ phoneNumber, aim });
 
       if (!sendOtpResponse.data?.verifyToken) {
         throw new Error(

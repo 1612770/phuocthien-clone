@@ -1,6 +1,7 @@
 import APIResponse from '@configs/types/api-response.type';
 import BaseClient from './BaseClient';
 import ProfileModel from '@configs/models/profile.model';
+import OtpSendAims from '@configs/enums/otp-send-aims.enum';
 
 export class AuthClient extends BaseClient {
   constructor(ctx: unknown, data: unknown) {
@@ -18,6 +19,7 @@ export class AuthClient extends BaseClient {
 
   async sendOtp(payload: {
     phoneNumber: string;
+    aim: OtpSendAims;
   }): Promise<APIResponse<{ verifyToken: string; remainSeconds: number }>> {
     return await super.call('POST', `auth/otp`, payload);
   }
