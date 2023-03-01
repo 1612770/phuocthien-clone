@@ -1,12 +1,26 @@
 import ImageWithFallback from '@components/templates/ImageWithFallback';
+import SlideBannerModel from '@configs/models/slide-banner.model';
 import ImageUtils from '@libs/utils/image.utils';
 import { Button, Carousel } from 'antd';
 import { CarouselRef } from 'antd/es/carousel';
 import { useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'react-feather';
 
-function HomepageCarousel() {
+function HomepageCarousel({
+  slideBanner,
+}: {
+  slideBanner: SlideBannerModel[];
+}) {
   const carouselRef = useRef<CarouselRef | null>(null);
+  if (
+    !slideBanner ||
+    slideBanner.length === 0 ||
+    slideBanner.every(
+      (slide) => typeof slide?.visible === 'boolean' && !slide?.visible
+    )
+  ) {
+    return <div className="relative aspect-[21/9] h-[120px]"></div>;
+  }
 
   return (
     <div className="relative">
@@ -15,46 +29,23 @@ function HomepageCarousel() {
         dots={false}
         ref={(ref) => (carouselRef.current = ref)}
       >
-        <div className="relative aspect-[21/9] h-auto max-h-[400px] w-full">
-          <ImageWithFallback
-            src=""
-            loading="lazy"
-            alt="carousel image"
-            layout="fill"
-            objectFit="cover"
-            getMockImage={ImageUtils.getRandomMockCampaignImageUrl}
-          />
-        </div>
-        <div className="relative aspect-[21/9] h-auto max-h-[400px] w-full">
-          <ImageWithFallback
-            src=""
-            loading="lazy"
-            alt="carousel image"
-            layout="fill"
-            objectFit="cover"
-            getMockImage={ImageUtils.getRandomMockCampaignImageUrl}
-          />
-        </div>
-        <div className="relative aspect-[21/9] h-auto max-h-[400px] w-full">
-          <ImageWithFallback
-            src=""
-            loading="lazy"
-            alt="carousel image"
-            layout="fill"
-            objectFit="cover"
-            getMockImage={ImageUtils.getRandomMockCampaignImageUrl}
-          />
-        </div>
-        <div className="relative aspect-[21/9] h-auto max-h-[400px] w-full">
-          <ImageWithFallback
-            src=""
-            loading="lazy"
-            alt="carousel image"
-            layout="fill"
-            objectFit="cover"
-            getMockImage={ImageUtils.getRandomMockCampaignImageUrl}
-          />
-        </div>
+        {slideBanner.map((slide) =>
+          typeof slide?.visible === 'boolean' && !slide?.visible ? null : (
+            <div
+              className="relative aspect-[21/9] h-auto max-h-[400px] w-full"
+              key={slide.key}
+            >
+              <ImageWithFallback
+                src=""
+                loading="lazy"
+                alt="carousel image"
+                layout="fill"
+                objectFit="cover"
+                getMockImage={ImageUtils.getRandomMockCampaignImageUrl}
+              />
+            </div>
+          )
+        )}
       </Carousel>
 
       <Button

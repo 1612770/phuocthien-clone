@@ -9,6 +9,8 @@ import FocusContentSection from '@modules/homepage/FocusContentSection';
 import VIRAL_PRODUCTS_LOAD_PER_TIME from '@configs/constants/viral-products-load-per-time';
 import dynamic from 'next/dynamic';
 import { useAppData } from '@providers/AppDataProvider';
+import { GeneralClient } from '@libs/client/General';
+import SlideBannerModel from '@configs/models/slide-banner.model';
 
 const ViralProductsList = dynamic(
   () => import('@modules/products/ViralProductsList'),
@@ -17,12 +19,13 @@ const ViralProductsList = dynamic(
 
 const Home: NextPageWithLayout<{
   viralProductsLists?: ViralProductsListModel[];
-}> = ({ viralProductsLists }) => {
+  slideBanner?: SlideBannerModel[];
+}> = ({ viralProductsLists, slideBanner }) => {
   const { focusContent } = useAppData();
 
   return (
     <div className="mb-0 lg:mb-8">
-      <HomepageCarousel />
+      <HomepageCarousel slideBanner={slideBanner || []} />
 
       <div className="-mt-20 hidden lg:block">
         <HomepageSearchSection />
@@ -56,25 +59,33 @@ export const getServerSideProps = async (
   const serverSideProps: {
     props: {
       viralProductsLists: ViralProductsListModel[];
+      slideBanner: SlideBannerModel[];
     };
   } = {
     props: {
       viralProductsLists: [],
+      slideBanner: [],
     },
   };
 
   const productClient = new ProductClient(context, {});
+  const generalClient = new GeneralClient(context, {});
 
   try {
-    const [viralProducts] = await Promise.all([
+    const [viralProducts, slideBanner] = await Promise.all([
       productClient.getViralProducts({
         page: 1,
         pageSize: VIRAL_PRODUCTS_LOAD_PER_TIME,
       }),
+      generalClient.getSlideBanner(),
     ]);
 
     if (viralProducts.data) {
       serverSideProps.props.viralProductsLists = viralProducts.data || [];
+    }
+
+    if (slideBanner.data) {
+      serverSideProps.props.slideBanner = slideBanner.data || [];
     }
   } catch (error) {
     console.error(error);
