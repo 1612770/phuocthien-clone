@@ -82,7 +82,7 @@ const CartPage: NextPageWithLayout<{
       </Breadcrumb>
 
       {cartProducts.length > 0 && (
-        <Form onFinish={checkout} scrollToFirstError>
+        <Form onFinish={() => undefined} scrollToFirstError>
           <div className="md:border-1 border-none px-4 py-0 shadow-none md:rounded-lg md:border-solid md:border-gray-200 md:py-4 md:shadow-lg">
             {cartProducts.map((cartProduct, index) => (
               <Fragment key={cartProduct.product.key}>
@@ -257,9 +257,10 @@ const CartPage: NextPageWithLayout<{
               </Typography>
             )}
 
+            <Button hidden htmlType="submit" />
             <Button
               type="primary"
-              htmlType="submit"
+              onClick={checkout}
               loading={checkingOut}
               size="large"
               block
