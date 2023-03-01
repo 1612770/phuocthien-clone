@@ -1,6 +1,4 @@
 class UrlUtils {
-  constructor() {}
-
   static removeAccent(text: string) {
     return (text || '')
       .toLocaleLowerCase()
@@ -17,22 +15,26 @@ class UrlUtils {
     if (!text) text = '';
     if (!id) id = '';
 
-    // lower case text
-    text = text.toLowerCase();
+    if (text) {
+      // lower case text
+      text = text.toLowerCase();
 
-    // remove accents, swap ñ for n, etc
-    text = UrlUtils.removeAccent(text);
+      // remove accents, swap ñ for n, etc
+      text = UrlUtils.removeAccent(text);
 
-    // remove invalid chars
-    text = text.replace(/[^a-z0-9 -]/g, '');
+      // remove invalid chars
+      text = text.replace(/[^a-z0-9 -]/g, '');
 
-    // collapse whitespace and replace by -
-    text = text.replace(/\s+/g, '-');
+      // collapse whitespace and replace by -
+      text = text.replace(/\s+/g, '-');
 
-    // collapse dashes
-    text = text.replace(/-+/g, '-');
+      // collapse dashes
+      text = text.replace(/-+/g, '-');
 
-    return `${text}-${id}`;
+      return `${text}-${id}`;
+    }
+
+    return `${id}`;
   }
 
   static getKeyFromParam(url?: string) {

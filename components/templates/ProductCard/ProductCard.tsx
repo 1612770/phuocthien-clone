@@ -21,12 +21,16 @@ function ProductCard({
   size = 'default',
   variant = 'card',
 }: ProductCardProps) {
+  const productTypeKey = product?.productType?.key || product?.productTypeKey;
+  const productGroupKey =
+    product?.productGroup?.key || product?.productGroupKey;
+
   const href = `/${UrlUtils.generateSlug(
     product.productType?.name,
-    product.productType?.key
+    productTypeKey
   )}/${UrlUtils.generateSlug(
     product.productGroup?.name,
-    product.productGroup?.key
+    productGroupKey
   )}/${UrlUtils.generateSlug(product?.name, product?.key)}`;
 
   return (
