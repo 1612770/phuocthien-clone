@@ -2,12 +2,13 @@ import { Divider, Space, Typography } from 'antd';
 import Link from 'next/link';
 import { Facebook, Mail, MapPin, Phone, Twitter, Youtube } from 'react-feather';
 import IMAGES from 'configs/assests/images';
-import { useFocusContent } from '@providers/FocusContentProvider';
+import { useAppData } from '@providers/AppDataProvider';
 import FocusContentSection from '@modules/homepage/FocusContentSection';
 import { useRouter } from 'next/router';
+import LinkWrapper from '@components/templates/LinkWrapper';
 
 function PrimaryFooter() {
-  const { focusContent } = useFocusContent();
+  const { focusContent, mainInfo } = useAppData();
   const router = useRouter();
 
   return (
@@ -18,9 +19,31 @@ function PrimaryFooter() {
       <footer className="bg-primary px-4">
         <div className="py-8 lg:container">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {mainInfo.map((info) =>
+              typeof info?.visible === 'boolean' && !info?.visible ? null : (
+                <div className="w-full" key={info.code}>
+                  <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
+                    {info.name}
+                  </Typography.Text>
+                  {info.groupInfo?.map((groupInfo) =>
+                    typeof groupInfo?.visible === 'boolean' &&
+                    !groupInfo?.visible ? null : (
+                      <Space className="my-0.5 w-full" key={groupInfo.code}>
+                        <LinkWrapper href={groupInfo.eventUrl}>
+                          <Typography.Text className="text-white">
+                            {groupInfo.name}
+                          </Typography.Text>
+                        </LinkWrapper>
+                      </Space>
+                    )
+                  )}
+                </div>
+              )
+            )}
+
             <div className="w-full">
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
-                Nhà thuốc Phước Thiện
+                Thông tin liên hệ
               </Typography.Text>
               <Space className="my-0.5 w-full">
                 <MapPin className="text-white" size={16} />
@@ -40,119 +63,6 @@ function PrimaryFooter() {
                   phuocthiendn@yahoo.com
                 </Typography.Text>
               </Space>
-            </div>
-
-            <div className="w-full">
-              <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
-                Hỗ trợ khách hàng
-              </Typography.Text>
-              <Space className="my-0.5 w-full">
-                <Link href="/">
-                  <a>
-                    <Typography.Text className="text-white">
-                      Mua hàng online
-                    </Typography.Text>
-                  </a>
-                </Link>
-              </Space>
-              <Space className="my-0.5 w-full">
-                <Link href="/">
-                  <a>
-                    <Typography.Text className="text-white">
-                      Chính sách vận chuyển và giao hàng
-                    </Typography.Text>
-                  </a>
-                </Link>
-              </Space>
-              <Space className="my-0.5 w-full">
-                <Link href="/">
-                  <a>
-                    <Typography.Text className="text-white">
-                      Bảo mật thông tin khách hàng
-                    </Typography.Text>
-                  </a>
-                </Link>
-              </Space>
-            </div>
-
-            <div className="w-full">
-              <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
-                Hệ thống thuốc
-              </Typography.Text>
-              <Space className="my-0.5 w-full">
-                <Link href="/">
-                  <a>
-                    <Typography.Text className="text-white">
-                      Hệ thống nhà thuốc
-                    </Typography.Text>
-                  </a>
-                </Link>
-              </Space>
-              <Space className="my-0.5 w-full">
-                <Link href="/">
-                  <a>
-                    <Typography.Text className="text-white">
-                      Quy định chung
-                    </Typography.Text>
-                  </a>
-                </Link>
-              </Space>
-              <Space className="my-0.5 w-full">
-                <Link href="/">
-                  <a>
-                    <Typography.Text className="text-white">
-                      Chính sách đổi trả
-                    </Typography.Text>
-                  </a>
-                </Link>
-              </Space>
-              <Space className="my-0.5 w-full">
-                <Link href="/">
-                  <a>
-                    <Typography.Text className="text-white">
-                      Chính sách bảo hành sản phẩm
-                    </Typography.Text>
-                  </a>
-                </Link>
-              </Space>
-            </div>
-
-            <div className="w-full">
-              <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
-                Thông tin chung
-              </Typography.Text>
-              <Space className="my-0.5 w-full">
-                <Link href="/">
-                  <a>
-                    <Typography.Text className="text-white">
-                      Khuyến mãi
-                    </Typography.Text>
-                  </a>
-                </Link>
-              </Space>
-              <Space className="my-0.5 w-full">
-                <Link href="/">
-                  <a>
-                    <Typography.Text className="text-white">
-                      Tìm kiếm nhà thuốc gần nhất
-                    </Typography.Text>
-                  </a>
-                </Link>
-              </Space>
-              <Link href="/">
-                <a>
-                  <Typography.Text className="my-2 block font-semibold uppercase text-white">
-                    Danh mục hợp chất
-                  </Typography.Text>
-                </a>
-              </Link>
-              <Link href="/">
-                <a>
-                  <Typography.Text className="my-2 block font-semibold uppercase text-white">
-                    Bản tin sức khỏe
-                  </Typography.Text>
-                </a>
-              </Link>
             </div>
           </div>
           <div className="my-3 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-4 lg:gap-4">

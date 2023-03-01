@@ -19,7 +19,8 @@ import AppMessageProvider from '@providers/AppMessageProvider';
 import AuthProvider from '@providers/AuthProvider';
 import AppConfirmDialogProvider from '@providers/AppConfirmDialogProvider';
 import FocusContentModel from '@configs/models/focus-content.model';
-import FocusContentProvider from '@providers/FocusContentProvider';
+import MainInfoModel from '@configs/models/main-info.model';
+import AppDataProvider from '@providers/AppDataProvider';
 
 interface AppPropsWithLayout<T> extends AppProps<T> {
   Component: NextPageWithLayout<T>;
@@ -31,6 +32,7 @@ function MyApp({
 }: AppPropsWithLayout<{
   fullMenu?: MenuModel[];
   focusContent?: FocusContentModel[];
+  mainInfo: MainInfoModel[];
 }>) {
   const getLayout = Component.getLayout || ((page) => page);
 
@@ -53,11 +55,12 @@ function MyApp({
               <AuthProvider>
                 <CartProvider>
                   <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
-                    <FocusContentProvider
+                    <AppDataProvider
                       focusContent={pageProps.focusContent || []}
+                      mainInfo={pageProps.mainInfo || []}
                     >
                       {getLayout(<Component {...pageProps} />)}
-                    </FocusContentProvider>
+                    </AppDataProvider>
                   </FullMenuProvider>
                 </CartProvider>
               </AuthProvider>
@@ -73,20 +76,26 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
   const initalProps = await App.getInitialProps(ctx);
 
   const appInitalProps: {
-    props: { fullMenu: MenuModel[]; focusContent: FocusContentModel[] };
+    props: {
+      fullMenu: MenuModel[];
+      focusContent: FocusContentModel[];
+      mainInfo: MainInfoModel[];
+    };
   } = {
     props: {
       fullMenu: [],
       focusContent: [],
+      mainInfo: [],
     },
   };
 
   const generalClient = new GeneralClient(ctx, {});
 
   try {
-    const [fullMenu, focusContent] = await Promise.all([
+    const [fullMenu, focusContent, mainInfo] = await Promise.all([
       generalClient.getMenu(),
       generalClient.getFocusContent(),
+      generalClient.getMainInfo(),
     ]);
 
     if (fullMenu.data) {
@@ -94,6 +103,10 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
     }
     if (focusContent.data) {
       appInitalProps.props.focusContent = focusContent.data || [];
+    }
+
+    if (mainInfo.data) {
+      appInitalProps.props.mainInfo = mainInfo.data || [];
     }
   } catch (error) {
     console.error(error);

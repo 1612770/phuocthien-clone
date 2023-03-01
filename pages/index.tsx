@@ -8,7 +8,7 @@ import ViralProductsListModel from '@configs/models/viral-products-list.model';
 import FocusContentSection from '@modules/homepage/FocusContentSection';
 import VIRAL_PRODUCTS_LOAD_PER_TIME from '@configs/constants/viral-products-load-per-time';
 import dynamic from 'next/dynamic';
-import { useFocusContent } from '@providers/FocusContentProvider';
+import { useAppData } from '@providers/AppDataProvider';
 
 const ViralProductsList = dynamic(
   () => import('@modules/products/ViralProductsList'),
@@ -18,7 +18,7 @@ const ViralProductsList = dynamic(
 const Home: NextPageWithLayout<{
   viralProductsLists?: ViralProductsListModel[];
 }> = ({ viralProductsLists }) => {
-  const { focusContent } = useFocusContent();
+  const { focusContent } = useAppData();
 
   return (
     <div className="mb-0 lg:mb-8">

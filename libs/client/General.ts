@@ -6,8 +6,11 @@ import ProductGroupModel from '@configs/models/product-group.model';
 import BrandModel from '@configs/models/brand.model';
 import PaymentMethodModel from '@configs/models/payment-method.model';
 import FocusContentModel from '@configs/models/focus-content.model';
+import SlideBannerModel from '@configs/models/slide-banner.model';
+import MainInfoModel from '@configs/models/main-info.model';
 
 export class GeneralClient extends BaseClient {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(ctx: any, data: any) {
     super(ctx, data);
   }
@@ -42,5 +45,13 @@ export class GeneralClient extends BaseClient {
 
   async getFocusContent(): Promise<APIResponse<FocusContentModel[]>> {
     return await super.call('GET', `focus`, {});
+  }
+
+  async getSlideBanner(): Promise<APIResponse<SlideBannerModel[]>> {
+    return await super.call('GET', `slide-banner`, {});
+  }
+
+  async getMainInfo(): Promise<APIResponse<MainInfoModel[]>> {
+    return await super.call('GET', `main-info`, {});
   }
 }
