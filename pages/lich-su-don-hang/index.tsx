@@ -1,6 +1,6 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { NextPageWithLayout } from '../page';
-import { Breadcrumb, Button, Empty, Spin, Typography } from 'antd';
+import { Breadcrumb, Button, Empty, Pagination, Spin, Typography } from 'antd';
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { COOKIE_KEYS } from '@libs/helpers';
 import OrdersProvider, { useOrders } from '@providers/OrdersProvider';
@@ -9,13 +9,17 @@ import Link from 'next/link';
 import { ChevronLeft } from 'react-feather';
 import OrderItem from '@modules/orders/OrderItem';
 import UserLayout from '@components/layouts/UserLayout';
+import { useRouter } from 'next/router';
 
 const OrdersPage: NextPageWithLayout = () => {
   const { orders, gettingOrders, getOrders } = useOrders();
+  const router = useRouter();
 
   useEffect(() => {
-    getOrders();
-  }, []);
+    getOrders({
+      page: +(router.query.trang || 1),
+    });
+  }, [router.query.trang]);
 
   return (
     <div className="min-h-screen min-w-full bg-primary-background">
@@ -54,6 +58,24 @@ const OrdersPage: NextPageWithLayout = () => {
               </Link>
             </Empty>
           )}
+
+          <div className="flex justify-center">
+            <Pagination
+              defaultCurrent={+(router.query.trang || 1)}
+              pageSize={10}
+              onChange={(page) => {
+                router.push({
+                  query: {
+                    ...router.query,
+                    trang: page,
+                  },
+                });
+              }}
+              total={orders?.total}
+              className="mt-4"
+              showSizeChanger={false}
+            />
+          </div>
         </UserLayout>
       </div>
     </div>

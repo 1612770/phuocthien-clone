@@ -4,11 +4,13 @@ import OrderModel from '@configs/models/order.model';
 import { useAppMessage } from './AppMessageProvider';
 import WithPagination from '@configs/types/utils/with-pagination';
 
+type GetOrderPayload = { page: number };
+
 const OrdersContext = React.createContext<{
   orders: WithPagination<OrderModel[]> | undefined;
   setOrders: (orders: WithPagination<OrderModel[]>) => void;
 
-  getOrders: () => Promise<void>;
+  getOrders: (payload: GetOrderPayload) => Promise<void>;
 
   gettingOrders: boolean;
   setGettingOrders: (gettingOrders: boolean) => void;
@@ -28,23 +30,26 @@ function OrdersProvider({ children }: { children: React.ReactNode }) {
 
   const { toastError } = useAppMessage();
 
-  const getOrders = useCallback(async () => {
-    try {
-      setGettingOrders(true);
+  const getOrders = useCallback(
+    async (payload: GetOrderPayload) => {
+      try {
+        setGettingOrders(true);
 
-      const order = new OrderClient(null, {});
-      const ordersResponse = await order.getOrders({
-        page: 1,
-        pageSize: 10,
-      });
+        const order = new OrderClient(null, {});
+        const ordersResponse = await order.getOrders({
+          page: payload.page,
+          pageSize: 10,
+        });
 
-      setOrders(ordersResponse.data);
-    } catch (error) {
-      toastError({ data: error });
-    } finally {
-      setGettingOrders(false);
-    }
-  }, [toastError]);
+        setOrders(ordersResponse.data);
+      } catch (error) {
+        toastError({ data: error });
+      } finally {
+        setGettingOrders(false);
+      }
+    },
+    [toastError]
+  );
 
   return (
     <OrdersContext.Provider
