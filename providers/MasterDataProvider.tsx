@@ -15,6 +15,9 @@ const MasterDataContext = React.createContext<{
 
   loadDistricts: (payload: { provinceCode: string }) => Promise<void>;
   loadWards: (payload: { districtCode: string }) => Promise<void>;
+
+  loadingDistricts: boolean;
+  loadingWards: boolean;
 }>({
   provinces: [],
   setProvinces: () => undefined,
@@ -25,6 +28,9 @@ const MasterDataContext = React.createContext<{
 
   loadDistricts: () => Promise.resolve(),
   loadWards: () => Promise.resolve(),
+
+  loadingDistricts: false,
+  loadingWards: false,
 });
 
 function MasterDataProvider({
@@ -38,6 +44,9 @@ function MasterDataProvider({
   const [districts, setDistricts] = useState<DistrictModel[]>([]);
   const [wards, setWards] = useState<WardModel[]>([]);
 
+  const [loadingDistricts, setLoadingDistricts] = useState(false);
+  const [loadingWards, setLoadingWards] = useState(false);
+
   const { toastError } = useAppMessage();
 
   const loadDistricts = useCallback(
@@ -45,6 +54,8 @@ function MasterDataProvider({
       const masterDataClient = new MasterDataClient(null, {});
 
       try {
+        setLoadingDistricts(true);
+
         const districts = await masterDataClient.getAllDistricts(payload);
         if (districts.data) {
           setDistricts(districts.data);
@@ -53,6 +64,8 @@ function MasterDataProvider({
         toastError({
           data: error,
         });
+      } finally {
+        setLoadingDistricts(false);
       }
     },
     [toastError]
@@ -63,6 +76,8 @@ function MasterDataProvider({
       const masterDataClient = new MasterDataClient(null, {});
 
       try {
+        setLoadingWards(true);
+
         const wards = await masterDataClient.getAllWards(payload);
         if (wards.data) {
           setWards(wards.data);
@@ -71,6 +86,8 @@ function MasterDataProvider({
         toastError({
           data: error,
         });
+      } finally {
+        setLoadingWards(false);
       }
     },
     [toastError]
@@ -88,6 +105,9 @@ function MasterDataProvider({
 
         loadDistricts,
         loadWards,
+
+        loadingDistricts,
+        loadingWards,
       }}
     >
       {children}

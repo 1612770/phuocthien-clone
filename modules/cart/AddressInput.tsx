@@ -1,4 +1,4 @@
-import { Col, Form, Input, Row, Select, Typography } from 'antd';
+import { Col, Form, Input, Row, Select, Spin, Typography } from 'antd';
 import { convertStringToASCII } from '@libs/helpers';
 import { useCheckout } from '@providers/CheckoutProvider';
 import { useEffect } from 'react';
@@ -16,8 +16,15 @@ function AddressInput() {
     setCurrentWardKey,
   } = useCheckout();
 
-  const { provinces, districts, wards, loadDistricts, loadWards } =
-    useMasterData();
+  const {
+    provinces,
+    districts,
+    wards,
+    loadDistricts,
+    loadWards,
+    loadingDistricts,
+    loadingWards,
+  } = useMasterData();
 
   const [form] = Form.useForm();
 
@@ -130,47 +137,49 @@ function AddressInput() {
                 }),
               ]}
             >
-              <div>
-                <Select
-                  showSearch
-                  className="w-full"
-                  disabled={!currentProvinceKey}
-                  value={currentDistrictKey}
-                  placeholder="Nhập huyện/quận"
-                  onChange={(value) => {
-                    setCurrentDistrictKey(value);
-                    setCurrentWardKey(null);
-                  }}
-                  filterOption={(inputValue, currentOption) => {
-                    if (!currentProvinceKey) return false;
+              <Spin spinning={loadingDistricts}>
+                <div>
+                  <Select
+                    showSearch
+                    className="w-full"
+                    disabled={!currentProvinceKey}
+                    value={currentDistrictKey}
+                    placeholder="Nhập huyện/quận"
+                    onChange={(value) => {
+                      setCurrentDistrictKey(value);
+                      setCurrentWardKey(null);
+                    }}
+                    filterOption={(inputValue, currentOption) => {
+                      if (!currentProvinceKey) return false;
 
-                    const option = districts.find(
-                      (district) =>
-                        district.districtCode === currentOption?.value
-                    );
-
-                    return (
-                      convertStringToASCII(
-                        (option?.districtName || '').toLowerCase()
-                      ).indexOf(
-                        convertStringToASCII(inputValue.toLowerCase())
-                      ) !== -1
-                    );
-                  }}
-                >
-                  {currentProvinceKey &&
-                    districts.map((district) => {
-                      return (
-                        <Select.Option
-                          key={district.districtCode}
-                          value={district.districtCode}
-                        >
-                          {district.districtName}
-                        </Select.Option>
+                      const option = districts.find(
+                        (district) =>
+                          district.districtCode === currentOption?.value
                       );
-                    })}
-                </Select>
-              </div>
+
+                      return (
+                        convertStringToASCII(
+                          (option?.districtName || '').toLowerCase()
+                        ).indexOf(
+                          convertStringToASCII(inputValue.toLowerCase())
+                        ) !== -1
+                      );
+                    }}
+                  >
+                    {currentProvinceKey &&
+                      districts.map((district) => {
+                        return (
+                          <Select.Option
+                            key={district.districtCode}
+                            value={district.districtCode}
+                          >
+                            {district.districtName}
+                          </Select.Option>
+                        );
+                      })}
+                  </Select>
+                </div>
+              </Spin>
             </Form.Item>
           </Col>
           <Col xs={24} md={12}>
@@ -189,44 +198,46 @@ function AddressInput() {
                 }),
               ]}
             >
-              <div>
-                <Select
-                  showSearch
-                  className="w-full"
-                  disabled={!currentDistrictKey}
-                  value={currentWardKey}
-                  placeholder="Nhập xã/phường"
-                  onChange={setCurrentWardKey}
-                  filterOption={(inputValue, currentOption) => {
-                    if (!currentProvinceKey) return false;
+              <Spin spinning={loadingWards}>
+                <div>
+                  <Select
+                    showSearch
+                    className="w-full"
+                    disabled={!currentDistrictKey}
+                    value={currentWardKey}
+                    placeholder="Nhập xã/phường"
+                    onChange={setCurrentWardKey}
+                    filterOption={(inputValue, currentOption) => {
+                      if (!currentProvinceKey) return false;
 
-                    const option =
-                      wards.find(
-                        (ward) => ward.wardName === currentOption?.value
-                      ) || {};
+                      const option =
+                        wards.find(
+                          (ward) => ward.wardName === currentOption?.value
+                        ) || {};
 
-                    return (
-                      convertStringToASCII(
-                        (option?.wardName || '').toLowerCase()
-                      ).indexOf(
-                        convertStringToASCII(inputValue.toLowerCase())
-                      ) !== -1
-                    );
-                  }}
-                >
-                  {currentProvinceKey &&
-                    wards.map((ward) => {
                       return (
-                        <Select.Option
-                          key={ward.wardName}
-                          value={ward.wardName}
-                        >
-                          {ward.wardName}
-                        </Select.Option>
+                        convertStringToASCII(
+                          (option?.wardName || '').toLowerCase()
+                        ).indexOf(
+                          convertStringToASCII(inputValue.toLowerCase())
+                        ) !== -1
                       );
-                    })}
-                </Select>
-              </div>
+                    }}
+                  >
+                    {currentProvinceKey &&
+                      wards.map((ward) => {
+                        return (
+                          <Select.Option
+                            key={ward.wardName}
+                            value={ward.wardName}
+                          >
+                            {ward.wardName}
+                          </Select.Option>
+                        );
+                      })}
+                  </Select>
+                </div>
+              </Spin>
             </Form.Item>
           </Col>
           <Col xs={24} md={12}>
