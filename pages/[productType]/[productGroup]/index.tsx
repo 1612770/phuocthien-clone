@@ -115,7 +115,7 @@ const ProductGroupPage: NextPageWithLayout<{
       </Breadcrumb>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[300px_minmax(600px,_1fr)]">
-        <div className="sticky top-0 hidden h-[100vh] grid-flow-row lg:block">
+        <div className="sticky top-0 hidden h-[100vh] grid-flow-row md:h-auto lg:block">
           <FilterOptions productBrands={productBrands || []} />
         </div>
         <div>
@@ -156,20 +156,33 @@ const ProductGroupPage: NextPageWithLayout<{
 
                 {[
                   {
-                    label: 'Bán chạy',
-                  },
-                  {
-                    label: 'Hàng mới',
-                  },
-                  {
                     label: 'Giá thấp',
+                    onClick: () => {
+                      router.push({
+                        query: {
+                          ...router.query,
+                          'sap-xep-theo': 'GIA_BAN_LE',
+                          'sap-xep': 'ASC',
+                        },
+                      });
+                    },
                   },
                   {
                     label: 'Giá cao',
+                    onClick: () => {
+                      router.push({
+                        query: {
+                          ...router.query,
+                          'sap-xep-theo': 'GIA_BAN_LE',
+                          'sap-xep': 'DESC',
+                        },
+                      });
+                    },
                   },
                 ].map((tag) => (
                   <Tag.CheckableTag
                     key={tag.label}
+                    onClick={tag.onClick}
                     checked={false}
                     className="mr-0 rounded-full border border-solid border-gray-200 px-4 py-1"
                   >
@@ -190,30 +203,32 @@ const ProductGroupPage: NextPageWithLayout<{
               ))}
             </div>
 
+            {!!products?.data.length && (
+              <div className="flex justify-center">
+                <Pagination
+                  pageSize={PRODUCTS_LOAD_PER_TIME}
+                  onChange={(page) => {
+                    router.replace({
+                      query: {
+                        ...router.query,
+                        trang: page,
+                      },
+                    });
+                  }}
+                  total={products?.total || 0}
+                  className="mt-4"
+                  current={+(router.query?.trang || 1)}
+                  showSizeChanger={false}
+                />
+              </div>
+            )}
+
             {!products?.data.length && (
               <Empty
                 className="mt-4 mb-8"
                 description={<Typography>Không có sản phẩm nào</Typography>}
               ></Empty>
             )}
-
-            <div className="flex justify-center">
-              <Pagination
-                pageSize={PRODUCTS_LOAD_PER_TIME}
-                onChange={(page) => {
-                  router.replace({
-                    query: {
-                      ...router.query,
-                      trang: page,
-                    },
-                  });
-                }}
-                total={products?.total || 0}
-                className="mt-4"
-                current={+(router.query?.trang || 1)}
-                showSizeChanger={false}
-              />
-            </div>
           </div>
         </div>
       </div>
@@ -268,6 +283,8 @@ export const getServerSideProps: GetServerSideProps = async (
       productionBrandKeys: context.query.brands
         ? (context.query.brands as string).split(',')
         : undefined,
+      sortBy: (context.query['sap-xep-theo'] as 'GIA_BAN_LE') || undefined,
+      sortOrder: (context.query['sap-xep'] as 'ASC' | 'DESC') || undefined,
     });
 
     if (products.data) {
