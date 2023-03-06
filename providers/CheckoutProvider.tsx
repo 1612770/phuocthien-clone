@@ -12,23 +12,7 @@ import SessionStorageUtils, {
 import OfferModel from '@configs/models/offer.model';
 import { useAppConfirmDialog } from './AppConfirmDialogProvider';
 import { useAppMessage } from '@providers/AppMessageProvider';
-
-const provincesOfVietNamJSON: {
-  [key: string]: {
-    name: string;
-    'quan-huyen': {
-      [key: string]: {
-        name: string;
-        'xa-phuong': {
-          [key: string]: {
-            name: string;
-          };
-        };
-      };
-    };
-  };
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-} = require('../public/assets/vn.json');
+import { useMasterData } from './MasterDataProvider';
 
 const CheckoutContext = React.createContext<{
   name: string;
@@ -81,33 +65,6 @@ const CheckoutContext = React.createContext<{
   checkingOut: boolean;
   setCheckingOut: (checkingOut: boolean) => void;
 
-  currentProvince:
-    | {
-        name: string;
-        'quan-huyen': {
-          [key: string]: {
-            name: string;
-            'xa-phuong': {
-              [key: string]: {
-                name: string;
-              };
-            };
-          };
-        };
-      }
-    | undefined;
-
-  currentDistrict:
-    | {
-        name: string;
-        'xa-phuong': {
-          [key: string]: {
-            name: string;
-          };
-        };
-      }
-    | undefined;
-
   checkout: () => void;
 
   offer: OfferModel | undefined;
@@ -152,9 +109,6 @@ const CheckoutContext = React.createContext<{
   checkingOut: false,
   setCheckingOut: () => undefined,
 
-  currentProvince: undefined,
-  currentDistrict: undefined,
-
   checkout: () => undefined,
 
   offer: undefined,
@@ -166,6 +120,7 @@ const CheckoutContext = React.createContext<{
 
 function CheckoutProvider({ children }: { children: React.ReactNode }) {
   const { cartProducts, resetCart } = useCart();
+  const { provinces, wards, districts } = useMasterData();
   const router = useRouter();
   const { setConfirmData } = useAppConfirmDialog();
   const { isUserLoggedIn } = useAuth();
@@ -205,21 +160,6 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
   const [offer, setOffer] = useState<OfferModel>();
 
-  const currentProvince = useMemo(() => {
-    if (!currentProvinceKey) {
-      return undefined;
-    }
-
-    return provincesOfVietNamJSON[currentProvinceKey];
-  }, [currentProvinceKey]);
-
-  const currentDistrict = useMemo(() => {
-    if (!currentDistrictKey) {
-      return undefined;
-    }
-    return currentProvince?.['quan-huyen'][currentDistrictKey];
-  }, [currentDistrictKey, currentProvince]);
-
   const totalRawPrice = useMemo(
     () =>
       cartProducts.reduce(
@@ -245,6 +185,26 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
     [cartProducts, offer]
   );
 
+  const getAddressData = () => {
+    if (!currentProvinceKey || !currentDistrictKey || !currentWardKey) {
+      return undefined;
+    }
+    const province = provinces.find(
+      (province) => province.provinceCode === currentProvinceKey
+    );
+    const district = districts.find(
+      (district) => district.districtCode === currentDistrictKey
+    );
+    const ward = wards.find((ward) => ward.wardName === currentWardKey);
+
+    return {
+      province: province?.provinceName || '',
+      district: district?.districtName || '',
+      ward: ward?.wardName || '',
+      detail: address,
+    };
+  };
+
   const checkout = async () => {
     try {
       if (!(totalPrice > 10000)) {
@@ -267,15 +227,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
             : undefined,
         deliveryAddressInfo:
           shippingType === ShippingTypes.DELIVERY
-            ? {
-                province: currentProvince?.name || '',
-                district: currentDistrict?.name || '',
-                ward:
-                  (currentWardKey &&
-                    currentDistrict?.['xa-phuong'][currentWardKey].name) ||
-                  '',
-                detail: address,
-              }
+            ? getAddressData()
             : undefined,
         items: cartProducts.map((cartProduct) => ({
           productKey: cartProduct.product.key || '',
@@ -370,9 +322,6 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
         currentDrugStoreKey,
         setCurrentDrugStoreKey,
-
-        currentProvince,
-        currentDistrict,
 
         productStatuses,
         setProductStatuses,

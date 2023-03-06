@@ -30,6 +30,9 @@ import { REGEX_PHONE } from '@configs/env';
 import { OfferClient } from '@libs/client/Offer';
 import OfferModel from '@configs/models/offer.model';
 import OfferCodeInput from '@modules/cart/OfferCodeInput';
+import { MasterDataClient } from '@libs/client/MasterData';
+import ProvinceModel from '@configs/models/province.model';
+import MasterDataProvider from '@providers/MasterDataProvider';
 
 const CartPage: NextPageWithLayout<{
   paymentMethods: PaymentMethodModel[];
@@ -61,6 +64,8 @@ const CartPage: NextPageWithLayout<{
     totalPrice,
   } = useCheckout();
 
+  const [checkoutForm] = Form.useForm();
+
   const totalProducts = cartProducts.reduce(
     (total, cartProduct) => total + (Number(cartProduct.quantity) || 0),
     0
@@ -82,7 +87,7 @@ const CartPage: NextPageWithLayout<{
       </Breadcrumb>
 
       {cartProducts.length > 0 && (
-        <Form onFinish={() => undefined} scrollToFirstError>
+        <Form onFinish={() => undefined} scrollToFirstError form={checkoutForm}>
           <div className="md:border-1 border-none px-4 py-0 shadow-none md:rounded-lg md:border-solid md:border-gray-200 md:py-4 md:shadow-lg">
             {cartProducts.map((cartProduct, index) => (
               <Fragment key={cartProduct.product.key}>
@@ -181,12 +186,6 @@ const CartPage: NextPageWithLayout<{
               />
             )}
 
-            <Input.TextArea
-              rows={2}
-              placeholder="Nhập ghi chú (nếu có)"
-              className="mt-2"
-            />
-
             <Divider />
             <Typography.Title level={4}>
               Chọn phương thức thanh toán
@@ -260,7 +259,11 @@ const CartPage: NextPageWithLayout<{
             <Button hidden htmlType="submit" />
             <Button
               type="primary"
-              onClick={checkout}
+              onClick={() => {
+                checkoutForm.validateFields().then(() => {
+                  checkout();
+                });
+              }}
               loading={checkingOut}
               size="large"
               block
@@ -298,7 +301,9 @@ export default CartPage;
 CartPage.getLayout = (page) => {
   return (
     <PrimaryLayout hideFooter>
-      <CheckoutProvider>{page}</CheckoutProvider>
+      <MasterDataProvider defaultProvinces={page.props.provinces}>
+        <CheckoutProvider>{page}</CheckoutProvider>
+      </MasterDataProvider>
     </PrimaryLayout>
   );
 };
@@ -311,32 +316,44 @@ export const getServerSideProps = async (
     props: {
       paymentMethods: PaymentMethodModel[];
       offers: OfferModel[];
+      provinces: ProvinceModel[];
     };
   } = {
     props: {
       paymentMethods: [],
       offers: [],
+      provinces: [],
     },
   };
 
   const general = new GeneralClient(context, {});
   const offerClient = new OfferClient(context, {});
+  const masterDataClient = new MasterDataClient(context, {});
 
-  const [paymentMethods, offers] = await Promise.all([
-    general.getPaymentMethods(),
-    offerClient.getAllActiveOffers(),
-  ]);
+  try {
+    const [paymentMethods, offers, provinces] = await Promise.all([
+      general.getPaymentMethods(),
+      offerClient.getAllActiveOffers(),
+      masterDataClient.getAllProvinces(),
+    ]);
 
-  if (offers.data) {
-    serverSideProps.props.offers = offers.data;
+    if (offers.data) {
+      serverSideProps.props.offers = offers.data;
+    }
+
+    if (provinces.data) {
+      serverSideProps.props.provinces = provinces.data;
+    }
+
+    serverSideProps.props.paymentMethods =
+      paymentMethods.data?.filter(
+        (method) =>
+          (typeof method.visible === 'boolean' && method.visible) ||
+          typeof method.visible === 'undefined'
+      ) || [];
+  } catch (error) {
+    console.error('Gio hang', error);
   }
-
-  serverSideProps.props.paymentMethods =
-    paymentMethods.data?.filter(
-      (method) =>
-        (typeof method.visible === 'boolean' && method.visible) ||
-        typeof method.visible === 'undefined'
-    ) || [];
 
   return serverSideProps;
 };

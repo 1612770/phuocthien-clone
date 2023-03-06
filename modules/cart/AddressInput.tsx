@@ -2,23 +2,7 @@ import { Col, Form, Input, Row, Select, Typography } from 'antd';
 import { convertStringToASCII } from '@libs/helpers';
 import { useCheckout } from '@providers/CheckoutProvider';
 import { useEffect } from 'react';
-
-const provincesOfVietNamJSON: {
-  [key: string]: {
-    name: string;
-    'quan-huyen': {
-      [key: string]: {
-        name: string;
-        'xa-phuong': {
-          [key: string]: {
-            name: string;
-          };
-        };
-      };
-    };
-  };
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-} = require('../../public/assets/vn.json');
+import { useMasterData } from '@providers/MasterDataProvider';
 
 function AddressInput() {
   const {
@@ -30,9 +14,10 @@ function AddressInput() {
     setCurrentDistrictKey,
     currentWardKey,
     setCurrentWardKey,
-    currentProvince,
-    currentDistrict,
   } = useCheckout();
+
+  const { provinces, districts, wards, loadDistricts, loadWards } =
+    useMasterData();
 
   const [form] = Form.useForm();
 
@@ -47,6 +32,22 @@ function AddressInput() {
   useEffect(() => {
     if (currentWardKey) form.validateFields(['currentWardKey']);
   }, [form, currentWardKey]);
+
+  useEffect(() => {
+    if (currentProvinceKey) {
+      loadDistricts({
+        provinceCode: currentProvinceKey,
+      });
+    }
+  }, [currentProvinceKey, loadDistricts]);
+
+  useEffect(() => {
+    if (currentDistrictKey) {
+      loadWards({
+        districtCode: currentDistrictKey,
+      });
+    }
+  }, [currentDistrictKey, loadWards]);
 
   return (
     <div className="my-4 rounded-lg bg-gray-50 p-4">
@@ -85,24 +86,30 @@ function AddressInput() {
                     setCurrentWardKey(null);
                   }}
                   filterOption={(inputValue, currentOption) => {
-                    const option = provincesOfVietNamJSON[currentOption?.key];
+                    const option = provinces.find(
+                      (province) =>
+                        province.provinceCode === currentOption?.value
+                    );
 
                     return (
-                      convertStringToASCII(option?.name.toLowerCase()).indexOf(
+                      convertStringToASCII(
+                        (option?.provinceName || '').toLowerCase()
+                      ).indexOf(
                         convertStringToASCII(inputValue.toLowerCase())
                       ) !== -1
                     );
                   }}
                 >
-                  {Object.entries(provincesOfVietNamJSON).map(
-                    ([key, province]) => {
-                      return (
-                        <Select.Option key={key} value={key}>
-                          {province.name}
-                        </Select.Option>
-                      );
-                    }
-                  )}
+                  {provinces.map((province) => {
+                    return (
+                      <Select.Option
+                        key={province.provinceCode}
+                        value={province.provinceCode}
+                      >
+                        {province.provinceName}
+                      </Select.Option>
+                    );
+                  })}
                 </Select>
               </div>
             </Form.Item>
@@ -137,28 +144,31 @@ function AddressInput() {
                   filterOption={(inputValue, currentOption) => {
                     if (!currentProvinceKey) return false;
 
-                    const option =
-                      provincesOfVietNamJSON[currentProvinceKey]['quan-huyen'][
-                        currentOption?.key
-                      ];
+                    const option = districts.find(
+                      (district) =>
+                        district.districtCode === currentOption?.value
+                    );
 
                     return (
-                      convertStringToASCII(option?.name.toLowerCase()).indexOf(
+                      convertStringToASCII(
+                        (option?.districtName || '').toLowerCase()
+                      ).indexOf(
                         convertStringToASCII(inputValue.toLowerCase())
                       ) !== -1
                     );
                   }}
                 >
                   {currentProvinceKey &&
-                    Object.entries(currentProvince?.['quan-huyen'] || {}).map(
-                      ([key, district]) => {
-                        return (
-                          <Select.Option key={key} value={key}>
-                            {district.name}
-                          </Select.Option>
-                        );
-                      }
-                    )}
+                    districts.map((district) => {
+                      return (
+                        <Select.Option
+                          key={district.districtCode}
+                          value={district.districtCode}
+                        >
+                          {district.districtName}
+                        </Select.Option>
+                      );
+                    })}
                 </Select>
               </div>
             </Form.Item>
@@ -191,11 +201,13 @@ function AddressInput() {
                     if (!currentProvinceKey) return false;
 
                     const option =
-                      currentDistrict?.['xa-phuong'][currentOption?.key];
+                      wards.find(
+                        (ward) => ward.wardName === currentOption?.value
+                      ) || {};
 
                     return (
                       convertStringToASCII(
-                        (option?.name || '').toLowerCase()
+                        (option?.wardName || '').toLowerCase()
                       ).indexOf(
                         convertStringToASCII(inputValue.toLowerCase())
                       ) !== -1
@@ -203,15 +215,16 @@ function AddressInput() {
                   }}
                 >
                   {currentProvinceKey &&
-                    Object.entries(currentDistrict?.['xa-phuong'] || {}).map(
-                      ([key, ward]) => {
-                        return (
-                          <Select.Option key={key} value={key}>
-                            {ward.name}
-                          </Select.Option>
-                        );
-                      }
-                    )}
+                    wards.map((ward) => {
+                      return (
+                        <Select.Option
+                          key={ward.wardName}
+                          value={ward.wardName}
+                        >
+                          {ward.wardName}
+                        </Select.Option>
+                      );
+                    })}
                 </Select>
               </div>
             </Form.Item>
