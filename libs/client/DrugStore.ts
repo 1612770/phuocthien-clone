@@ -3,6 +3,7 @@ import BaseClient from './BaseClient';
 import DrugStore from '@configs/models/drug-store.model';
 
 export class DrugstoreClient extends BaseClient {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(ctx: any, data: any) {
     super(ctx, data);
   }
