@@ -1,25 +1,22 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { NextPageWithLayout } from '../page';
-import { Breadcrumb, Button, Empty, Pagination, Spin, Typography } from 'antd';
+import { Breadcrumb, Button, Empty, Pagination, Typography } from 'antd';
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { COOKIE_KEYS } from '@libs/helpers';
-import OrdersProvider, { useOrders } from '@providers/OrdersProvider';
-import { useEffect } from 'react';
+import OrdersProvider from '@providers/OrdersProvider';
 import Link from 'next/link';
 import { ChevronLeft } from 'react-feather';
 import OrderItem from '@modules/orders/OrderItem';
 import UserLayout from '@components/layouts/UserLayout';
+import { OrderClient } from '@libs/client/Order';
+import OrderModel from '@configs/models/order.model';
+import WithPagination from '@configs/types/utils/with-pagination';
 import { useRouter } from 'next/router';
 
-const OrdersPage: NextPageWithLayout = () => {
-  const { orders, gettingOrders, getOrders } = useOrders();
+const OrdersPage: NextPageWithLayout<{
+  orders?: WithPagination<OrderModel[]>;
+}> = ({ orders }) => {
   const router = useRouter();
-
-  useEffect(() => {
-    getOrders({
-      page: +(router.query.trang || 1),
-    });
-  }, [router.query.trang]);
 
   return (
     <div className="min-h-screen min-w-full bg-primary-background">
@@ -38,11 +35,9 @@ const OrdersPage: NextPageWithLayout = () => {
         </Breadcrumb>
 
         <UserLayout>
-          <Spin spinning={gettingOrders}>
-            {orders?.data?.map((order) => (
-              <OrderItem order={order} key={order.key} />
-            ))}
-          </Spin>
+          {orders?.data?.map((order) => (
+            <OrderItem order={order} key={order.key} />
+          ))}
 
           {!orders?.total && (
             <Empty
@@ -59,23 +54,25 @@ const OrdersPage: NextPageWithLayout = () => {
             </Empty>
           )}
 
-          <div className="flex justify-center">
-            <Pagination
-              defaultCurrent={+(router.query.trang || 1)}
-              pageSize={10}
-              onChange={(page) => {
-                router.push({
-                  query: {
-                    ...router.query,
-                    trang: page,
-                  },
-                });
-              }}
-              total={orders?.total}
-              className="mt-4"
-              showSizeChanger={false}
-            />
-          </div>
+          {!!orders?.total && (
+            <div className="flex justify-center">
+              <Pagination
+                defaultCurrent={+(router.query.trang || 1)}
+                pageSize={10}
+                onChange={(page) => {
+                  router.push({
+                    query: {
+                      ...router.query,
+                      trang: page,
+                    },
+                  });
+                }}
+                total={orders?.total}
+                className="mt-4"
+                showSizeChanger={false}
+              />
+            </div>
+          )}
         </UserLayout>
       </div>
     </div>
@@ -95,6 +92,14 @@ OrdersPage.getLayout = (page) => {
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
+  const serverSideProps: {
+    props: {
+      orders?: WithPagination<OrderModel[]>;
+    };
+  } = {
+    props: {},
+  };
+
   // check cookie in request
   const { req } = context;
   const token = req.cookies[COOKIE_KEYS.TOKEN];
@@ -107,7 +112,19 @@ export const getServerSideProps: GetServerSideProps = async (
     };
   }
 
-  return {
-    props: {},
-  };
+  try {
+    const orderClient = new OrderClient(context, {});
+    const ordersResponse = await orderClient.getOrders({
+      page: +(context.query.trang || 1),
+      pageSize: 10,
+    });
+
+    if (ordersResponse?.data) {
+      serverSideProps.props.orders = ordersResponse.data;
+    }
+  } catch (error) {
+    console.error('file: index.tsx:130 | error:', error);
+  }
+
+  return serverSideProps;
 };
