@@ -53,6 +53,12 @@ class BaseClient {
       if (method == 'GET' || method == 'DELETE') {
         url = url + '?' + serialize(data);
       } else {
+        Object.keys(data).forEach((key) => {
+          if (typeof data[key] === 'string') {
+            data[key] = data[key].trim();
+          }
+        });
+
         req.body = JSON.stringify(data);
       }
     }
