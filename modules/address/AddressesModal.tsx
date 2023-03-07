@@ -17,7 +17,8 @@ function AddressesModal({
   defaultAddress?: AddressModel;
   onReset: () => void;
 }) {
-  const { createAddress, updateAddress } = useAddresses();
+  const { createAddress, updateAddress, creatingAddress, updatingAddress } =
+    useAddresses();
   const { provinces, districts, wards, form, loadDistricts, loadWards } =
     useMasterData();
 
@@ -106,7 +107,7 @@ function AddressesModal({
       return;
 
     if (mode === 'add') {
-      createAddress({
+      await createAddress({
         address,
         provinceName: foundProvince?.provinceName,
         districtName: foundDistrict?.districtName,
@@ -116,7 +117,7 @@ function AddressesModal({
     }
 
     if (mode === 'edit' && defaultAddress?.key) {
-      updateAddress({
+      await updateAddress({
         key: defaultAddress?.key,
         address,
         provinceName: foundProvince?.provinceName,
@@ -134,6 +135,7 @@ function AddressesModal({
       onCancel={() => {
         onReset();
       }}
+      confirmLoading={creatingAddress || updatingAddress}
       onOk={submit}
     >
       <Form
