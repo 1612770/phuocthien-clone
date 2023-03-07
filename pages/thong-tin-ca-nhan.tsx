@@ -1,18 +1,17 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Button, Form, Input, Typography } from 'antd';
+import { Breadcrumb, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import Link from 'next/link';
 import { ChevronLeft } from 'react-feather';
 import React from 'react';
-import { useAuth } from '@providers/AuthProvider';
 import UserLayout from '@components/layouts/UserLayout';
 import AddressesProvider from '@providers/AddressesProvider';
 import MasterDataProvider from '@providers/MasterDataProvider';
 import Addresses from '@modules/address/Addresses';
+import UserProfileUpdatingForm from '@modules/profile/UserProfileUpdatingForm';
+import PasswordUpdateForm from '@modules/profile/PasswordUpdateForm';
 
 const ProfileInformationPage: NextPageWithLayout = () => {
-  const { userData } = useAuth();
-
   return (
     <div className="min-h-screen min-w-full bg-primary-background">
       <div className="container grid py-2">
@@ -34,45 +33,7 @@ const ProfileInformationPage: NextPageWithLayout = () => {
             <Typography.Title level={4} className="font-medium">
               Thông tin cá nhân
             </Typography.Title>
-            <Form
-              style={{ maxWidth: 600 }}
-              autoComplete="off"
-              layout="vertical"
-              colon={false}
-            >
-              <Form.Item
-                label="Tên người dùng"
-                name="name"
-                className="mb-4"
-                rules={[{ required: true, message: 'Hãy nhập tên của bạn!' }]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                label="Số điện thoại"
-                name="tel"
-                className="mb-4"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Số điện thoại không được để trống!',
-                  },
-                ]}
-              >
-                <Input value={userData?.phoneNumber} />
-              </Form.Item>
-
-              <Form.Item className="mb-0">
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="shadow-none"
-                >
-                  Lưu thay đổi
-                </Button>
-              </Form.Item>
-            </Form>
+            <UserProfileUpdatingForm />
           </div>
 
           <div className="mt-4 rounded-xl bg-white p-4 shadow-lg">
@@ -81,72 +42,11 @@ const ProfileInformationPage: NextPageWithLayout = () => {
             </Typography.Title>
             <Addresses />
           </div>
-
           <div className="mt-4  rounded-xl bg-white p-4 shadow-lg">
             <Typography.Title level={4} className="font-medium">
               Đổi mật khẩu
             </Typography.Title>
-            <Form
-              autoComplete="off"
-              layout="vertical"
-              style={{ maxWidth: 600 }}
-              colon={false}
-            >
-              <Form.Item
-                label="Mật khẩu cũ"
-                name="old-password"
-                className="mb-4"
-                rules={[
-                  { required: true, message: 'Vui lòng nhập mật khẩu cũ!' },
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
-
-              <Form.Item
-                label="Mật khẩu mới"
-                name="new-password"
-                className="mb-4"
-                rules={[
-                  { required: true, message: 'Vui lòng nhập mật khẩu mới!' },
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
-
-              <Form.Item
-                label="Xác nhận mật khẩu"
-                name="retype-new-password"
-                className="mb-4"
-                rules={[
-                  { required: true, message: 'Vui lòng nhập lại mật khẩu!' },
-                  { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' },
-                  ({ getFieldValue }) => ({
-                    validator(value) {
-                      if (!value || getFieldValue('password') === value) {
-                        return Promise.resolve();
-                      }
-
-                      return Promise.reject(
-                        'Mật khẩu nhập lại không trùng khớp!'
-                      );
-                    },
-                  }),
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
-
-              <Form.Item className="mb-0">
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="shadow-none"
-                >
-                  Đổi mật khẩu
-                </Button>
-              </Form.Item>
-            </Form>
+            <PasswordUpdateForm />
           </div>
         </UserLayout>
       </div>

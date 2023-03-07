@@ -61,6 +61,24 @@ export class AuthClient extends BaseClient {
     return await super.call('GET', `auth/profile`, {});
   }
 
+  async updateProfile(
+    payload:
+      | {
+          displayName?: string;
+          sex?: string;
+          birthday?: string;
+          email?: string;
+          address?: string;
+          company?: string;
+        }
+      | {
+          password: string;
+          oldPassword: string;
+        }
+  ): Promise<APIResponse<ProfileModel>> {
+    return await super.call('PUT', `auth/profile`, payload);
+  }
+
   async getAddresses(): Promise<APIResponse<AddressModel[]>> {
     return await super.call('GET', `auth/address`, {});
   }
