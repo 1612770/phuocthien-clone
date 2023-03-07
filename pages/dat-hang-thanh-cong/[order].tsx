@@ -56,7 +56,7 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
 
                 <div className="mt-4 rounded-xl bg-primary-background p-4">
                   <Typography className="text-left">
-                    <span className="text-gray-600">Khách hàng:</span>
+                    <span className="text-gray-600">Người nhận hàng:</span>
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     <Typography.Text className="font-medium">
                       {orderToShow?.receiverName}, {orderToShow?.receiverTel}

@@ -111,7 +111,7 @@ const CartPage: NextPageWithLayout<{
             </div>
 
             <Divider />
-            <Typography.Title level={4}>Thông tin khách hàng</Typography.Title>
+            <Typography.Title level={4}>Thông tin nhận hàng</Typography.Title>
 
             <Row className="mt-2" gutter={[8, 8]}>
               <Col xs={24} md={12}>
