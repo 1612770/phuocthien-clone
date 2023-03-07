@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type APIResponse<T = any> = {
   data?: T;
   error: Partial<{
