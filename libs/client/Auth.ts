@@ -2,6 +2,7 @@ import APIResponse from '@configs/types/api-response.type';
 import BaseClient from './BaseClient';
 import ProfileModel from '@configs/models/profile.model';
 import OtpSendAims from '@configs/enums/otp-send-aims.enum';
+import AddressModel from '@configs/models/address.model';
 
 export class AuthClient extends BaseClient {
   constructor(ctx: unknown, data: unknown) {
@@ -58,5 +59,36 @@ export class AuthClient extends BaseClient {
 
   async getProfile(): Promise<APIResponse<ProfileModel>> {
     return await super.call('GET', `auth/profile`, {});
+  }
+
+  async getAddresses(): Promise<APIResponse<AddressModel[]>> {
+    return await super.call('GET', `auth/address`, {});
+  }
+
+  async createAddress(payload: {
+    address: string;
+    provinceName: string;
+    districtName: string;
+    wardName: string;
+    isDefault?: boolean;
+  }): Promise<APIResponse<AddressModel[]>> {
+    return await super.call('POST', `auth/address`, payload);
+  }
+
+  async updateAddress(payload: {
+    key: string;
+    address: string;
+    provinceName: string;
+    districtName: string;
+    wardName: string;
+    isDefault?: boolean;
+  }): Promise<APIResponse<AddressModel[]>> {
+    return await super.call('PUT', `auth/address`, payload);
+  }
+
+  async deleteAddress(payload: {
+    key: string;
+  }): Promise<APIResponse<AddressModel[]>> {
+    return await super.call('POST', `auth/address/delete`, payload);
   }
 }

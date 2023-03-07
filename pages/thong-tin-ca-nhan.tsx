@@ -1,11 +1,14 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Button, Form, Input, Tag, Typography } from 'antd';
+import { Breadcrumb, Button, Form, Input, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import Link from 'next/link';
-import { ChevronLeft, MapPin } from 'react-feather';
+import { ChevronLeft } from 'react-feather';
 import React from 'react';
 import { useAuth } from '@providers/AuthProvider';
 import UserLayout from '@components/layouts/UserLayout';
+import AddressesProvider from '@providers/AddressesProvider';
+import MasterDataProvider from '@providers/MasterDataProvider';
+import Addresses from '@modules/address/Addresses';
 
 const ProfileInformationPage: NextPageWithLayout = () => {
   const { userData } = useAuth();
@@ -72,55 +75,11 @@ const ProfileInformationPage: NextPageWithLayout = () => {
             </Form>
           </div>
 
-          <div className="mt-4  rounded-xl bg-white p-4 shadow-lg">
+          <div className="mt-4 rounded-xl bg-white p-4 shadow-lg">
             <Typography.Title level={4} className="font-medium">
               Sổ địa chỉ
             </Typography.Title>
-            <Form
-              autoComplete="off"
-              labelCol={{ span: 6 }}
-              wrapperCol={{ span: 16 }}
-              style={{ maxWidth: 600 }}
-              colon={false}
-            >
-              {[
-                {
-                  name: 'Nguyễn Văn A',
-                  tel: '0123456789',
-                  province: 'Hà Nội',
-                  district: 'Ba Đình',
-                  ward: 'Đống Đa',
-                  address: 'Số 1, Ngõ 1, Đường 1',
-                  isDefault: true,
-                },
-              ].map((info, index) => (
-                <div className="mb-4 flex flex-col items-start" key={index}>
-                  <Typography.Text className="font-medium">
-                    {info.name} - {info.tel}
-                  </Typography.Text>
-                  <Typography.Text>
-                    {info.address} - {info.province} - {info.district} -{' '}
-                    {info.ward}
-                  </Typography.Text>
-                  {info.isDefault && (
-                    <Tag color="blue" className="mt-2 inline-block">
-                      <Typography className="text-xs">
-                        Địa chỉ mặc định
-                      </Typography>
-                    </Tag>
-                  )}
-                </div>
-              ))}
-
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="shadow-none"
-                icon={<MapPin size={14} className="mr-1 align-middle" />}
-              >
-                Thêm địa chỉ mới
-              </Button>
-            </Form>
+            <Addresses />
           </div>
 
           <div className="mt-4  rounded-xl bg-white p-4 shadow-lg">
@@ -163,7 +122,7 @@ const ProfileInformationPage: NextPageWithLayout = () => {
                   { required: true, message: 'Vui lòng nhập lại mật khẩu!' },
                   { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' },
                   ({ getFieldValue }) => ({
-                    validator(rule, value) {
+                    validator(value) {
                       if (!value || getFieldValue('password') === value) {
                         return Promise.resolve();
                       }
@@ -198,5 +157,11 @@ const ProfileInformationPage: NextPageWithLayout = () => {
 export default ProfileInformationPage;
 
 ProfileInformationPage.getLayout = (page) => {
-  return <PrimaryLayout>{page}</PrimaryLayout>;
+  return (
+    <PrimaryLayout>
+      <MasterDataProvider>
+        <AddressesProvider>{page}</AddressesProvider>
+      </MasterDataProvider>
+    </PrimaryLayout>
+  );
 };

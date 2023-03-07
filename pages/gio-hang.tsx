@@ -8,18 +8,19 @@ import {
   Empty,
   Form,
   Input,
+  Modal,
   Radio,
   Row,
   Typography,
 } from 'antd';
-import { ChevronLeft } from 'react-feather';
+import { ChevronLeft, MapPin } from 'react-feather';
 import CartProductItem from '@modules/cart/CartProductItem';
 import { useCart } from '@providers/CartProvider';
 import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
 import PaymentMethodModel from '@configs/models/payment-method.model';
 import { GeneralClient } from '@libs/client/General';
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import ShippingTypes from '@configs/enums/shipping-types.enum';
 import DrugStorePicker from '@modules/cart/DrugStorePicker';
@@ -32,7 +33,136 @@ import OfferModel from '@configs/models/offer.model';
 import OfferCodeInput from '@modules/cart/OfferCodeInput';
 import { MasterDataClient } from '@libs/client/MasterData';
 import ProvinceModel from '@configs/models/province.model';
-import MasterDataProvider from '@providers/MasterDataProvider';
+import MasterDataProvider, {
+  useMasterData,
+} from '@providers/MasterDataProvider';
+import { AuthClient } from '@libs/client/Auth';
+import AddressModel from '@configs/models/address.model';
+import AddressesProvider, { useAddresses } from '@providers/AddressesProvider';
+import { useAuth } from '@providers/AuthProvider';
+import { useAppMessage } from '@providers/AppMessageProvider';
+import Addresses from '@modules/address/Addresses';
+
+function AddressSection() {
+  const [openModal, setOpenModal] = useState(false);
+
+  const {
+    address,
+    setAddress,
+    currentProvinceKey,
+    setCurrentProvinceKey,
+    currentDistrictKey,
+    setCurrentDistrictKey,
+    currentWardKey,
+    setCurrentWardKey,
+  } = useCheckout();
+
+  const { isUserLoggedIn } = useAuth();
+  const { defaultAddress } = useAddresses();
+  const { loadWards, loadDistricts, provinces } = useMasterData();
+  const { toastError } = useAppMessage();
+
+  const setDefaultDistrict = async (
+    defaultAddress: AddressModel,
+    provinceCode: string
+  ) => {
+    try {
+      const districts = await loadDistricts({ provinceCode });
+
+      const foundDistrict = districts?.find(
+        (district) => district.districtName === defaultAddress.districtName
+      );
+      setCurrentDistrictKey(foundDistrict?.districtCode || '');
+      const wards = await loadWards({
+        districtCode: foundDistrict?.districtCode || '',
+      });
+      const foundWard = wards?.find(
+        (ward) => ward.wardName === defaultAddress.wardName
+      );
+      setCurrentWardKey(foundWard?.wardName || '');
+    } catch (error) {
+      toastError({
+        data: error,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (defaultAddress && isUserLoggedIn) {
+      setAddress(defaultAddress.address || '');
+
+      const foundProvince = provinces.find(
+        (province) => province.provinceName === defaultAddress.provinceName
+      );
+
+      setCurrentProvinceKey(foundProvince?.provinceCode || '');
+
+      setDefaultDistrict(defaultAddress, foundProvince?.provinceCode || '');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultAddress, isUserLoggedIn]);
+
+  return (
+    <div className="my-4 rounded-lg bg-gray-50 p-4">
+      <Typography.Text className="text-sm">
+        Chọn địa chỉ để biết thời gian nhận hàng và phí vận chuyển (nếu có)
+      </Typography.Text>
+      {isUserLoggedIn && (
+        <div>
+          <Button
+            type="link"
+            className="my-0 px-0 "
+            onClick={() => setOpenModal(true)}
+            icon={<MapPin size={14} className=" mr-1 align-text-top" />}
+          >
+            Chọn địa chỉ từ sổ địa chỉ
+          </Button>
+
+          <Modal
+            title={
+              <Typography className="text-base font-medium">
+                Sổ địa chỉ
+              </Typography>
+            }
+            open={openModal}
+            onCancel={() => setOpenModal(false)}
+            footer={null}
+          >
+            <div className="max-h-[400px] overflow-y-auto">
+              <Addresses
+                pickOnly
+                onAddressSelect={(address) => {
+                  setAddress(address.address || '');
+                  const foundProvince = provinces.find(
+                    (province) => province.provinceName === address.provinceName
+                  );
+
+                  setCurrentProvinceKey(foundProvince?.provinceCode || '');
+
+                  setDefaultDistrict(
+                    address,
+                    foundProvince?.provinceCode || ''
+                  );
+                  setOpenModal(false);
+                }}
+              />
+            </div>
+          </Modal>
+        </div>
+      )}
+      <AddressInput
+        address={address}
+        setAddress={setAddress}
+        currentProvinceKey={currentProvinceKey}
+        setCurrentProvinceKey={setCurrentProvinceKey}
+        currentDistrictKey={currentDistrictKey}
+        setCurrentDistrictKey={setCurrentDistrictKey}
+        currentWardKey={currentWardKey}
+        setCurrentWardKey={setCurrentWardKey}
+      />
+    </div>
+  );
+}
 
 const CartPage: NextPageWithLayout<{
   paymentMethods: PaymentMethodModel[];
@@ -55,14 +185,15 @@ const CartPage: NextPageWithLayout<{
     setPaymentMethodKey,
 
     checkoutError,
-
+    setCheckoutError,
     checkingOut,
-
     checkout,
 
     totalRawPrice,
     totalPrice,
   } = useCheckout();
+
+  const { form } = useMasterData();
 
   const [checkoutForm] = Form.useForm();
 
@@ -70,6 +201,25 @@ const CartPage: NextPageWithLayout<{
     (total, cartProduct) => total + (Number(cartProduct.quantity) || 0),
     0
   );
+
+  const onCheckoutButtonClick = async () => {
+    try {
+      await Promise.all([
+        checkoutForm.validateFields(),
+        form?.validateFields(),
+      ]);
+
+      checkout();
+    } catch (error) {
+      setCheckoutError('Vui lòng kiểm tra lại thông tin');
+
+      // scroll smoothly to the top of the page
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
+  };
 
   return (
     <div className="container max-w-[720px] pb-4">
@@ -175,7 +325,7 @@ const CartPage: NextPageWithLayout<{
               </Radio.Button>
             </Radio.Group>
 
-            {shippingType === ShippingTypes.DELIVERY && <AddressInput />}
+            {shippingType === ShippingTypes.DELIVERY && <AddressSection />}
 
             {shippingType === ShippingTypes.AT_STORE && (
               <DrugStorePicker
@@ -259,11 +409,7 @@ const CartPage: NextPageWithLayout<{
             <Button hidden htmlType="submit" />
             <Button
               type="primary"
-              onClick={() => {
-                checkoutForm.validateFields().then(() => {
-                  checkout();
-                });
-              }}
+              onClick={onCheckoutButtonClick}
               loading={checkingOut}
               size="large"
               block
@@ -302,7 +448,11 @@ CartPage.getLayout = (page) => {
   return (
     <PrimaryLayout hideFooter>
       <MasterDataProvider defaultProvinces={page.props.provinces}>
-        <CheckoutProvider>{page}</CheckoutProvider>
+        <CheckoutProvider>
+          <AddressesProvider defaultAddresses={page.props.addresses}>
+            {page}
+          </AddressesProvider>
+        </CheckoutProvider>
       </MasterDataProvider>
     </PrimaryLayout>
   );
@@ -317,24 +467,28 @@ export const getServerSideProps = async (
       paymentMethods: PaymentMethodModel[];
       offers: OfferModel[];
       provinces: ProvinceModel[];
+      addresses: AddressModel[];
     };
   } = {
     props: {
       paymentMethods: [],
       offers: [],
       provinces: [],
+      addresses: [],
     },
   };
 
-  const general = new GeneralClient(context, {});
+  const generalClient = new GeneralClient(context, {});
+  const authClient = new AuthClient(context, {});
   const offerClient = new OfferClient(context, {});
   const masterDataClient = new MasterDataClient(context, {});
 
   try {
-    const [paymentMethods, offers, provinces] = await Promise.all([
-      general.getPaymentMethods(),
+    const [paymentMethods, offers, provinces, addresses] = await Promise.all([
+      generalClient.getPaymentMethods(),
       offerClient.getAllActiveOffers(),
       masterDataClient.getAllProvinces(),
+      authClient.getAddresses(),
     ]);
 
     if (offers.data) {
@@ -343,6 +497,10 @@ export const getServerSideProps = async (
 
     if (provinces.data) {
       serverSideProps.props.provinces = provinces.data;
+    }
+
+    if (addresses.data) {
+      serverSideProps.props.addresses = addresses.data;
     }
 
     serverSideProps.props.paymentMethods =

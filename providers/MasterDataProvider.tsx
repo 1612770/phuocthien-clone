@@ -4,6 +4,7 @@ import WardModel from '@configs/models/ward.model';
 import { MasterDataClient } from '@libs/client/MasterData';
 import React, { useCallback, useState } from 'react';
 import { useAppMessage } from './AppMessageProvider';
+import { Form, FormInstance } from 'antd';
 
 const MasterDataContext = React.createContext<{
   provinces: ProvinceModel[];
@@ -13,11 +14,20 @@ const MasterDataContext = React.createContext<{
   wards: WardModel[];
   setWards: (wards: WardModel[]) => void;
 
-  loadDistricts: (payload: { provinceCode: string }) => Promise<void>;
-  loadWards: (payload: { districtCode: string }) => Promise<void>;
+  loadProvinces: () => Promise<void>;
+  loadDistricts: (payload: {
+    provinceCode: string;
+  }) => Promise<DistrictModel[] | undefined>;
+  loadWards: (payload: {
+    districtCode: string;
+  }) => Promise<WardModel[] | undefined>;
 
+  loadingProvinces: boolean;
   loadingDistricts: boolean;
   loadingWards: boolean;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form?: FormInstance<any>;
 }>({
   provinces: [],
   setProvinces: () => undefined,
@@ -26,28 +36,55 @@ const MasterDataContext = React.createContext<{
   wards: [],
   setWards: () => undefined,
 
-  loadDistricts: () => Promise.resolve(),
-  loadWards: () => Promise.resolve(),
+  loadProvinces: () => Promise.resolve(),
+  loadDistricts: () => Promise.resolve([]),
+  loadWards: () => Promise.resolve([]),
 
+  loadingProvinces: false,
   loadingDistricts: false,
   loadingWards: false,
+
+  form: undefined,
 });
 
 function MasterDataProvider({
   defaultProvinces,
   children,
 }: {
-  defaultProvinces: ProvinceModel[];
+  defaultProvinces?: ProvinceModel[];
   children: React.ReactNode;
 }) {
-  const [provinces, setProvinces] = useState<ProvinceModel[]>(defaultProvinces);
+  const [provinces, setProvinces] = useState<ProvinceModel[]>(
+    defaultProvinces || []
+  );
   const [districts, setDistricts] = useState<DistrictModel[]>([]);
   const [wards, setWards] = useState<WardModel[]>([]);
 
+  const [loadingProvinces, setLoadingProvinces] = useState(false);
   const [loadingDistricts, setLoadingDistricts] = useState(false);
   const [loadingWards, setLoadingWards] = useState(false);
 
   const { toastError } = useAppMessage();
+  const [form] = Form.useForm();
+
+  const loadProvinces = useCallback(async () => {
+    const masterDataClient = new MasterDataClient(null, {});
+
+    try {
+      setLoadingProvinces(true);
+
+      const provices = await masterDataClient.getAllProvinces();
+      if (provices.data) {
+        setProvinces(provices.data);
+      }
+    } catch (error) {
+      toastError({
+        data: error,
+      });
+    } finally {
+      setLoadingProvinces(false);
+    }
+  }, [toastError]);
 
   const loadDistricts = useCallback(
     async (payload: { provinceCode: string }) => {
@@ -60,6 +97,8 @@ function MasterDataProvider({
         if (districts.data) {
           setDistricts(districts.data);
         }
+
+        return districts.data;
       } catch (error) {
         toastError({
           data: error,
@@ -82,6 +121,8 @@ function MasterDataProvider({
         if (wards.data) {
           setWards(wards.data);
         }
+
+        return wards.data;
       } catch (error) {
         toastError({
           data: error,
@@ -103,11 +144,15 @@ function MasterDataProvider({
         wards,
         setWards,
 
+        loadProvinces,
         loadDistricts,
         loadWards,
 
+        loadingProvinces,
         loadingDistricts,
         loadingWards,
+
+        form,
       }}
     >
       {children}
