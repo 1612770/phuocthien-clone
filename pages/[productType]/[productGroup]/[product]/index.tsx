@@ -1,5 +1,5 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Col, List, Row, Typography } from 'antd';
+import { Breadcrumb, Col, Empty, List, Row, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
@@ -17,13 +17,15 @@ import ImageUtils from '@libs/utils/image.utils';
 import { OfferClient } from '@libs/client/Offer';
 import OfferModel from '@configs/models/offer.model';
 import ProductCardDetail from '@modules/products/ProductCardDetail';
+import { DrugstoreClient } from '@libs/client/DrugStore';
 
 const ProductPage: NextPageWithLayout<{
   product?: Product;
-  otherProducts: Product[];
-  drugStores: DrugStore[];
+  otherProducts?: Product[];
+  drugStoresAvailable?: DrugStore[];
+  drugStores?: DrugStore[];
   offers: OfferModel[];
-}> = ({ product, otherProducts, drugStores, offers }) => {
+}> = ({ product, otherProducts, drugStoresAvailable, offers, drugStores }) => {
   const carouselImages: string[] = useMemo(() => {
     let memoCarouselImages: string[] = [];
 
@@ -43,6 +45,9 @@ const ProductPage: NextPageWithLayout<{
 
     return memoCarouselImages;
   }, [product]);
+
+  const drugstoresToShow =
+    (drugStoresAvailable?.length || 0) > 0 ? drugStoresAvailable : drugStores;
 
   if (!product) return null;
   if (typeof product?.isDestroyed === 'boolean' && product?.isDestroyed) {
@@ -81,7 +86,7 @@ const ProductPage: NextPageWithLayout<{
             <a>{product.productGroup?.name}</a>
           </Link>
         </Breadcrumb.Item>
-        <Breadcrumb.Item>{product?.name}</Breadcrumb.Item>
+        <Breadcrumb.Item>{product?.detail?.displayName}</Breadcrumb.Item>
       </Breadcrumb>
 
       <div className="grid  grid-cols-1 gap-4 lg:grid-cols-[minmax(200px,_1fr)_280px] lg:gap-6 xl:grid-cols-[400px_minmax(200px,_1fr)_280px]">
@@ -92,7 +97,7 @@ const ProductPage: NextPageWithLayout<{
         <div className="relative xl:sticky xl:top-[32px]">
           <div className="flex flex-col">
             <Typography.Title className="mx-0 mt-2 text-2xl font-medium">
-              {product?.name}
+              {product?.detail?.displayName}
             </Typography.Title>
 
             <ProductBonusSection offers={offers} />
@@ -128,86 +133,86 @@ const ProductPage: NextPageWithLayout<{
 
           <div className="mb-2 mt-8">
             {!!product?.productionBrand?.name && (
-              <div className="flex items-center">
-                <Typography className="my-0.5 font-medium ">
+              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+                <Typography.Text className=" font-medium ">
                   Thương hiệu
-                </Typography>
-                <Typography.Text className="ml-2">
+                </Typography.Text>
+                <Typography.Text className=" ml-2">
                   {product?.productionBrand?.name}
                 </Typography.Text>
               </div>
             )}
 
             {!!product?.ingredient && (
-              <div className="flex items-center">
-                <Typography className="my-0.5 font-medium ">
+              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+                <Typography.Text className=" whitespace-nowrap font-medium">
                   Hoạt chất
-                </Typography>
-                <Typography.Text className="ml-2">
+                </Typography.Text>
+                <Typography.Text className=" ml-2">
                   {product?.ingredient}
                 </Typography.Text>
               </div>
             )}
 
             {!!product?.drugContent && (
-              <div className="flex items-center">
-                <Typography className="my-0.5 font-medium ">
+              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+                <Typography.Text className=" font-medium ">
                   Hàm lượng
-                </Typography>
-                <Typography.Text className="ml-2">
+                </Typography.Text>
+                <Typography.Text className=" ml-2">
                   {product?.drugContent}
                 </Typography.Text>
               </div>
             )}
 
             {!!product?.packagingProcess && (
-              <div className="flex items-center">
-                <Typography className="my-0.5 font-medium ">
+              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+                <Typography.Text className=" font-medium ">
                   Quy cách đóng gói
-                </Typography>
-                <Typography.Text className="ml-2">
+                </Typography.Text>
+                <Typography.Text className=" ml-2">
                   {product?.packagingProcess}
                 </Typography.Text>
               </div>
             )}
 
-            <div className="flex items-center">
-              <Typography className="my-0.5 font-medium ">
+            <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+              <Typography.Text className=" font-medium ">
                 Là thuốc kê đơn
-              </Typography>
-              <Typography.Text className="ml-2">
+              </Typography.Text>
+              <Typography.Text className=" ml-2">
                 {product?.isPrescripted ? 'Có' : 'Không'}
               </Typography.Text>
             </div>
 
             {product?.isSpecial && (
-              <div className="flex items-center">
-                <Typography className="my-0.5 font-medium ">
+              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+                <Typography.Text className=" font-medium ">
                   Là thuốc đặc biệt
-                </Typography>
-                <Typography.Text className="ml-2">
+                </Typography.Text>
+                <Typography.Text className=" ml-2">
                   {product?.isSpecial ? 'Có' : 'Không'}
                 </Typography.Text>
               </div>
             )}
 
             {product?.isMental && (
-              <div className="flex items-center">
-                <Typography className="my-0.5 font-medium ">
+              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+                <Typography.Text className=" font-medium ">
                   Là thuốc tâm thần
-                </Typography>
-                <Typography.Text className="ml-2">
+                </Typography.Text>
+                <Typography.Text className=" ml-2">
                   {product?.isMental ? 'Có' : 'Không'}
                 </Typography.Text>
               </div>
             )}
 
             {!!product?.registrationNumber && (
-              <div className="flex items-center">
-                <Typography className="my-0.5 font-medium ">
+              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+                <Typography.Text className=" font-medium ">
                   Số đăng ký
-                </Typography>
-                <Typography.Text className="ml-2">
+                </Typography.Text>
+                <Typography.Text className=" ml-2">
                   {product?.registrationNumber}
                 </Typography.Text>
               </div>
@@ -221,11 +226,18 @@ const ProductPage: NextPageWithLayout<{
               level={5}
               className="px-4 pt-6 font-medium uppercase"
             >
-              Có <b className="text-primary">{drugStores.length}</b> nhà thuốc
-              có sẵn
+              {(drugStoresAvailable?.length || 0) > 0 ? (
+                <>
+                  Có{' '}
+                  <b className="text-primary">{drugStoresAvailable?.length}</b>{' '}
+                  nhà thuốc có sẵn
+                </>
+              ) : (
+                <>Hệ thống nhà thuốc Phước Thiện</>
+              )}
             </Typography.Title>
             <List className="max-h-[440px] overflow-y-scroll px-4">
-              {drugStores.map((drugStore) => (
+              {drugstoresToShow?.map((drugStore) => (
                 <List.Item className="py-4 px-0" key={drugStore.key}>
                   <div className="flex items-center">
                     <ImageWithFallback
@@ -253,6 +265,13 @@ const ProductPage: NextPageWithLayout<{
                   </div>
                 </List.Item>
               ))}
+
+              {!drugstoresToShow?.length && (
+                <Empty
+                  className="my-8"
+                  description={<Typography>Không có nhà thuốc nào</Typography>}
+                ></Empty>
+              )}
             </List>
           </div>
         </div>
@@ -284,8 +303,8 @@ const ProductPage: NextPageWithLayout<{
               level={3}
               className="mb-0 mt-6 inline-block uppercase lg:mb-4 lg:mt-12"
             >
-              Các sản phẩm khác{' '}
-            </Typography.Title>
+              Các sản phẩm khác
+            </Typography.Title>{' '}
             <Typography.Title
               level={3}
               className="hidden uppercase lg:inline-block"
@@ -294,17 +313,18 @@ const ProductPage: NextPageWithLayout<{
             </Typography.Title>
           </div>
         </div>
-        {otherProducts.length > 0 && (
+
+        {(otherProducts?.length || 0) > 0 && (
           <div className="lg:container">
             <Row gutter={[16, 16]} className="hidden lg:flex">
-              {otherProducts.map((product, index) => (
+              {otherProducts?.map((product, index) => (
                 <Col sm={24} md={12} lg={6} className="w-full" key={index}>
                   <ProductCard product={product} />
                 </Col>
               ))}
             </Row>
             <div className="-mx-2 flex w-full overflow-auto lg:hidden">
-              {otherProducts.map((product, index) => (
+              {otherProducts?.map((product, index) => (
                 <ProductCard
                   key={index}
                   product={product}
@@ -326,12 +346,14 @@ export const getServerSideProps = async (
     props: {
       product?: Product;
       otherProducts: Product[];
+      drugStoresAvailable: DrugStore[];
       drugStores: DrugStore[];
       offers: OfferModel[];
     };
   } = {
     props: {
       otherProducts: [],
+      drugStoresAvailable: [],
       drugStores: [],
       offers: [],
     },
@@ -349,22 +371,32 @@ export const getServerSideProps = async (
       serverSideProps.props.product = product.data;
     }
 
-    const drugStores = await productClient.checkInventoryAtDrugStores({
+    const drugStoresAvailable = await productClient.checkInventoryAtDrugStores({
       key: UrlUtils.getKeyFromParam(context.params?.product as string),
     });
 
-    if (drugStores.data) {
-      serverSideProps.props.drugStores = drugStores.data.map(
+    if (drugStoresAvailable.data?.length) {
+      serverSideProps.props.drugStoresAvailable = drugStoresAvailable.data.map(
         (drugStore) => drugStore.drugstore
       );
+    } else {
+      const drugstoreClient = new DrugstoreClient(context, {});
+      const drugStores = await drugstoreClient.getAllDrugStores();
+      if (drugStores.data) {
+        serverSideProps.props.drugStores = drugStores.data;
+      }
     }
 
     const [products, offers] = await Promise.all([
       productClient.getProducts({
         page: 1,
         pageSize: 10,
-        productTypeKey: context.params?.productTypeKey as string,
-        productGroupKey: context.params?.productGroupKey as string,
+        productTypeKey: UrlUtils.getKeyFromParam(
+          context.params?.productType as string
+        ),
+        productGroupKey: UrlUtils.getKeyFromParam(
+          context.params?.productGroup as string
+        ),
         isPrescripted: false,
       }),
       offerClient.getAllActiveOffers(),
