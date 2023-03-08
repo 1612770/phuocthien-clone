@@ -25,7 +25,7 @@ function ImageWithFallback({
         );
       }}
       {...props}
-      src={src}
+      src={ImageUtils.getFullImageUrl(src)}
     />
   );
 }
