@@ -1,6 +1,6 @@
 import ImageUtils from '@libs/utils/image.utils';
 import Image, { ImageProps } from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 function ImageWithFallback({
   getMockImage,
@@ -9,10 +9,19 @@ function ImageWithFallback({
   getMockImage?: () => string;
 }) {
   const [src, setSrc] = useState('');
+  const [isImageLoadFailed, setisImageLoadFailed] = useState(false);
 
   useEffect(() => {
     setSrc(props.src as string);
   }, [props.src]);
+
+  const imageSource = useMemo(() => {
+    if (isImageLoadFailed) {
+      return getMockImage ? getMockImage() : '/image-placeholder.png';
+    }
+
+    return ImageUtils.getFullImageUrl(src);
+  }, [isImageLoadFailed, src, getMockImage]);
 
   return (
     <Image
@@ -20,12 +29,10 @@ function ImageWithFallback({
       placeholder="blur"
       blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgwVjB6IiBmaWxsPSIjZmZmIi8+PC9zdmc+"
       onError={() => {
-        setSrc(
-          getMockImage ? getMockImage() : ImageUtils.getRandomMockMenuUrl()
-        );
+        setisImageLoadFailed(true);
       }}
       {...props}
-      src={ImageUtils.getFullImageUrl(src)}
+      src={imageSource}
     />
   );
 }
