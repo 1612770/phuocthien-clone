@@ -97,21 +97,24 @@ function ViralProductsList({
             </a>
           </Link>
         </div>
-
-        <Link href={`/viral/${viralProductsList?.key}`}>
-          <a>
-            <div className="relative mb-4 aspect-[21/9] h-[200px] w-full">
-              <ImageWithFallback
-                src={viralProductsList?.imageUrl || ''}
-                width={'100%'}
-                height={240}
-                layout="fill"
-                objectFit="cover"
-                getMockImage={() => ImageUtils.getRandomMockCampaignImageUrl()}
-              ></ImageWithFallback>
-            </div>
-          </a>
-        </Link>
+        {viralProductsList?.imageUrl && (
+          <Link href={`/viral/${viralProductsList?.key}`}>
+            <a>
+              <div className="relative mb-4 aspect-[21/9] h-[200px] w-full">
+                <ImageWithFallback
+                  src={viralProductsList?.imageUrl || ''}
+                  width={'100%'}
+                  height={240}
+                  layout="fill"
+                  objectFit="cover"
+                  getMockImage={() =>
+                    ImageUtils.getRandomMockCampaignImageUrl()
+                  }
+                ></ImageWithFallback>
+              </div>
+            </a>
+          </Link>
+        )}
       </div>
 
       <div className="lg:container">

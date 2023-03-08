@@ -21,16 +21,18 @@ const ViralGroupPage: NextPageWithLayout<{
         {viralProductsLists?.[0]?.name}
       </Typography.Title>
 
-      <div className="relative mb-4 h-[200px] w-full">
-        <ImageWithFallback
-          src={viralProductsLists?.[0]?.imageUrl || ''}
-          width={'100%'}
-          height={240}
-          layout="fill"
-          objectFit="cover"
-          getMockImage={() => ImageUtils.getRandomMockCampaignImageUrl()}
-        ></ImageWithFallback>
-      </div>
+      {viralProductsLists?.[0]?.imageUrl && (
+        <div className="relative mb-4 h-[200px] w-full">
+          <ImageWithFallback
+            src={viralProductsLists?.[0]?.imageUrl || ''}
+            width={'100%'}
+            height={240}
+            layout="fill"
+            objectFit="cover"
+            getMockImage={() => ImageUtils.getRandomMockCampaignImageUrl()}
+          ></ImageWithFallback>
+        </div>
+      )}
 
       {(viralProductsLists?.[0].listProductViral?.length || 0) > 0 && (
         <div className="mt-4">
