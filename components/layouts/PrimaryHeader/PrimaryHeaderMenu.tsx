@@ -54,7 +54,8 @@ function PrimaryHeaderMenu() {
           </Space>
 
           {fullMenu.map((menu) =>
-            menu?.name && IMPORTANT_MENUS.includes(menu?.name) ? (
+            menu?.name &&
+            IMPORTANT_MENUS.includes(menu?.name.toLocaleLowerCase()) ? (
               <span
                 className="inline-block py-2"
                 onMouseLeave={() => {
