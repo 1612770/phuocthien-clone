@@ -19,7 +19,7 @@ function ProductCardDetail(
     <div className="relative pb-12">
       <div
         {...props}
-        className=" max-h-[500px] overflow-hidden"
+        className=" product-detail-content max-h-[500px] overflow-hidden"
         ref={(ref) => {
           divRef.current = ref;
         }}
