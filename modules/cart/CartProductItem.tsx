@@ -143,13 +143,13 @@ function CartProductItem({
               cartProduct.product.productGroup?.name,
               cartProduct.product.productGroup?.key
             )}/${UrlUtils.generateSlug(
-              cartProduct.product.name,
+              cartProduct.product.detail?.displayName,
               cartProduct.product.key
             )}`}
           >
             <a>
               <Typography.Text className="mt-2">
-                {cartProduct.product.name}
+                {cartProduct.product.detail?.displayName}
               </Typography.Text>
             </a>
           </Link>
@@ -159,14 +159,12 @@ function CartProductItem({
         <div className="meta flex flex-col">
           <Typography.Text className="text-right">
             <Typography.Text className="text-sm font-semibold">
-              {cartProduct.product.retailPrice
-                ?.toLocaleString('it-IT', {
-                  style: 'currency',
-                  currency: 'VND',
-                })
-                .slice(0, -3)}
+              {cartProduct.product.retailPrice?.toLocaleString('it-IT', {
+                style: 'currency',
+                currency: 'VND',
+              })}
             </Typography.Text>
-            VND
+
             {cartProduct.product.unit && (
               <Typography.Text className="text-sm">
                 /{cartProduct.product.unit}

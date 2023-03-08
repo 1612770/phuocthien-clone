@@ -57,7 +57,7 @@ function CartProductItemNoteInput({
         focusTriggerAfterClose={false}
         title={
           <Typography className="text-base font-medium">
-            Nhập ghi chú cho sản phẩm ${cartProduct.product.name}
+            Nhập ghi chú cho sản phẩm ${cartProduct.product.detail?.displayName}
           </Typography>
         }
       >

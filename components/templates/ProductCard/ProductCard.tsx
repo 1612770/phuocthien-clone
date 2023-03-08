@@ -31,7 +31,7 @@ function ProductCard({
   )}/${UrlUtils.generateSlug(
     product.productGroup?.name,
     productGroupKey
-  )}/${UrlUtils.generateSlug(product?.name, product?.key)}`;
+  )}/${UrlUtils.generateSlug(product?.detail?.displayName, product?.key)}`;
 
   return (
     <Link href={href}>
@@ -45,7 +45,7 @@ function ProductCard({
                 } w-full bg-white transition-transform duration-300 group-hover:scale-110`}
               >
                 <ImageWithFallback
-                  alt={product?.name || ''}
+                  alt={product?.detail?.displayName || ''}
                   src={product?.detail?.image || ''}
                   layout="fill"
                   objectFit="contain"
@@ -81,7 +81,7 @@ function ProductCard({
                     size !== 'small' ? 'min-h-[48px]' : 'min-h-[68px]'
                   }`}
                 >
-                  {product?.name}
+                  {product?.detail?.displayName}
                 </Typography.Text>
                 <Typography.Text className="mt-1 block">
                   <Typography.Text className="text-base font-semibold text-primary-dark">
@@ -89,7 +89,6 @@ function ProductCard({
                       style: 'currency',
                       currency: 'VND',
                     })}
-                    <sup className="text-sups font-semibold">đ</sup>
                   </Typography.Text>
                   {product?.unit && (
                     <Typography.Text className="text-base">
@@ -121,7 +120,7 @@ function ProductCard({
               } overflow-hidden rounded-lg border border-solid border-gray-200 bg-gray-100`}
             >
               <ImageWithFallback
-                alt={product?.name || ''}
+                alt={product?.detail?.displayName || ''}
                 src={product?.detail?.image || ''}
                 layout="fill"
                 objectFit="cover"
@@ -141,7 +140,7 @@ function ProductCard({
               <div className="relative flex flex-col">
                 <Space direction="vertical" size={0}>
                   <Typography.Text className={`mt-1 block`}>
-                    {product?.name}
+                    {product?.detail?.displayName}
                   </Typography.Text>
                   <Tag className="mt-1 border-none bg-primary-background">
                     {product?.productGroup?.name} - {product?.productType?.name}
@@ -152,7 +151,6 @@ function ProductCard({
                         style: 'currency',
                         currency: 'VND',
                       })}
-                      <sup className="text-sups font-semibold">đ</sup>
                     </Typography.Text>
                     {product?.unit && (
                       <Typography.Text className="text-base">

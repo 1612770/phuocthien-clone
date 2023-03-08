@@ -172,7 +172,7 @@ function DrugStorePickerInventoryChecking({
                   </div>
                   <div key={productStatus.product.key} className="  p-2">
                     <Typography className="font-medium">
-                      {productStatus.product.name}
+                      {productStatus.product.detail?.displayName}
                     </Typography>
                     {!productStatus.statusData.isStillAvailable && (
                       <>
