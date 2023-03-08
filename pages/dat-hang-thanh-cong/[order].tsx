@@ -24,6 +24,7 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
         setOrderToShow(JSON.parse(order));
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
