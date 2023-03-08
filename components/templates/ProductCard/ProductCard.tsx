@@ -77,8 +77,9 @@ function ProductCard({
             <div className="relative flex flex-col">
               <Space direction="vertical" size={0}>
                 <Typography.Text
-                  className={`mt-1 block ${
-                    size !== 'small' ? 'min-h-[48px]' : 'min-h-[68px]'
+                  title={product?.detail?.displayName}
+                  className={`two-line-text mt-1 ${
+                    size !== 'small' ? 'h-[48px]' : 'h-[68px]'
                   }`}
                 >
                   {product?.detail?.displayName}
@@ -139,7 +140,10 @@ function ProductCard({
             <div className="ml-4">
               <div className="relative flex flex-col">
                 <Space direction="vertical" size={0}>
-                  <Typography.Text className={`mt-1 block`}>
+                  <Typography.Text
+                    className={`mt-1 block`}
+                    title={product?.detail?.displayName}
+                  >
                     {product?.detail?.displayName}
                   </Typography.Text>
                   <Tag className="mt-1 border-none bg-primary-background">
