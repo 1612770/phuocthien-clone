@@ -1,6 +1,6 @@
 import FocusContentModel from '@configs/models/focus-content.model';
 import MainInfoModel from '@configs/models/main-info.model';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 const AppDataContext = React.createContext<{
   focusContent: FocusContentModel[];
@@ -19,11 +19,16 @@ function AppDataProvider({
   mainInfo: MainInfoModel[];
   children: React.ReactNode;
 }) {
+  const nonEmptyInfo = useMemo(
+    () => mainInfo.filter((info) => !!info.groupInfo?.length),
+    [mainInfo]
+  );
+
   return (
     <AppDataContext.Provider
       value={{
         focusContent,
-        mainInfo,
+        mainInfo: nonEmptyInfo,
       }}
     >
       {children}
