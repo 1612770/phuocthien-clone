@@ -163,6 +163,7 @@ const ProductGroupPage: NextPageWithLayout<{
                           ...router.query,
                           'sap-xep-theo': 'GIA_BAN_LE',
                           'sap-xep': 'ASC',
+                          trang: 1,
                         },
                       });
                     },
@@ -175,6 +176,7 @@ const ProductGroupPage: NextPageWithLayout<{
                           ...router.query,
                           'sap-xep-theo': 'GIA_BAN_LE',
                           'sap-xep': 'DESC',
+                          trang: 1,
                         },
                       });
                     },
