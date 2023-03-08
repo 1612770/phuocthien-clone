@@ -12,6 +12,8 @@ function ProductCarousel({ images }: { images: string[] }) {
     carouselRef.current?.goTo(active);
   }, [active]);
 
+  const imagesToShow = images?.length > 0 ? images : [''];
+
   return (
     <div>
       <div className="relative">
@@ -25,10 +27,11 @@ function ProductCarousel({ images }: { images: string[] }) {
           autoplaySpeed={5000}
           ref={(ref) => (carouselRef.current = ref)}
         >
-          {images.map((image, index) => {
+          {imagesToShow.map((image, index) => {
             return (
               <div key={index} className="relative h-[400px] w-full">
                 <ImageWithFallback
+                  key={image}
                   src={image}
                   alt="product"
                   height={400}
