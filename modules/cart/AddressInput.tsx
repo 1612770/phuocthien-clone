@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useMasterData } from '@providers/MasterDataProvider';
 
 function AddressInput({
+  id,
   address,
   setAddress,
   currentProvinceKey,
@@ -13,6 +14,7 @@ function AddressInput({
   currentWardKey,
   setCurrentWardKey,
 }: {
+  id?: string;
   address: string;
   setAddress: (address: string) => void;
   currentProvinceKey: string | null;
@@ -63,15 +65,15 @@ function AddressInput({
   }, [currentDistrictKey, loadWards]);
 
   useEffect(() => {
-    form?.setFieldValue('address', address);
-  }, [address, form]);
+    form?.setFieldValue(id + 'address', address);
+  }, [address, form, id]);
 
   return (
     <Form form={form}>
       <Row className="my-2" gutter={[8, 8]}>
         <Col xs={24} md={12}>
           <Form.Item
-            name="currentProvinceKey"
+            name={id + 'currentProvinceKey'}
             className="mb-0 w-full"
             rules={[
               () => ({
@@ -127,7 +129,7 @@ function AddressInput({
         </Col>
         <Col xs={24} md={12}>
           <Form.Item
-            name="currentDistrictKey"
+            name={id + 'currentDistrictKey'}
             className="mb-0 w-full"
             rules={[
               () => ({
@@ -188,7 +190,7 @@ function AddressInput({
         </Col>
         <Col xs={24} md={12}>
           <Form.Item
-            name="currentWardKey"
+            name={id + 'currentWardKey'}
             className="mb-0 w-full"
             rules={[
               () => ({
@@ -247,7 +249,7 @@ function AddressInput({
         <Col xs={24} md={12}>
           <Form.Item
             style={{ marginBottom: 0 }}
-            name="address"
+            name={id + 'address'}
             className="w-full"
             rules={[
               {

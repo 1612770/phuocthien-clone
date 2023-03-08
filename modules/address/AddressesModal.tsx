@@ -146,6 +146,7 @@ function AddressesModal({
         colon={false}
       >
         <AddressInput
+          id="address-modal"
           address={address}
           setAddress={setAddress}
           currentProvinceKey={currentProvinceKey}
