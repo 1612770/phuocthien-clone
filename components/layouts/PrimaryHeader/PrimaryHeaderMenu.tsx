@@ -92,7 +92,7 @@ function PrimaryHeaderMenu() {
               </Space>
             </a>
           </Link>
-          <Link href={'/chuoi-nha-thuoc'} style={{ color: 'white' }}>
+          <Link href={'/nha-thuoc'} style={{ color: 'white' }}>
             <a className="hidden xl:flex">
               <Space align="center">
                 <MapPin className="text-stone-800" size={16} />

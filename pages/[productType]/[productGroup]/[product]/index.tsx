@@ -12,12 +12,11 @@ import React, { useMemo } from 'react';
 import DrugStore from '@configs/models/drug-store.model';
 import AddToCartButton from '@modules/products/AddToCartButton';
 import ProductBonusSection from '@modules/products/ProductBonusSection';
-import ImageWithFallback from '@components/templates/ImageWithFallback';
-import ImageUtils from '@libs/utils/image.utils';
 import { OfferClient } from '@libs/client/Offer';
 import OfferModel from '@configs/models/offer.model';
 import ProductCardDetail from '@modules/products/ProductCardDetail';
 import { DrugstoreClient } from '@libs/client/DrugStore';
+import DrugstoreItem from '@modules/drugstore/DrugstoreItem';
 
 const ProductPage: NextPageWithLayout<{
   product?: Product;
@@ -236,34 +235,9 @@ const ProductPage: NextPageWithLayout<{
                 <>Hệ thống nhà thuốc Phước Thiện</>
               )}
             </Typography.Title>
-            <List className="max-h-[440px] overflow-y-scroll px-4">
+            <List className="max-h-[440px] overflow-y-scroll px-0">
               {drugstoresToShow?.map((drugStore) => (
-                <List.Item className="py-4 px-0" key={drugStore.key}>
-                  <div className="flex items-center">
-                    <ImageWithFallback
-                      src={drugStore.image || ''}
-                      width={32}
-                      height={32}
-                      layout="fixed"
-                      getMockImage={() =>
-                        ImageUtils.getRandomMockDrugstoreUrl()
-                      }
-                    />
-                    <div className="ml-2">
-                      <Typography className=" text-xs font-medium">
-                        {drugStore.name}
-                      </Typography>
-                      <Typography className="text-xs text-gray-600">
-                        {drugStore.address}
-                      </Typography>
-                      <a href={`tel:${drugStore.tel}`}>
-                        <Typography className="text-xs text-gray-600">
-                          {drugStore.tel}
-                        </Typography>
-                      </a>
-                    </div>
-                  </div>
-                </List.Item>
+                <DrugstoreItem drugstore={drugStore} key={drugStore.key} />
               ))}
 
               {!drugstoresToShow?.length && (

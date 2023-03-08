@@ -173,6 +173,34 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
           </Collapse.Panel>
         ))}
       </Collapse>
+      <Divider className="mt-4 mb-0" />
+      <Space size={8} direction="vertical" className="mt-4 w-full">
+        <Link href={`/goc-suc-khoe`}>
+          <a className="my-2 -mx-2 flex items-center">
+            <Typography
+              onClick={(e) => {
+                onClose?.(e);
+              }}
+              className="ml-2 font-medium"
+            >
+              GÓC SỨC KHỎE
+            </Typography>
+          </a>
+        </Link>
+
+        <Link href={`/nha-thuoc`}>
+          <a className="my-2 -mx-2 flex items-center">
+            <Typography
+              onClick={(e) => {
+                onClose?.(e);
+              }}
+              className="ml-2 font-medium"
+            >
+              CHUỖI NHÀ THUỐC
+            </Typography>
+          </a>
+        </Link>
+      </Space>
     </Drawer>
   );
 }
