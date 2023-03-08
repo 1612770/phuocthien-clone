@@ -32,15 +32,16 @@ function HomepageCarousel({
         {slideBanner.map((slide) =>
           typeof slide?.visible === 'boolean' && !slide?.visible ? null : (
             <div
-              className="relative aspect-[21/9] h-auto max-h-[400px] w-full"
+              className="relative aspect-[16/9] h-[400px] w-full"
               key={slide.key}
             >
               <ImageWithFallback
-                src=""
+                src={slide.imageUrl || ''}
                 loading="lazy"
                 alt="carousel image"
                 layout="fill"
                 objectFit="cover"
+                objectPosition="center"
                 getMockImage={ImageUtils.getRandomMockCampaignImageUrl}
               />
             </div>
