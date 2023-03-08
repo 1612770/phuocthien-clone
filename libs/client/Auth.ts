@@ -66,7 +66,7 @@ export class AuthClient extends BaseClient {
       | {
           displayName?: string;
           sex?: string;
-          birthday?: string;
+          birthday?: Date;
           email?: string;
           address?: string;
           company?: string;

@@ -1,8 +1,9 @@
-import { Button, DatePicker, Form, Input, Radio } from 'antd';
+import { Button, Form, Input, Radio } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@providers/AuthProvider';
 import { AuthClient } from '@libs/client/Auth';
 import { useAppMessage } from '@providers/AppMessageProvider';
+import dayjs from 'dayjs';
 
 function UserProfileUpdatingForm() {
   const { userData } = useAuth();
@@ -18,7 +19,7 @@ function UserProfileUpdatingForm() {
   const [form] = Form.useForm<{
     displayName: string;
     sex: string;
-    birthday: string;
+    birthday: dayjs.Dayjs;
     email: string;
     address: string;
     company: string;
@@ -30,8 +31,16 @@ function UserProfileUpdatingForm() {
 
       setUpdating(true);
       const values = form.getFieldsValue();
+      const valuesToSubmit: Omit<typeof values, 'birthday'> & {
+        birthday?: Date;
+      } = {
+        ...values,
+        birthday: values.birthday
+          ? new Date(values.birthday.toDate())
+          : undefined,
+      };
 
-      await authClient.updateProfile(values);
+      await authClient.updateProfile(valuesToSubmit);
 
       toastSuccess({ data: 'Cập nhật thông tin thành công!' });
     } catch (error) {
@@ -45,7 +54,9 @@ function UserProfileUpdatingForm() {
     form.setFieldsValue({
       displayName: userData?.displayName || '',
       sex: userData?.sex || '',
-      birthday: userData?.birthday || '',
+      birthday: userData?.birthday
+        ? dayjs(new Date(userData?.birthday))
+        : undefined,
       email: userData?.email || '',
       address: userData?.address || '',
       company: userData?.company || '',
@@ -75,13 +86,13 @@ function UserProfileUpdatingForm() {
             <Radio.Button value="Nữ">Nữ</Radio.Button>
           </Radio.Group>
         </Form.Item>
-        <Form.Item label="Ngày sinh" name="birthday" className="mb-2">
+        {/* <Form.Item label="Ngày sinh" name="birthday" className="mb-2">
           <DatePicker
             className="w-full"
             placeholder="VD: 01/01/2000"
-            format="DD/MM/YYYY"
+            format={'DD/MM/YYYY'}
           />
-        </Form.Item>
+        </Form.Item> */}
       </div>
 
       <Form.Item
