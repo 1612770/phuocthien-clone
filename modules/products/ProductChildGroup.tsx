@@ -23,7 +23,7 @@ function ProductChildGroup({
             }}
             alt={label}
           />
-          <Typography className="mr-2">{label}</Typography>
+          <Typography className="two-line-text mr-2">{label}</Typography>
         </div>
       </a>
     </Link>
