@@ -1,4 +1,4 @@
-import { Button, Modal } from 'antd';
+import { Button, Modal, Typography } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 
 function ProductCardDetail(
@@ -41,7 +41,11 @@ function ProductCardDetail(
       )}
 
       <Modal
-        title="Modal 1000px width"
+        title={
+          <Typography>
+            <Typography.Title level={4}>Chi tiết sản phẩm</Typography.Title>
+          </Typography>
+        }
         footer={null}
         style={{ top: 20, bottom: 20 }}
         open={openFullModal}
@@ -49,7 +53,9 @@ function ProductCardDetail(
         onCancel={() => setOpenFullModal(false)}
         width={1000}
       >
-        <div {...props}></div>
+        <div className="product-detail-content">
+          <div {...props}></div>
+        </div>
       </Modal>
     </div>
   );
