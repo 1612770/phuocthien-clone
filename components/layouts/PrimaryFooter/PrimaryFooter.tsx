@@ -19,16 +19,16 @@ function PrimaryFooter() {
       <footer className="bg-primary px-4">
         <div className="py-8 lg:container">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {mainInfo.map((info) =>
+            {mainInfo.map((info, index) =>
               typeof info?.visible === 'boolean' && !info?.visible ? null : (
-                <div className="w-full" key={info.code}>
+                <div className="w-full" key={index}>
                   <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                     {info.name}
                   </Typography.Text>
-                  {info.groupInfo?.map((groupInfo) =>
+                  {info.groupInfo?.map((groupInfo, index) =>
                     typeof groupInfo?.visible === 'boolean' &&
                     !groupInfo?.visible ? null : (
-                      <Space className="my-0.5 w-full" key={groupInfo.code}>
+                      <Space className="my-0.5 w-full" key={index}>
                         <LinkWrapper href={groupInfo.eventUrl}>
                           <Typography.Text className="text-white">
                             {groupInfo.name}
