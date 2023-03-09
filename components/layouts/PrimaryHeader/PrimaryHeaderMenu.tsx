@@ -2,7 +2,7 @@ import { Popover, Space, Typography } from 'antd';
 import Link from 'next/link';
 import { Book, ChevronDown, MapPin } from 'react-feather';
 import { useState } from 'react';
-import { IMPORTANT_MENUS } from '@configs/env';
+import { IMPORTANT_MENU_KEYS } from '@configs/env';
 import ProductGroupModel from '@configs/models/product-group.model';
 import UrlUtils from '@libs/utils/url.utils';
 import { useFullMenu } from '@providers/FullMenuProvider';
@@ -55,7 +55,7 @@ function PrimaryHeaderMenu() {
 
           {fullMenu.map((menu) =>
             menu?.name &&
-            IMPORTANT_MENUS.includes(menu?.name.toLocaleLowerCase()) ? (
+            IMPORTANT_MENU_KEYS.includes((menu?.key || '').toUpperCase()) ? (
               <span
                 className="inline-block py-2"
                 onMouseLeave={() => {
