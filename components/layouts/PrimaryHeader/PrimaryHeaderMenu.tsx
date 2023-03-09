@@ -2,7 +2,7 @@ import { Popover, Space, Typography } from 'antd';
 import Link from 'next/link';
 import { Book, ChevronDown, MapPin } from 'react-feather';
 import { useState } from 'react';
-import IMPORTANT_MENUS from '@configs/constants/important-menus';
+import { IMPORTANT_MENUS } from '@configs/env';
 import ProductGroupModel from '@configs/models/product-group.model';
 import UrlUtils from '@libs/utils/url.utils';
 import { useFullMenu } from '@providers/FullMenuProvider';
