@@ -36,7 +36,7 @@ function ProductCarousel({ images }: { images: string[] }) {
                   alt="product"
                   height={400}
                   layout="fill"
-                  objectFit="cover"
+                  objectFit="contain"
                   className="m-auto w-full"
                 />
               </div>
@@ -78,7 +78,7 @@ function ProductCarousel({ images }: { images: string[] }) {
       </div>
 
       {images.length > 1 && (
-        <div className="mt-4 flex gap-2 overflow-auto pb-2 lg:gap-4">
+        <div className="mt-4 flex gap-1  overflow-auto pb-2 lg:gap-2">
           {images.map((image, index) => (
             <div
               key={index}

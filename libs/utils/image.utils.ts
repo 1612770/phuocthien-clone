@@ -11,7 +11,7 @@ class ImageUtils {
 
   static CHECKOUT_MOCKS = ['/image-placeholder.png'];
 
-  static DRUGSTORE_MOCKS = ['/image-placeholder.png'];
+  static DRUGSTORE_MOCKS = ['/logo.png'];
 
   static FOCUS_MOCKS = ['/image-placeholder.png'];
 

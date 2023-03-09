@@ -31,9 +31,10 @@ const ProductPage: NextPageWithLayout<{
     if (product?.detail?.image) {
       memoCarouselImages.push(product?.detail?.image);
     }
+
     if (product?.images) {
       const imageUrls = product?.images.reduce((images, currentImage) => {
-        const url = currentImage?.url;
+        const url = currentImage?.image;
         if (url) {
           images.push(url);
         }
@@ -89,11 +90,11 @@ const ProductPage: NextPageWithLayout<{
       </Breadcrumb>
 
       <div className="grid  grid-cols-1 gap-4 lg:grid-cols-[minmax(200px,_1fr)_280px] lg:gap-6 xl:grid-cols-[400px_minmax(200px,_1fr)_280px]">
-        <div className="h-[500px] lg:col-span-2 xl:sticky xl:top-[32px] xl:col-span-1">
+        <div className="h-[500px] lg:col-span-2 xl:col-span-1">
           <ProductCarousel images={carouselImages} />
         </div>
 
-        <div className="relative xl:sticky xl:top-[32px]">
+        <div className="relative ">
           <div className="flex flex-col">
             <Typography.Title className="mx-0 mt-2 text-2xl font-medium">
               {product?.detail?.displayName}

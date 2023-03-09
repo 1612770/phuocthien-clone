@@ -243,6 +243,7 @@ const CartPage: NextPageWithLayout<{
                         width={40}
                         height={40}
                         layout="fixed"
+                        objectFit="contain"
                         getMockImage={() =>
                           ImageUtils.getRandomMockCheckoutUrl()
                         }

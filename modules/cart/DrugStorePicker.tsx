@@ -66,17 +66,18 @@ function DrugStorePicker({
                 {showedDrugStores.map((drugStore) => (
                   <div key={drugStore.key} className="my-4">
                     <Radio value={drugStore.key}>
-                      <div className="ml-2 flex items-center">
+                      <div className="ml-2 flex items-start">
                         <ImageWithFallback
                           src={drugStore.image || ''}
                           width={40}
                           height={40}
                           layout="fixed"
+                          objectFit="contain"
                           getMockImage={() =>
                             ImageUtils.getRandomMockDrugstoreUrl()
                           }
                         />
-                        <div className="ml-4">
+                        <div className="ml-2">
                           <Typography className="">{drugStore.name}</Typography>
                           <Typography className="text-xs text-gray-600">
                             Địa chỉ: {drugStore.address}
