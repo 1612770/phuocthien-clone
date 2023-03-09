@@ -32,7 +32,7 @@ function ImageWithFallback({
         setisImageLoadFailed(true);
       }}
       {...props}
-      src={imageSource}
+      src={imageSource || '/'}
     />
   );
 }
