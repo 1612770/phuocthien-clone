@@ -181,8 +181,8 @@ function PrimaryHeaderMenuAllPopoverContent({
                 >
                   <Link
                     href={`/${UrlUtils.generateSlug(
-                      currentFocusMenu?.name,
-                      currentFocusMenu?.key
+                      currentMenu?.name,
+                      currentMenu?.key
                     )}/${UrlUtils.generateSlug(
                       currentFocusGroup?.name,
                       currentFocusGroup?.key
