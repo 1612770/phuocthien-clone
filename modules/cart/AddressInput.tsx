@@ -69,7 +69,7 @@ function AddressInput({
   }, [address, form, id]);
 
   return (
-    <Form form={form}>
+    <Form form={form} component="div">
       <Row className="my-2" gutter={[8, 8]}>
         <Col xs={24} md={12}>
           <Form.Item
