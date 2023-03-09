@@ -36,8 +36,6 @@ const DrugstorePage: NextPageWithLayout<{
         <div className="relative mb-4 h-[240px] w-full">
           <ImageWithFallback
             src={drugstore?.image || ''}
-            width={'100%'}
-            height={240}
             layout="fill"
             objectFit="cover"
             getMockImage={() => ImageUtils.getRandomMockCampaignImageUrl()}

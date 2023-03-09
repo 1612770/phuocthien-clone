@@ -103,8 +103,6 @@ function ViralProductsList({
               <div className="relative mb-4 aspect-[21/9] h-[200px] w-full">
                 <ImageWithFallback
                   src={viralProductsList?.imageUrl || ''}
-                  width={'100%'}
-                  height={240}
                   layout="fill"
                   objectFit="cover"
                   getMockImage={() =>

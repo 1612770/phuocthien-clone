@@ -25,8 +25,6 @@ function FocusContentSection({
               <div className="flex h-full flex-col items-center rounded-lg ">
                 <div className="relative mt-3 h-[40px] w-[40px] min-w-[40px]">
                   <ImageWithFallback
-                    width={80}
-                    height={80}
                     layout="fill"
                     src={focus.imageUrl || ''}
                     getMockImage={() => ImageUtils.getFocusMockUrl()}

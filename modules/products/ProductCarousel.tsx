@@ -34,7 +34,6 @@ function ProductCarousel({ images }: { images: string[] }) {
                   key={image}
                   src={image}
                   alt="product"
-                  height={400}
                   layout="fill"
                   objectFit="contain"
                   className="m-auto w-full"
