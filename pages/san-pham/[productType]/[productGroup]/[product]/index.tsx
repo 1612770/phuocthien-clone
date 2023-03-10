@@ -65,7 +65,7 @@ const ProductPage: NextPageWithLayout<{
         </Breadcrumb.Item>
         <Breadcrumb.Item>
           <Link
-            href={`/${UrlUtils.generateSlug(
+            href={`/san-pham/${UrlUtils.generateSlug(
               product?.productType?.name,
               product.productType?.key
             )}`}
@@ -75,7 +75,7 @@ const ProductPage: NextPageWithLayout<{
         </Breadcrumb.Item>
         <Breadcrumb.Item>
           <Link
-            href={`/${UrlUtils.generateSlug(
+            href={`/san-pham/${UrlUtils.generateSlug(
               product?.productType?.name,
               product.productType?.key
             )}/${UrlUtils.generateSlug(
@@ -102,7 +102,7 @@ const ProductPage: NextPageWithLayout<{
 
             <ProductBonusSection offers={offers} />
 
-            <div className="flex w-full items-center justify-between gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg lg:gap-4">
+            <div className="flex w-full flex-wrap items-center justify-between gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg md:flex-nowrap lg:gap-4">
               <div className="flex items-end">
                 <Typography.Title
                   level={2}
@@ -121,7 +121,7 @@ const ProductPage: NextPageWithLayout<{
                 )}
               </div>
               {product && (
-                <div className="w-[140px]">
+                <div className="w-full md:w-[140px]">
                   <AddToCartButton
                     product={product}
                     className="w-full uppercase"
@@ -137,7 +137,7 @@ const ProductPage: NextPageWithLayout<{
                 <Typography.Text className=" font-medium ">
                   Thương hiệu
                 </Typography.Text>
-                <Typography.Text className=" ml-2">
+                <Typography.Text className=" ml-0 md:ml-2">
                   {product?.productionBrand?.name}
                 </Typography.Text>
               </div>
@@ -148,7 +148,7 @@ const ProductPage: NextPageWithLayout<{
                 <Typography.Text className=" whitespace-nowrap font-medium">
                   Hoạt chất
                 </Typography.Text>
-                <Typography.Text className=" ml-2">
+                <Typography.Text className=" ml-0 md:ml-2">
                   {product?.ingredient}
                 </Typography.Text>
               </div>
@@ -159,7 +159,7 @@ const ProductPage: NextPageWithLayout<{
                 <Typography.Text className=" font-medium ">
                   Hàm lượng
                 </Typography.Text>
-                <Typography.Text className=" ml-2">
+                <Typography.Text className=" ml-0 md:ml-2">
                   {product?.drugContent}
                 </Typography.Text>
               </div>
@@ -170,7 +170,7 @@ const ProductPage: NextPageWithLayout<{
                 <Typography.Text className=" font-medium ">
                   Quy cách đóng gói
                 </Typography.Text>
-                <Typography.Text className=" ml-2">
+                <Typography.Text className=" ml-0 md:ml-2">
                   {product?.packagingProcess}
                 </Typography.Text>
               </div>
@@ -180,7 +180,7 @@ const ProductPage: NextPageWithLayout<{
               <Typography.Text className=" font-medium ">
                 Là thuốc kê đơn
               </Typography.Text>
-              <Typography.Text className=" ml-2">
+              <Typography.Text className=" ml-0 md:ml-2">
                 {product?.isPrescripted ? 'Có' : 'Không'}
               </Typography.Text>
             </div>
@@ -190,7 +190,7 @@ const ProductPage: NextPageWithLayout<{
                 <Typography.Text className=" font-medium ">
                   Là thuốc đặc biệt
                 </Typography.Text>
-                <Typography.Text className=" ml-2">
+                <Typography.Text className=" ml-0 md:ml-2">
                   {product?.isSpecial ? 'Có' : 'Không'}
                 </Typography.Text>
               </div>
@@ -201,7 +201,7 @@ const ProductPage: NextPageWithLayout<{
                 <Typography.Text className=" font-medium ">
                   Là thuốc tâm thần
                 </Typography.Text>
-                <Typography.Text className=" ml-2">
+                <Typography.Text className=" ml-0 md:ml-2">
                   {product?.isMental ? 'Có' : 'Không'}
                 </Typography.Text>
               </div>
@@ -212,7 +212,7 @@ const ProductPage: NextPageWithLayout<{
                 <Typography.Text className=" font-medium ">
                   Số đăng ký
                 </Typography.Text>
-                <Typography.Text className=" ml-2">
+                <Typography.Text className=" ml-0 md:ml-2">
                   {product?.registrationNumber}
                 </Typography.Text>
               </div>

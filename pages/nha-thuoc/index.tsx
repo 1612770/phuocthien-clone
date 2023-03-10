@@ -21,7 +21,10 @@ const DrugstorePage: NextPageWithLayout<{
         <Breadcrumb.Item>Danh sách nhà thuốc</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Typography.Title level={1} className="mt-8 mb-6 font-medium">
+      <Typography.Title
+        level={1}
+        className="mt-8 mb-6 text-2xl font-medium md:text-4xl"
+      >
         Hệ thống các chi nhánh nhà thuốc Phước Thiện
       </Typography.Title>
 

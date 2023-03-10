@@ -28,7 +28,10 @@ const DrugstorePage: NextPageWithLayout<{
         <Breadcrumb.Item>{drugstore?.name}</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Typography.Title level={1} className="mt-8 mb-2 font-medium">
+      <Typography.Title
+        level={1}
+        className="mt-8 mb-2 text-2xl font-medium md:text-4xl"
+      >
         {drugstore?.name}
       </Typography.Title>
 

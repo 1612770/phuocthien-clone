@@ -8,6 +8,7 @@ import PaymentMethodModel from '@configs/models/payment-method.model';
 import FocusContentModel from '@configs/models/focus-content.model';
 import SlideBannerModel from '@configs/models/slide-banner.model';
 import MainInfoModel from '@configs/models/main-info.model';
+import ProductSearchKeyword from '@configs/models/product-search-keyword.model';
 
 export class GeneralClient extends BaseClient {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -53,5 +54,11 @@ export class GeneralClient extends BaseClient {
 
   async getMainInfo(): Promise<APIResponse<MainInfoModel[]>> {
     return await super.call('GET', `main-info`, {});
+  }
+
+  async getProductSearchKeywords(): Promise<
+    APIResponse<ProductSearchKeyword[]>
+  > {
+    return await super.call('GET', `product-search-keywords`, {});
   }
 }

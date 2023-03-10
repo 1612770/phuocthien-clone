@@ -11,6 +11,8 @@ import dynamic from 'next/dynamic';
 import { useAppData } from '@providers/AppDataProvider';
 import { GeneralClient } from '@libs/client/General';
 import SlideBannerModel from '@configs/models/slide-banner.model';
+import ProductSearchKeyword from '@configs/models/product-search-keyword.model';
+import { useEffect } from 'react';
 
 const ViralProductsList = dynamic(
   () => import('@modules/products/ViralProductsList'),
@@ -20,8 +22,14 @@ const ViralProductsList = dynamic(
 const Home: NextPageWithLayout<{
   viralProductsLists?: ViralProductsListModel[];
   slideBanner?: SlideBannerModel[];
-}> = ({ viralProductsLists, slideBanner }) => {
-  const { focusContent } = useAppData();
+  productSearchKeywords?: ProductSearchKeyword[];
+}> = ({ viralProductsLists, slideBanner, productSearchKeywords }) => {
+  const { focusContent, setProductSearchKeywords } = useAppData();
+
+  useEffect(() => {
+    setProductSearchKeywords(productSearchKeywords || []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="mb-0 lg:mb-8">
@@ -60,11 +68,13 @@ export const getServerSideProps = async (
     props: {
       viralProductsLists: ViralProductsListModel[];
       slideBanner: SlideBannerModel[];
+      productSearchKeywords: ProductSearchKeyword[];
     };
   } = {
     props: {
       viralProductsLists: [],
       slideBanner: [],
+      productSearchKeywords: [],
     },
   };
 
@@ -72,13 +82,15 @@ export const getServerSideProps = async (
   const generalClient = new GeneralClient(context, {});
 
   try {
-    const [viralProducts, slideBanner] = await Promise.all([
-      productClient.getViralProducts({
-        page: 1,
-        pageSize: VIRAL_PRODUCTS_LOAD_PER_TIME,
-      }),
-      generalClient.getSlideBanner(),
-    ]);
+    const [viralProducts, slideBanner, productSearchKeywords] =
+      await Promise.all([
+        productClient.getViralProducts({
+          page: 1,
+          pageSize: VIRAL_PRODUCTS_LOAD_PER_TIME,
+        }),
+        generalClient.getSlideBanner(),
+        generalClient.getProductSearchKeywords(),
+      ]);
 
     if (viralProducts.data) {
       serverSideProps.props.viralProductsLists = viralProducts.data || [];
@@ -86,6 +98,11 @@ export const getServerSideProps = async (
 
     if (slideBanner.data) {
       serverSideProps.props.slideBanner = slideBanner.data || [];
+    }
+
+    if (productSearchKeywords.data) {
+      serverSideProps.props.productSearchKeywords =
+        productSearchKeywords.data || [];
     }
   } catch (error) {
     console.error(error);

@@ -131,7 +131,12 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
                 onClose?.(e);
               }}
             >
-              <Link href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}>
+              <Link
+                href={`/san-pham/${UrlUtils.generateSlug(
+                  menu?.name,
+                  menu?.key
+                )}`}
+              >
                 <a className="my-2 -mx-4 flex items-center">
                   <ImageWithFallback
                     src={menu?.image || ''}
@@ -148,7 +153,7 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
                 menu.productGroups?.map((group, idx) => (
                   <Link
                     key={idx}
-                    href={`/${UrlUtils.generateSlug(
+                    href={`/san-pham/${UrlUtils.generateSlug(
                       menu?.name,
                       menu?.key
                     )}/${UrlUtils.generateSlug(group?.name, group?.key)}`}

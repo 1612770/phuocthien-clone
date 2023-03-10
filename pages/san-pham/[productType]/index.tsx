@@ -27,7 +27,7 @@ const ProductTypesPage: NextPageWithLayout<{
           <ProductGroup
             key={productGroup?.key}
             productGroup={productGroup}
-            href={`/${UrlUtils.generateSlug(
+            href={`/san-pham/${UrlUtils.generateSlug(
               productType?.name,
               productType?.key
             )}/${UrlUtils.generateSlug(productGroup?.name, productGroup?.key)}`}
