@@ -16,7 +16,7 @@ function ProductCardDetail(
   }, [props.dangerouslySetInnerHTML?.__html]);
 
   return (
-    <div className="relative pb-12">
+    <div className="relative">
       <div
         {...props}
         className=" product-detail-content max-h-[500px] overflow-hidden"
@@ -26,7 +26,7 @@ function ProductCardDetail(
       ></div>
       {showViewMoreButton && (
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white to-transparent">
-          <div className="flex h-full w-full items-center justify-center py-4">
+          <div className="flex h-full w-full items-center justify-center bg-transparent pt-16">
             <Button
               type="primary"
               ghost
