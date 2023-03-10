@@ -27,7 +27,7 @@ function ProductBonusSection({ offers }: { offers?: OfferModel[] }) {
               <div className="ml-2">
                 {offer.offerCode && (
                   <Typography.Paragraph className="m-0 font-medium">
-                    {offer.offerCode}{' '}
+                    Mã khuyến mãi: {offer.offerCode}{' '}
                   </Typography.Paragraph>
                 )}
                 {offer.offerName && (
