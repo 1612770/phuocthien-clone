@@ -91,26 +91,21 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
 
   const generalClient = new GeneralClient(ctx, {});
 
-  try {
-    const [fullMenu, focusContent, mainInfo] = await Promise.all([
-      generalClient.getMenu(),
-      generalClient.getFocusContent(),
-      generalClient.getMainInfo(),
-    ]);
+  const [fullMenu, focusContent, mainInfo] = await Promise.allSettled([
+    generalClient.getMenu(),
+    generalClient.getFocusContent(),
+    generalClient.getMainInfo(),
+  ]);
 
-    if (fullMenu.data) {
-      appInitalProps.props.fullMenu = fullMenu.data;
-    }
-    if (focusContent.data) {
-      appInitalProps.props.focusContent = focusContent.data || [];
-    }
+  if (fullMenu.status === 'fulfilled' && fullMenu.value.data) {
+    appInitalProps.props.fullMenu = fullMenu.value.data;
+  }
+  if (focusContent.status === 'fulfilled' && focusContent.value.data) {
+    appInitalProps.props.focusContent = focusContent.value.data || [];
+  }
 
-    if (mainInfo.data) {
-      appInitalProps.props.mainInfo = mainInfo.data || [];
-    }
-  } catch (error) {
-    console.error(error);
-    appInitalProps.props.fullMenu = [];
+  if (mainInfo.status === 'fulfilled' && mainInfo.value.data) {
+    appInitalProps.props.mainInfo = mainInfo.value.data || [];
   }
 
   initalProps.pageProps = {
