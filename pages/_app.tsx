@@ -19,7 +19,6 @@ import AppMessageProvider from '@providers/AppMessageProvider';
 import AuthProvider from '@providers/AuthProvider';
 import AppConfirmDialogProvider from '@providers/AppConfirmDialogProvider';
 import FocusContentModel from '@configs/models/focus-content.model';
-import MainInfoModel from '@configs/models/main-info.model';
 import AppDataProvider from '@providers/AppDataProvider';
 
 interface AppPropsWithLayout<T> extends AppProps<T> {
@@ -32,7 +31,6 @@ function MyApp({
 }: AppPropsWithLayout<{
   fullMenu?: MenuModel[];
   focusContent?: FocusContentModel[];
-  mainInfo: MainInfoModel[];
 }>) {
   const getLayout = Component.getLayout || ((page) => page);
 
@@ -57,7 +55,6 @@ function MyApp({
                   <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
                     <AppDataProvider
                       focusContent={pageProps.focusContent || []}
-                      mainInfo={pageProps.mainInfo || []}
                     >
                       {getLayout(<Component {...pageProps} />)}
                     </AppDataProvider>
@@ -79,22 +76,19 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
     props: {
       fullMenu: MenuModel[];
       focusContent: FocusContentModel[];
-      mainInfo: MainInfoModel[];
     };
   } = {
     props: {
       fullMenu: [],
       focusContent: [],
-      mainInfo: [],
     },
   };
 
   const generalClient = new GeneralClient(ctx, {});
 
-  const [fullMenu, focusContent, mainInfo] = await Promise.allSettled([
+  const [fullMenu, focusContent] = await Promise.allSettled([
     generalClient.getMenu(),
     generalClient.getFocusContent(),
-    generalClient.getMainInfo(),
   ]);
 
   if (fullMenu.status === 'fulfilled' && fullMenu.value.data) {
@@ -102,10 +96,6 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
   }
   if (focusContent.status === 'fulfilled' && focusContent.value.data) {
     appInitalProps.props.focusContent = focusContent.value.data || [];
-  }
-
-  if (mainInfo.status === 'fulfilled' && mainInfo.value.data) {
-    appInitalProps.props.mainInfo = mainInfo.value.data || [];
   }
 
   initalProps.pageProps = {
