@@ -41,7 +41,7 @@ function AddressInput({
         provinceCode: currentProvinceKey,
       });
     }
-  }, [currentProvinceKey, loadDistricts, form]);
+  }, [currentProvinceKey, loadDistricts]);
 
   useEffect(() => {
     if (currentDistrictKey) {
@@ -49,7 +49,7 @@ function AddressInput({
         districtCode: currentDistrictKey,
       });
     }
-  }, [currentDistrictKey, loadWards, form]);
+  }, [currentDistrictKey, loadWards]);
 
   return (
     <div className="my-2 grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-4">
@@ -74,9 +74,11 @@ function AddressInput({
           placeholder="Nhập tỉnh/thành phố"
           allowClear
           onChange={(value) => {
-            form?.setFieldValue('currentProvinceKey', value);
-            form?.setFieldValue('currentDistrictKey', null);
-            form?.setFieldValue('currentWardKey', null);
+            form?.setFieldsValue({
+              currentProvinceKey: value,
+              currentDistrictKey: null,
+              currentWardKey: null,
+            });
           }}
           value={currentProvinceKey}
           filterOption={(inputValue, currentOption) => {
@@ -110,7 +112,7 @@ function AddressInput({
           () => ({
             validator() {
               if (!currentDistrictKey) {
-                return Promise.reject('Vui lòng chọn huyện/quận!');
+                return Promise.reject('Vui lòng chọn tỉnh/thành phố!');
               }
 
               return Promise.resolve('');
@@ -118,45 +120,42 @@ function AddressInput({
           }),
         ]}
       >
-        <Spin spinning={loadingDistricts}>
-          <Select
-            showSearch
-            allowClear
-            className="w-full"
-            disabled={!currentProvinceKey}
-            placeholder="Nhập huyện/quận"
-            value={currentDistrictKey}
-            onChange={(value) => {
-              form?.setFieldValue('currentDistrictKey', value);
-              form?.setFieldValue('currentWardKey', null);
-            }}
-            filterOption={(inputValue, currentOption) => {
-              if (!currentProvinceKey) return false;
+        <Select
+          showSearch
+          allowClear
+          className="w-full"
+          placeholder="Nhập huyện/quận"
+          value={currentDistrictKey}
+          disabled={!currentProvinceKey || loadingDistricts}
+          onChange={(value) => {
+            form?.setFieldsValue({
+              currentDistrictKey: value,
+              currentWardKey: null,
+            });
+          }}
+          filterOption={(inputValue, currentOption) => {
+            const option = districts.find(
+              (district) => district.districtCode === currentOption?.value
+            );
 
-              const option = districts.find(
-                (district) => district.districtCode === currentOption?.value
-              );
-
-              return (
-                convertStringToASCII(
-                  (option?.districtName || '').toLowerCase()
-                ).indexOf(convertStringToASCII(inputValue.toLowerCase())) !== -1
-              );
-            }}
-          >
-            {currentProvinceKey &&
-              districts.map((district) => {
-                return (
-                  <Select.Option
-                    key={district.districtCode}
-                    value={district.districtCode}
-                  >
-                    {district.districtName}
-                  </Select.Option>
-                );
-              })}
-          </Select>
-        </Spin>
+            return (
+              convertStringToASCII(
+                (option?.districtName || '').toLowerCase()
+              ).indexOf(convertStringToASCII(inputValue.toLowerCase())) !== -1
+            );
+          }}
+        >
+          {districts.map((district) => {
+            return (
+              <Select.Option
+                key={district.districtCode}
+                value={district.districtCode}
+              >
+                {district.districtName}
+              </Select.Option>
+            );
+          })}
+        </Select>
       </Form.Item>
       <Form.Item
         name={'currentWardKey'}
@@ -173,41 +172,39 @@ function AddressInput({
           }),
         ]}
       >
-        <Spin spinning={loadingWards}>
-          <Select
-            showSearch
-            allowClear
-            className="w-full"
-            disabled={!currentDistrictKey}
-            value={currentWardKey}
-            onChange={(value) => {
-              form?.setFieldValue('currentWardKey', value);
-            }}
-            placeholder="Nhập xã/phường"
-            filterOption={(inputValue, currentOption) => {
-              if (!currentProvinceKey) return false;
+        <Select
+          showSearch
+          allowClear
+          className="w-full"
+          disabled={!currentDistrictKey || loadingWards}
+          value={currentWardKey}
+          onChange={(value) => {
+            form?.setFieldValue('currentWardKey', value);
+          }}
+          placeholder="Nhập xã/phường"
+          filterOption={(inputValue, currentOption) => {
+            if (!currentProvinceKey) return false;
 
-              const option =
-                wards.find((ward) => ward.wardName === currentOption?.value) ||
-                {};
+            const option =
+              wards.find((ward) => ward.wardName === currentOption?.value) ||
+              {};
 
+            return (
+              convertStringToASCII(
+                (option?.wardName || '').toLowerCase()
+              ).indexOf(convertStringToASCII(inputValue.toLowerCase())) !== -1
+            );
+          }}
+        >
+          {currentProvinceKey &&
+            wards.map((ward) => {
               return (
-                convertStringToASCII(
-                  (option?.wardName || '').toLowerCase()
-                ).indexOf(convertStringToASCII(inputValue.toLowerCase())) !== -1
+                <Select.Option key={ward.wardName} value={ward.wardName}>
+                  {ward.wardName}
+                </Select.Option>
               );
-            }}
-          >
-            {currentProvinceKey &&
-              wards.map((ward) => {
-                return (
-                  <Select.Option key={ward.wardName} value={ward.wardName}>
-                    {ward.wardName}
-                  </Select.Option>
-                );
-              })}
-          </Select>
-        </Spin>
+            })}
+        </Select>
       </Form.Item>
       <Form.Item
         style={{ marginBottom: 0 }}
