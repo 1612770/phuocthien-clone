@@ -31,9 +31,7 @@ import OfferModel from '@configs/models/offer.model';
 import OfferCodeInput from '@modules/cart/OfferCodeInput';
 import { MasterDataClient } from '@libs/client/MasterData';
 import ProvinceModel from '@configs/models/province.model';
-import MasterDataProvider, {
-  useMasterData,
-} from '@providers/MasterDataProvider';
+import MasterDataProvider from '@providers/MasterDataProvider';
 import AddressesProvider from '@providers/AddressesProvider';
 import AddressSection from '@modules/cart/AddressSection';
 import AddressModel from '@configs/models/address.model';
@@ -46,20 +44,6 @@ const CartPage: NextPageWithLayout<{
 }> = ({ paymentMethods, offers }) => {
   const { cartProducts } = useCart();
   const {
-    name,
-    setName,
-
-    tel,
-    setTel,
-
-    shippingType,
-    setShippingType,
-
-    currentDrugStoreKey,
-    setCurrentDrugStoreKey,
-
-    setPaymentMethodKey,
-
     checkoutError,
     setCheckoutError,
     checkingOut,
@@ -67,11 +51,9 @@ const CartPage: NextPageWithLayout<{
 
     totalRawPrice,
     totalPrice,
+
+    checkoutForm,
   } = useCheckout();
-
-  const { form } = useMasterData();
-
-  const [checkoutForm] = Form.useForm();
 
   const totalProducts = cartProducts.reduce(
     (total, cartProduct) => total + (Number(cartProduct.quantity) || 0),
@@ -80,10 +62,7 @@ const CartPage: NextPageWithLayout<{
 
   const onCheckoutButtonClick = async () => {
     try {
-      await Promise.all([
-        checkoutForm.validateFields(),
-        form?.validateFields(),
-      ]);
+      await checkoutForm?.validateFields();
 
       checkout();
     } catch (error) {
@@ -113,7 +92,14 @@ const CartPage: NextPageWithLayout<{
       </Breadcrumb>
 
       {cartProducts.length > 0 && (
-        <Form onFinish={() => undefined} scrollToFirstError form={checkoutForm}>
+        <Form
+          onFinish={() => undefined}
+          scrollToFirstError
+          form={checkoutForm}
+          initialValues={{
+            shippingType: ShippingTypes.DELIVERY,
+          }}
+        >
           <div className="md:border-1 border-none px-4 py-0 shadow-none md:rounded-lg md:border-solid md:border-gray-200 md:py-4 md:shadow-lg">
             {cartProducts.map((cartProduct, index) => (
               <Fragment key={cartProduct.product.key}>
@@ -151,11 +137,7 @@ const CartPage: NextPageWithLayout<{
                     },
                   ]}
                 >
-                  <Input
-                    placeholder="Họ và tên (bắt buộc)"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
+                  <Input placeholder="Họ và tên (bắt buộc)" />
                 </Form.Item>
               </Col>
               <Col xs={24} md={12}>
@@ -173,51 +155,47 @@ const CartPage: NextPageWithLayout<{
                     },
                   ]}
                 >
-                  <Input
-                    placeholder="Số điện thoại (bắt buộc)"
-                    value={tel}
-                    onChange={(e) => setTel(e.target.value)}
-                  />
+                  <Input placeholder="Số điện thoại (bắt buộc)" />
                 </Form.Item>
               </Col>
             </Row>
 
-            <Divider className="mt-0" />
+            <Divider className="mt-4 mb-4" />
             <Typography.Title level={4}>
               Chọn cách thức nhận hàng
             </Typography.Title>
-            <Radio.Group value={shippingType}>
-              <Radio.Button
-                value={ShippingTypes.DELIVERY}
-                onChange={(e) => setShippingType(e.target.value)}
-              >
-                Giao tận nơi
-              </Radio.Button>
-              <Radio.Button
-                value={ShippingTypes.AT_STORE}
-                onChange={(e) => setShippingType(e.target.value)}
-              >
-                Nhận tại nhà thuốc
-              </Radio.Button>
-            </Radio.Group>
+            <Form.Item name="shippingType">
+              <Radio.Group>
+                <Radio.Button value={ShippingTypes.DELIVERY}>
+                  Giao tận nơi
+                </Radio.Button>
+                <Radio.Button value={ShippingTypes.AT_STORE}>
+                  Nhận tại nhà thuốc
+                </Radio.Button>
+              </Radio.Group>
+            </Form.Item>
 
-            {shippingType === ShippingTypes.DELIVERY && <AddressSection />}
-
-            {shippingType === ShippingTypes.AT_STORE && (
-              <DrugStorePicker
-                value={currentDrugStoreKey}
-                onChange={(key) => {
-                  setCurrentDrugStoreKey(key);
-                }}
-              />
-            )}
+            <Form.Item
+              noStyle
+              shouldUpdate={(prevValues, currentValues) =>
+                prevValues.shippingType !== currentValues.shippingType
+              }
+            >
+              {({ getFieldValue }) =>
+                getFieldValue('shippingType') === ShippingTypes.DELIVERY ? (
+                  <AddressSection />
+                ) : getFieldValue('shippingType') === ShippingTypes.AT_STORE ? (
+                  <DrugStorePicker />
+                ) : null
+              }
+            </Form.Item>
 
             <Divider />
             <Typography.Title level={4}>
               Chọn phương thức thanh toán
             </Typography.Title>
             <Form.Item
-              name="paymentMethod"
+              name="paymentMethodKey"
               className="w-full"
               rules={[
                 {
@@ -230,10 +208,6 @@ const CartPage: NextPageWithLayout<{
                 {paymentMethods.map((paymentMethod) => (
                   <Radio
                     value={paymentMethod.key}
-                    onChange={() => {
-                      if (paymentMethod.key)
-                        setPaymentMethodKey(paymentMethod.key);
-                    }}
                     key={paymentMethod.key}
                     className="my-2 w-full"
                   >

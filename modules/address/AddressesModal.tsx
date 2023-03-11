@@ -1,5 +1,5 @@
 import { Checkbox, Form, Modal, ModalProps } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useAddresses } from '@providers/AddressesProvider';
 import { useMasterData } from '@providers/MasterDataProvider';
 import AddressInput from '@modules/cart/AddressInput';
@@ -19,21 +19,17 @@ function AddressesModal({
 }) {
   const { createAddress, updateAddress, creatingAddress, updatingAddress } =
     useAddresses();
-  const { provinces, districts, wards, form, loadDistricts, loadWards } =
+  const { provinces, districts, wards, loadDistricts, loadWards } =
     useMasterData();
 
-  const [currentProvinceKey, setCurrentProvinceKey] = useState<string | null>(
-    null
-  );
-  const [currentDistrictKey, setCurrentDistrictKey] = useState<string | null>(
-    null
-  );
-  const [currentWardKey, setCurrentWardKey] = useState<string | null>(null);
-  const [isDefault, setIsDefault] = useState(false);
-
-  const [address, setAddress] = useState('');
-
   const { toastError } = useAppMessage();
+  const [addressForm] = Form.useForm<{
+    currentProvinceKey: string;
+    currentDistrictKey: string;
+    currentWardKey: string;
+    address: string;
+    isDefault?: boolean;
+  }>();
 
   const setDefaultDistrict = async (
     defaultAddress: AddressModel,
@@ -45,14 +41,17 @@ function AddressesModal({
       const foundDistrict = districts?.find(
         (district) => district.districtName === defaultAddress.districtName
       );
-      setCurrentDistrictKey(foundDistrict?.districtCode || '');
+      addressForm.setFieldValue(
+        'currentDistrictKey',
+        foundDistrict?.districtCode || ''
+      );
       const wards = await loadWards({
         districtCode: foundDistrict?.districtCode || '',
       });
       const foundWard = wards?.find(
         (ward) => ward.wardName === defaultAddress.wardName
       );
-      setCurrentWardKey(foundWard?.wardName || '');
+      addressForm.setFieldValue('currentWardKey', foundWard?.wardName || '');
     } catch (error) {
       toastError({
         data: error,
@@ -62,42 +61,44 @@ function AddressesModal({
 
   useEffect(() => {
     if (defaultAddress) {
-      setAddress(defaultAddress.address || '');
-
       const foundProvince = provinces.find(
         (province) => province.provinceName === defaultAddress.provinceName
       );
 
-      setCurrentProvinceKey(foundProvince?.provinceCode || '');
-
       setDefaultDistrict(defaultAddress, foundProvince?.provinceCode || '');
 
-      setIsDefault(defaultAddress.isDefault || false);
+      addressForm.setFieldsValue({
+        currentProvinceKey: foundProvince?.provinceCode || '',
+        address: defaultAddress.address,
+        isDefault: defaultAddress.isDefault,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultAddress]);
 
   useEffect(() => {
     if (!props.open) {
-      setAddress('');
-      setCurrentProvinceKey(null);
-      setCurrentDistrictKey(null);
-      setCurrentWardKey(null);
-      setIsDefault(false);
+      addressForm.resetFields();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.open]);
 
   const submit = async () => {
-    await form?.validateFields();
+    await addressForm?.validateFields();
+
+    const valuesToSubmit = addressForm.getFieldsValue();
 
     const foundProvince = provinces.find(
-      (province) => province.provinceCode === currentProvinceKey
+      (province) => province.provinceCode === valuesToSubmit.currentProvinceKey
     );
+
     const foundDistrict = districts.find(
-      (district) => district.districtCode === currentDistrictKey
+      (district) => district.districtCode === valuesToSubmit.currentDistrictKey
     );
-    const foundWard = wards.find((ward) => ward.wardName === currentWardKey);
+
+    const foundWard = wards.find(
+      (ward) => ward.wardName === valuesToSubmit.currentWardKey
+    );
 
     if (
       !foundProvince?.provinceName ||
@@ -108,22 +109,22 @@ function AddressesModal({
 
     if (mode === 'add') {
       await createAddress({
-        address,
+        address: valuesToSubmit.address,
         provinceName: foundProvince?.provinceName,
         districtName: foundDistrict?.districtName,
         wardName: foundWard?.wardName,
-        isDefault,
+        isDefault: valuesToSubmit.isDefault,
       });
     }
 
     if (mode === 'edit' && defaultAddress?.key) {
       await updateAddress({
         key: defaultAddress?.key,
-        address,
+        address: valuesToSubmit.address,
         provinceName: foundProvince?.provinceName,
         districtName: foundDistrict?.districtName,
         wardName: foundWard?.wardName,
-        isDefault,
+        isDefault: valuesToSubmit.isDefault,
       });
     }
 
@@ -141,29 +142,23 @@ function AddressesModal({
       <Form
         autoComplete="off"
         labelCol={{ span: 6 }}
-        wrapperCol={{ span: 16 }}
         style={{ maxWidth: 600 }}
         colon={false}
+        form={addressForm}
       >
-        <AddressInput
-          id="address-modal"
-          address={address}
-          setAddress={setAddress}
-          currentProvinceKey={currentProvinceKey}
-          setCurrentProvinceKey={setCurrentProvinceKey}
-          currentDistrictKey={currentDistrictKey}
-          setCurrentDistrictKey={setCurrentDistrictKey}
-          currentWardKey={currentWardKey}
-          setCurrentWardKey={setCurrentWardKey}
-        />
-        <Checkbox
-          checked={isDefault}
-          onChange={(e) => {
-            setIsDefault(e.target.checked);
-          }}
+        <AddressInput form={addressForm} />
+
+        <Form.Item
+          name="isDefault"
+          valuePropName="checked"
+          rules={[
+            {
+              required: false,
+            },
+          ]}
         >
-          Đặt làm địa chỉ mặc định
-        </Checkbox>
+          <Checkbox>Đặt làm địa chỉ mặc định</Checkbox>
+        </Form.Item>
       </Form>
     </Modal>
   );

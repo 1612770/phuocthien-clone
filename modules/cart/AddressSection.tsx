@@ -13,23 +13,14 @@ import Addresses from '@modules/address/Addresses';
 function AddressSection() {
   const [openModal, setOpenModal] = useState(false);
 
-  const {
-    address,
-    setAddress,
-    currentProvinceKey,
-    setCurrentProvinceKey,
-    currentDistrictKey,
-    setCurrentDistrictKey,
-    currentWardKey,
-    setCurrentWardKey,
-  } = useCheckout();
+  const { checkoutForm } = useCheckout();
 
   const { isUserLoggedIn } = useAuth();
   const { defaultAddress } = useAddresses();
   const { loadWards, loadDistricts, provinces } = useMasterData();
   const { toastError } = useAppMessage();
 
-  const setDefaultDistrict = async (
+  const setDefaultDistrictWard = async (
     defaultAddress: AddressModel,
     provinceCode: string
   ) => {
@@ -39,14 +30,18 @@ function AddressSection() {
       const foundDistrict = districts?.find(
         (district) => district.districtName === defaultAddress.districtName
       );
-      setCurrentDistrictKey(foundDistrict?.districtCode || '');
+      checkoutForm?.setFieldValue(
+        'currentDistrictKey',
+        foundDistrict?.districtCode || ''
+      );
       const wards = await loadWards({
         districtCode: foundDistrict?.districtCode || '',
       });
       const foundWard = wards?.find(
         (ward) => ward.wardName === defaultAddress.wardName
       );
-      setCurrentWardKey(foundWard?.wardName || '');
+
+      checkoutForm?.setFieldValue('currentWardKey', foundWard?.wardName || '');
     } catch (error) {
       toastError({
         data: error,
@@ -56,15 +51,18 @@ function AddressSection() {
 
   useEffect(() => {
     if (defaultAddress && isUserLoggedIn) {
-      setAddress(defaultAddress.address || '');
+      checkoutForm?.setFieldValue('address', defaultAddress.address || '');
 
       const foundProvince = provinces.find(
         (province) => province.provinceName === defaultAddress.provinceName
       );
 
-      setCurrentProvinceKey(foundProvince?.provinceCode || '');
+      checkoutForm?.setFieldValue(
+        'currentProvinceKey',
+        foundProvince?.provinceCode || ''
+      );
 
-      setDefaultDistrict(defaultAddress, foundProvince?.provinceCode || '');
+      setDefaultDistrictWard(defaultAddress, foundProvince?.provinceCode || '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultAddress, isUserLoggedIn]);
@@ -99,14 +97,18 @@ function AddressSection() {
               <Addresses
                 pickOnly
                 onAddressSelect={(address) => {
-                  setAddress(address.address || '');
+                  checkoutForm?.setFieldValue('address', address.address || '');
+
                   const foundProvince = provinces.find(
                     (province) => province.provinceName === address.provinceName
                   );
 
-                  setCurrentProvinceKey(foundProvince?.provinceCode || '');
+                  checkoutForm?.setFieldValue(
+                    'currentProvinceKey',
+                    foundProvince?.provinceCode || ''
+                  );
 
-                  setDefaultDistrict(
+                  setDefaultDistrictWard(
                     address,
                     foundProvince?.provinceCode || ''
                   );
@@ -117,16 +119,7 @@ function AddressSection() {
           </Modal>
         </div>
       )}
-      <AddressInput
-        address={address}
-        setAddress={setAddress}
-        currentProvinceKey={currentProvinceKey}
-        setCurrentProvinceKey={setCurrentProvinceKey}
-        currentDistrictKey={currentDistrictKey}
-        setCurrentDistrictKey={setCurrentDistrictKey}
-        currentWardKey={currentWardKey}
-        setCurrentWardKey={setCurrentWardKey}
-      />
+      <AddressInput form={checkoutForm} />
     </div>
   );
 }

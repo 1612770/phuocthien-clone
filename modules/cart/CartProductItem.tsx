@@ -20,8 +20,7 @@ function CartProductItem({
   const [quantity, setQuantity] = useState<number>(0);
 
   const { removeFromCart, changeProductData } = useCart();
-  const { currentDrugStoreKey, productStatuses, setProductStatuses } =
-    useCheckout();
+  const { checkoutForm, productStatuses, setProductStatuses } = useCheckout();
   const { setConfirmData } = useAppConfirmDialog();
   const quantityInputRef = useRef(1);
 
@@ -34,7 +33,8 @@ function CartProductItem({
 
     const foundDrugstore = (checkInventoryAtDrugStoresResponse.data || []).find(
       (inventoryAtDrugStore) =>
-        inventoryAtDrugStore?.drugstore.key === currentDrugStoreKey
+        inventoryAtDrugStore?.drugstore.key ===
+        checkoutForm?.getFieldValue('currentDrugStoreKey')
     );
 
     if (!foundDrugstore) {
@@ -96,7 +96,7 @@ function CartProductItem({
   };
 
   const processWhenChangeQuantity = (newQuantity: number) => {
-    if (currentDrugStoreKey) {
+    if (checkoutForm?.getFieldValue('currentDrugStoreKey')) {
       checkNewQuantityFitDrugstoreQuantity(newQuantity);
     } else {
       changeProductData(cartProduct.product, {

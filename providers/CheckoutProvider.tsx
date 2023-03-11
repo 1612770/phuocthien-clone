@@ -13,35 +13,9 @@ import OfferModel from '@configs/models/offer.model';
 import { useAppConfirmDialog } from './AppConfirmDialogProvider';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import { useMasterData } from './MasterDataProvider';
+import { Form, FormInstance } from 'antd';
 
 const CheckoutContext = React.createContext<{
-  name: string;
-  setName: (name: string) => void;
-
-  tel: string;
-  setTel: (tel: string) => void;
-
-  paymentMethodKey: string;
-  setPaymentMethodKey: (paymentMethodKey: string) => void;
-
-  shippingType: ShippingTypes;
-  setShippingType: (shippingType: ShippingTypes) => void;
-
-  currentProvinceKey: string | null;
-  setCurrentProvinceKey: (currentProvinceKey: string | null) => void;
-
-  currentDistrictKey: string | null;
-  setCurrentDistrictKey: (currentDistrictKey: string | null) => void;
-
-  currentWardKey: string | null;
-  setCurrentWardKey: (currentWardKey: string | null) => void;
-
-  address: string;
-  setAddress: (address: string) => void;
-
-  currentDrugStoreKey: string;
-  setCurrentDrugStoreKey: (currentDrugStoreKey: string) => void;
-
   productStatuses: {
     product: Product;
     statusData: {
@@ -72,34 +46,10 @@ const CheckoutContext = React.createContext<{
 
   totalRawPrice: number;
   totalPrice: number;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  checkoutForm?: FormInstance<any>;
 }>({
-  name: '',
-  setName: () => undefined,
-
-  tel: '',
-  setTel: () => undefined,
-
-  paymentMethodKey: '',
-  setPaymentMethodKey: () => undefined,
-
-  shippingType: ShippingTypes.DELIVERY,
-  setShippingType: () => undefined,
-
-  currentProvinceKey: null,
-  setCurrentProvinceKey: () => undefined,
-
-  currentDistrictKey: null,
-  setCurrentDistrictKey: () => undefined,
-
-  currentWardKey: null,
-  setCurrentWardKey: () => undefined,
-
-  address: '',
-  setAddress: () => undefined,
-
-  currentDrugStoreKey: '',
-  setCurrentDrugStoreKey: () => undefined,
-
   productStatuses: [],
   setProductStatuses: () => undefined,
 
@@ -116,6 +66,8 @@ const CheckoutContext = React.createContext<{
 
   totalRawPrice: 0,
   totalPrice: 0,
+
+  checkoutForm: undefined,
 });
 
 function CheckoutProvider({ children }: { children: React.ReactNode }) {
@@ -125,25 +77,19 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
   const { setConfirmData } = useAppConfirmDialog();
   const { isUserLoggedIn } = useAuth();
   const { toastSuccess } = useAppMessage();
+  const [checkoutForm] = Form.useForm<{
+    name: string;
+    tel: string;
+    paymentMethodKey: string;
+    shippingType: ShippingTypes;
+    currentProvinceKey: string;
+    currentDistrictKey: string;
+    currentWardKey: string;
+    address: string;
+    currentDrugStoreKey: string;
+  }>();
 
-  const [name, setName] = useState('');
-  const [tel, setTel] = useState('');
-
-  const [paymentMethodKey, setPaymentMethodKey] = useState('');
-  const [shippingType, setShippingType] = useState<ShippingTypes>(
-    ShippingTypes.DELIVERY
-  );
-
-  const [currentProvinceKey, setCurrentProvinceKey] = useState<string | null>(
-    null
-  );
-  const [currentDistrictKey, setCurrentDistrictKey] = useState<string | null>(
-    null
-  );
-  const [currentWardKey, setCurrentWardKey] = useState<string | null>(null);
-
-  const [address, setAddress] = useState('');
-  const [currentDrugStoreKey, setCurrentDrugStoreKey] = useState('');
+  const shippingType = Form.useWatch('shippingType', checkoutForm);
 
   const [productStatuses, setProductStatuses] = useState<
     {
@@ -186,6 +132,9 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
   );
 
   const getAddressData = () => {
+    const { currentProvinceKey, currentDistrictKey, currentWardKey, address } =
+      checkoutForm.getFieldsValue();
+
     if (!currentProvinceKey || !currentDistrictKey || !currentWardKey) {
       return undefined;
     }
@@ -213,20 +162,22 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
       setCheckingOut(true);
 
+      const valuesToSubmit = checkoutForm.getFieldsValue();
+
       const order = new OrderClient(null, {});
       const orderResponse = await order.order({
         customerInfo: {
-          name,
-          tel,
+          name: valuesToSubmit.name,
+          tel: valuesToSubmit.tel,
         },
-        paymentMethodKey,
-        shippingType,
+        paymentMethodKey: valuesToSubmit.paymentMethodKey,
+        shippingType: valuesToSubmit.shippingType,
         drugstoreKey:
-          shippingType === ShippingTypes.AT_STORE
-            ? currentDrugStoreKey
+          valuesToSubmit.shippingType === ShippingTypes.AT_STORE
+            ? valuesToSubmit.currentDrugStoreKey
             : undefined,
         deliveryAddressInfo:
-          shippingType === ShippingTypes.DELIVERY
+          valuesToSubmit.shippingType === ShippingTypes.DELIVERY
             ? getAddressData()
             : undefined,
         items: cartProducts.map((cartProduct) => ({
@@ -258,10 +209,11 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
    */
   useEffect(() => {
     if (shippingType === ShippingTypes.DELIVERY) {
-      setCurrentDrugStoreKey('');
+      checkoutForm.setFieldsValue({
+        currentDrugStoreKey: undefined,
+      });
     }
-  }, [shippingType]);
-
+  }, [checkoutForm, shippingType]);
   /**
    * Effect trigger when price change to apply offer
    */
@@ -296,33 +248,6 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
   return (
     <CheckoutContext.Provider
       value={{
-        name,
-        setName,
-
-        tel,
-        setTel,
-
-        paymentMethodKey,
-        setPaymentMethodKey,
-
-        shippingType,
-        setShippingType,
-
-        currentProvinceKey,
-        setCurrentProvinceKey,
-
-        currentDistrictKey,
-        setCurrentDistrictKey,
-
-        currentWardKey,
-        setCurrentWardKey,
-
-        address,
-        setAddress,
-
-        currentDrugStoreKey,
-        setCurrentDrugStoreKey,
-
         productStatuses,
         setProductStatuses,
 
@@ -339,6 +264,8 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
         totalRawPrice,
         totalPrice,
+
+        checkoutForm,
       }}
     >
       {children}
