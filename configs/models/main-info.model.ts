@@ -1,21 +1,11 @@
-type MainInfoGroupInfoModel = Partial<{
-  code: number;
-  key: string;
-  index: number;
-  name: string;
-  imageUrl: string;
-  eventUrl: string;
-  createdDate: string;
-  description: string;
-  visible: boolean;
-}>;
+import GroupInfoModel from './GroupInfoModel';
 
 type MainInfoModel = Partial<{
   code: number;
   name: string;
-  type: number;
+  type: string;
   visible: boolean;
-  groupInfo: MainInfoGroupInfoModel[];
+  groupInfo: GroupInfoModel[];
 }>;
 
 export default MainInfoModel;
