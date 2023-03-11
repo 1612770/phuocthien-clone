@@ -125,7 +125,7 @@ function OfferCodeInput({ offers }: { offers: OfferModel[] }) {
               <div>
                 <div className="flex items-center justify-between">
                   <Typography.Text className="text-base">
-                    {offer.offerCode}
+                    Mã khuyến mãi: {offer.offerCode}
                   </Typography.Text>
                   <Button
                     className="ml-2"
