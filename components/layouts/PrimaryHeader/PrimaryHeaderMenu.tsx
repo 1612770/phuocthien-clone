@@ -9,6 +9,7 @@ import { useFullMenu } from '@providers/FullMenuProvider';
 import PrimaryHeaderMenuAllPopoverContent from './PrimaryHeaderMenuAllPopoverContent';
 import PrimaryHeaderMenuItem from './PrimaryHeaderMenuItem';
 import MenuModel from '@configs/models/menu.model';
+import LinkWrapper from '@components/templates/LinkWrapper';
 
 function PrimaryHeaderMenu() {
   const { fullMenu, open, setOpen, intoPopover } = useFullMenu();
@@ -85,16 +86,14 @@ function PrimaryHeaderMenu() {
           <Typography.Text className="mx-4 hidden xl:flex" type="secondary">
             |
           </Typography.Text>
-          <Link href={'/goc-suc-khoe'} style={{ color: 'white' }}>
-            <a className="hidden xl:flex">
-              <Space align="center">
-                <Book className="text-stone-800" size={16} />
-                <Typography.Text className="whitespace-nowrap font-medium uppercase ">
-                  Góc sức khỏe
-                </Typography.Text>
-              </Space>
-            </a>
-          </Link>
+          <LinkWrapper href={'/tin-tuc'} className="hidden xl:flex">
+            <Space align="center">
+              <Book className="text-stone-800" size={16} />
+              <Typography.Text className="whitespace-nowrap font-medium uppercase ">
+                Góc tin tức
+              </Typography.Text>
+            </Space>
+          </LinkWrapper>
           <Link href={'/nha-thuoc'} style={{ color: 'white' }}>
             <a className="hidden xl:flex">
               <Space align="center">

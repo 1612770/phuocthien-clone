@@ -180,7 +180,7 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
       </Collapse>
       <Divider className="mt-4 mb-0" />
       <Space size={8} direction="vertical" className="mt-4 w-full">
-        <Link href={`/goc-suc-khoe`}>
+        <Link href={`/tin-tuc`}>
           <a className="my-2 -mx-2 flex items-center">
             <Typography
               onClick={(e) => {
@@ -188,7 +188,7 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
               }}
               className="ml-2 font-medium"
             >
-              GÓC SỨC KHỎE
+              GÓC TIN TỨC
             </Typography>
           </a>
         </Link>
