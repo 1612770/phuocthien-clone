@@ -1,5 +1,5 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Col, Empty, List, Row, Typography } from 'antd';
+import { Breadcrumb, Col, Empty, List, Row, Tag, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
@@ -17,6 +17,7 @@ import OfferModel from '@configs/models/offer.model';
 import ProductCardDetail from '@modules/products/ProductCardDetail';
 import { DrugstoreClient } from '@libs/client/DrugStore';
 import DrugstoreItem from '@modules/drugstore/DrugstoreItem';
+import COLORS from '@configs/colors';
 
 const ProductPage: NextPageWithLayout<{
   product?: Product;
@@ -90,7 +91,7 @@ const ProductPage: NextPageWithLayout<{
       </Breadcrumb>
 
       <div className="grid  grid-cols-1 gap-4 lg:grid-cols-[minmax(200px,_1fr)_280px] lg:gap-6 xl:grid-cols-[400px_minmax(200px,_1fr)_280px]">
-        <div className="h-[500px] lg:col-span-2 xl:col-span-1">
+        <div className="h-[500px] lg:col-span-2 lg:pt-4 xl:col-span-1">
           <ProductCarousel images={carouselImages} />
         </div>
 
@@ -102,7 +103,13 @@ const ProductPage: NextPageWithLayout<{
 
             <ProductBonusSection offers={offers} />
 
-            <div className="flex w-full flex-wrap items-center justify-between gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg md:flex-nowrap lg:gap-4">
+            <div className=" relative flex w-full flex-wrap items-center justify-between gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg md:flex-nowrap lg:gap-4">
+              <Tag
+                color={COLORS.red}
+                className="absolute -top-[8px] -left-[8px]"
+              >
+                Giảm giá
+              </Tag>
               <div className="flex items-end">
                 <Typography.Title
                   level={2}
