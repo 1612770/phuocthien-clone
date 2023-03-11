@@ -116,20 +116,18 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
     [cartProducts]
   );
 
-  const totalPrice = useMemo(
-    () =>
-      cartProducts.reduce((total, cartProduct) => {
-        const calculatedTotal =
-          total + (cartProduct.product.retailPrice || 0) * cartProduct.quantity;
+  const totalPrice = useMemo(() => {
+    let calculatedTotal = cartProducts.reduce(
+      (total, cartProduct) =>
+        total + (cartProduct.product.retailPrice || 0) * cartProduct.quantity,
+      0
+    );
+    if ((offer?.minAmountOffer || 0) <= calculatedTotal) {
+      calculatedTotal = calculatedTotal - (offer?.offerVal || 0);
+    }
 
-        if ((offer?.minAmountOffer || 0) <= calculatedTotal) {
-          return calculatedTotal - (offer?.offerVal || 0);
-        }
-
-        return calculatedTotal;
-      }, 0),
-    [cartProducts, offer]
-  );
+    return calculatedTotal;
+  }, [cartProducts, offer]);
 
   const getAddressData = () => {
     const { currentProvinceKey, currentDistrictKey, currentWardKey, address } =
