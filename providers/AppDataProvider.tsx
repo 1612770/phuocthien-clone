@@ -24,17 +24,15 @@ const AppDataContext = React.createContext<{
 function AppDataProvider({
   focusContent,
   mainInfo,
-  defaultProductSearchKeywords,
   children,
 }: {
   focusContent: FocusContentModel[];
   mainInfo: MainInfoModel[];
-  defaultProductSearchKeywords: ProductSearchKeyword[];
   children: React.ReactNode;
 }) {
   const [productSearchKeywords, setProductSearchKeywords] = useState<
     ProductSearchKeyword[]
-  >(defaultProductSearchKeywords || []);
+  >([]);
 
   const nonEmptyInfo = useMemo(
     () => mainInfo.filter((info) => !!info.groupInfo?.length),
