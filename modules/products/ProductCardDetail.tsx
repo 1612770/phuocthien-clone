@@ -19,7 +19,7 @@ function ProductCardDetail(
     <div className="relative">
       <div
         {...props}
-        className=" product-detail-content max-h-[500px] overflow-hidden"
+        className=" max-h-[500px] overflow-hidden"
         ref={(ref) => {
           divRef.current = ref;
         }}
@@ -53,7 +53,7 @@ function ProductCardDetail(
         onCancel={() => setOpenFullModal(false)}
         width={1000}
       >
-        <div className="product-detail-content">
+        <div className="">
           <div {...props}></div>
         </div>
       </Modal>
