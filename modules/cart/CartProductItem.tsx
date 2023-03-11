@@ -184,7 +184,7 @@ function CartProductItem({
               }}
             ></Button>
             <Input
-              className="w-[40px]"
+              className="w-[46px] text-center"
               value={quantity || ''}
               onFocus={(e) => {
                 quantityInputRef.current = +e.target.value || 1;
