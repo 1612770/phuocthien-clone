@@ -42,3 +42,5 @@ next-env.d.ts
 sshbash.sh
 deploy.sh
 .env.development
+deploy-prod.sh
+sshprod.sh
