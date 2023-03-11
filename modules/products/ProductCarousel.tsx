@@ -18,7 +18,7 @@ function ProductCarousel({ images }: { images: string[] }) {
     <div>
       <div className="relative">
         <Carousel
-          className="overflow-hidden rounded-lg "
+          className="overflow-hidden  rounded-lg border border-solid border-gray-200"
           dots={false}
           afterChange={(index) => {
             setActive(index);
