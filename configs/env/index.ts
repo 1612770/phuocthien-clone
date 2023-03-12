@@ -7,3 +7,6 @@ export const IMPORTANT_MENU_KEYS = process.env.NEXT_PUBLIC_IMPORTANT_MENU_KEYS
       key.trim().toUpperCase()
     )
   : [];
+
+export const QR_URL =
+  process.env.NEXT_PUBLIC_QR_URL || '([+84|84|0]+[3|5|7|8|9])+([0-9]{8})\b';
