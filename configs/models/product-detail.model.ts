@@ -12,6 +12,9 @@ type ProductDetailModel = Partial<{
   isExclusive: boolean;
   isSaleOff: boolean;
   productKey: string;
+  drugUsers: string;
+  packedType: string;
+  useOfDrugs: string;
 }>;
 
 export default ProductDetailModel;

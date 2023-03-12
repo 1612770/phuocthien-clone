@@ -221,22 +221,22 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         setOffer(undefined);
 
         setConfirmData({
-          title: 'Hủy bỏ mã khuyến mãi đã được áp dụng',
-          content: `Bạn đang áp dụng mã khuyến mãi "${
+          title: 'Hủy bỏ mã ưu đãi đã được áp dụng',
+          content: `Bạn đang áp dụng mã ưu đãi "${
             offer?.offerCode
           }" với giá trị giảm là ${offer?.offerVal?.toLocaleString('it-IT', {
             style: 'currency',
             currency: 'VND',
-          })}. Tuy nhiên, bạn đã cập nhật giỏ hàng không đủ điều kiện của khuyến mãi. Chúng tôi sẽ loại bỏ mã khuyến mãi đã áp dụng của bạn`,
+          })}. Tuy nhiên, bạn đã cập nhật giỏ hàng không đủ điều kiện của ưu đãi. Chúng tôi sẽ loại bỏ mã ưu đãi đã áp dụng của bạn`,
           cancelButtonProps: {
             hidden: true,
           },
 
           onOk: () => {
-            toastSuccess({ data: 'Đã hủy bỏ mã khuyến mãi' });
+            toastSuccess({ data: 'Đã hủy bỏ mã ưu đãi' });
           },
           onCancel: () => {
-            toastSuccess({ data: 'Đã hủy bỏ mã khuyến mãi' });
+            toastSuccess({ data: 'Đã hủy bỏ mã ưu đãi' });
           },
         });
       }

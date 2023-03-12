@@ -8,7 +8,7 @@ function ProductBonusSection({ offers }: { offers?: OfferModel[] }) {
   if (!offers?.length) return null;
   return (
     <div className="my-4 rounded-lg border border-solid border-blue-500 bg-blue-50 py-2 px-4 ">
-      <Typography className="font-medium">Khuyến mãi</Typography>
+      <Typography className="font-medium">Ưu đãi</Typography>
 
       <List>
         {offers?.map((offer) => (
@@ -27,7 +27,7 @@ function ProductBonusSection({ offers }: { offers?: OfferModel[] }) {
               <div className="ml-2">
                 {offer.offerCode && (
                   <Typography.Paragraph className="m-0 font-medium">
-                    Mã khuyến mãi: {offer.offerCode}{' '}
+                    Mã ưu đãi: {offer.offerCode}{' '}
                   </Typography.Paragraph>
                 )}
                 {offer.offerName && (
@@ -37,7 +37,7 @@ function ProductBonusSection({ offers }: { offers?: OfferModel[] }) {
                 )}
                 {(offer.beginDate || offer.endDate) && (
                   <Typography.Paragraph className="m-0 text-sm text-gray-600">
-                    Khuyến mãi diễn ra{' '}
+                    Ưu đãi chỉ diễn ra{' '}
                     {offer.beginDate
                       ? `từ ${TimeUtils.formatDate(offer.beginDate, {
                           noTime: true,
