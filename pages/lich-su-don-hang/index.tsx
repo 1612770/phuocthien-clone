@@ -1,6 +1,6 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { NextPageWithLayout } from '../page';
-import { Breadcrumb, Button, Empty, Pagination, Typography } from 'antd';
+import { Breadcrumb, Empty, Pagination, Tabs, Typography } from 'antd';
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { COOKIE_KEYS } from '@libs/helpers';
 import OrdersProvider from '@providers/OrdersProvider';
@@ -12,6 +12,8 @@ import { OrderClient } from '@libs/client/Order';
 import OrderModel from '@configs/models/order.model';
 import WithPagination from '@configs/types/utils/with-pagination';
 import { useRouter } from 'next/router';
+import OrderStatuses from '@configs/enums/order-statuses.enum';
+import OrderStatusUtils from '@libs/utils/order-status.utils';
 
 const OrdersPage: NextPageWithLayout<{
   orders?: WithPagination<OrderModel[]>;
@@ -35,44 +37,69 @@ const OrdersPage: NextPageWithLayout<{
         </Breadcrumb>
 
         <UserLayout>
-          {orders?.data?.map((order) => (
-            <OrderItem order={order} key={order.key} />
-          ))}
+          <Tabs
+            className="px-2"
+            defaultActiveKey={
+              router.query['trang-thai']
+                ? String(router.query['trang-thai'])
+                : String(OrderStatuses.WAIT_FOR_CONFIRM)
+            }
+            items={[
+              OrderStatuses.WAIT_FOR_CONFIRM,
+              OrderStatuses.PROCESSING,
+              OrderStatuses.SHIPPING,
+              OrderStatuses.COMPLETED,
+              OrderStatuses.CANCELLED,
+            ].map((status) => ({
+              key: String(status),
+              label: OrderStatusUtils.formatOrderStatus(status).label,
+              children: (
+                <>
+                  {orders?.data?.map((order) => (
+                    <OrderItem order={order} key={order.key} />
+                  ))}
 
-          {!orders?.total && (
-            <Empty
-              className="mt-8"
-              description={
-                <Typography>Bạn chưa có đơn hàng nào ở đây</Typography>
-              }
-            >
-              <Link href="/gio-hang">
-                <a>
-                  <Button>Tiến hành thanh toán</Button>
-                </a>
-              </Link>
-            </Empty>
-          )}
+                  {!orders?.total && (
+                    <Empty
+                      className="mt-8"
+                      description={
+                        <Typography>Bạn chưa có đơn hàng nào ở đây</Typography>
+                      }
+                    ></Empty>
+                  )}
 
-          {!!orders?.total && (
-            <div className="flex justify-center">
-              <Pagination
-                defaultCurrent={+(router.query.trang || 1)}
-                pageSize={10}
-                onChange={(page) => {
-                  router.push({
-                    query: {
-                      ...router.query,
-                      trang: page,
-                    },
-                  });
-                }}
-                total={orders?.total}
-                className="mt-4"
-                showSizeChanger={false}
-              />
-            </div>
-          )}
+                  {!!orders?.total && (
+                    <div className="flex justify-center">
+                      <Pagination
+                        defaultCurrent={+(router.query.trang || 1)}
+                        pageSize={10}
+                        onChange={(page) => {
+                          router.push({
+                            query: {
+                              ...router.query,
+                              trang: page,
+                            },
+                          });
+                        }}
+                        total={orders?.total}
+                        className="mt-4"
+                        showSizeChanger={false}
+                      />
+                    </div>
+                  )}
+                </>
+              ),
+            }))}
+            onChange={(value) => {
+              router.push({
+                query: {
+                  ...router.query,
+                  trang: 1,
+                  ['trang-thai']: value,
+                },
+              });
+            }}
+          />
         </UserLayout>
       </div>
     </div>
@@ -117,6 +144,9 @@ export const getServerSideProps: GetServerSideProps = async (
     const ordersResponse = await orderClient.getOrders({
       page: +(context.query.trang || 1),
       pageSize: 10,
+      status: context.query['trang-thai']
+        ? (+context.query['trang-thai'] as OrderStatuses)
+        : undefined,
     });
 
     if (ordersResponse?.data) {
