@@ -8,7 +8,7 @@ function ProductBonusSection({ offers }: { offers?: OfferModel[] }) {
   if (!offers?.length) return null;
   return (
     <div className="my-4 rounded-lg border border-solid border-blue-500 bg-blue-50 py-2 px-4 ">
-      <Typography className="font-medium">Ưu đãi</Typography>
+      <Typography className="font-medium">Ưu đãi khi mua hàng</Typography>
 
       <List>
         {offers?.map((offer) => (

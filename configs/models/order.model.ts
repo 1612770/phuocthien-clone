@@ -23,10 +23,10 @@ type OrderModel = Partial<{
   deliveryWard: string;
   deliveryDetail: string;
   status: OrderStatuses;
-  image: string;
   details: OrderDetailModel[];
   paymentMethod: PaymentMethodModel;
   drugstore: DrugStore;
+  offerCode: string;
 }>;
 
 export default OrderModel;

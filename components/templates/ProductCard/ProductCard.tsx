@@ -21,17 +21,10 @@ function ProductCard({
   size = 'default',
   variant = 'card',
 }: ProductCardProps) {
-  const productTypeKey = product?.productType?.key || product?.productTypeKey;
-  const productGroupKey =
-    product?.productGroup?.key || product?.productGroupKey;
-
-  const href = `/san-pham/${UrlUtils.generateSlug(
-    product.productType?.name,
-    productTypeKey
-  )}/${UrlUtils.generateSlug(
-    product.productGroup?.name,
-    productGroupKey
-  )}/${UrlUtils.generateSlug(product?.detail?.displayName, product?.key)}`;
+  const href = `/san-pham/chi-tiet/${UrlUtils.generateSlug(
+    product?.detail?.displayName,
+    product?.key
+  )}`;
 
   return (
     <Link href={href}>

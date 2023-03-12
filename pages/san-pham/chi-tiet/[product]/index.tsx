@@ -362,6 +362,29 @@ export const getServerSideProps = async (
 
     if (product.data) {
       serverSideProps.props.product = product.data;
+
+      const [products, offers] = await Promise.all([
+        productClient.getProducts({
+          page: 1,
+          pageSize: 10,
+          productTypeKey: UrlUtils.getKeyFromParam(
+            product.data.productType?.key
+          ),
+          productGroupKey: UrlUtils.getKeyFromParam(
+            product.data.productGroup?.key
+          ),
+          isPrescripted: false,
+        }),
+        offerClient.getAllActiveOffers(),
+      ]);
+
+      if (offers.data) {
+        serverSideProps.props.offers = offers.data;
+      }
+
+      if (products.data) {
+        serverSideProps.props.otherProducts = products.data.data.slice(0, 4);
+      }
     }
 
     const drugStoresAvailable = await productClient.checkInventoryAtDrugStores({
@@ -378,29 +401,6 @@ export const getServerSideProps = async (
       if (drugStores.data) {
         serverSideProps.props.drugStores = drugStores.data;
       }
-    }
-
-    const [products, offers] = await Promise.all([
-      productClient.getProducts({
-        page: 1,
-        pageSize: 10,
-        productTypeKey: UrlUtils.getKeyFromParam(
-          context.params?.productType as string
-        ),
-        productGroupKey: UrlUtils.getKeyFromParam(
-          context.params?.productGroup as string
-        ),
-        isPrescripted: false,
-      }),
-      offerClient.getAllActiveOffers(),
-    ]);
-
-    if (offers.data) {
-      serverSideProps.props.offers = offers.data;
-    }
-
-    if (products.data) {
-      serverSideProps.props.otherProducts = products.data.data.slice(0, 4);
     }
   } catch (error) {
     console.error(error);

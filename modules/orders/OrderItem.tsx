@@ -9,20 +9,19 @@ import LinkWrapper from '@components/templates/LinkWrapper';
 
 const { useBreakpoint } = Grid;
 
- function OrderItem({ order }: { order: OrderModel }) {
+function OrderItem({ order }: { order: OrderModel }) {
   const screens = useBreakpoint();
 
   return (
     <LinkWrapper
       href={screens.md ? undefined : `/lich-su-don-hang/${order.key}`}
-      key={order.key}
     >
       <div className=" mb-4 rounded-none bg-white p-4 sm:rounded-lg sm:p-8">
         <div className="flex flex-wrap gap-0 sm:gap-2">
           <div className="flex">
             <Typography className=" whitespace-nowrap">Mã đơn hàng:</Typography>
             <Typography.Text className="ml-2 whitespace-pre-wrap font-medium">
-              #{order.key}
+              #{order.code}
             </Typography.Text>
           </div>
 
@@ -41,7 +40,7 @@ const { useBreakpoint } = Grid;
             className={`relative mr-4 h-[60px] min-w-[60px] overflow-hidden rounded-lg border border-solid border-gray-200 bg-gray-100`}
           >
             <ImageWithFallback
-              src={order.image || ''}
+              src={order.details?.[0].imageUrl || ''}
               layout="fill"
               objectFit="cover"
               loading="lazy"
@@ -120,4 +119,4 @@ const { useBreakpoint } = Grid;
   );
 }
 
-export default OrderItem
+export default OrderItem;

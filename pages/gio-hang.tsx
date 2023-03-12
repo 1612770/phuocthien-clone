@@ -190,6 +190,14 @@ const CartPage: NextPageWithLayout<{
               }
             </Form.Item>
 
+            <Form.Item name="orderNote">
+              <Input.TextArea
+                rows={4}
+                placeholder="Nhập ghi chú (nếu có)"
+                className="mt-2"
+              />
+            </Form.Item>
+
             <Divider />
             <Typography.Title level={4}>
               Chọn phương thức thanh toán
