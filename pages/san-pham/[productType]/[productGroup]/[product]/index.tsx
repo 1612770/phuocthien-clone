@@ -149,7 +149,40 @@ const ProductPage: NextPageWithLayout<{
                 </Typography.Text>
               </div>
             )}
+            {!!product?.registrationNumber && (
+              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+                <Typography.Text className=" font-medium ">
+                  Số đăng ký
+                </Typography.Text>
+                <Typography.Text className=" ml-0 md:ml-2">
+                  {product?.registrationNumber}
+                </Typography.Text>
+              </div>
+            )}
+            {!!product?.packagingProcess && (
+              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+                <Typography.Text className=" font-medium ">
+                  Quy cách đóng gói
+                </Typography.Text>
+                <Typography.Text className=" ml-0 md:ml-2">
+                  {product?.packagingProcess}{' '}
+                  {product?.detail?.packedType
+                    ? `(${product?.detail?.packedType})`
+                    : ``}
+                </Typography.Text>
+              </div>
+            )}
 
+            {!!product?.detail?.drugUsers && (
+              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+                <Typography.Text className=" font-medium ">
+                  Đối tượng sử dụng
+                </Typography.Text>
+                <Typography.Text className=" ml-0 md:ml-2">
+                  {product?.detail?.drugUsers}
+                </Typography.Text>
+              </div>
+            )}
             {!!product?.ingredient && (
               <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
                 <Typography.Text className=" whitespace-nowrap font-medium">
@@ -168,17 +201,6 @@ const ProductPage: NextPageWithLayout<{
                 </Typography.Text>
                 <Typography.Text className=" ml-0 md:ml-2">
                   {product?.drugContent}
-                </Typography.Text>
-              </div>
-            )}
-
-            {!!product?.packagingProcess && (
-              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
-                <Typography.Text className=" font-medium ">
-                  Quy cách đóng gói
-                </Typography.Text>
-                <Typography.Text className=" ml-0 md:ml-2">
-                  {product?.packagingProcess}
                 </Typography.Text>
               </div>
             )}
@@ -210,17 +232,6 @@ const ProductPage: NextPageWithLayout<{
                 </Typography.Text>
                 <Typography.Text className=" ml-0 md:ml-2">
                   {product?.isMental ? 'Có' : 'Không'}
-                </Typography.Text>
-              </div>
-            )}
-
-            {!!product?.registrationNumber && (
-              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
-                <Typography.Text className=" font-medium ">
-                  Số đăng ký
-                </Typography.Text>
-                <Typography.Text className=" ml-0 md:ml-2">
-                  {product?.registrationNumber}
                 </Typography.Text>
               </div>
             )}
@@ -285,7 +296,7 @@ const ProductPage: NextPageWithLayout<{
               level={3}
               className="mb-0 mt-6 inline-block uppercase lg:mb-4 lg:mt-12"
             >
-              Các sản phẩm khác
+              Các sản phẩm cùng loại
             </Typography.Title>{' '}
             <Typography.Title
               level={3}

@@ -39,6 +39,7 @@ type Product = Partial<{
   productGroup: ProductGroupModel;
   productionBrand: ProductBrand;
   detail: ProductDetailModel;
+
   images: ProductImage[];
 }>;
 
