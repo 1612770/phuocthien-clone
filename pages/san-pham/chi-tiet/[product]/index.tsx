@@ -91,7 +91,7 @@ const ProductPage: NextPageWithLayout<{
         <Breadcrumb.Item>{product?.detail?.displayName}</Breadcrumb.Item>
       </Breadcrumb>
 
-      <div className="grid  grid-cols-1 gap-4 lg:grid-cols-[minmax(200px,_1fr)_280px] lg:gap-6 xl:grid-cols-[400px_minmax(200px,_1fr)_280px]">
+      <div className="grid  grid-cols-1 gap-4 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[400px_minmax(200px,_1fr)_280px]">
         <div>
           <div className=" mb-4 lg:col-span-2 lg:pt-4 xl:col-span-1">
             <ProductCarousel images={carouselImages} />
