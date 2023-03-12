@@ -28,6 +28,8 @@ export class OrderClient extends BaseClient {
       quantity: number;
       note: string;
     }[];
+    offerCode?: string;
+    orderNote?: string;
   }): Promise<APIResponse<OrderModel>> {
     return await super.call('POST', `order`, payload);
   }

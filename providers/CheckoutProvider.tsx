@@ -87,6 +87,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
     currentWardKey: string;
     address: string;
     currentDrugStoreKey: string;
+    orderNote: string;
   }>();
 
   const shippingType = Form.useWatch('shippingType', checkoutForm);
@@ -165,8 +166,8 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
       const order = new OrderClient(null, {});
       const orderResponse = await order.order({
         customerInfo: {
-          name: valuesToSubmit.name,
-          tel: valuesToSubmit.tel,
+          name: valuesToSubmit.name.trim(),
+          tel: valuesToSubmit.tel.trim(),
         },
         paymentMethodKey: valuesToSubmit.paymentMethodKey,
         shippingType: valuesToSubmit.shippingType,
@@ -183,6 +184,8 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
           quantity: cartProduct.quantity || 0,
           note: cartProduct.note || '',
         })),
+        offerCode: offer?.offerCode || undefined,
+        orderNote: valuesToSubmit.orderNote || undefined,
       });
 
       resetCart();
