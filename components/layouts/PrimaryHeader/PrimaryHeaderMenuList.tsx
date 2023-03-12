@@ -16,7 +16,7 @@ function PrimaryHeaderMenuList({
         {!!productGroups?.length &&
           productGroups?.map((productGroup) => (
             <ProductChildGroup
-              href={`${parentHref}/${UrlUtils.generateSlug(
+              href={`/san-pham/${parentHref}/${UrlUtils.generateSlug(
                 productGroup?.name,
                 productGroup?.key
               )}`}

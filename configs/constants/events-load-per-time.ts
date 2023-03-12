@@ -1,0 +1,3 @@
+const EVENTS_LOAD_PER_TIME = 10;
+
+export default EVENTS_LOAD_PER_TIME;

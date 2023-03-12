@@ -8,17 +8,28 @@ import Link from 'next/link';
 import ProductCard from '@components/templates/ProductCard';
 import WithPagination from '@configs/types/utils/with-pagination';
 import { useRouter } from 'next/router';
+import { useAppData } from '@providers/AppDataProvider';
+import { useEffect } from 'react';
+import { GeneralClient } from '@libs/client/General';
+import ProductSearchKeyword from '@configs/models/product-search-keyword.model';
 
 const SearchPage: NextPageWithLayout<{
   searchedProducts?: WithPagination<Product[]>;
-}> = ({ searchedProducts }) => {
+  productSearchKeywords?: ProductSearchKeyword[];
+}> = ({ searchedProducts, productSearchKeywords }) => {
   const router = useRouter();
+  const { setProductSearchKeywords } = useAppData();
+
+  useEffect(() => {
+    setProductSearchKeywords(productSearchKeywords || []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="mx-auto  px-4 pb-8 lg:container lg:px-0">
       <Typography.Title
         level={1}
-        className="mt-8 text-3xl font-medium md:text-4xl"
+        className="mt-4 mb-0 text-2xl font-medium md:mt-8 md:text-4xl"
       >
         {router.query['tu-khoa'] ? (
           <>
@@ -29,23 +40,21 @@ const SearchPage: NextPageWithLayout<{
         )}
       </Typography.Title>
 
-      <div className="mt-4">
+      <div className="mt-2 md:mt-4">
         <Typography.Title
           level={4}
           className="mb-1 text-lg font-normal text-neutral-600 md:text-xl"
         >
-          Cụm từ khóa nổi bật
+          Cụm từ khóa phổ biến
         </Typography.Title>
-        <Space size={[8, 8]} wrap>
-          {[
-            'Thuốc đau đầu',
-            'Thuốc đau bụng',
-            'Thuốc đau mắt',
-            'Thuốc xương khớp',
-          ].map((tag) => (
-            <Link href={`/tim-kiem?tu-khoa=${tag}`} key={tag}>
+        <Space size={[0, 0]} wrap>
+          {productSearchKeywords?.map((keyword) => (
+            <Link
+              href={`/tim-kiem?tu-khoa=${keyword.keyword}`}
+              key={keyword.keyword}
+            >
               <Tag className="cursor-pointer rounded-full border-none bg-primary-background p-2 text-sm md:text-base">
-                {tag}
+                {keyword.keyword}
               </Tag>
             </Link>
           ))}
@@ -98,10 +107,12 @@ export const getServerSideProps: GetServerSideProps = async (
   const serverSideProps: {
     props: {
       searchedProducts?: WithPagination<Product[]>;
+      productSearchKeywords: ProductSearchKeyword[];
     };
   } = {
     props: {
       searchedProducts: undefined,
+      productSearchKeywords: [],
     },
   };
 
@@ -109,16 +120,28 @@ export const getServerSideProps: GetServerSideProps = async (
   const page = context.query['trang'] as string;
   const pageSize = context.query['so-luong'] as string;
 
-  const product = new ProductClient(null, {});
-  const searchProducts = await product.getProducts({
-    page: page ? parseInt(page) : 1,
-    pageSize: pageSize ? parseInt(pageSize) : 20,
-    isPrescripted: false,
-    filterByName: query,
-  });
+  try {
+    const productClient = new ProductClient(context, {});
+    const generalClient = new GeneralClient(context, {});
+    const [searchProducts, productSearchKeywords] = await Promise.all([
+      productClient.getProducts({
+        page: page ? parseInt(page) : 1,
+        pageSize: pageSize ? parseInt(pageSize) : 20,
+        isPrescripted: false,
+        filterByName: query,
+      }),
+      generalClient.getProductSearchKeywords(),
+    ]);
 
-  if (searchProducts.data) {
-    serverSideProps.props.searchedProducts = searchProducts.data;
+    if (searchProducts.data) {
+      serverSideProps.props.searchedProducts = searchProducts.data;
+    }
+
+    if (productSearchKeywords.data) {
+      serverSideProps.props.productSearchKeywords = productSearchKeywords.data;
+    }
+  } catch (error) {
+    console.error('file: tim-kiem.tsx:141 | error:', error);
   }
 
   return serverSideProps;

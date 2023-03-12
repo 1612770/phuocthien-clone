@@ -4,7 +4,6 @@ import WardModel from '@configs/models/ward.model';
 import { MasterDataClient } from '@libs/client/MasterData';
 import React, { useCallback, useState } from 'react';
 import { useAppMessage } from './AppMessageProvider';
-import { Form, FormInstance } from 'antd';
 
 const MasterDataContext = React.createContext<{
   provinces: ProvinceModel[];
@@ -25,9 +24,6 @@ const MasterDataContext = React.createContext<{
   loadingProvinces: boolean;
   loadingDistricts: boolean;
   loadingWards: boolean;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form?: FormInstance<any>;
 }>({
   provinces: [],
   setProvinces: () => undefined,
@@ -43,8 +39,6 @@ const MasterDataContext = React.createContext<{
   loadingProvinces: false,
   loadingDistricts: false,
   loadingWards: false,
-
-  form: undefined,
 });
 
 function MasterDataProvider({
@@ -65,7 +59,6 @@ function MasterDataProvider({
   const [loadingWards, setLoadingWards] = useState(false);
 
   const { toastError } = useAppMessage();
-  const [form] = Form.useForm();
 
   const loadProvinces = useCallback(async () => {
     const masterDataClient = new MasterDataClient(null, {});
@@ -151,8 +144,6 @@ function MasterDataProvider({
         loadingProvinces,
         loadingDistricts,
         loadingWards,
-
-        form,
       }}
     >
       {children}

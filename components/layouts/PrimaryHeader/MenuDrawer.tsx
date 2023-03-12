@@ -131,7 +131,12 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
                 onClose?.(e);
               }}
             >
-              <Link href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}>
+              <Link
+                href={`/san-pham/${UrlUtils.generateSlug(
+                  menu?.name,
+                  menu?.key
+                )}`}
+              >
                 <a className="my-2 -mx-4 flex items-center">
                   <ImageWithFallback
                     src={menu?.image || ''}
@@ -148,7 +153,7 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
                 menu.productGroups?.map((group, idx) => (
                   <Link
                     key={idx}
-                    href={`/${UrlUtils.generateSlug(
+                    href={`/san-pham/${UrlUtils.generateSlug(
                       menu?.name,
                       menu?.key
                     )}/${UrlUtils.generateSlug(group?.name, group?.key)}`}
@@ -175,7 +180,7 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
       </Collapse>
       <Divider className="mt-4 mb-0" />
       <Space size={8} direction="vertical" className="mt-4 w-full">
-        <Link href={`/goc-suc-khoe`}>
+        <Link href={`/tin-tuc`}>
           <a className="my-2 -mx-2 flex items-center">
             <Typography
               onClick={(e) => {
@@ -183,7 +188,7 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
               }}
               className="ml-2 font-medium"
             >
-              GÓC SỨC KHỎE
+              GÓC TIN TỨC
             </Typography>
           </a>
         </Link>

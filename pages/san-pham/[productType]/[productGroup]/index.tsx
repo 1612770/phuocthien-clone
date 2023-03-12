@@ -103,7 +103,7 @@ const ProductGroupPage: NextPageWithLayout<{
         </Breadcrumb.Item>
         <Breadcrumb.Item>
           <Link
-            href={`/${UrlUtils.generateSlug(
+            href={`/san-pham/${UrlUtils.generateSlug(
               productType?.name,
               productType?.key
             )}`}

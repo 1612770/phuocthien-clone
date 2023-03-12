@@ -106,7 +106,7 @@ function PrimaryHeaderMenuAllPopoverContent({
               currentMenu &&
               currentMenu.productGroups?.map((productGroup) => (
                 <PrimaryHeaderMenuAllPopoverContentLeftItem
-                  href={`/${UrlUtils.generateSlug(
+                  href={`/san-pham/${UrlUtils.generateSlug(
                     currentMenu?.name,
                     currentMenu?.key
                   )}/${UrlUtils.generateSlug(
@@ -126,7 +126,10 @@ function PrimaryHeaderMenuAllPopoverContent({
             {mode === 'all' &&
               fullMenu.map((menu) => (
                 <PrimaryHeaderMenuAllPopoverContentLeftItem
-                  href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}
+                  href={`/san-pham/${UrlUtils.generateSlug(
+                    menu?.name,
+                    menu?.key
+                  )}`}
                   key={menu?.key}
                   active={menu?.key === currentFocusMenu?.key}
                   onMouseEnter={() => {
@@ -153,7 +156,7 @@ function PrimaryHeaderMenuAllPopoverContent({
                 key={productGroup?.key}
               >
                 <ProductChildGroup
-                  href={`/${UrlUtils.generateSlug(
+                  href={`/san-pham/${UrlUtils.generateSlug(
                     currentFocusMenu?.name,
                     currentFocusMenu?.key
                   )}/${UrlUtils.generateSlug(
@@ -180,9 +183,9 @@ function PrimaryHeaderMenuAllPopoverContent({
                   }}
                 >
                   <Link
-                    href={`/${UrlUtils.generateSlug(
-                      currentFocusMenu?.name,
-                      currentFocusMenu?.key
+                    href={`/san-pham/${UrlUtils.generateSlug(
+                      currentMenu?.name,
+                      currentMenu?.key
                     )}/${UrlUtils.generateSlug(
                       currentFocusGroup?.name,
                       currentFocusGroup?.key

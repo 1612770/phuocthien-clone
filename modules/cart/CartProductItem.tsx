@@ -20,8 +20,7 @@ function CartProductItem({
   const [quantity, setQuantity] = useState<number>(0);
 
   const { removeFromCart, changeProductData } = useCart();
-  const { currentDrugStoreKey, productStatuses, setProductStatuses } =
-    useCheckout();
+  const { checkoutForm, productStatuses, setProductStatuses } = useCheckout();
   const { setConfirmData } = useAppConfirmDialog();
   const quantityInputRef = useRef(1);
 
@@ -34,7 +33,8 @@ function CartProductItem({
 
     const foundDrugstore = (checkInventoryAtDrugStoresResponse.data || []).find(
       (inventoryAtDrugStore) =>
-        inventoryAtDrugStore?.drugstore.key === currentDrugStoreKey
+        inventoryAtDrugStore?.drugstore.key ===
+        checkoutForm?.getFieldValue('currentDrugStoreKey')
     );
 
     if (!foundDrugstore) {
@@ -96,7 +96,7 @@ function CartProductItem({
   };
 
   const processWhenChangeQuantity = (newQuantity: number) => {
-    if (currentDrugStoreKey) {
+    if (checkoutForm?.getFieldValue('currentDrugStoreKey')) {
       checkNewQuantityFitDrugstoreQuantity(newQuantity);
     } else {
       changeProductData(cartProduct.product, {
@@ -136,7 +136,7 @@ function CartProductItem({
       <div className="flex flex-grow flex-wrap gap-2">
         <div className="flex flex-grow basis-[300px] flex-col items-start">
           <Link
-            href={`/${UrlUtils.generateSlug(
+            href={`/san-pham/${UrlUtils.generateSlug(
               cartProduct.product.productType?.name,
               cartProduct.product.productType?.key
             )}/${UrlUtils.generateSlug(
@@ -184,7 +184,7 @@ function CartProductItem({
               }}
             ></Button>
             <Input
-              className="w-[40px]"
+              className="w-[46px] text-center"
               value={quantity || ''}
               onFocus={(e) => {
                 quantityInputRef.current = +e.target.value || 1;

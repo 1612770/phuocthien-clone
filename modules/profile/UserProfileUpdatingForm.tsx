@@ -1,4 +1,4 @@
-import { Button, Form, Input, Radio } from 'antd';
+import { Button, DatePicker, Form, Input, Radio } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@providers/AuthProvider';
 import { AuthClient } from '@libs/client/Auth';
@@ -86,13 +86,13 @@ function UserProfileUpdatingForm() {
             <Radio.Button value="Nữ">Nữ</Radio.Button>
           </Radio.Group>
         </Form.Item>
-        {/* <Form.Item label="Ngày sinh" name="birthday" className="mb-2">
+        <Form.Item label="Ngày sinh" name="birthday" className="mb-2">
           <DatePicker
             className="w-full"
             placeholder="VD: 01/01/2000"
             format={'DD/MM/YYYY'}
           />
-        </Form.Item> */}
+        </Form.Item>
       </div>
 
       <Form.Item

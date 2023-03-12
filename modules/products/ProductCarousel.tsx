@@ -18,7 +18,7 @@ function ProductCarousel({ images }: { images: string[] }) {
     <div>
       <div className="relative">
         <Carousel
-          className="overflow-hidden rounded-lg "
+          className="overflow-hidden  rounded-lg border border-solid border-gray-200"
           dots={false}
           afterChange={(index) => {
             setActive(index);
@@ -34,9 +34,8 @@ function ProductCarousel({ images }: { images: string[] }) {
                   key={image}
                   src={image}
                   alt="product"
-                  height={400}
                   layout="fill"
-                  objectFit="cover"
+                  objectFit="contain"
                   className="m-auto w-full"
                 />
               </div>
@@ -78,7 +77,7 @@ function ProductCarousel({ images }: { images: string[] }) {
       </div>
 
       {images.length > 1 && (
-        <div className="mt-4 flex gap-2 overflow-auto pb-2 lg:gap-4">
+        <div className="mt-4 flex gap-1  overflow-auto pb-2 lg:gap-2">
           {images.map((image, index) => (
             <div
               key={index}

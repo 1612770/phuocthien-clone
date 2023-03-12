@@ -18,6 +18,7 @@ import { useAppMessage } from '@providers/AppMessageProvider';
 import ProductCard from '@components/templates/ProductCard';
 import WithPagination from '@configs/types/utils/with-pagination';
 import Link from 'next/link';
+import { useAppData } from '@providers/AppDataProvider';
 
 function ProductSearchInputMobile({ onBack = () => undefined }) {
   const [searchValue, setSearchValue] = useState('');
@@ -26,16 +27,11 @@ function ProductSearchInputMobile({ onBack = () => undefined }) {
     useState<WithPagination<Product[]>>();
 
   const debouncedCurrentFocusGroup = useDebounce(searchValue, 500);
-  const ignoreFirstCall = useRef(false);
   const searchInput = useRef<InputRef | null>(null);
   const { toastError } = useAppMessage();
+  const { productSearchKeywords, getProductSearchKeywords } = useAppData();
 
   const searchProducts = useCallback(async () => {
-    if (!ignoreFirstCall.current) {
-      ignoreFirstCall.current = true;
-      return;
-    }
-
     const product = new ProductClient(null, {});
     try {
       setSearching(true);
@@ -61,6 +57,14 @@ function ProductSearchInputMobile({ onBack = () => undefined }) {
   useEffect(() => {
     searchProducts();
   }, [searchProducts]);
+
+  /**
+   * Get keywords for search when component mounted
+   */
+  useEffect(() => {
+    getProductSearchKeywords();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="fixed top-0 left-0 bottom-0 right-0 z-10 h-full w-full overflow-auto overscroll-contain bg-white px-4">
@@ -96,21 +100,16 @@ function ProductSearchInputMobile({ onBack = () => undefined }) {
 
       <div className="mt-4">
         <Space size={[8, 8]} wrap>
-          {[
-            'Thuốc đau đầu',
-            'Thuốc đau bụng',
-            'Thuốc đau mắt',
-            'Thuốc xương khớp',
-          ].map((tag) => (
+          {productSearchKeywords.map((keyword) => (
             <Tag
-              key={tag}
+              key={keyword.id}
               className="mx-0 cursor-pointer rounded-full border-none bg-primary-background p-2 text-sm"
               onClick={() => {
-                setSearchValue(tag);
+                setSearchValue(keyword.keyword || '');
                 searchInput.current?.focus();
               }}
             >
-              {tag}
+              {keyword.keyword}
             </Tag>
           ))}
         </Space>

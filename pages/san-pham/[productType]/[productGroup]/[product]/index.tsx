@@ -1,5 +1,5 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Col, Empty, List, Row, Typography } from 'antd';
+import { Breadcrumb, Col, Empty, List, Row, Tag, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
@@ -17,6 +17,7 @@ import OfferModel from '@configs/models/offer.model';
 import ProductCardDetail from '@modules/products/ProductCardDetail';
 import { DrugstoreClient } from '@libs/client/DrugStore';
 import DrugstoreItem from '@modules/drugstore/DrugstoreItem';
+import COLORS from '@configs/colors';
 
 const ProductPage: NextPageWithLayout<{
   product?: Product;
@@ -31,9 +32,10 @@ const ProductPage: NextPageWithLayout<{
     if (product?.detail?.image) {
       memoCarouselImages.push(product?.detail?.image);
     }
+
     if (product?.images) {
       const imageUrls = product?.images.reduce((images, currentImage) => {
-        const url = currentImage?.url;
+        const url = currentImage?.image;
         if (url) {
           images.push(url);
         }
@@ -64,7 +66,7 @@ const ProductPage: NextPageWithLayout<{
         </Breadcrumb.Item>
         <Breadcrumb.Item>
           <Link
-            href={`/${UrlUtils.generateSlug(
+            href={`/san-pham/${UrlUtils.generateSlug(
               product?.productType?.name,
               product.productType?.key
             )}`}
@@ -74,7 +76,7 @@ const ProductPage: NextPageWithLayout<{
         </Breadcrumb.Item>
         <Breadcrumb.Item>
           <Link
-            href={`/${UrlUtils.generateSlug(
+            href={`/san-pham/${UrlUtils.generateSlug(
               product?.productType?.name,
               product.productType?.key
             )}/${UrlUtils.generateSlug(
@@ -89,11 +91,11 @@ const ProductPage: NextPageWithLayout<{
       </Breadcrumb>
 
       <div className="grid  grid-cols-1 gap-4 lg:grid-cols-[minmax(200px,_1fr)_280px] lg:gap-6 xl:grid-cols-[400px_minmax(200px,_1fr)_280px]">
-        <div className="h-[500px] lg:col-span-2 xl:sticky xl:top-[32px] xl:col-span-1">
+        <div className="h-[500px] lg:col-span-2 lg:pt-4 xl:col-span-1">
           <ProductCarousel images={carouselImages} />
         </div>
 
-        <div className="relative xl:sticky xl:top-[32px]">
+        <div className="relative ">
           <div className="flex flex-col">
             <Typography.Title className="mx-0 mt-2 text-2xl font-medium">
               {product?.detail?.displayName}
@@ -101,7 +103,13 @@ const ProductPage: NextPageWithLayout<{
 
             <ProductBonusSection offers={offers} />
 
-            <div className="flex w-full items-center justify-between gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg lg:gap-4">
+            <div className=" relative flex w-full flex-wrap items-center justify-between gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg md:flex-nowrap lg:gap-4">
+              <Tag
+                color={COLORS.red}
+                className="absolute -top-[8px] -left-[8px]"
+              >
+                Giảm giá
+              </Tag>
               <div className="flex items-end">
                 <Typography.Title
                   level={2}
@@ -120,7 +128,7 @@ const ProductPage: NextPageWithLayout<{
                 )}
               </div>
               {product && (
-                <div className="w-[140px]">
+                <div className="w-full md:w-[140px]">
                   <AddToCartButton
                     product={product}
                     className="w-full uppercase"
@@ -136,18 +144,51 @@ const ProductPage: NextPageWithLayout<{
                 <Typography.Text className=" font-medium ">
                   Thương hiệu
                 </Typography.Text>
-                <Typography.Text className=" ml-2">
+                <Typography.Text className=" ml-0 md:ml-2">
                   {product?.productionBrand?.name}
                 </Typography.Text>
               </div>
             )}
+            {!!product?.registrationNumber && (
+              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+                <Typography.Text className=" font-medium ">
+                  Số đăng ký
+                </Typography.Text>
+                <Typography.Text className=" ml-0 md:ml-2">
+                  {product?.registrationNumber}
+                </Typography.Text>
+              </div>
+            )}
+            {!!product?.packagingProcess && (
+              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+                <Typography.Text className=" font-medium ">
+                  Quy cách đóng gói
+                </Typography.Text>
+                <Typography.Text className=" ml-0 md:ml-2">
+                  {product?.packagingProcess}{' '}
+                  {product?.detail?.packedType
+                    ? `(${product?.detail?.packedType})`
+                    : ``}
+                </Typography.Text>
+              </div>
+            )}
 
+            {!!product?.detail?.drugUsers && (
+              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+                <Typography.Text className=" font-medium ">
+                  Đối tượng sử dụng
+                </Typography.Text>
+                <Typography.Text className=" ml-0 md:ml-2">
+                  {product?.detail?.drugUsers}
+                </Typography.Text>
+              </div>
+            )}
             {!!product?.ingredient && (
               <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
                 <Typography.Text className=" whitespace-nowrap font-medium">
                   Hoạt chất
                 </Typography.Text>
-                <Typography.Text className=" ml-2">
+                <Typography.Text className=" ml-0 md:ml-2">
                   {product?.ingredient}
                 </Typography.Text>
               </div>
@@ -158,19 +199,8 @@ const ProductPage: NextPageWithLayout<{
                 <Typography.Text className=" font-medium ">
                   Hàm lượng
                 </Typography.Text>
-                <Typography.Text className=" ml-2">
+                <Typography.Text className=" ml-0 md:ml-2">
                   {product?.drugContent}
-                </Typography.Text>
-              </div>
-            )}
-
-            {!!product?.packagingProcess && (
-              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
-                <Typography.Text className=" font-medium ">
-                  Quy cách đóng gói
-                </Typography.Text>
-                <Typography.Text className=" ml-2">
-                  {product?.packagingProcess}
                 </Typography.Text>
               </div>
             )}
@@ -179,7 +209,7 @@ const ProductPage: NextPageWithLayout<{
               <Typography.Text className=" font-medium ">
                 Là thuốc kê đơn
               </Typography.Text>
-              <Typography.Text className=" ml-2">
+              <Typography.Text className=" ml-0 md:ml-2">
                 {product?.isPrescripted ? 'Có' : 'Không'}
               </Typography.Text>
             </div>
@@ -189,7 +219,7 @@ const ProductPage: NextPageWithLayout<{
                 <Typography.Text className=" font-medium ">
                   Là thuốc đặc biệt
                 </Typography.Text>
-                <Typography.Text className=" ml-2">
+                <Typography.Text className=" ml-0 md:ml-2">
                   {product?.isSpecial ? 'Có' : 'Không'}
                 </Typography.Text>
               </div>
@@ -200,19 +230,8 @@ const ProductPage: NextPageWithLayout<{
                 <Typography.Text className=" font-medium ">
                   Là thuốc tâm thần
                 </Typography.Text>
-                <Typography.Text className=" ml-2">
+                <Typography.Text className=" ml-0 md:ml-2">
                   {product?.isMental ? 'Có' : 'Không'}
-                </Typography.Text>
-              </div>
-            )}
-
-            {!!product?.registrationNumber && (
-              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
-                <Typography.Text className=" font-medium ">
-                  Số đăng ký
-                </Typography.Text>
-                <Typography.Text className=" ml-2">
-                  {product?.registrationNumber}
                 </Typography.Text>
               </div>
             )}
@@ -277,7 +296,7 @@ const ProductPage: NextPageWithLayout<{
               level={3}
               className="mb-0 mt-6 inline-block uppercase lg:mb-4 lg:mt-12"
             >
-              Các sản phẩm khác
+              Các sản phẩm cùng loại
             </Typography.Title>{' '}
             <Typography.Title
               level={3}

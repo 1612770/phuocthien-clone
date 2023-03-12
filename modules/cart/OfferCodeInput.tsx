@@ -120,12 +120,12 @@ function OfferCodeInput({ offers }: { offers: OfferModel[] }) {
           {offer && (
             <div className="mt-4">
               <Typography.Text type="secondary">
-                Mã giảm giá đã áp dụng:
+                Mã ưu đãi đã áp dụng:
               </Typography.Text>
               <div>
                 <div className="flex items-center justify-between">
                   <Typography.Text className="text-base">
-                    {offer.offerCode}
+                    Mã ưu đãi: {offer.offerCode}
                   </Typography.Text>
                   <Button
                     className="ml-2"

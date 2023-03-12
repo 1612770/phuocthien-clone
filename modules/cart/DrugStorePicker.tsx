@@ -7,13 +7,7 @@ import DrugStorePickerInventoryChecking from './DrugStorePickerInventoryChecking
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import ImageUtils from '@libs/utils/image.utils';
 
-function DrugStorePicker({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (drugStoreKey: string) => void;
-}) {
+function DrugStorePicker() {
   const [drugStores, setDrugStores] = useState<DrugStore[]>([]);
   const [loading, setLoading] = useState(false);
   const [isListLimited, setIsListLimited] = useState(true);
@@ -34,6 +28,7 @@ function DrugStorePicker({
 
   useEffect(() => {
     getDrugStores();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const showedDrugStores = useMemo(
@@ -46,7 +41,7 @@ function DrugStorePicker({
       <div className="my-4 rounded-lg">
         <div className=" rounded-lg bg-gray-50 ">
           <Form.Item
-            name="drugStore"
+            name="currentDrugStoreKey"
             className="relative w-full"
             rules={[
               {
@@ -56,27 +51,22 @@ function DrugStorePicker({
             ]}
           >
             <div className="max-h-[280px] overflow-auto px-4">
-              <Radio.Group
-                className={isListLimited ? 'pb-12' : ''}
-                onChange={(e) => {
-                  onChange(e.target.value);
-                }}
-                value={value}
-              >
+              <Radio.Group className={isListLimited ? 'pb-12' : ''}>
                 {showedDrugStores.map((drugStore) => (
                   <div key={drugStore.key} className="my-4">
                     <Radio value={drugStore.key}>
-                      <div className="ml-2 flex items-center">
+                      <div className="ml-2 flex items-start">
                         <ImageWithFallback
                           src={drugStore.image || ''}
                           width={40}
                           height={40}
                           layout="fixed"
+                          objectFit="contain"
                           getMockImage={() =>
                             ImageUtils.getRandomMockDrugstoreUrl()
                           }
                         />
-                        <div className="ml-4">
+                        <div className="ml-2">
                           <Typography className="">{drugStore.name}</Typography>
                           <Typography className="text-xs text-gray-600">
                             Địa chỉ: {drugStore.address}
@@ -105,7 +95,18 @@ function DrugStorePicker({
           </Form.Item>
         </div>
 
-        <DrugStorePickerInventoryChecking drugStoreKey={value} />
+        <Form.Item
+          noStyle
+          shouldUpdate={(prevValues, currentValues) =>
+            prevValues.currentDrugStoreKey !== currentValues.currentDrugStoreKey
+          }
+        >
+          {({ getFieldValue }) => (
+            <DrugStorePickerInventoryChecking
+              drugStoreKey={getFieldValue('currentDrugStoreKey')}
+            />
+          )}
+        </Form.Item>
       </div>
     </Spin>
   );

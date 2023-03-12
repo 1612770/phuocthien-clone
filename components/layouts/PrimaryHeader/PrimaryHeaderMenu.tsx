@@ -2,13 +2,14 @@ import { Popover, Space, Typography } from 'antd';
 import Link from 'next/link';
 import { Book, ChevronDown, MapPin } from 'react-feather';
 import { useState } from 'react';
-import IMPORTANT_MENUS from '@configs/constants/important-menus';
+import { IMPORTANT_MENU_KEYS } from '@configs/env';
 import ProductGroupModel from '@configs/models/product-group.model';
 import UrlUtils from '@libs/utils/url.utils';
 import { useFullMenu } from '@providers/FullMenuProvider';
 import PrimaryHeaderMenuAllPopoverContent from './PrimaryHeaderMenuAllPopoverContent';
 import PrimaryHeaderMenuItem from './PrimaryHeaderMenuItem';
 import MenuModel from '@configs/models/menu.model';
+import LinkWrapper from '@components/templates/LinkWrapper';
 
 function PrimaryHeaderMenu() {
   const { fullMenu, open, setOpen, intoPopover } = useFullMenu();
@@ -55,7 +56,7 @@ function PrimaryHeaderMenu() {
 
           {fullMenu.map((menu) =>
             menu?.name &&
-            IMPORTANT_MENUS.includes(menu?.name.toLocaleLowerCase()) ? (
+            IMPORTANT_MENU_KEYS.includes((menu?.key || '').toUpperCase()) ? (
               <span
                 className="inline-block py-2"
                 onMouseLeave={() => {
@@ -69,7 +70,10 @@ function PrimaryHeaderMenu() {
                 key={menu?.key}
               >
                 <PrimaryHeaderMenuItem
-                  href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}
+                  href={`/san-pham/${UrlUtils.generateSlug(
+                    menu?.name,
+                    menu?.key
+                  )}`}
                   label={menu.name || ''}
                   productGroups={
                     (menu?.productGroups as ProductGroupModel[]) || []
@@ -82,16 +86,14 @@ function PrimaryHeaderMenu() {
           <Typography.Text className="mx-4 hidden xl:flex" type="secondary">
             |
           </Typography.Text>
-          <Link href={'/goc-suc-khoe'} style={{ color: 'white' }}>
-            <a className="hidden xl:flex">
-              <Space align="center">
-                <Book className="text-stone-800" size={16} />
-                <Typography.Text className="whitespace-nowrap font-medium uppercase ">
-                  Góc sức khỏe
-                </Typography.Text>
-              </Space>
-            </a>
-          </Link>
+          <LinkWrapper href={'/tin-tuc'} className="hidden xl:flex">
+            <Space align="center">
+              <Book className="text-stone-800" size={16} />
+              <Typography.Text className="whitespace-nowrap font-medium uppercase ">
+                Góc tin tức
+              </Typography.Text>
+            </Space>
+          </LinkWrapper>
           <Link href={'/nha-thuoc'} style={{ color: 'white' }}>
             <a className="hidden xl:flex">
               <Space align="center">

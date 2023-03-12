@@ -17,23 +17,24 @@ function DrugstoreItem({
       <a>
         {variant === 'list-item' && (
           <List.Item className="py-4 px-4 hover:bg-gray-100">
-            <div className="flex items-center">
+            <div className="flex items-start">
               <ImageWithFallback
                 src={drugstore.image || ''}
                 width={32}
                 height={32}
                 layout="fixed"
+                objectFit="contain"
                 getMockImage={() => ImageUtils.getRandomMockDrugstoreUrl()}
               />
               <div className="ml-2">
                 <Typography className=" text-xs font-medium">
                   {drugstore.name}
                 </Typography>
-                <a href={`tel:${drugstore.tel}`}>
-                  <Typography className="text-xs text-gray-600">
-                    {drugstore.tel}
-                  </Typography>
-                </a>
+
+                <Typography className="text-xs text-gray-600">
+                  {drugstore.tel}
+                </Typography>
+
                 <Typography className="text-xs text-gray-600">
                   {drugstore.address}
                 </Typography>
@@ -44,12 +45,13 @@ function DrugstoreItem({
 
         {variant === 'card' && (
           <div className="h-full rounded-lg border border-solid border-gray-200 bg-white p-4 transition ease-in-out hover:border-primary-light hover:bg-gray-100">
-            <div className="flex items-center">
+            <div className="flex items-start">
               <ImageWithFallback
                 src={drugstore.image || ''}
                 width={32}
                 height={32}
                 layout="fixed"
+                objectFit="contain"
                 getMockImage={() => ImageUtils.getRandomMockDrugstoreUrl()}
               />
               <div className="ml-2">

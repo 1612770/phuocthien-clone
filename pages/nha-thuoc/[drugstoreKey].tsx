@@ -28,7 +28,10 @@ const DrugstorePage: NextPageWithLayout<{
         <Breadcrumb.Item>{drugstore?.name}</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Typography.Title level={1} className="mt-8 mb-2 font-medium">
+      <Typography.Title
+        level={1}
+        className="mt-8 mb-2 text-2xl font-medium md:text-4xl"
+      >
         {drugstore?.name}
       </Typography.Title>
 
@@ -36,8 +39,6 @@ const DrugstorePage: NextPageWithLayout<{
         <div className="relative mb-4 h-[240px] w-full">
           <ImageWithFallback
             src={drugstore?.image || ''}
-            width={'100%'}
-            height={240}
             layout="fill"
             objectFit="cover"
             getMockImage={() => ImageUtils.getRandomMockCampaignImageUrl()}

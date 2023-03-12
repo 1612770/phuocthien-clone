@@ -25,7 +25,7 @@ function ProductCard({
   const productGroupKey =
     product?.productGroup?.key || product?.productGroupKey;
 
-  const href = `/${UrlUtils.generateSlug(
+  const href = `/san-pham/${UrlUtils.generateSlug(
     product.productType?.name,
     productTypeKey
   )}/${UrlUtils.generateSlug(
@@ -147,7 +147,7 @@ function ProductCard({
                     {product?.detail?.displayName}
                   </Typography.Text>
                   <Tag className="mt-1 border-none bg-primary-background">
-                    {product?.productGroup?.name} - {product?.productType?.name}
+                    {product?.productGroup?.name}
                   </Tag>
                   <Typography.Text className="mt-1 block">
                     <Typography.Text className="text-base font-semibold text-primary-dark">

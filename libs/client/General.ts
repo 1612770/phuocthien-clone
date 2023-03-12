@@ -8,6 +8,9 @@ import PaymentMethodModel from '@configs/models/payment-method.model';
 import FocusContentModel from '@configs/models/focus-content.model';
 import SlideBannerModel from '@configs/models/slide-banner.model';
 import MainInfoModel from '@configs/models/main-info.model';
+import ProductSearchKeyword from '@configs/models/product-search-keyword.model';
+import EventModel from '@configs/models/EventModel';
+import GroupInfoModel from '@configs/models/GroupInfoModel';
 
 export class GeneralClient extends BaseClient {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,7 +54,31 @@ export class GeneralClient extends BaseClient {
     return await super.call('GET', `slide-banner`, {});
   }
 
-  async getMainInfo(): Promise<APIResponse<MainInfoModel[]>> {
-    return await super.call('GET', `main-info`, {});
+  async getMainInfos(payload: {
+    page: number;
+    pageSize: number;
+    mainInfoCode?: number;
+  }): Promise<APIResponse<MainInfoModel[]>> {
+    return await super.call('GET', `main-info`, payload);
+  }
+
+  async getGroupInfos(payload: {
+    page: number;
+    pageSize: number;
+    keyGroup?: string;
+  }): Promise<APIResponse<GroupInfoModel[]>> {
+    return await super.call('GET', `group-info`, payload);
+  }
+
+  async getEvent(payload: {
+    keyEvent: string;
+  }): Promise<APIResponse<EventModel>> {
+    return await super.call('GET', `event`, payload);
+  }
+
+  async getProductSearchKeywords(): Promise<
+    APIResponse<ProductSearchKeyword[]>
+  > {
+    return await super.call('GET', `product-search-keywords`, {});
   }
 }

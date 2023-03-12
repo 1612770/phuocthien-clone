@@ -3,6 +3,7 @@ import Product from '@configs/models/product.model';
 import WithPagination from '@configs/types/utils/with-pagination';
 import { ProductClient } from '@libs/client/Product';
 import { useDebounce } from '@libs/utils/hooks';
+import { useAppData } from '@providers/AppDataProvider';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import {
   Button,
@@ -30,6 +31,7 @@ function HomepageSearchSection() {
   const ignoreFirstCall = useRef(false);
   const searchInput = useRef<InputRef | null>(null);
   const { toastError } = useAppMessage();
+  const { productSearchKeywords } = useAppData();
 
   const searchProducts = useCallback(async () => {
     if (!ignoreFirstCall.current) {
@@ -147,26 +149,21 @@ function HomepageSearchSection() {
             level={4}
             className="mb-1 font-normal text-neutral-600"
           >
-            Nổi bật
+            Từ khóa phổ biến
           </Typography.Title>
           <Space size={[8, 8]} wrap>
-            {[
-              'Thuốc đau đầu',
-              'Thuốc đau bụng',
-              'Thuốc đau mắt',
-              'Thuốc xương khớp',
-            ].map((tag) => (
+            {productSearchKeywords.map((keyword) => (
               <Tag
-                key={tag}
+                key={keyword.id}
                 className="cursor-pointer rounded-full border-none bg-primary-background p-2 text-base"
                 onClick={() => {
                   setSearchFocus(true);
                   scrollSectionIntoView();
-                  setSearchValue(tag);
+                  setSearchValue(keyword.keyword || '');
                   searchInput.current?.focus();
                 }}
               >
-                {tag}
+                {keyword.keyword}
               </Tag>
             ))}
           </Space>

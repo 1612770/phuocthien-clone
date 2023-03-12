@@ -19,6 +19,7 @@ import ProductCard from '@components/templates/ProductCard';
 import WithPagination from '@configs/types/utils/with-pagination';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { useAppData } from '@providers/AppDataProvider';
 
 function ProductSearchInput() {
   const [searchFocus, setSearchFocus] = useState(false);
@@ -31,6 +32,7 @@ function ProductSearchInput() {
   const ignoreFirstCall = useRef(false);
   const searchInput = useRef<InputRef | null>(null);
   const { toastError } = useAppMessage();
+  const { productSearchKeywords, getProductSearchKeywords } = useAppData();
   const router = useRouter();
 
   const searchProducts = useCallback(async () => {
@@ -75,6 +77,16 @@ function ProductSearchInput() {
 
     if (searchValue) {
       searchProducts();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchFocus]);
+
+  /**
+   * Effect to get keyword when focus search
+   */
+  useEffect(() => {
+    if (searchFocus) {
+      getProductSearchKeywords();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchFocus]);
@@ -136,21 +148,16 @@ function ProductSearchInput() {
           <div className="absolute left-0 right-0 top-10 max-h-[800px] overflow-auto rounded-br-md rounded-bl-md bg-white">
             <div className="mx-2 mt-4">
               <Space size={[8, 8]} wrap>
-                {[
-                  'Thuốc đau đầu',
-                  'Thuốc đau bụng',
-                  'Thuốc đau mắt',
-                  'Thuốc xương khớp',
-                ].map((tag) => (
+                {productSearchKeywords.map((keyword) => (
                   <Tag
-                    key={tag}
+                    key={keyword.id}
                     className="mx-0 cursor-pointer rounded-full border-none bg-primary-background p-2 text-sm"
                     onClick={() => {
-                      setSearchValue(tag);
+                      setSearchValue(keyword.keyword || '');
                       searchInput.current?.focus();
                     }}
                   >
-                    {tag}
+                    {keyword.keyword}
                   </Tag>
                 ))}
               </Space>
