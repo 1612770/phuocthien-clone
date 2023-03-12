@@ -51,7 +51,7 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
             subTitle={
               <>
                 <Typography className="text-center">
-                  Mã đơn hàng: #<b>{orderToShow?.key}</b>. Chúng tôi sẽ xử lý
+                  Mã đơn hàng: #<b>{orderToShow?.code}</b>. Chúng tôi sẽ xử lý
                   đơn hàng và giao cho bạn trong thời gian sớm nhất.
                 </Typography>
 
