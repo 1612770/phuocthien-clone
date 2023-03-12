@@ -136,13 +136,7 @@ function CartProductItem({
       <div className="flex flex-grow flex-wrap gap-2">
         <div className="flex flex-grow basis-[300px] flex-col items-start">
           <Link
-            href={`/san-pham/${UrlUtils.generateSlug(
-              cartProduct.product.productType?.name,
-              cartProduct.product.productType?.key
-            )}/${UrlUtils.generateSlug(
-              cartProduct.product.productGroup?.name,
-              cartProduct.product.productGroup?.key
-            )}/${UrlUtils.generateSlug(
+            href={`/san-pham/chi-tiet/${UrlUtils.generateSlug(
               cartProduct.product.detail?.displayName,
               cartProduct.product.key
             )}`}
