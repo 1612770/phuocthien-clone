@@ -105,12 +105,14 @@ const ProductPage: NextPageWithLayout<{
             <ProductBonusSection offers={offers} />
 
             <div className=" relative flex w-full flex-wrap items-center justify-between gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg md:flex-nowrap lg:gap-4">
-              <Tag
-                color={COLORS.red}
-                className="absolute -top-[8px] -left-[8px]"
-              >
-                Giảm giá
-              </Tag>
+              {product.detail?.isSaleOff && (
+                <Tag
+                  color={COLORS.red}
+                  className="absolute -top-[8px] -left-[8px]"
+                >
+                  Giảm giá
+                </Tag>
+              )}
               <div className="flex items-end">
                 <Typography.Title
                   level={2}
