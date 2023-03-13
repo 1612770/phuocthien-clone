@@ -158,6 +158,15 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
                           {detail.quantity} {detail.unit}
                         </Typography.Text>
                       </Typography.Text>
+
+                      {detail.note && (
+                        <Typography.Text className="text-sm text-gray-500">
+                          Ghi chú:&nbsp;&nbsp;
+                          <Typography.Text className="">
+                            {detail.note}
+                          </Typography.Text>
+                        </Typography.Text>
+                      )}
                     </div>
 
                     <div className="meta flex flex-col">
