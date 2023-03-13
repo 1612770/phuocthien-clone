@@ -50,4 +50,4 @@ function QRApp() {
   );
 }
 
-export default QRApp;
+export default React.memo(QRApp);
