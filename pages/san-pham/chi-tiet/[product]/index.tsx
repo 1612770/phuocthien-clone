@@ -18,6 +18,7 @@ import ProductCardDetail from '@modules/products/ProductCardDetail';
 import { DrugstoreClient } from '@libs/client/DrugStore';
 import DrugstoreItem from '@modules/drugstore/DrugstoreItem';
 import COLORS from '@configs/colors';
+import OfferUtils from '@libs/utils/offer.utils';
 
 const ProductPage: NextPageWithLayout<{
   product?: Product;
@@ -379,7 +380,9 @@ export const getServerSideProps = async (
       ]);
 
       if (offers.data) {
-        serverSideProps.props.offers = offers.data;
+        serverSideProps.props.offers = OfferUtils.filterNonValueOffer(
+          offers.data
+        );
       }
 
       if (products.data) {
