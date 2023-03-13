@@ -33,17 +33,23 @@ function CartProductItemNoteInput({
       <Button
         type="link"
         className={`p-0 text-gray-500`}
-        icon={<Edit size={14} className=" align-text-top" />}
         onClick={() => {
           inputRef.current?.focus();
           setOpen(true);
         }}
       >
-        <Typography.Text
-          className={`${cartProduct.note ? 'text-black-100' : 'text-gray-500'}`}
-        >
-          &nbsp;{cartProduct.note || 'Thêm ghi chú'}
-        </Typography.Text>
+        <div className="flex">
+          <div className="h-[14px] w-[14px]">
+            <Edit size={14} className="" />
+          </div>
+          <Typography.Text
+            className={`${
+              cartProduct.note ? 'text-black-100' : 'text-gray-500'
+            } whitespace-pre-wrap text-left`}
+          >
+            &nbsp;{cartProduct.note || 'Thêm ghi chú'}
+          </Typography.Text>
+        </div>
       </Button>
 
       <Modal
