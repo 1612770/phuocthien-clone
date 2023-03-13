@@ -54,7 +54,7 @@ function AddToCartButton({
             />
             <Button
               className="min-w-[32px] rounded-lg border-none bg-green-50 disabled:bg-gray-50"
-              disabled={productIncart.quantity >= 10}
+              disabled={productIncart.quantity >= 1000}
               icon={<Plus size={20} className="text-primary" />}
               onClick={(e) => {
                 e.preventDefault;
