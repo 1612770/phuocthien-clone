@@ -91,6 +91,13 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
                 {order?.drugstore.name}, {order?.drugstore.address}
               </Typography>
             )}
+            {order?.orderNote && (
+              <Typography className="mb-2 text-left">
+                <Typography.Text className=" text-gray-600">
+                  Ghi chú: {order?.orderNote}
+                </Typography.Text>
+              </Typography>
+            )}
           </div>
 
           <div className="rounded-lg border border-solid border-gray-200 bg-white p-4">
@@ -158,15 +165,6 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
                           {detail.quantity} {detail.unit}
                         </Typography.Text>
                       </Typography.Text>
-
-                      {detail.note && (
-                        <Typography.Text className="text-sm text-gray-500">
-                          Ghi chú:&nbsp;&nbsp;
-                          <Typography.Text className="">
-                            {detail.note}
-                          </Typography.Text>
-                        </Typography.Text>
-                      )}
                     </div>
 
                     <div className="meta flex flex-col">
