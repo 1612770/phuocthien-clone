@@ -88,7 +88,7 @@ function OfferCodeInput({ offers }: { offers: OfferModel[] }) {
         <>
           <ProductBonusSection offers={offers} />
           <div>
-            <Input.Group compact className="flex">
+            <Input.Group compact className="mt-2 flex">
               <Input
                 size="large"
                 placeholder="Nhập mã giảm giá"
