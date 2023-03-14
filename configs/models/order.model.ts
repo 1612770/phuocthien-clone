@@ -27,6 +27,7 @@ type OrderModel = Partial<{
   paymentMethod: PaymentMethodModel;
   drugstore: DrugStore;
   offerCode: string;
+  orderNote: string;
 }>;
 
 export default OrderModel;

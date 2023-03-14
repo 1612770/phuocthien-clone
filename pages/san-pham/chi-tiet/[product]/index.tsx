@@ -18,6 +18,8 @@ import ProductCardDetail from '@modules/products/ProductCardDetail';
 import { DrugstoreClient } from '@libs/client/DrugStore';
 import DrugstoreItem from '@modules/drugstore/DrugstoreItem';
 import COLORS from '@configs/colors';
+import OfferUtils from '@libs/utils/offer.utils';
+import QRApp from '@modules/products/QRApp';
 
 const ProductPage: NextPageWithLayout<{
   product?: Product;
@@ -90,9 +92,12 @@ const ProductPage: NextPageWithLayout<{
         <Breadcrumb.Item>{product?.detail?.displayName}</Breadcrumb.Item>
       </Breadcrumb>
 
-      <div className="grid  grid-cols-1 gap-4 lg:grid-cols-[minmax(200px,_1fr)_280px] lg:gap-6 xl:grid-cols-[400px_minmax(200px,_1fr)_280px]">
-        <div className="h-[500px] lg:col-span-2 lg:pt-4 xl:col-span-1">
-          <ProductCarousel images={carouselImages} />
+      <div className="grid  grid-cols-1 gap-4 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[400px_minmax(200px,_1fr)_280px]">
+        <div>
+          <div className=" mb-4 lg:col-span-2 lg:pt-4 xl:col-span-1">
+            <ProductCarousel images={carouselImages} />
+          </div>
+          <QRApp />
         </div>
 
         <div className="relative ">
@@ -104,12 +109,14 @@ const ProductPage: NextPageWithLayout<{
             <ProductBonusSection offers={offers} />
 
             <div className=" relative flex w-full flex-wrap items-center justify-between gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg md:flex-nowrap lg:gap-4">
-              <Tag
-                color={COLORS.red}
-                className="absolute -top-[8px] -left-[8px]"
-              >
-                Giảm giá
-              </Tag>
+              {product.detail?.isSaleOff && (
+                <Tag
+                  color={COLORS.red}
+                  className="absolute -top-[8px] -left-[8px]"
+                >
+                  Giảm giá
+                </Tag>
+              )}
               <div className="flex items-end">
                 <Typography.Title
                   level={2}
@@ -379,7 +386,9 @@ export const getServerSideProps = async (
       ]);
 
       if (offers.data) {
-        serverSideProps.props.offers = offers.data;
+        serverSideProps.props.offers = OfferUtils.filterNonValueOffer(
+          offers.data
+        );
       }
 
       if (products.data) {

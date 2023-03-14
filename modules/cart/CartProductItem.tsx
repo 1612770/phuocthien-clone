@@ -166,7 +166,7 @@ function CartProductItem({
             )}
           </Typography.Text>
 
-          <Space size={4} className="mt-1">
+          <Space size={4} className="mt-1 md:ml-auto md:mr-0">
             <Button
               icon={<Minus size={20} />}
               disabled={cartProduct.quantity <= 1}

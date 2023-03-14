@@ -37,6 +37,7 @@ import AddressSection from '@modules/cart/AddressSection';
 import AddressModel from '@configs/models/address.model';
 import { AuthClient } from '@libs/client/Auth';
 import { COOKIE_KEYS } from '@libs/helpers';
+import OfferUtils from '@libs/utils/offer.utils';
 
 const CartPage: NextPageWithLayout<{
   paymentMethods: PaymentMethodModel[];
@@ -353,7 +354,9 @@ export const getServerSideProps = async (
     ]);
 
     if (offers.data) {
-      serverSideProps.props.offers = offers.data;
+      serverSideProps.props.offers = OfferUtils.filterNonValueOffer(
+        offers.data
+      );
     }
 
     if (provinces.data) {
