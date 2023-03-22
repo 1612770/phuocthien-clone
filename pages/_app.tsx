@@ -12,7 +12,7 @@ import { GeneralClient } from 'libs/client/General';
 import MenuModel from '@configs/models/menu.model';
 import FullMenuProvider from '@providers/FullMenuProvider';
 import App from 'next/app';
-import React from 'react';
+import React, { Suspense } from 'react';
 import NProgress from '@components/templates/NProgress';
 import CartProvider from '@providers/CartProvider';
 import AppMessageProvider from '@providers/AppMessageProvider';
@@ -20,6 +20,7 @@ import AuthProvider from '@providers/AuthProvider';
 import AppConfirmDialogProvider from '@providers/AppConfirmDialogProvider';
 import FocusContentModel from '@configs/models/focus-content.model';
 import AppDataProvider from '@providers/AppDataProvider';
+import { ZaloChat } from '@modules/zaloChat';
 
 interface AppPropsWithLayout<T> extends AppProps<T> {
   Component: NextPageWithLayout<T>;
@@ -65,6 +66,9 @@ function MyApp({
           </AppMessageProvider>
         </ConfigProvider>
       </NProgress>
+      <Suspense>
+        <ZaloChat />
+      </Suspense>
     </>
   );
 }
