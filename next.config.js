@@ -12,7 +12,7 @@ const nextConfig = {
   },
   env: {
     API_HOST: process.env.API_HOST,
-    API_VERSION: process.env.API_VERSION,
+    MS_PATH: process.env.MS_PATH,
     HOST_IMAGE: process.env.HOST_IMAGE,
     NEXT_PUBLIC_REGEX_PHONE: process.env.NEXT_PUBLIC_REGEX_PHONE,
   },
@@ -24,7 +24,7 @@ const nextConfig = {
     return [
       {
         source: '/backend/:path*',
-        destination: `${process.env.API_HOST}/${process.env.API_VERSION}/:path*`,
+        destination: `${process.env.API_HOST}/${process.env.MS_PATH}/:path*`,
       },
     ];
   },
