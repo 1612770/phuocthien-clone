@@ -20,6 +20,48 @@ import DrugstoreItem from '@modules/drugstore/DrugstoreItem';
 import COLORS from '@configs/colors';
 import OfferUtils from '@libs/utils/offer.utils';
 import QRApp from '@modules/products/QRApp';
+import PromotionList from '@modules/products/PromotionList';
+import PriceUnit from '@modules/products/PriceUnit';
+import { Promotion } from '@configs/models/promotion.model';
+import { useCart } from '@providers/CartProvider';
+import { InfoCircleOutlined } from '@ant-design/icons';
+
+const getMaxDiscount = (promotions: Promotion[]): number => {
+  let maxDiscount = 0;
+  promotions.forEach((promotion) => {
+    if (promotion.val > maxDiscount) {
+      maxDiscount = promotion.val;
+    }
+  });
+  return maxDiscount;
+};
+
+const getNextPromotion = (
+  promotions: Promotion[],
+  currentQuantity: number
+): Promotion | undefined => {
+  let nextPromo: Promotion | undefined = undefined;
+
+  promotions.forEach((promotion) => {
+    if (promotion.productQuantityMinCondition > currentQuantity) {
+      nextPromo = promotion;
+    }
+  });
+
+  return nextPromo;
+};
+
+const getInstruction = (
+  promotions: Promotion[],
+  currentQuantity: number
+): string => {
+  const nextPromo = getNextPromotion(promotions, currentQuantity);
+
+  if (!nextPromo) return '';
+  return `Mua ${currentQuantity ? 'thêm' : 'ít nhất'} ${
+    nextPromo.productQuantityMinCondition - currentQuantity
+  } sản phẩm để được giảm ${nextPromo.val * 100}%`;
+};
 
 const ProductPage: NextPageWithLayout<{
   product?: Product;
@@ -28,6 +70,8 @@ const ProductPage: NextPageWithLayout<{
   drugStores?: DrugStore[];
   offers: OfferModel[];
 }> = ({ product, otherProducts, drugStoresAvailable, offers, drugStores }) => {
+  const { cartProducts } = useCart();
+
   const carouselImages: string[] = useMemo(() => {
     let memoCarouselImages: string[] = [];
 
@@ -48,6 +92,15 @@ const ProductPage: NextPageWithLayout<{
 
     return memoCarouselImages;
   }, [product]);
+
+  const curProductIncart = cartProducts.find(
+    (item) => item.product.key === product?.key
+  );
+  const maxDisCount = getMaxDiscount(product?.promotions || []);
+  const nextInstruction = getInstruction(
+    product?.promotions || [],
+    curProductIncart?.quantity || 0
+  );
 
   const drugstoresToShow =
     (drugStoresAvailable?.length || 0) > 0 ? drugStoresAvailable : drugStores;
@@ -108,7 +161,7 @@ const ProductPage: NextPageWithLayout<{
 
             <ProductBonusSection offers={offers} />
 
-            <div className=" relative flex w-full flex-wrap items-center justify-between gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg md:flex-nowrap lg:gap-4">
+            <div className="relative flex w-full flex-col flex-wrap gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg md:flex-nowrap lg:gap-2">
               {product.detail?.isSaleOff && (
                 <Tag
                   color={COLORS.red}
@@ -117,31 +170,35 @@ const ProductPage: NextPageWithLayout<{
                   Giảm giá
                 </Tag>
               )}
-              <div className="flex items-end">
-                <Typography.Title
-                  level={2}
-                  className="m-0 -mb-[2px] font-bold text-primary"
-                >
-                  {product?.retailPrice?.toLocaleString('it-IT', {
-                    style: 'currency',
-                    currency: 'VND',
-                  })}
-                </Typography.Title>
 
-                {product?.unit && (
-                  <Typography.Text className="text-xl">
-                    &nbsp;/&nbsp;{product?.unit}
+              {nextInstruction && (
+                <div className="flex items-center gap-2 text-blue-500">
+                  <InfoCircleOutlined size={12} />
+                  <Typography.Text className="text-inherit">
+                    {nextInstruction}
                   </Typography.Text>
-                )}
-              </div>
-              {product && (
-                <div className="w-full md:w-[140px]">
-                  <AddToCartButton
-                    product={product}
-                    className="w-full uppercase"
-                  />
                 </div>
               )}
+
+              <div className="flex w-full flex-1 flex-wrap items-start justify-between">
+                <PriceUnit
+                  price={product.retailPrice}
+                  discountVal={maxDisCount}
+                  unit={product.unit}
+                />
+                {product && (
+                  <div className="w-full md:w-[140px]">
+                    <AddToCartButton
+                      product={product}
+                      className="w-full uppercase"
+                    />
+                  </div>
+                )}
+              </div>
+              <PromotionList
+                promotions={product.promotions || []}
+                retailPrice={product.retailPrice}
+              />
             </div>
           </div>
 

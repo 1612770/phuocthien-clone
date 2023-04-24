@@ -3,6 +3,7 @@ import ProductGroupModel from './product-group.model';
 import ProductBrand from './product-brand.model';
 import ProductType from './product-type.model';
 import ProductDetailModel from './product-detail.model';
+import { Promotion } from './promotion.model';
 
 type Product = Partial<{
   key: string;
@@ -39,8 +40,8 @@ type Product = Partial<{
   productGroup: ProductGroupModel;
   productionBrand: ProductBrand;
   detail: ProductDetailModel;
-
   images: ProductImage[];
+  promotions: Promotion[];
 }>;
 
 export default Product;
