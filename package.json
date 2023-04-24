@@ -48,6 +48,7 @@
     "util": "^0.12.5"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.0.1",
     "antd": "^5.0.7",
     "cookies-next": "^2.1.1",
     "date-fns": "^2.29.3",
