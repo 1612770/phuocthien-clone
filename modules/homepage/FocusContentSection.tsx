@@ -26,6 +26,7 @@ function FocusContentSection({
                 <div className="relative mt-3 h-[40px] w-[40px] min-w-[40px]">
                   <ImageWithFallback
                     layout="fill"
+                    alt={focus.name}
                     src={focus.imageUrl || ''}
                     getMockImage={() => ImageUtils.getFocusMockUrl()}
                   ></ImageWithFallback>

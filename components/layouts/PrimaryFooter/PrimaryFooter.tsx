@@ -25,6 +25,7 @@ function PrimaryFooter() {
                     src={IMAGES.logo}
                     alt="Nhà thuốc Phước Thiện"
                     className="mr-2 h-8 object-contain"
+                    style={{ width: 42, height: 32 }}
                   />
 
                   <Space
@@ -35,7 +36,10 @@ function PrimaryFooter() {
                     <Typography.Text className="m-0 -mb-2 inline-block text-base text-white">
                       Nhà thuốc
                     </Typography.Text>
-                    <Typography.Text strong className="uppercase text-white">
+                    <Typography.Text
+                      strong
+                      className="whitespace-nowrap uppercase text-white"
+                    >
                       Phước Thiện
                     </Typography.Text>
                   </Space>
@@ -79,14 +83,24 @@ function PrimaryFooter() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <img src="/chplay.png" alt="" className="w-[120px]" />
+                  <img
+                    src="/chplay.png"
+                    alt=""
+                    className="w-[120px]"
+                    style={{ width: 120, height: 40 }}
+                  />
                 </a>
                 <a
                   target="_blank"
                   href="https://apps.apple.com/us/app/nh%C3%A0-thu%E1%BB%91c-ph%C6%B0%E1%BB%9Bc-thi%E1%BB%87n/id1662328703"
                   rel="noreferrer"
                 >
-                  <img src="/appstore.png" alt="" className="w-[120px]" />
+                  <img
+                    src="/appstore.png"
+                    alt=""
+                    className="w-[120px]"
+                    style={{ width: 120, height: 40 }}
+                  />
                 </a>
               </div>
             </div>
@@ -138,12 +152,20 @@ function PrimaryFooter() {
                 src={IMAGES.bocongthuongDathongbao}
                 alt="bocongthuong-dathongbao"
                 className="h-10"
+                style={{
+                  height: 40,
+                  width: 104,
+                }}
               />
             </a>
             <img
               src={IMAGES.dmcaProtected}
               alt="dmca-protected"
               className="h-6"
+              style={{
+                height: 24,
+                width: 128,
+              }}
             />
           </div>
         </div>

@@ -28,6 +28,7 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
           <a className="flex items-center" onClick={onClose}>
             <img
               src={IMAGES.logo}
+              style={{ width: 42, height: 32 }}
               alt="Nhà thuốc Phước Thiện"
               className="mr-2 h-8 object-contain"
             />
@@ -36,7 +37,10 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
               <Typography.Text className="m-0 -mb-2 inline-block text-base font-normal text-white">
                 Nhà thuốc
               </Typography.Text>
-              <Typography.Text strong className="uppercase text-white">
+              <Typography.Text
+                strong
+                className="whitespace-nowrap uppercase text-white"
+              >
                 Phước Thiện
               </Typography.Text>
             </Space>
