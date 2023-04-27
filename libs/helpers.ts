@@ -60,3 +60,10 @@ export function convertStringToASCII(string: string) {
     .replace(/[ùúủũụưừứửữự]/g, 'u')
     .replace(/[ỳýỷỹỵ]/g, 'y');
 }
+
+export function getVisibleItems<T extends { visible?: boolean }>(array: T[]) {
+  return array.filter(
+    // filter out all items has visible === false
+    (item) => !(typeof item?.visible === 'boolean' && !item?.visible)
+  );
+}
