@@ -28,6 +28,8 @@ export class OrderClient extends BaseClient {
       productKey: string;
       quantity: number;
       note: string;
+      keyPromo?: string;
+      keyPromoPercent?: string;
     }[];
     offerCode?: string;
     orderNote?: string;
