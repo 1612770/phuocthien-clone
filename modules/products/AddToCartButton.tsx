@@ -3,13 +3,29 @@ import Product from '@configs/models/product.model';
 import { Minus, Plus } from 'react-feather';
 import React from 'react';
 import { useCart } from '@providers/CartProvider';
+import { PromotionPercent } from '@configs/models/promotion.model';
+
+const putPromotionIntoNonPromotionProduct = (
+  product: Product,
+  promotionPercent?: PromotionPercent
+): Product => {
+  if (!product.promotions && promotionPercent) {
+    return {
+      ...product,
+      promotions: [promotionPercent],
+    };
+  }
+  return product;
+};
 
 function AddToCartButton({
   product,
   className,
+  promotionPercent,
 }: {
   product: Product;
   className?: string;
+  promotionPercent?: PromotionPercent;
 }) {
   const { addToCart, cartProducts, removeFromCart } = useCart();
 
@@ -30,7 +46,10 @@ function AddToCartButton({
                 e.preventDefault();
                 if ((productIncart?.quantity || 0) > 1) {
                   addToCart({
-                    product,
+                    product: putPromotionIntoNonPromotionProduct(
+                      product,
+                      promotionPercent
+                    ),
                     quantity: (productIncart?.quantity || 1) - 1,
                   });
                 }
@@ -42,7 +61,10 @@ function AddToCartButton({
               onChange={(e) => {
                 e.preventDefault;
                 addToCart({
-                  product,
+                  product: putPromotionIntoNonPromotionProduct(
+                    product,
+                    promotionPercent
+                  ),
                   quantity: +e.target.value,
                 });
               }}
@@ -59,7 +81,10 @@ function AddToCartButton({
               onClick={(e) => {
                 e.preventDefault;
                 addToCart({
-                  product,
+                  product: putPromotionIntoNonPromotionProduct(
+                    product,
+                    promotionPercent
+                  ),
                   quantity: (productIncart?.quantity || 1) + 1,
                 });
               }}
@@ -74,7 +99,13 @@ function AddToCartButton({
           type="primary"
           onClick={(e) => {
             e.preventDefault();
-            addToCart({ product, quantity: 1 });
+            addToCart({
+              product: putPromotionIntoNonPromotionProduct(
+                product,
+                promotionPercent
+              ),
+              quantity: 1,
+            });
           }}
         >
           Chọn mua

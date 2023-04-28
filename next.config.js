@@ -19,7 +19,7 @@ const nextConfig = withBundleAnalyzer({
     NEXT_PUBLIC_REGEX_PHONE: process.env.NEXT_PUBLIC_REGEX_PHONE,
   },
   images: {
-    domains: [`${process.env.HOST_IMAGE}`],
+    domains: [`${process.env.HOST_IMAGE}`, 'pt-storage.hn.ss.bfcplatform.vn'],
   },
 
   rewrites() {

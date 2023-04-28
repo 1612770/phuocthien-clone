@@ -22,14 +22,14 @@ import OfferUtils from '@libs/utils/offer.utils';
 import QRApp from '@modules/products/QRApp';
 import PromotionList from '@modules/products/PromotionList';
 import PriceUnit from '@modules/products/PriceUnit';
-import { Promotion } from '@configs/models/promotion.model';
+import { PromotionPercent } from '@configs/models/promotion.model';
 import { useCart } from '@providers/CartProvider';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import ProductMetaData from '@modules/products/ProductMetaData';
 
-const getMaxDiscount = (promotions: Promotion[]): number => {
+const getMaxDiscount = (promotionPercents: PromotionPercent[]): number => {
   let maxDiscount = 0;
-  promotions.forEach((promotion) => {
+  promotionPercents.forEach((promotion) => {
     if (promotion.val > maxDiscount) {
       maxDiscount = promotion.val;
     }
@@ -38,12 +38,12 @@ const getMaxDiscount = (promotions: Promotion[]): number => {
 };
 
 const getNextPromotion = (
-  promotions: Promotion[],
+  promotionPercents: PromotionPercent[],
   currentQuantity: number
-): Promotion | undefined => {
-  let nextPromo: Promotion | undefined = undefined;
+): PromotionPercent | undefined => {
+  let nextPromo: PromotionPercent | undefined = undefined;
 
-  promotions.forEach((promotion) => {
+  promotionPercents.forEach((promotion) => {
     if (promotion.productQuantityMinCondition > currentQuantity) {
       nextPromo = promotion;
     }
@@ -53,10 +53,10 @@ const getNextPromotion = (
 };
 
 const getInstruction = (
-  promotions: Promotion[],
+  promotionPercents: PromotionPercent[],
   currentQuantity: number
 ): string => {
-  const nextPromo = getNextPromotion(promotions, currentQuantity);
+  const nextPromo = getNextPromotion(promotionPercents, currentQuantity);
 
   if (!nextPromo) return '';
   return `Mua ${currentQuantity ? 'thêm' : 'ít nhất'} ${
@@ -163,12 +163,12 @@ const ProductPage: NextPageWithLayout<{
             <ProductBonusSection offers={offers} />
 
             <div className="relative flex w-full flex-col flex-wrap gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg md:flex-nowrap lg:gap-2">
-              {product.detail?.isSaleOff && (
+              {maxDisCount > 0 && (
                 <Tag
                   color={COLORS.red}
                   className="absolute -top-[8px] -left-[8px]"
                 >
-                  Giảm giá
+                  Giảm {maxDisCount * 100}%
                 </Tag>
               )}
 
@@ -198,7 +198,7 @@ const ProductPage: NextPageWithLayout<{
               </div>
               {!!product.promotions?.length && (
                 <PromotionList
-                  promotions={product.promotions || []}
+                  promotionPercents={product.promotions || []}
                   retailPrice={product.retailPrice}
                 />
               )}
@@ -208,7 +208,7 @@ const ProductPage: NextPageWithLayout<{
           {product && <ProductMetaData product={product} />}
         </div>
 
-        <div className="w-full ">
+        <div className="w-full lg:col-span-2 xl:col-span-1">
           <div className=" rounded-lg border border-solid  border-gray-200">
             <Typography.Title
               level={5}

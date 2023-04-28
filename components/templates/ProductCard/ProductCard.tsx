@@ -7,12 +7,27 @@ import ImageUtils from '@libs/utils/image.utils';
 import COLORS from '@configs/colors';
 import AddToCartButton from '@modules/products/AddToCartButton';
 import UrlUtils from '@libs/utils/url.utils';
+import CurrencyUtils from '@libs/utils/currency.utils';
+import { PromotionPercent } from '@configs/models/promotion.model';
+import { GiftFilled } from '@ant-design/icons';
 
 type ProductCardProps = {
   product: Product;
   className?: string;
   size?: 'small' | 'default';
   variant?: 'card' | 'list';
+  promotionPercent?: PromotionPercent;
+  showMinQuantity?: boolean;
+};
+
+const getMaxDiscount = (promotionPercents: PromotionPercent[]): number => {
+  let maxDiscount = 0;
+  promotionPercents.forEach((promotionPercent) => {
+    if (promotionPercent.val > maxDiscount) {
+      maxDiscount = promotionPercent.val;
+    }
+  });
+  return maxDiscount;
 };
 
 function ProductCard({
@@ -20,15 +35,39 @@ function ProductCard({
   className,
   size = 'default',
   variant = 'card',
+  promotionPercent,
+  showMinQuantity = false,
 }: ProductCardProps) {
+  const productDiscountVal =
+    promotionPercent?.val || getMaxDiscount(product?.promotions || []) || 0;
+
+  const displayName = product?.detail?.displayName || product.name;
+  const price = CurrencyUtils.format(product?.retailPrice);
+  const priceWithDiscount = CurrencyUtils.formatWithDiscount(
+    product?.retailPrice,
+    productDiscountVal
+  );
+
+  const isDiscount = productDiscountVal > 0;
+
   const href = `/san-pham/chi-tiet/${UrlUtils.generateSlug(
-    product?.detail?.displayName,
+    displayName,
     product?.key
   )}`;
 
+  const disCountText = showMinQuantity ? (
+    <>
+      <GiftFilled />
+      &nbsp;Mua {promotionPercent?.productQuantityMinCondition || 1} giảm{' '}
+      {productDiscountVal * 100}%
+    </>
+  ) : (
+    `Giảm ${productDiscountVal * 100}%`
+  );
+
   return (
     <Link href={href}>
-      <a className="group inline-block w-full">
+      <a className={`group block w-full ${className}`}>
         {variant === 'card' && (
           <Card
             cover={
@@ -38,30 +77,32 @@ function ProductCard({
                 } w-full bg-white transition-transform duration-300 group-hover:scale-110`}
               >
                 <ImageWithFallback
-                  alt={product?.detail?.displayName || ''}
+                  alt={displayName || ''}
                   src={product?.detail?.image || ''}
                   layout="fill"
                   objectFit="contain"
                   loading="lazy"
-                  getMockImage={() => ImageUtils.getRandomMockProductImageUrl()}
                 />
               </div>
             }
             bodyStyle={{
               padding: '12px',
             }}
-            className={`${className} relative overflow-hidden transition duration-300 group-hover:border-primary-light`}
+            className={`relative overflow-hidden transition duration-300 group-hover:border-primary-light`}
           >
-            {product.detail?.isSaleOff && (
-              <Tag color={COLORS.red} className="absolute top-[8px] left-[8px]">
-                Giảm giá
+            {isDiscount && (
+              <Tag
+                color={COLORS.red}
+                className="absolute top-[8px] left-[8px] rounded-full"
+              >
+                {disCountText}
               </Tag>
             )}
 
             {product?.unit && (
               <Tag
                 color="blue"
-                className="absolute top-[8px] right-[8px] mr-0 capitalize"
+                className="absolute top-[8px] right-[8px] mr-0 rounded-full capitalize"
               >
                 {product?.unit}
               </Tag>
@@ -69,33 +110,38 @@ function ProductCard({
 
             <div className="relative flex flex-col">
               <Space direction="vertical" size={0}>
-                <Typography.Text
-                  title={product?.detail?.displayName}
-                  className={`two-line-text mt-1 ${
-                    size !== 'small' ? 'h-[48px]' : 'h-[68px]'
-                  }`}
-                >
-                  {product?.detail?.displayName}
-                </Typography.Text>
-                <Typography.Text className="mt-1 block">
-                  <Typography.Text className="text-base font-semibold text-primary-dark">
-                    {product?.retailPrice?.toLocaleString('it-IT', {
-                      style: 'currency',
-                      currency: 'VND',
-                    })}
+                <div className="h-[90px] flex-1">
+                  <Typography.Text
+                    title={displayName}
+                    className={`two-line-text mt-1 ${
+                      size !== 'small' ? 'h-[48px]' : 'h-[68px]'
+                    }`}
+                  >
+                    {displayName}
                   </Typography.Text>
-                  {product?.unit && (
-                    <Typography.Text className="text-base">
-                      &nbsp;/&nbsp;{product?.unit}
+                  <Typography.Text className="mt-1 block">
+                    <Typography.Text className="text-base font-semibold text-primary-dark">
+                      {priceWithDiscount !== price ? priceWithDiscount : price}
+                    </Typography.Text>
+                    {product?.unit && (
+                      <Typography.Text className="text-base">
+                        &nbsp;/&nbsp;{product?.unit}
+                      </Typography.Text>
+                    )}
+                  </Typography.Text>
+                  {priceWithDiscount !== price && (
+                    <Typography.Text className="text-gray line-through">
+                      {price}
                     </Typography.Text>
                   )}
-                </Typography.Text>
+                </div>
 
                 {size !== 'small' && (
                   <div className="mt-2">
                     <AddToCartButton
                       className="w-full border border-solid border-gray-200 bg-white text-black shadow-none transition duration-300 group-hover:border-primary-light group-hover:bg-primary-light group-hover:text-white"
                       product={product}
+                      promotionPercent={promotionPercent}
                     />
                   </div>
                 )}
@@ -114,40 +160,32 @@ function ProductCard({
               } overflow-hidden rounded-lg border border-solid border-gray-200 bg-gray-100`}
             >
               <ImageWithFallback
-                alt={product?.detail?.displayName || ''}
+                alt={displayName || ''}
                 src={product?.detail?.image || ''}
                 layout="fill"
                 objectFit="cover"
                 loading="lazy"
                 getMockImage={() => ImageUtils.getRandomMockProductImageUrl()}
               />
-              {product.detail?.isSaleOff && (
+              {isDiscount && (
                 <Tag
                   color={COLORS.red}
                   className="absolute top-0 left-0 rounded-tr-none rounded-bl-none rounded-br-none"
-                >
-                  Giảm giá
-                </Tag>
+                ></Tag>
               )}
             </div>
             <div className="ml-4">
               <div className="relative flex flex-col">
                 <Space direction="vertical" size={0}>
-                  <Typography.Text
-                    className={`mt-1 block`}
-                    title={product?.detail?.displayName}
-                  >
-                    {product?.detail?.displayName}
+                  <Typography.Text className={`mt-1 block`} title={displayName}>
+                    {displayName}
                   </Typography.Text>
                   <Tag className="mt-1 border-none bg-primary-background">
                     {product?.productGroup?.name}
                   </Tag>
                   <Typography.Text className="mt-1 block">
                     <Typography.Text className="text-base font-semibold text-primary-dark">
-                      {product?.retailPrice?.toLocaleString('it-IT', {
-                        style: 'currency',
-                        currency: 'VND',
-                      })}
+                      {priceWithDiscount !== price ? priceWithDiscount : price}
                     </Typography.Text>
                     {product?.unit && (
                       <Typography.Text className="text-base">
@@ -155,6 +193,11 @@ function ProductCard({
                       </Typography.Text>
                     )}
                   </Typography.Text>
+                  {priceWithDiscount !== price && (
+                    <Typography.Text className="text-gray line-through">
+                      {price}
+                    </Typography.Text>
+                  )}
                 </Space>
               </div>
             </div>

@@ -1,9 +1,7 @@
 import { Button, Input, Space, Typography } from 'antd';
-import { Minus, Plus, X } from 'react-feather';
 import Product from '@configs/models/product.model';
 import { useCart } from '@providers/CartProvider';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
-import ImageUtils from '@libs/utils/image.utils';
 import { useEffect, useRef, useState } from 'react';
 import CartProductItemNoteInput from './CartProductItemNoteInput';
 import { useCheckout } from '@providers/CheckoutProvider';
@@ -11,6 +9,9 @@ import { ProductClient } from '@libs/client/Product';
 import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
 import Link from 'next/link';
 import UrlUtils from '@libs/utils/url.utils';
+import CurrencyUtils from '@libs/utils/currency.utils';
+import CartProductItemCollapse from './CartProductItemCollapse';
+import { CloseOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
 function CartProductItem({
   cartProduct,
@@ -110,16 +111,28 @@ function CartProductItem({
     setQuantity(cartProduct.quantity);
   }, [cartProduct]);
 
+  const productPromotionPercent = cartProduct.product?.promotions?.[0];
+  const displayName =
+    cartProduct.product?.detail?.displayName || cartProduct.product.name;
+  const price = CurrencyUtils.format(cartProduct.product?.retailPrice);
+  const priceWithDiscount = CurrencyUtils.formatWithDiscount(
+    cartProduct.product?.retailPrice,
+    productPromotionPercent?.val
+  );
+
+  const isDiscount =
+    (cartProduct.quantity >=
+      (productPromotionPercent?.productQuantityMinCondition || 0) &&
+      productPromotionPercent?.val) ||
+    0 > 0;
+
   return (
-    <div className="my-4 flex justify-between ">
+    <div className="group -mx-4 flex select-none justify-between py-4 px-4 transition-all duration-200 ease-in-out hover:bg-stone-50">
       <div className="mr-4 flex flex-col items-center ">
         <div className="relative flex h-[60px] w-[60px] flex-col">
           <ImageWithFallback
             src={cartProduct.product.detail?.image || ''}
             alt="product image"
-            getMockImage={() => {
-              return ImageUtils.getRandomMockProductImageUrl();
-            }}
             layout="fill"
           />
         </div>
@@ -128,35 +141,36 @@ function CartProductItem({
           size="small"
           type="ghost"
           className="mt-2 inline-block bg-gray-200 px-2 py-0 text-xs "
-          icon={<X size={14} className=" align-text-top" />}
+          icon={<CloseOutlined className="" />}
         >
-          &nbsp;Xóa
+          Xóa
         </Button>
       </div>
       <div className="flex flex-grow flex-wrap gap-2">
         <div className="flex flex-grow basis-[300px] flex-col items-start">
           <Link
             href={`/san-pham/chi-tiet/${UrlUtils.generateSlug(
-              cartProduct.product.detail?.displayName,
+              displayName,
               cartProduct.product.key
             )}`}
           >
             <a>
-              <Typography.Text className="mt-2">
-                {cartProduct.product.detail?.displayName}
-              </Typography.Text>
+              <Typography.Text className="mt-2">{displayName}</Typography.Text>
             </a>
           </Link>
 
           <CartProductItemNoteInput cartProduct={cartProduct} />
+
+          {(cartProduct.product.promotions?.length || 0) > 0 && (
+            <CartProductItemCollapse
+              promotionPercents={cartProduct.product.promotions || []}
+            />
+          )}
         </div>
         <div className="meta flex flex-col">
           <Typography.Text className="text-right">
             <Typography.Text className="text-sm font-semibold">
-              {cartProduct.product.retailPrice?.toLocaleString('it-IT', {
-                style: 'currency',
-                currency: 'VND',
-              })}
+              {isDiscount ? priceWithDiscount : price}
             </Typography.Text>
 
             {cartProduct.product.unit && (
@@ -165,10 +179,15 @@ function CartProductItem({
               </Typography.Text>
             )}
           </Typography.Text>
+          {isDiscount && (
+            <Typography.Text className="text-right text-xs font-semibold text-gray-500 line-through">
+              {price}
+            </Typography.Text>
+          )}
 
           <Space size={4} className="mt-1 md:ml-auto md:mr-0">
             <Button
-              icon={<Minus size={20} />}
+              icon={<MinusOutlined />}
               disabled={cartProduct.quantity <= 1}
               onClick={() => {
                 if (cartProduct.quantity > 1) {
@@ -196,7 +215,7 @@ function CartProductItem({
               }}
             ></Input>
             <Button
-              icon={<Plus size={20} />}
+              icon={<PlusOutlined />}
               onClick={() => {
                 quantityInputRef.current = cartProduct.quantity;
                 processWhenChangeQuantity(cartProduct.quantity + 1);

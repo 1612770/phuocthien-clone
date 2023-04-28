@@ -16,7 +16,7 @@ function DrugstoreItem({
     <Link href={`/nha-thuoc/${drugstore.key}`}>
       <a>
         {variant === 'list-item' && (
-          <List.Item className="py-4 px-4 hover:bg-gray-100">
+          <List.Item className="py-3 px-4 transition duration-200 ease-in-out hover:bg-gray-100">
             <div className="flex items-start">
               <ImageWithFallback
                 src={drugstore.image || ''}
@@ -44,7 +44,7 @@ function DrugstoreItem({
         )}
 
         {variant === 'card' && (
-          <div className="h-full rounded-lg border border-solid border-gray-200 bg-white p-4 transition ease-in-out hover:border-primary-light hover:bg-gray-100">
+          <div className="h-full rounded-lg border border-solid border-gray-200 bg-white p-4 transition duration-200 ease-in-out hover:border-primary-light hover:bg-gray-100">
             <div className="flex items-start">
               <ImageWithFallback
                 src={drugstore.image || ''}

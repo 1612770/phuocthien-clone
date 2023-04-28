@@ -1,9 +1,9 @@
 import { Button, Form, Input, Modal, Typography } from 'antd';
-import { Edit } from 'react-feather';
 import Product from '@configs/models/product.model';
 import { useCart } from '@providers/CartProvider';
 import { useEffect, useRef, useState } from 'react';
 import { TextAreaRef } from 'antd/es/input/TextArea';
+import { EditOutlined } from '@ant-design/icons';
 
 function CartProductItemNoteInput({
   cartProduct,
@@ -39,9 +39,7 @@ function CartProductItemNoteInput({
         }}
       >
         <div className="flex">
-          <div className="h-[14px] w-[14px]">
-            <Edit size={14} className="" />
-          </div>
+          <EditOutlined />
           <Typography.Text
             className={`${
               cartProduct.note ? 'text-black-100' : 'text-gray-500'

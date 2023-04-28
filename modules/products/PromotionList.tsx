@@ -1,15 +1,15 @@
 import { PercentageOutlined, TagOutlined } from '@ant-design/icons';
-import { Promotion } from '@configs/models/promotion.model';
+import { PromotionPercent } from '@configs/models/promotion.model';
 import CurrencyUtils from '@libs/utils/currency.utils';
 import TimeUtils from '@libs/utils/time.utils';
 import { Typography } from 'antd';
 import React from 'react';
 
 function PromotionList({
-  promotions,
+  promotionPercents,
   retailPrice,
 }: {
-  promotions: Promotion[];
+  promotionPercents: PromotionPercent[];
   retailPrice?: number;
 }) {
   return (
@@ -22,7 +22,7 @@ function PromotionList({
       </div>
 
       <div className="py-1">
-        {promotions.map((promotion) => (
+        {promotionPercents.map((promotion) => (
           <div
             key={promotion.promotionKey}
             className="my-2 flex items-center gap-2 px-4"
