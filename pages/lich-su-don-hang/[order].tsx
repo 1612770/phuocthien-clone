@@ -15,10 +15,10 @@ import OrderModel from '@configs/models/order.model';
 import { OrderClient } from '@libs/client/Order';
 import UserLayout from '@components/layouts/UserLayout';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
-import ImageUtils from '@libs/utils/image.utils';
 import TimeUtils from '@libs/utils/time.utils';
 import OrderStatusUtils from '@libs/utils/order-status.utils';
 import LinkWrapper from '@components/templates/LinkWrapper';
+import CurrencyUtils from '@libs/utils/currency.utils';
 
 const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
   return (
@@ -127,74 +127,103 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
           </div>
 
           <div className="divide-y divide-x-0 divide-solid divide-gray-200">
-            {order?.details?.map((detail) => (
-              <LinkWrapper
-                href={`/san-pham/chi-tiet/${detail.productKey}`}
-                key={detail.key}
-              >
-                <div
-                  className={`flex flex-col justify-start px-4 py-4 transition-all duration-200 ease-in-out hover:bg-gray-100 sm:flex-row sm:justify-between`}
+            {order?.details?.map((detail) => {
+              const discountVal = +(detail.promoInfo?.split('#').pop() || 0);
+
+              return (
+                <LinkWrapper
+                  href={`/san-pham/chi-tiet/${detail.productKey}`}
+                  key={detail.key}
                 >
-                  <div className="mr-4 flex flex-col items-start sm:items-center">
-                    <div className="relative flex h-[60px] w-[60px] flex-col">
-                      <ImageWithFallback
-                        src={detail.imageUrl || ''}
-                        alt="product image"
-                        getMockImage={() => {
-                          return ImageUtils.getRandomMockProductImageUrl();
-                        }}
-                        layout="fill"
-                      />
+                  <div
+                    className={`flex flex-col justify-start px-4 py-4 transition-all duration-200 ease-in-out hover:bg-gray-100 sm:flex-row sm:justify-between`}
+                  >
+                    <div className="mr-4 flex flex-col items-start sm:items-center">
+                      <div className="relative flex h-[60px] w-[60px] flex-col">
+                        <ImageWithFallback
+                          src={detail.imageUrl || ''}
+                          alt="product image"
+                          layout="fill"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex flex-grow flex-wrap gap-2">
-                    <div className="flex flex-grow basis-[300px] flex-col items-start">
-                      <Typography.Text className="font-medium">
-                        {detail.productName}
-                      </Typography.Text>
-
-                      {detail.note && (
-                        <Typography.Text className="text-sm text-gray-600">
-                          {detail.note}
+                    <div className="flex flex-grow flex-wrap gap-2">
+                      <div className="flex flex-grow basis-[300px] flex-col items-start">
+                        <Typography.Text className="font-medium">
+                          {detail.productName}
                         </Typography.Text>
-                      )}
 
-                      <Typography.Text className="text-sm text-gray-500">
-                        Số lượng:&nbsp;&nbsp;
-                        <Typography.Text className="">
-                          {detail.quantity} {detail.unit}
-                        </Typography.Text>
-                      </Typography.Text>
-                    </div>
-
-                    <div className="meta flex flex-col">
-                      <Typography.Text className="text-right">
-                        <Typography.Text className="text-sm">
-                          {detail.price?.toLocaleString('it-IT', {
-                            style: 'currency',
-                            currency: 'VND',
-                          })}
-                        </Typography.Text>
-                        {detail.unit && (
-                          <Typography.Text className="text-sm">
-                            &nbsp;/&nbsp;{detail.unit}
+                        {detail.note && (
+                          <Typography.Text className="text-sm text-gray-600">
+                            {detail.note}
                           </Typography.Text>
                         )}
-                      </Typography.Text>
-                      <Typography.Text className="text-sm text-gray-500">
-                        Tạm tính:&nbsp;&nbsp;
-                        <Typography.Text className="">
-                          {detail.totalAmount?.toLocaleString('it-IT', {
-                            style: 'currency',
-                            currency: 'VND',
-                          })}
+
+                        <Typography.Text className="text-sm text-gray-500">
+                          Số lượng:&nbsp;&nbsp;
+                          <Typography.Text className="">
+                            {detail.quantity} {detail.unit}
+                          </Typography.Text>
                         </Typography.Text>
-                      </Typography.Text>
+
+                        {discountVal > 0 && (
+                          <Tag className="rounded-full bg-red-500 text-white shadow-none">
+                            Giảm {discountVal * 100}%
+                          </Tag>
+                        )}
+                      </div>
+
+                      <div className="meta flex flex-col">
+                        {discountVal > 0 && (
+                          <>
+                            <Typography.Text className="text-right text-gray-400 line-through">
+                              <Typography.Text className="text-sm text-inherit">
+                                {CurrencyUtils.format(detail.price)}
+                              </Typography.Text>
+                              {detail.unit && (
+                                <Typography.Text className="text-sm text-inherit">
+                                  &nbsp;/&nbsp;{detail.unit}
+                                </Typography.Text>
+                              )}
+                            </Typography.Text>
+                            <Typography.Text className="text-sm text-gray-400">
+                              <Typography.Text className="mr-2 font-medium text-inherit">
+                                Tạm tính
+                              </Typography.Text>
+                              <Typography.Text className="inline-block min-w-[80px] text-right text-inherit line-through">
+                                {CurrencyUtils.format(detail.sumOrder)}
+                              </Typography.Text>
+                            </Typography.Text>
+                          </>
+                        )}
+
+                        <Typography.Text className="text-right">
+                          <Typography.Text className="text-sm">
+                            {CurrencyUtils.formatWithDiscount(
+                              detail.price,
+                              discountVal
+                            )}
+                          </Typography.Text>
+                          {detail.unit && (
+                            <Typography.Text className="text-sm">
+                              &nbsp;/&nbsp;{detail.unit}
+                            </Typography.Text>
+                          )}
+                        </Typography.Text>
+                        <Typography.Text className="text-sm text-gray-500">
+                          <Typography.Text className="mr-2 font-medium">
+                            Tổng tiền
+                          </Typography.Text>
+                          <Typography.Text className="inline-block min-w-[80px] text-right">
+                            {CurrencyUtils.format(detail.totalAmount)}
+                          </Typography.Text>
+                        </Typography.Text>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </LinkWrapper>
-            ))}
+                </LinkWrapper>
+              );
+            })}
           </div>
         </div>
         <div className="mr-0 ml-auto w-full px-0 py-4 md:w-[400px] md:px-2">
@@ -229,10 +258,7 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
               Tổng tiền
             </Typography.Text>
             <Typography.Text className="m-0 text-3xl font-bold text-primary">
-              {order?.totalAmount?.toLocaleString('it-IT', {
-                style: 'currency',
-                currency: 'VND',
-              })}
+              {CurrencyUtils.format(order?.totalAmount)}
             </Typography.Text>
           </div>
         </div>
