@@ -58,7 +58,6 @@ export interface CampaignPromotion {
   status: string;
   type: string;
   updatedAt: string;
-  products: Product[];
 }
 
 export interface CampaignpromotionPercent {

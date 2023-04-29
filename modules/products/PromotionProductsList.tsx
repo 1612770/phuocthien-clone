@@ -14,10 +14,12 @@ import { Button } from 'antd';
 function PromotionProductsList({
   promotion,
   id,
+  defaultProducts,
   isPrimaryBackground,
   scrollable,
 }: {
   promotion?: CampaignPromotion;
+  defaultProducts: Product[];
   id?: string;
   isPrimaryBackground?: boolean;
   scrollable?: boolean;
@@ -29,8 +31,8 @@ function PromotionProductsList({
   const { toastError } = useAppMessage();
 
   useEffect(() => {
-    setPromotionProducts(promotion?.products || []);
-  }, [promotion]);
+    setPromotionProducts(defaultProducts || []);
+  }, [defaultProducts]);
 
   const loadMore = async () => {
     if (loadingMore || !promotion) return;

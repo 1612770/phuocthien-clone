@@ -4,7 +4,7 @@ import ImageWithFallback from '@components/templates/ImageWithFallback';
 import { Typography } from 'antd';
 import Product from '@configs/models/product.model';
 import { PromotionClient } from '@libs/client/Promotion';
-import { Campaign } from '@configs/models/promotion.model';
+import { Campaign, CampaignPromotion } from '@configs/models/promotion.model';
 import { GetServerSidePropsContext } from 'next';
 import PromotionProductsList from '@modules/products/PromotionProductsList';
 import { useRouter } from 'next/router';
@@ -16,17 +16,9 @@ const getPromotionId = (id: string) => {
 
 const Home: NextPageWithLayout<{
   campaign: Campaign;
-  products: Product[];
-}> = ({ campaign }) => {
+  listProducts: Product[][];
+}> = ({ campaign, listProducts }) => {
   const router = useRouter();
-
-  useEffect(() => {
-    scrollIntoView(router.query.anchor as string);
-  }, [router]);
-
-  if (!campaign) return null;
-
-  const promotions = campaign.promotions;
 
   const scrollIntoView = (id: string) => {
     const element = document.getElementById(getPromotionId(id));
@@ -40,6 +32,14 @@ const Home: NextPageWithLayout<{
       });
     }
   };
+
+  useEffect(() => {
+    scrollIntoView(router.query.anchor as string);
+  }, [router]);
+
+  if (!campaign) return null;
+
+  const promotions = campaign.promotions;
 
   return (
     <div className="pb-0 lg:pb-8">
@@ -69,14 +69,24 @@ const Home: NextPageWithLayout<{
         </div>
       </div>
 
-      {promotions.map((promotion, index) => (
-        <PromotionProductsList
-          id={getPromotionId(promotion.key)}
-          promotion={promotion}
-          isPrimaryBackground={index === 0}
-          key={index}
-        />
-      ))}
+      {listProducts?.map((listProduct, index) => {
+        if (!listProducts.length) return null;
+        const keyPromo = listProduct[0].keyPromo;
+        const promotion = promotions.find(
+          (promotion) => promotion.key === keyPromo
+        );
+        if (!promotion) return null;
+
+        return (
+          <PromotionProductsList
+            id={getPromotionId(promotion.key)}
+            promotion={promotion}
+            isPrimaryBackground={index === 0}
+            key={index}
+            defaultProducts={listProduct}
+          />
+        );
+      })}
     </div>
   );
 };
@@ -93,11 +103,11 @@ export const getServerSideProps = async (
   const serverSideProps: {
     props: {
       campaign?: Campaign;
-      promoProductsLists: Product[];
+      listProducts?: Product[][];
     };
   } = {
     props: {
-      promoProductsLists: [],
+      listProducts: [],
     },
   };
 
@@ -121,6 +131,24 @@ export const getServerSideProps = async (
       }
 
       serverSideProps.props.campaign = campaigns.value.data[0];
+
+      const promotions = campaigns.value.data.reduce((acc, curCampaign) => {
+        return [...acc, ...curCampaign.promotions];
+      }, [] as CampaignPromotion[]);
+
+      const listProducts = await Promise.all(
+        promotions.map((promotion) =>
+          promotionClient.getPromoProducts({
+            page: 1,
+            pageSize: 20,
+            keyPromo: promotion.key,
+          })
+        )
+      );
+
+      serverSideProps.props.listProducts = listProducts.map(
+        (listProducts) => listProducts.data
+      ) as Product[][];
     }
   } catch (error) {
     console.error(error);
