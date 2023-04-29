@@ -176,7 +176,10 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
       note: cartProduct.note || '',
     };
 
-    if (promotionPercent) {
+    if (
+      promotionPercent &&
+      cartProduct.quantity >= promotionPercent.productQuantityMinCondition
+    ) {
       res.keyPromo = promotionPercent.promotionKey;
       res.keyPromoPercent = promotionPercent.key;
     }
