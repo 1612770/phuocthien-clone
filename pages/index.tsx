@@ -15,9 +15,10 @@ import ProductSearchKeyword from '@configs/models/product-search-keyword.model';
 import { useEffect } from 'react';
 import MainInfoModel from '@configs/models/main-info.model';
 import { PromotionClient } from '@libs/client/Promotion';
-import { Campaign } from '@configs/models/promotion.model';
+import { Campaign, CampaignPromotion } from '@configs/models/promotion.model';
 import { getVisibleItems } from '@libs/helpers';
 import { Grid } from 'antd';
+import Product from '@configs/models/product.model';
 
 const { useBreakpoint } = Grid;
 
@@ -42,17 +43,16 @@ const Home: NextPageWithLayout<{
   productSearchKeywords?: ProductSearchKeyword[];
   mainInfos?: MainInfoModel[];
   campaigns?: Campaign[];
-  campaignsDetail: Campaign[];
+  listProducts?: Product[][];
 }> = ({
   viralProductsLists,
   slideBanner,
   productSearchKeywords,
   mainInfos,
   campaigns,
-  campaignsDetail,
+  listProducts,
 }) => {
   const { focusContent, setProductSearchKeywords } = useAppData();
-
   const sliderImages =
     campaigns?.map((campaign) => ({
       url: campaign.imgUrl,
@@ -61,6 +61,9 @@ const Home: NextPageWithLayout<{
   const visibleSlides = getVisibleItems(slideBanner || []).map((slide) => ({
     url: (slide.imageUrl as string) || '',
   }));
+  const promotions = (campaigns || []).reduce((acc, curCampaign) => {
+    return [...acc, ...curCampaign.promotions];
+  }, [] as CampaignPromotion[]);
 
   useEffect(() => {
     setProductSearchKeywords(productSearchKeywords || []);
@@ -104,17 +107,23 @@ const Home: NextPageWithLayout<{
         <FocusContentSection focusContent={focusContent || []} />
       </div>
 
-      {campaignsDetail.map((campaign) => {
-        return campaign.promotions.map((promotion, index) => {
-          return (
-            <PromotionProductsList
-              key={promotion.key}
-              promotion={promotion}
-              isPrimaryBackground={index === 0}
-              scrollable={!screens.md}
-            />
-          );
-        });
+      {listProducts?.map((listProduct, index) => {
+        if (!listProducts.length) return null;
+        const keyPromo = listProduct[0].keyPromo;
+        const promotion = promotions.find(
+          (promotion) => promotion.key === keyPromo
+        );
+        if (!promotion) return null;
+
+        return (
+          <PromotionProductsList
+            key={promotion.key}
+            promotion={promotion}
+            isPrimaryBackground={index === 0}
+            scrollable={!screens.md}
+            defaultProducts={listProduct}
+          />
+        );
       })}
 
       {viralProductsLists?.map((viralProductsList, index) => (
@@ -148,7 +157,7 @@ export const getServerSideProps = async (
       productSearchKeywords: ProductSearchKeyword[];
       mainInfos: MainInfoModel[];
       campaigns: Campaign[];
-      campaignsDetail: Campaign[];
+      listProducts?: Product[][];
     };
   } = {
     props: {
@@ -157,7 +166,7 @@ export const getServerSideProps = async (
       productSearchKeywords: [],
       mainInfos: [],
       campaigns: [],
-      campaignsDetail: [],
+      listProducts: [],
     },
   };
 
@@ -220,20 +229,23 @@ export const getServerSideProps = async (
     if (campaigns.status === 'fulfilled' && campaigns.value.data) {
       serverSideProps.props.campaigns = campaigns.value.data;
 
-      const campaignsDetail = await Promise.all(
-        campaigns.value.data.map((campaign) =>
-          promotionClient.getPromo({
+      const promotions = campaigns.value.data.reduce((acc, curCampaign) => {
+        return [...acc, ...curCampaign.promotions];
+      }, [] as CampaignPromotion[]);
+
+      const listProducts = await Promise.all(
+        promotions.map((promotion) =>
+          promotionClient.getPromoProducts({
             page: 1,
             pageSize: 20,
-            keyCampaign: campaign.key,
+            keyPromo: promotion.key,
           })
         )
       );
 
-      serverSideProps.props.campaignsDetail = campaignsDetail.map(
-        (campaignDetail) =>
-          campaignDetail.data?.length ? campaignDetail.data?.[0] : null
-      ) as Campaign[];
+      serverSideProps.props.listProducts = listProducts.map(
+        (listProducts) => listProducts.data
+      ) as Product[][];
     }
   } catch (error) {
     console.error(error);

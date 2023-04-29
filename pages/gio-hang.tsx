@@ -37,6 +37,7 @@ import AddressModel from '@configs/models/address.model';
 import { AuthClient } from '@libs/client/Auth';
 import { COOKIE_KEYS } from '@libs/helpers';
 import OfferUtils from '@libs/utils/offer.utils';
+import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
 
 const CartPage: NextPageWithLayout<{
   paymentMethods: PaymentMethodModel[];
@@ -55,6 +56,8 @@ const CartPage: NextPageWithLayout<{
     checkoutForm,
   } = useCheckout();
 
+  const { setConfirmData } = useAppConfirmDialog();
+
   const totalProducts = cartProducts.reduce(
     (total, cartProduct) => total + (Number(cartProduct.quantity) || 0),
     0
@@ -63,8 +66,12 @@ const CartPage: NextPageWithLayout<{
   const onCheckoutButtonClick = async () => {
     try {
       await checkoutForm?.validateFields();
-
-      checkout();
+      setConfirmData({
+        title: 'Xác nhận đặt hàng',
+        content:
+          'Bạn đã kiểm tra thông tin mua hàng của mình và xác nhận đặt hàng',
+        onOk: checkout,
+      });
     } catch (error) {
       setCheckoutError('Vui lòng kiểm tra lại thông tin');
 
