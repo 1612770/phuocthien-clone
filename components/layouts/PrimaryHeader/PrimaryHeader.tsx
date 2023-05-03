@@ -33,6 +33,7 @@ function PrimaryHeader() {
                 <img
                   src={IMAGES.logo}
                   alt="Nhà thuốc Phước Thiện"
+                  style={{ width: 42, height: 32 }}
                   className="mr-2 h-8 object-contain"
                 />
 
@@ -40,7 +41,10 @@ function PrimaryHeader() {
                   <Typography.Text className="m-0 -mb-2 inline-block text-base text-white">
                     Nhà thuốc
                   </Typography.Text>
-                  <Typography.Text strong className="uppercase text-white">
+                  <Typography.Text
+                    strong
+                    className="whitespace-nowrap uppercase text-white"
+                  >
                     Phước Thiện
                   </Typography.Text>
                 </Space>

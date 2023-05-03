@@ -11,6 +11,8 @@ type OrderDetailModel = Partial<{
   productName: string;
   unit: string;
   imageUrl: string;
+  sumOrder: number;
+  promoInfo: string;
 }>;
 
 export default OrderDetailModel;

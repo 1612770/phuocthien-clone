@@ -1,7 +1,7 @@
-import { Typography } from 'antd';
+import { QRCode, Typography } from 'antd';
 import React from 'react';
 import { QR_URL } from '@configs/env';
-import { QRCode } from 'react-qrcode-logo';
+// import { QRCode } from 'react-qrcode-logo';
 
 function QRApp() {
   return (
@@ -9,11 +9,11 @@ function QRApp() {
       <div className="mt-2 flex items-center gap-1 lg:gap-2">
         <div className="flex flex-col items-center">
           <QRCode
+            errorLevel="H"
             value={QR_URL}
-            logoImage="/logo.png"
-            size={96}
-            logoWidth={16}
-            logoHeight={14}
+            icon={'/logo.svg'}
+            iconSize={32}
+            size={128}
           />
           <Typography className=" mt-1 text-sm text-gray-500">
             Quét để tải app

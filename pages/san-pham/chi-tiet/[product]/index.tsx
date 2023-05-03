@@ -20,6 +20,49 @@ import DrugstoreItem from '@modules/drugstore/DrugstoreItem';
 import COLORS from '@configs/colors';
 import OfferUtils from '@libs/utils/offer.utils';
 import QRApp from '@modules/products/QRApp';
+import PromotionList from '@modules/products/PromotionList';
+import PriceUnit from '@modules/products/PriceUnit';
+import { PromotionPercent } from '@configs/models/promotion.model';
+import { useCart } from '@providers/CartProvider';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import ProductMetaData from '@modules/products/ProductMetaData';
+
+const getMaxDiscount = (promotionPercents: PromotionPercent[]): number => {
+  let maxDiscount = 0;
+  promotionPercents.forEach((promotion) => {
+    if (promotion.val > maxDiscount) {
+      maxDiscount = promotion.val;
+    }
+  });
+  return maxDiscount;
+};
+
+const getNextPromotion = (
+  promotionPercents: PromotionPercent[],
+  currentQuantity: number
+): PromotionPercent | undefined => {
+  let nextPromo: PromotionPercent | undefined = undefined;
+
+  promotionPercents.forEach((promotion) => {
+    if (promotion.productQuantityMinCondition > currentQuantity) {
+      nextPromo = promotion;
+    }
+  });
+
+  return nextPromo;
+};
+
+const getInstruction = (
+  promotionPercents: PromotionPercent[],
+  currentQuantity: number
+): string => {
+  const nextPromo = getNextPromotion(promotionPercents, currentQuantity);
+
+  if (!nextPromo) return '';
+  return `Mua ${currentQuantity ? 'thêm' : 'ít nhất'} ${
+    nextPromo.productQuantityMinCondition - currentQuantity
+  } sản phẩm để được giảm ${nextPromo.val * 100}%`;
+};
 
 const ProductPage: NextPageWithLayout<{
   product?: Product;
@@ -28,6 +71,8 @@ const ProductPage: NextPageWithLayout<{
   drugStores?: DrugStore[];
   offers: OfferModel[];
 }> = ({ product, otherProducts, drugStoresAvailable, offers, drugStores }) => {
+  const { cartProducts } = useCart();
+
   const carouselImages: string[] = useMemo(() => {
     let memoCarouselImages: string[] = [];
 
@@ -48,6 +93,15 @@ const ProductPage: NextPageWithLayout<{
 
     return memoCarouselImages;
   }, [product]);
+
+  const curProductIncart = cartProducts.find(
+    (item) => item.product.key === product?.key
+  );
+  const maxDisCount = getMaxDiscount(product?.promotions || []);
+  const nextInstruction = getInstruction(
+    product?.promotions || [],
+    curProductIncart?.quantity || 0
+  );
 
   const drugstoresToShow =
     (drugStoresAvailable?.length || 0) > 0 ? drugStoresAvailable : drugStores;
@@ -108,144 +162,53 @@ const ProductPage: NextPageWithLayout<{
 
             <ProductBonusSection offers={offers} />
 
-            <div className=" relative flex w-full flex-wrap items-center justify-between gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg md:flex-nowrap lg:gap-4">
-              {product.detail?.isSaleOff && (
+            <div className="relative flex w-full flex-col flex-wrap gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg md:flex-nowrap lg:gap-2">
+              {maxDisCount > 0 && (
                 <Tag
                   color={COLORS.red}
                   className="absolute -top-[8px] -left-[8px]"
                 >
-                  Giảm giá
+                  Giảm {maxDisCount * 100}%
                 </Tag>
               )}
-              <div className="flex items-end">
-                <Typography.Title
-                  level={2}
-                  className="m-0 -mb-[2px] font-bold text-primary"
-                >
-                  {product?.retailPrice?.toLocaleString('it-IT', {
-                    style: 'currency',
-                    currency: 'VND',
-                  })}
-                </Typography.Title>
 
-                {product?.unit && (
-                  <Typography.Text className="text-xl">
-                    &nbsp;/&nbsp;{product?.unit}
+              {nextInstruction && (
+                <div className="flex items-center gap-2 text-blue-500">
+                  <InfoCircleOutlined size={12} />
+                  <Typography.Text className="text-inherit">
+                    {nextInstruction}
                   </Typography.Text>
+                </div>
+              )}
+
+              <div className="flex w-full flex-1 flex-wrap items-start justify-between">
+                <PriceUnit
+                  price={product.retailPrice}
+                  discountVal={maxDisCount}
+                  unit={product.unit}
+                />
+                {product && (
+                  <div className="w-full md:w-[140px]">
+                    <AddToCartButton
+                      product={product}
+                      className="w-full uppercase"
+                    />
+                  </div>
                 )}
               </div>
-              {product && (
-                <div className="w-full md:w-[140px]">
-                  <AddToCartButton
-                    product={product}
-                    className="w-full uppercase"
-                  />
-                </div>
+              {!!product.promotions?.length && (
+                <PromotionList
+                  promotionPercents={product.promotions || []}
+                  retailPrice={product.retailPrice}
+                />
               )}
             </div>
           </div>
 
-          <div className="mb-2 mt-8">
-            {!!product?.productionBrand?.name && (
-              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
-                <Typography.Text className=" font-medium ">
-                  Thương hiệu
-                </Typography.Text>
-                <Typography.Text className=" ml-0 md:ml-2">
-                  {product?.productionBrand?.name}
-                </Typography.Text>
-              </div>
-            )}
-            {!!product?.registrationNumber && (
-              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
-                <Typography.Text className=" font-medium ">
-                  Số đăng ký
-                </Typography.Text>
-                <Typography.Text className=" ml-0 md:ml-2">
-                  {product?.registrationNumber}
-                </Typography.Text>
-              </div>
-            )}
-            {!!product?.packagingProcess && (
-              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
-                <Typography.Text className=" font-medium ">
-                  Quy cách đóng gói
-                </Typography.Text>
-                <Typography.Text className=" ml-0 md:ml-2">
-                  {product?.packagingProcess}{' '}
-                  {product?.detail?.packedType
-                    ? `(${product?.detail?.packedType})`
-                    : ``}
-                </Typography.Text>
-              </div>
-            )}
-
-            {!!product?.detail?.drugUsers && (
-              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
-                <Typography.Text className=" font-medium ">
-                  Đối tượng sử dụng
-                </Typography.Text>
-                <Typography.Text className=" ml-0 md:ml-2">
-                  {product?.detail?.drugUsers}
-                </Typography.Text>
-              </div>
-            )}
-            {!!product?.ingredient && (
-              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
-                <Typography.Text className=" whitespace-nowrap font-medium">
-                  Hoạt chất
-                </Typography.Text>
-                <Typography.Text className=" ml-0 md:ml-2">
-                  {product?.ingredient}
-                </Typography.Text>
-              </div>
-            )}
-
-            {!!product?.drugContent && (
-              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
-                <Typography.Text className=" font-medium ">
-                  Hàm lượng
-                </Typography.Text>
-                <Typography.Text className=" ml-0 md:ml-2">
-                  {product?.drugContent}
-                </Typography.Text>
-              </div>
-            )}
-
-            <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
-              <Typography.Text className=" font-medium ">
-                Là thuốc kê đơn
-              </Typography.Text>
-              <Typography.Text className=" ml-0 md:ml-2">
-                {product?.isPrescripted ? 'Có' : 'Không'}
-              </Typography.Text>
-            </div>
-
-            {product?.isSpecial && (
-              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
-                <Typography.Text className=" font-medium ">
-                  Là thuốc đặc biệt
-                </Typography.Text>
-                <Typography.Text className=" ml-0 md:ml-2">
-                  {product?.isSpecial ? 'Có' : 'Không'}
-                </Typography.Text>
-              </div>
-            )}
-
-            {product?.isMental && (
-              <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
-                <Typography.Text className=" font-medium ">
-                  Là thuốc tâm thần
-                </Typography.Text>
-                <Typography.Text className=" ml-0 md:ml-2">
-                  {product?.isMental ? 'Có' : 'Không'}
-                </Typography.Text>
-              </div>
-            )}
-          </div>
+          {product && <ProductMetaData product={product} />}
         </div>
 
-        <div className="w-full ">
+        <div className="w-full lg:col-span-2 xl:col-span-1">
           <div className=" rounded-lg border border-solid  border-gray-200">
             <Typography.Title
               level={5}
@@ -361,10 +324,13 @@ export const getServerSideProps = async (
 
   const productClient = new ProductClient(context, {});
   const offerClient = new OfferClient(context, {});
+  const productKey = UrlUtils.getKeyFromParam(
+    context.params?.product as string
+  );
 
   try {
     const product = await productClient.getProduct({
-      key: UrlUtils.getKeyFromParam(context.params?.product as string),
+      key: productKey,
     });
 
     if (product.data) {
@@ -374,12 +340,8 @@ export const getServerSideProps = async (
         productClient.getProducts({
           page: 1,
           pageSize: 10,
-          productTypeKey: UrlUtils.getKeyFromParam(
-            product.data.productType?.key
-          ),
-          productGroupKey: UrlUtils.getKeyFromParam(
-            product.data.productGroup?.key
-          ),
+          productTypeKey: product.data.productType?.key,
+          productGroupKey: product.data.productGroup?.key,
           isPrescripted: false,
         }),
         offerClient.getAllActiveOffers(),
@@ -392,12 +354,14 @@ export const getServerSideProps = async (
       }
 
       if (products.data) {
-        serverSideProps.props.otherProducts = products.data.data.slice(0, 4);
+        serverSideProps.props.otherProducts = products.data.data
+          .filter((product) => product.key !== productKey)
+          .slice(0, 4);
       }
     }
 
     const drugStoresAvailable = await productClient.checkInventoryAtDrugStores({
-      key: UrlUtils.getKeyFromParam(context.params?.product as string),
+      key: productKey,
     });
 
     if (drugStoresAvailable.data?.length) {

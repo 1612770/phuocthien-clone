@@ -1,8 +1,10 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+/* eslint-disable */
 const path = require('path');
-
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = withBundleAnalyzer({
   output: 'standalone',
   reactStrictMode: false,
   staticPageGenerationTimeout: 1000,
@@ -12,22 +14,22 @@ const nextConfig = {
   },
   env: {
     API_HOST: process.env.API_HOST,
-    API_VERSION: process.env.API_VERSION,
+    MS_PATH: process.env.MS_PATH,
     HOST_IMAGE: process.env.HOST_IMAGE,
     NEXT_PUBLIC_REGEX_PHONE: process.env.NEXT_PUBLIC_REGEX_PHONE,
   },
   images: {
-    domains: [`${process.env.HOST_IMAGE}`],
+    domains: [`${process.env.HOST_IMAGE}`, 'pt-storage.hn.ss.bfcplatform.vn'],
   },
 
   rewrites() {
     return [
       {
         source: '/backend/:path*',
-        destination: `${process.env.API_HOST}/${process.env.API_VERSION}/:path*`,
+        destination: `${process.env.API_HOST}/${process.env.MS_PATH}/:path*`,
       },
     ];
   },
-};
+});
 
 module.exports = nextConfig;

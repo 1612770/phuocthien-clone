@@ -68,7 +68,7 @@ function AddressSection() {
   }, [defaultAddress, isUserLoggedIn]);
 
   return (
-    <div className="my-4 rounded-lg bg-gray-50 p-4">
+    <div className="mt-4 mb-2 rounded-lg bg-gray-50 p-4">
       <Typography.Text className="text-sm">
         Chọn địa chỉ để biết thời gian nhận hàng và phí vận chuyển (nếu có)
       </Typography.Text>

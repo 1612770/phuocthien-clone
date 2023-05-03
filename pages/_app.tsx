@@ -44,7 +44,7 @@ function MyApp({
         <ConfigProvider
           theme={{
             token: {
-              fontFamily: 'Roboto',
+              fontFamily: 'Inter',
               colorPrimary: COLORS.primary,
             },
           }}

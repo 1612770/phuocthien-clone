@@ -65,7 +65,6 @@ class BaseClient {
 
     // make call
     const resp = await fetch(url, req);
-
     if (!resp.ok) {
       throw resp.statusText;
     }
@@ -83,7 +82,7 @@ class BaseClient {
     return typeof window === 'undefined'
       ? await this.makeRequest(
           method,
-          `${process.env.API_HOST}/${process.env.API_VERSION}/${url}`,
+          `${process.env.API_HOST}/${process.env.MS_PATH}/${url}`,
           data
         )
       : await this.makeRequest(method, '/backend/' + url, data);

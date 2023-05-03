@@ -24,7 +24,6 @@ import ImageWithFallback from '@components/templates/ImageWithFallback';
 import ShippingTypes from '@configs/enums/shipping-types.enum';
 import DrugStorePicker from '@modules/cart/DrugStorePicker';
 import CheckoutProvider, { useCheckout } from '@providers/CheckoutProvider';
-import ImageUtils from '@libs/utils/image.utils';
 import { REGEX_PHONE } from '@configs/env';
 import { OfferClient } from '@libs/client/Offer';
 import OfferModel from '@configs/models/offer.model';
@@ -38,6 +37,7 @@ import AddressModel from '@configs/models/address.model';
 import { AuthClient } from '@libs/client/Auth';
 import { COOKIE_KEYS } from '@libs/helpers';
 import OfferUtils from '@libs/utils/offer.utils';
+import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
 
 const CartPage: NextPageWithLayout<{
   paymentMethods: PaymentMethodModel[];
@@ -56,6 +56,8 @@ const CartPage: NextPageWithLayout<{
     checkoutForm,
   } = useCheckout();
 
+  const { setConfirmData } = useAppConfirmDialog();
+
   const totalProducts = cartProducts.reduce(
     (total, cartProduct) => total + (Number(cartProduct.quantity) || 0),
     0
@@ -64,8 +66,12 @@ const CartPage: NextPageWithLayout<{
   const onCheckoutButtonClick = async () => {
     try {
       await checkoutForm?.validateFields();
-
-      checkout();
+      setConfirmData({
+        title: 'Xác nhận đặt hàng',
+        content:
+          'Bạn đã kiểm tra thông tin mua hàng của mình và xác nhận đặt hàng',
+        onOk: checkout,
+      });
     } catch (error) {
       setCheckoutError('Vui lòng kiểm tra lại thông tin');
 
@@ -123,7 +129,7 @@ const CartPage: NextPageWithLayout<{
               </Typography.Text>
             </div>
 
-            <Divider />
+            <Divider className="my-2" />
             <Typography.Title level={4}>Thông tin nhận hàng</Typography.Title>
 
             <Row className="mt-2" gutter={[8, 8]}>
@@ -165,7 +171,7 @@ const CartPage: NextPageWithLayout<{
             <Typography.Title level={4}>
               Chọn cách thức nhận hàng
             </Typography.Title>
-            <Form.Item name="shippingType">
+            <Form.Item name="shippingType" className="m-0">
               <Radio.Group>
                 <Radio.Button value={ShippingTypes.DELIVERY}>
                   Giao tận nơi
@@ -177,10 +183,10 @@ const CartPage: NextPageWithLayout<{
             </Form.Item>
 
             <Form.Item
-              noStyle
               shouldUpdate={(prevValues, currentValues) =>
                 prevValues.shippingType !== currentValues.shippingType
               }
+              noStyle
             >
               {({ getFieldValue }) =>
                 getFieldValue('shippingType') === ShippingTypes.DELIVERY ? (
@@ -199,7 +205,8 @@ const CartPage: NextPageWithLayout<{
               />
             </Form.Item>
 
-            <Divider />
+            <Divider className="my-2" />
+
             <Typography.Title level={4}>
               Chọn phương thức thanh toán
             </Typography.Title>
@@ -221,21 +228,22 @@ const CartPage: NextPageWithLayout<{
                     className="my-2 w-full"
                   >
                     <div className="flex items-center">
-                      <ImageWithFallback
-                        src={paymentMethod.image || ''}
-                        width={40}
-                        height={40}
-                        layout="fixed"
-                        objectFit="contain"
-                        getMockImage={() =>
-                          ImageUtils.getRandomMockCheckoutUrl()
-                        }
-                      />
+                      <div className="ml-2">
+                        <ImageWithFallback
+                          src={paymentMethod.image || ''}
+                          width={28}
+                          height={28}
+                          layout="fixed"
+                          objectFit="contain"
+                        />
+                      </div>
                       <div className="ml-4">
-                        <Typography className="font-medium">
+                        <Typography className="font-semibold">
                           {paymentMethod.name}
                         </Typography>
-                        <Typography>{paymentMethod.description}</Typography>
+                        <Typography className=" text-sm text-gray-500">
+                          {paymentMethod.description}
+                        </Typography>
                       </div>
                     </div>
                   </Radio>
@@ -243,7 +251,7 @@ const CartPage: NextPageWithLayout<{
               </Radio.Group>
             </Form.Item>
 
-            <Divider />
+            <Divider className="mb-4 mt-2" />
 
             <OfferCodeInput offers={offers} />
 

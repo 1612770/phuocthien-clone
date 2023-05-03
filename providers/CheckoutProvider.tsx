@@ -109,26 +109,30 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
   const totalRawPrice = useMemo(
     () =>
-      cartProducts.reduce(
-        (total, cartProduct) =>
-          total + (cartProduct.product.retailPrice || 0) * cartProduct.quantity,
-        0
-      ),
+      cartProducts.reduce((total, cartProduct) => {
+        const discountVal = cartProduct.product.promotions?.[0]?.val || 0;
+        const productQuantityMinCondition =
+          cartProduct.product.promotions?.[0]?.productQuantityMinCondition || 0;
+        const retailPrice = cartProduct.product.retailPrice || 0;
+
+        if (cartProduct.quantity >= productQuantityMinCondition) {
+          return total + retailPrice * (1 - discountVal) * cartProduct.quantity;
+        }
+
+        return total + retailPrice * cartProduct.quantity;
+      }, 0),
     [cartProducts]
   );
 
   const totalPrice = useMemo(() => {
-    let calculatedTotal = cartProducts.reduce(
-      (total, cartProduct) =>
-        total + (cartProduct.product.retailPrice || 0) * cartProduct.quantity,
-      0
-    );
+    let calculatedTotal = totalRawPrice;
+
     if ((offer?.minAmountOffer || 0) <= calculatedTotal) {
       calculatedTotal = calculatedTotal - (offer?.offerVal || 0);
     }
 
     return calculatedTotal;
-  }, [cartProducts, offer]);
+  }, [offer?.minAmountOffer, offer?.offerVal, totalRawPrice]);
 
   const getAddressData = () => {
     const { currentProvinceKey, currentDistrictKey, currentWardKey, address } =
@@ -151,6 +155,36 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
       ward: ward?.wardName || '',
       detail: address,
     };
+  };
+
+  const getCartProductOrderItem = (cartProduct: {
+    product: Product;
+    quantity: number;
+    note?: string;
+  }) => {
+    const promotionPercent = cartProduct.product.promotions?.[0];
+
+    const res: {
+      productKey: string;
+      quantity: number;
+      note: string;
+      keyPromo?: string;
+      keyPromoPercent?: string;
+    } = {
+      productKey: cartProduct.product.key || '',
+      quantity: cartProduct.quantity || 0,
+      note: cartProduct.note || '',
+    };
+
+    if (
+      promotionPercent &&
+      cartProduct.quantity >= promotionPercent.productQuantityMinCondition
+    ) {
+      res.keyPromo = promotionPercent.promotionKey;
+      res.keyPromoPercent = promotionPercent.key;
+    }
+
+    return res;
   };
 
   const checkout = async () => {
@@ -179,11 +213,9 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
           valuesToSubmit.shippingType === ShippingTypes.DELIVERY
             ? getAddressData()
             : undefined,
-        items: cartProducts.map((cartProduct) => ({
-          productKey: cartProduct.product.key || '',
-          quantity: cartProduct.quantity || 0,
-          note: cartProduct.note || '',
-        })),
+        items: cartProducts.map((cartProduct) =>
+          getCartProductOrderItem(cartProduct)
+        ),
         offerCode: offer?.offerCode || undefined,
         orderNote: valuesToSubmit.orderNote || undefined,
       });

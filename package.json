@@ -13,6 +13,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "analize:build": "ANALYZE=true && next build",
     "start": "next start",
     "lint": "next lint",
     "prettier": "prettier --write .",
@@ -22,6 +23,7 @@
     "@babel/core": "^7.20.2",
     "@commitlint/cli": "^17.2.0",
     "@commitlint/config-conventional": "^17.2.0",
+    "@next/bundle-analyzer": "^13.3.0",
     "@types/node": "^18.11.9",
     "@types/nprogress": "^0.2.0",
     "@types/react": "18.0.25",
@@ -46,6 +48,8 @@
     "util": "^0.12.5"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.0.1",
+    "@types/styled-components": "^5.1.26",
     "antd": "^5.0.7",
     "cookies-next": "^2.1.1",
     "date-fns": "^2.29.3",
@@ -54,7 +58,10 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-feather": "^2.0.10",
-    "react-qrcode-logo": "^2.9.0",
-    "sharp": "^0.31.3"
+    "sharp": "^0.31.3",
+    "styled-components": "^5.3.10"
+  },
+  "resolutions": {
+    "styled-components": "^5"
   }
 }
