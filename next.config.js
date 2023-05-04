@@ -1,10 +1,10 @@
 /* eslint-disable */
 const path = require('path');
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
+// const withBundleAnalyzer = require('@next/bundle-analyzer')({
+//   enabled: process.env.ANALYZE === 'true',
+// });
 /** @type {import('next').NextConfig} */
-const nextConfig = withBundleAnalyzer({
+const nextConfig = {
   output: 'standalone',
   reactStrictMode: false,
   staticPageGenerationTimeout: 1000,
@@ -34,6 +34,6 @@ const nextConfig = withBundleAnalyzer({
       },
     ];
   },
-});
+};
 
 module.exports = nextConfig;
