@@ -10,7 +10,7 @@ import ProductSearchInput from './ProductSearchInput';
 import ProductSearchInputMobile from './ProductSearchInputMobile';
 import PrimaryHeaderMenuDrawer from './MenuDrawer';
 
-function PrimaryHeader() {
+function PrimaryHeader({ showSearch = true }) {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const [openMobileSearch, setOpenMobileSearch] = useState(false);
 
@@ -51,7 +51,7 @@ function PrimaryHeader() {
               </a>
             </Link>
 
-            {router.asPath !== '/' && (
+            {showSearch && (
               <div className="hidden h-10 w-full flex-1 lg:block">
                 <ProductSearchInput />
               </div>

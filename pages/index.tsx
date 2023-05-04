@@ -95,13 +95,15 @@ const Home: NextPageWithLayout<{
         </div>
       </div>
 
-      <div
-        className={`hidden lg:block ${
-          !sliderImages.length ? `-mt-[100px]` : 'mt-[32px]'
-        }`}
-      >
-        <HomepageSearchSection />
-      </div>
+      {!campaigns?.length && (
+        <div
+          className={`hidden lg:block ${
+            !sliderImages.length ? `-mt-[100px]` : 'mt-[32px]'
+          }`}
+        >
+          <HomepageSearchSection />
+        </div>
+      )}
 
       <div className="mt-[32px] hidden lg:block">
         <FocusContentSection focusContent={focusContent || []} />
@@ -144,7 +146,8 @@ const Home: NextPageWithLayout<{
 export default Home;
 
 Home.getLayout = (page) => {
-  return <PrimaryLayout>{page}</PrimaryLayout>;
+  const showSearch = !!page.props.campaigns?.length;
+  return <PrimaryLayout showSearch={showSearch}>{page}</PrimaryLayout>;
 };
 
 export const getServerSideProps = async (
