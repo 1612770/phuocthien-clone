@@ -6,11 +6,28 @@ import ProductChildGroup from '@modules/products/ProductChildGroup';
 import UrlUtils from '@libs/utils/url.utils';
 import ProductGroupModel from '@configs/models/product-group.model';
 import { ProductClient } from '@libs/client/Product';
-import Product from '@configs/models/product.model';
 import ProductCard from '@components/templates/ProductCard';
 import PrimaryHeaderMenuAllPopoverContentLeftItem from './PrimaryHeaderMenuAllPopoverContentLeftItem';
 import { useDebounce } from '@libs/utils/hooks';
 import Link from 'next/link';
+import Product from '@configs/models/product.model';
+
+const generateKey = (groupKey?: string, typeKey?: string) => {
+  return `${groupKey}-${typeKey}`;
+};
+
+const checkCanGetFocusGroupProducts = (
+  productsMenu: {
+    [key: string]: Product[];
+  },
+  groupKey?: string,
+  typeKey?: string
+) => {
+  if (!groupKey || !typeKey) return false;
+  const key = generateKey(groupKey, typeKey);
+
+  return !productsMenu[key];
+};
 
 function PrimaryHeaderMenuAllPopoverContent({
   currentMenu,
@@ -20,15 +37,22 @@ function PrimaryHeaderMenuAllPopoverContent({
   mode: 'all' | 'menu';
 }) {
   const [currentFocusMenu, setCurrentFocusMenu] = useState<MenuModel>();
-  const [products, setProducts] = useState<Product[]>([]);
   const [loadingProduct, setLoadingProduct] = useState(false);
   const [currentFocusGroup, setCurrentFocusGroup] =
     useState<ProductGroupModel>();
 
-  const { fullMenu, setIntoPopover, setOpen } = useFullMenu();
+  const { fullMenu, setIntoPopover, setOpen, productsMenu, addProductMenu } =
+    useFullMenu();
   const debouncedCurrentFocusGroup = useDebounce(currentFocusGroup, 500);
 
-  const getFocusGroupProducts = useCallback(async () => {
+  const onGetFocusGroupProducts = useCallback(async () => {
+    const canGet = checkCanGetFocusGroupProducts(
+      productsMenu,
+      debouncedCurrentFocusGroup?.key,
+      currentMenu?.key
+    );
+    if (!canGet) return;
+
     const productClient = new ProductClient(null, {});
 
     setLoadingProduct(true);
@@ -42,9 +66,17 @@ function PrimaryHeaderMenuAllPopoverContent({
     setLoadingProduct(false);
 
     if (products.data) {
-      setProducts(products.data.data);
+      addProductMenu(
+        generateKey(debouncedCurrentFocusGroup?.key, currentMenu?.key),
+        products.data.data
+      );
     }
-  }, [debouncedCurrentFocusGroup, currentMenu]);
+  }, [
+    productsMenu,
+    debouncedCurrentFocusGroup?.key,
+    currentMenu?.key,
+    addProductMenu,
+  ]);
 
   /**
    * Mode: all
@@ -72,16 +104,12 @@ function PrimaryHeaderMenuAllPopoverContent({
    */
   useEffect(() => {
     if (debouncedCurrentFocusGroup?.key && mode === 'menu') {
-      getFocusGroupProducts();
+      onGetFocusGroupProducts();
     }
-  }, [debouncedCurrentFocusGroup, getFocusGroupProducts, mode]);
+  }, [debouncedCurrentFocusGroup, onGetFocusGroupProducts, mode]);
 
-  /**
-   * Reset products
-   */
-  useEffect(() => {
-    setProducts([]);
-  }, [currentFocusGroup, currentFocusMenu, currentMenu]);
+  const products =
+    productsMenu[generateKey(currentFocusGroup?.key, currentMenu?.key)] || [];
 
   return (
     <div
@@ -221,72 +249,70 @@ function PrimaryHeaderMenuAllPopoverContent({
               </div>
             )}
 
-            {!!currentMenu?.productGroups?.length &&
-              (loadingProduct ||
-                debouncedCurrentFocusGroup?.key !== currentFocusGroup?.key) && (
-                <div className="flex flex-wrap gap-2">
-                  <Card
-                    cover={
-                      <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
-                        <Skeleton.Image className="h-full w-full" />
-                      </div>
-                    }
-                    bodyStyle={{
-                      padding: '12px',
-                    }}
-                    className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
-                  >
-                    <Skeleton.Button active shape="square" />
-                    <Skeleton.Input active block className="mt-1" />
-                    <Skeleton.Button active shape="square" className="mt-2" />
-                  </Card>
-                  <Card
-                    cover={
-                      <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
-                        <Skeleton.Image className="h-full w-full" />
-                      </div>
-                    }
-                    bodyStyle={{
-                      padding: '12px',
-                    }}
-                    className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
-                  >
-                    <Skeleton.Button active shape="square" />
-                    <Skeleton.Input active block className="mt-1" />
-                    <Skeleton.Button active shape="square" className="mt-2" />
-                  </Card>
-                  <Card
-                    cover={
-                      <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
-                        <Skeleton.Image className="h-full w-full" />
-                      </div>
-                    }
-                    bodyStyle={{
-                      padding: '12px',
-                    }}
-                    className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
-                  >
-                    <Skeleton.Button active shape="square" />
-                    <Skeleton.Input active block className="mt-1" />
-                    <Skeleton.Button active shape="square" className="mt-2" />
-                  </Card>
-                  <Card
-                    cover={
-                      <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
-                        <Skeleton.Image className="h-full w-full" />
-                      </div>
-                    }
-                    bodyStyle={{
-                      padding: '12px',
-                    }}
-                    className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
-                  >
-                    <Skeleton.Button active shape="square" />
-                    <Skeleton.Input active block className="mt-1" />
-                    <Skeleton.Button active shape="square" className="mt-2" />
-                  </Card>
-                </div>
-              )}
+            {!!currentMenu?.productGroups?.length && loadingProduct && (
+              <div className="flex flex-wrap gap-2">
+                <Card
+                  cover={
+                    <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
+                      <Skeleton.Image className="h-full w-full" />
+                    </div>
+                  }
+                  bodyStyle={{
+                    padding: '12px',
+                  }}
+                  className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
+                >
+                  <Skeleton.Button active shape="square" />
+                  <Skeleton.Input active block className="mt-1" />
+                  <Skeleton.Button active shape="square" className="mt-2" />
+                </Card>
+                <Card
+                  cover={
+                    <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
+                      <Skeleton.Image className="h-full w-full" />
+                    </div>
+                  }
+                  bodyStyle={{
+                    padding: '12px',
+                  }}
+                  className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
+                >
+                  <Skeleton.Button active shape="square" />
+                  <Skeleton.Input active block className="mt-1" />
+                  <Skeleton.Button active shape="square" className="mt-2" />
+                </Card>
+                <Card
+                  cover={
+                    <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
+                      <Skeleton.Image className="h-full w-full" />
+                    </div>
+                  }
+                  bodyStyle={{
+                    padding: '12px',
+                  }}
+                  className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
+                >
+                  <Skeleton.Button active shape="square" />
+                  <Skeleton.Input active block className="mt-1" />
+                  <Skeleton.Button active shape="square" className="mt-2" />
+                </Card>
+                <Card
+                  cover={
+                    <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
+                      <Skeleton.Image className="h-full w-full" />
+                    </div>
+                  }
+                  bodyStyle={{
+                    padding: '12px',
+                  }}
+                  className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
+                >
+                  <Skeleton.Button active shape="square" />
+                  <Skeleton.Input active block className="mt-1" />
+                  <Skeleton.Button active shape="square" className="mt-2" />
+                </Card>
+              </div>
+            )}
           </div>
         )}
 
@@ -296,9 +322,7 @@ function PrimaryHeaderMenuAllPopoverContent({
               (currentFocusGroup &&
                 !products.length &&
                 !(
-                  !!currentMenu?.productGroups?.length &&
-                  (loadingProduct ||
-                    debouncedCurrentFocusGroup?.key !== currentFocusGroup?.key)
+                  !!currentMenu?.productGroups?.length && loadingProduct
                 ))))) && (
           <div className="flex w-full items-center justify-center py-8">
             <Empty
