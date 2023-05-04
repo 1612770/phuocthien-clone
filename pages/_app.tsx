@@ -39,6 +39,7 @@ function MyApp({
     <>
       <Head>
         <title>Nhà thuốc Phước Thiện</title>
+        <meta name="robots" content="noindex,nofollow" />
       </Head>
       <NProgress>
         <ConfigProvider
