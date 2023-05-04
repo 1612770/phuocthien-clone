@@ -43,7 +43,7 @@ function PrimaryHeaderMenuAllPopoverContent({
 
   const { fullMenu, setIntoPopover, setOpen, productsMenu, addProductMenu } =
     useFullMenu();
-  const debouncedCurrentFocusGroup = useDebounce(currentFocusGroup, 500);
+  const debouncedCurrentFocusGroup = useDebounce(currentFocusGroup, 200);
 
   const onGetFocusGroupProducts = useCallback(async () => {
     const canGet = checkCanGetFocusGroupProducts(
