@@ -1,6 +1,4 @@
-import { Button, Typography } from 'antd';
-import ImageWithFallback from '@components/templates/ImageWithFallback';
-import TimeUtils from '@libs/utils/time.utils';
+import { Button } from 'antd';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import UrlUtils from '@libs/utils/url.utils';
 import EventItem from '@modules/event/EventItem';
@@ -9,7 +7,7 @@ import GroupInfoModel from '@configs/models/GroupInfoModel';
 function EventList({ group }: { group: GroupInfoModel }) {
   return (
     <div>
-      {group.eventInfos?.[0] && (
+      {/* {group.eventInfos?.[0] && (
         <LinkWrapper
           href={`/tin-tuc/bai-viet/${UrlUtils.generateSlug(
             group.eventInfos?.[0].name,
@@ -51,14 +49,10 @@ function EventList({ group }: { group: GroupInfoModel }) {
             </div>
           </div>
         </LinkWrapper>
-      )}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-3">
+      )} */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
         {group.eventInfos?.map((event, index) => (
-          <EventItem
-            event={event}
-            key={index}
-            className={`${index === 0 ? 'lg:hidden' : ''}`}
-          />
+          <EventItem event={event} key={index} />
         ))}
       </div>
 
