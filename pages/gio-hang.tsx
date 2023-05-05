@@ -314,7 +314,7 @@ export default CartPage;
 
 CartPage.getLayout = (page) => {
   return (
-    <PrimaryLayout hideFooter>
+    <PrimaryLayout>
       <MasterDataProvider defaultProvinces={page.props.provinces}>
         <CheckoutProvider>
           <AddressesProvider defaultAddresses={page.props.addresses}>

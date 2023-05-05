@@ -339,5 +339,5 @@ const SignUpPage: NextPageWithLayout = () => {
 export default SignUpPage;
 
 SignUpPage.getLayout = (page) => {
-  return <PrimaryLayout hideFooter>{page}</PrimaryLayout>;
+  return <PrimaryLayout>{page}</PrimaryLayout>;
 };
