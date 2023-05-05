@@ -12,46 +12,55 @@ const UserLayout: React.FC<IUserLayout> = ({ children }) => {
   const { logOut } = useAuth();
   const router = useRouter();
 
+  const isActiveOrderList = router.asPath.startsWith('/lich-su-don-hang');
+  const isProfile = router.asPath.startsWith('/thong-tin-ca-nhan');
+
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[240px_1fr]">
       <List className="-mt-2 hidden lg:block">
         <Link href="/lich-su-don-hang">
-          <List.Item
-            className={`${
-              router.asPath.startsWith('/lich-su-don-hang') ? 'bg-gray-200' : ''
-            } my-2 cursor-pointer rounded-full border-none px-4 transition-all duration-200 ease-in-out hover:bg-gray-200`}
-          >
-            <div className="flex items-center gap-2">
-              <Avatar>
+          <List.Item className="border-none p-0">
+            <div
+              className={`${
+                isActiveOrderList ? 'border-primary' : 'border-transparent'
+              } my-1 flex w-full cursor-pointer items-center gap-2 rounded-full border border-solid px-4 py-2 transition-all duration-200 ease-in-out hover:border-gray-300`}
+            >
+              <Avatar className={`${isActiveOrderList ? 'bg-primary' : ''}`}>
                 <User className=" align-text-bottom" size={16} />
               </Avatar>
-              <Typography className="">Lịch sử đơn hàng</Typography>
+              <Typography
+                className={`${isActiveOrderList ? 'text-primary' : ''}`}
+              >
+                Lịch sử đơn hàng
+              </Typography>
             </div>
           </List.Item>
         </Link>
         <Link href="/thong-tin-ca-nhan">
-          <List.Item
-            className={`${
-              router.asPath.startsWith('/thong-tin-ca-nhan')
-                ? 'bg-gray-200'
-                : ''
-            } my-2 cursor-pointer rounded-full border-none px-4 transition-all duration-200 ease-in-out hover:bg-gray-200`}
-          >
-            <div className="flex items-center gap-2">
-              <Avatar>
+          <List.Item className="border-none p-0">
+            <div
+              className={`${
+                isProfile ? 'border-primary' : ' border-transparent'
+              } my-1 flex w-full cursor-pointer items-center gap-2 rounded-full border border-solid px-4 py-2 transition-all duration-200 ease-in-out`}
+            >
+              <Avatar className={`${isProfile ? 'bg-primary' : ''}`}>
                 <Book className=" align-text-bottom" size={16} />
               </Avatar>
-              <Typography className="">Thông tin cá nhân</Typography>
+              <Typography className={`${isProfile ? 'text-primary' : ''}`}>
+                Thông tin cá nhân
+              </Typography>
             </div>
           </List.Item>
         </Link>
         <List.Item
-          className={`my-2 cursor-pointer rounded-full border-none px-4 transition-all duration-200 ease-in-out hover:bg-gray-200`}
+          className="border-none p-0"
           onClick={() => {
             logOut();
           }}
         >
-          <div className="flex items-center gap-2">
+          <div
+            className={`my-1 flex w-full cursor-pointer items-center gap-2 rounded-full px-4 py-2 transition-all duration-200 ease-in-out`}
+          >
             <Avatar className=" bg-red-500">
               <LogOut className=" align-text-bottom" size={16} />
             </Avatar>

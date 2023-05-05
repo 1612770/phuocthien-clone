@@ -33,18 +33,19 @@ const EventPage: NextPageWithLayout<{
         </Breadcrumb>
       </div>
 
-      <div className="mb-6">
-        <Divider className="m-0" />
-        <div className="relative h-[400px]">
-          <ImageWithFallback
-            src={event?.imageUrl || ''}
-            layout="fill"
-            objectFit="contain"
-          ></ImageWithFallback>
+      {event?.imageUrl && (
+        <div className="mb-6">
+          <Divider className="m-0" />
+          <div className="relative h-[400px]">
+            <ImageWithFallback
+              src={event?.imageUrl || ''}
+              layout="fill"
+              objectFit="contain"
+            ></ImageWithFallback>
+          </div>
+          <Divider className="m-0" />
         </div>
-        <Divider className="m-0" />
-      </div>
-
+      )}
       <div className="px-4 pb-4 lg:container lg:px-0">
         <div className="mb-6">
           <Typography.Title

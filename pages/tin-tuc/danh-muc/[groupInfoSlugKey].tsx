@@ -78,7 +78,7 @@ const GroupInfoPage: NextPageWithLayout<{
 
         <div className="mb-6 lg:container">
           {(eventInfos?.length || 0) > 0 && (
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-4 lg:gap-6 xl:grid-cols-2">
               {eventInfos?.map((event, index) => (
                 <EventItem event={event} key={index} />
               ))}

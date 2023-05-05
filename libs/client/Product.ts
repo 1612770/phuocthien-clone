@@ -18,6 +18,7 @@ export class ProductClient extends BaseClient {
     productGroupKey?: string;
     productionBrandKeys?: string[];
     filterByName?: string;
+    filterByIds?: string[];
     sortBy?: 'GIA_BAN_LE';
     sortOrder?: 'ASC' | 'DESC';
   }): Promise<APIResponse<WithPagination<Product[]>>> {

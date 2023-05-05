@@ -133,5 +133,5 @@ const LoginPage: NextPageWithLayout = () => {
 export default LoginPage;
 
 LoginPage.getLayout = (page) => {
-  return <PrimaryLayout hideFooter>{page}</PrimaryLayout>;
+  return <PrimaryLayout>{page}</PrimaryLayout>;
 };

@@ -35,11 +35,11 @@ const EventPage: NextPageWithLayout<{
 
           return (
             <div key={index}>
-              <div className="mb-2">
+              <div className="">
                 {mainInfo.groupInfo?.map(
                   (groupInfo, index) =>
                     !!groupInfo.eventInfos?.length && (
-                      <div key={index}>
+                      <div key={index} className="mb-6">
                         <Typography.Title
                           level={1}
                           className="m-0 mb-2 text-2xl font-medium md:text-4xl"

@@ -52,7 +52,7 @@ interface Args extends IntersectionObserverInit {
   freezeOnceVisible?: boolean;
 }
 
-function useIntersectionObserver(
+export function useIntersectionObserver(
   elementRef: RefObject<Element>,
   {
     threshold = 0,
@@ -81,17 +81,7 @@ function useIntersectionObserver(
     observer.observe(node);
 
     return () => observer.disconnect();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    elementRef?.current,
-    JSON.stringify(threshold),
-    root,
-    rootMargin,
-    frozen,
-  ]);
+  }, [root, rootMargin, frozen, elementRef, threshold]);
 
   return entry;
 }
-
-export default useIntersectionObserver;

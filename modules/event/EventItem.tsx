@@ -27,13 +27,15 @@ function EventItem({
             objectFit="cover"
           ></ImageWithFallback>
         </div>
-        <div className="">
-          <Typography.Text className="two-line-text min-h-[40px] font-medium group-hover:text-primary">
-            {event.name}
-          </Typography.Text>
-          <Typography.Text className=" two-line-text  text-gray-700">
-            {event.summary}
-          </Typography.Text>
+        <div className="flex flex-col py-1">
+          <div className="flex-1">
+            <Typography.Text className="two-line-text font-medium group-hover:text-primary">
+              {event.name}
+            </Typography.Text>
+            <Typography.Text className=" two-line-text  text-gray-700">
+              {event.summary}
+            </Typography.Text>
+          </div>
           <div className="mt-1 flex items-center">
             <Typography.Text className="text-xs text-gray-500">
               {TimeUtils.formatDate(event.eventDate, {
