@@ -5,13 +5,26 @@ import IMAGES from 'configs/assests/images';
 import { useAppData } from '@providers/AppDataProvider';
 import FocusContentSection from '@modules/homepage/FocusContentSection';
 import { useRouter } from 'next/router';
+import { useWatchCacheProduct } from '@libs/utils/hooks/useWatchCacheProduct';
+import ProductList from '@components/templates/ProductList';
 
 function PrimaryFooter() {
   const { focusContent } = useAppData();
   const router = useRouter();
 
+  const [products] = useWatchCacheProduct();
+
   return (
     <>
+      <div className="py-8 lg:container">
+        <Typography.Title
+          level={3}
+          className={'m-0 my-4 text-center font-medium uppercase lg:text-left'}
+        >
+          Sản phẩm vừa xem
+        </Typography.Title>
+        <ProductList products={products} />
+      </div>
       <div className={`block ${router.asPath === '/' ? 'lg:hidden' : ''}`}>
         <FocusContentSection focusContent={focusContent || []} />
       </div>

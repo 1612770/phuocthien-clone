@@ -1,12 +1,11 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Col, Empty, List, Row, Tag, Typography } from 'antd';
+import { Breadcrumb, Empty, List, Tag, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
 import { ProductClient } from '@libs/client/Product';
 import UrlUtils from '@libs/utils/url.utils';
 import Product from '@configs/models/product.model';
-import ProductCard from '@components/templates/ProductCard';
 import ProductCarousel from '@modules/products/ProductCarousel';
 import React, { useMemo } from 'react';
 import DrugStore from '@configs/models/drug-store.model';
@@ -26,6 +25,8 @@ import { PromotionPercent } from '@configs/models/promotion.model';
 import { useCart } from '@providers/CartProvider';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import ProductMetaData from '@modules/products/ProductMetaData';
+import { useCacheProduct } from '@libs/utils/hooks/useCacheProduct';
+import ProductList from '@components/templates/ProductList';
 
 const getMaxDiscount = (promotionPercents: PromotionPercent[]): number => {
   let maxDiscount = 0;
@@ -72,6 +73,7 @@ const ProductPage: NextPageWithLayout<{
   offers: OfferModel[];
 }> = ({ product, otherProducts, drugStoresAvailable, offers, drugStores }) => {
   const { cartProducts } = useCart();
+  useCacheProduct(product?.key);
 
   const carouselImages: string[] = useMemo(() => {
     let memoCarouselImages: string[] = [];
@@ -113,7 +115,7 @@ const ProductPage: NextPageWithLayout<{
   if (typeof product?.visible === 'boolean' && !product?.visible) return null;
 
   return (
-    <div className="px-4 pb-4 lg:container lg:px-0">
+    <div className="px-4 lg:container lg:px-0">
       <Breadcrumb className="mt-4 mb-2">
         <Breadcrumb.Item>
           <Link href="/">
@@ -245,7 +247,7 @@ const ProductPage: NextPageWithLayout<{
           <div className="lg:container lg:pl-0">
             <Typography.Title
               level={3}
-              className="mb-0 mt-6 uppercase lg:mb-4 lg:mt-12"
+              className="mb-0 mt-6 font-medium uppercase lg:mb-4 lg:mt-12"
             >
               Chi tiết sản phẩm
             </Typography.Title>
@@ -264,13 +266,13 @@ const ProductPage: NextPageWithLayout<{
           <div className=" lg:container lg:pl-0">
             <Typography.Title
               level={3}
-              className="mb-0 mt-6 inline-block uppercase lg:mb-4 lg:mt-12"
+              className="mb-0 mt-6 inline-block font-medium uppercase lg:mb-4 lg:mt-12"
             >
               Các sản phẩm cùng loại
             </Typography.Title>{' '}
             <Typography.Title
               level={3}
-              className="hidden uppercase lg:inline-block"
+              className="hidden font-medium uppercase lg:inline-block"
             >
               trong nhóm {product?.productGroup?.name}
             </Typography.Title>
@@ -278,24 +280,7 @@ const ProductPage: NextPageWithLayout<{
         </div>
 
         {(otherProducts?.length || 0) > 0 && (
-          <div className="lg:container">
-            <Row gutter={[16, 16]} className="hidden lg:flex">
-              {otherProducts?.map((product, index) => (
-                <Col sm={24} md={12} lg={6} className="w-full" key={index}>
-                  <ProductCard product={product} />
-                </Col>
-              ))}
-            </Row>
-            <div className="-mx-2 flex w-full overflow-auto lg:hidden">
-              {otherProducts?.map((product, index) => (
-                <ProductCard
-                  key={index}
-                  product={product}
-                  className="m-2 min-w-[240px] max-w-[240px]"
-                />
-              ))}
-            </div>
-          </div>
+          <ProductList products={otherProducts || []} />
         )}
       </div>
     </div>
@@ -356,7 +341,7 @@ export const getServerSideProps = async (
       if (products.data) {
         serverSideProps.props.otherProducts = products.data.data
           .filter((product) => product.key !== productKey)
-          .slice(0, 4);
+          .slice(0, 5);
       }
     }
 
