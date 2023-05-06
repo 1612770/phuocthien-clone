@@ -19,15 +19,19 @@ function PrimaryFooter() {
 
   return (
     <>
-      <div className="py-8 lg:container">
-        <Typography.Title
-          level={3}
-          className={'m-0 my-4 text-center font-medium uppercase lg:text-left'}
-        >
-          Sản phẩm vừa xem
-        </Typography.Title>
-        <ProductList products={products} />
-      </div>
+      {!!products.length && (
+        <div className="py-8 lg:container">
+          <Typography.Title
+            level={3}
+            className={
+              'm-0 my-4 text-center font-medium uppercase lg:text-left'
+            }
+          >
+            Sản phẩm vừa xem
+          </Typography.Title>
+          <ProductList products={products} />
+        </div>
+      )}
       <div className={`block ${router.asPath === '/' ? 'lg:hidden' : ''}`}>
         <FocusContentSection focusContent={focusContent || []} />
       </div>
