@@ -44,8 +44,8 @@ function PrimaryFooter() {
                   <img
                     src={IMAGES.logo}
                     alt="Nhà thuốc Phước Thiện"
-                    className="mr-2 h-8 object-contain"
-                    style={{ width: 42, height: 32 }}
+                    className="mr-2 aspect-[21/16] h-8"
+                    style={{ minHeight: 60 }}
                   />
 
                   <Space
