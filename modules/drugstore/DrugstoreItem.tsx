@@ -24,7 +24,6 @@ function DrugstoreItem({
                 height={32}
                 layout="fixed"
                 objectFit="contain"
-                getMockImage={() => ImageUtils.getRandomMockDrugstoreUrl()}
               />
               <div className="ml-2">
                 <Typography className=" text-xs font-medium">

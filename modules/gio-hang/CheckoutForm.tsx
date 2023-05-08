@@ -1,0 +1,104 @@
+import ShippingTypes from '@configs/enums/shipping-types.enum';
+import { REGEX_PHONE } from '@configs/env';
+import OfferModel from '@configs/models/offer.model';
+import PaymentMethodModel from '@configs/models/payment-method.model';
+import CartProductItem from '@modules/cart/CartProductItem';
+import { useCart } from '@providers/CartProvider';
+import { useCheckout } from '@providers/CheckoutProvider';
+import { Form, Divider, Typography, Input } from 'antd';
+import React, { Fragment } from 'react';
+import CheckoutPaymentMethodsFormItem from './CheckoutPaymentMethodsFormItem';
+import CheckoutShippingType from './CheckoutShippingType';
+import CheckoutPrice from './CheckoutPrice';
+
+function CheckoutForm({
+  paymentMethods,
+  offers,
+  onCheckout,
+}: {
+  paymentMethods: PaymentMethodModel[];
+  offers: OfferModel[];
+  onCheckout: () => void;
+}) {
+  const { cartProducts } = useCart();
+  const { checkoutForm } = useCheckout();
+
+  return (
+    <Form
+      onFinish={() => undefined}
+      scrollToFirstError
+      form={checkoutForm}
+      initialValues={{
+        shippingType: ShippingTypes.DELIVERY,
+      }}
+    >
+      <div className="grid grid-cols-1 gap-2 lg:grid-cols-[1fr,_400px] lg:gap-4">
+        <div className="border-none bg-white px-4 py-0 shadow-none md:rounded-lg md:border-solid md:border-gray-100 md:py-4">
+          {cartProducts.map((cartProduct, index) => (
+            <Fragment key={cartProduct.product.key}>
+              <CartProductItem cartProduct={cartProduct} />
+              {index !== cartProducts.length - 1 && (
+                <Divider className="my-2" />
+              )}
+            </Fragment>
+          ))}
+
+          <Divider className="my-2" />
+          <Typography.Title level={5} className="mt-4 font-medium uppercase">
+            Thông tin nhận hàng
+          </Typography.Title>
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-4">
+            <Form.Item
+              name="name"
+              className="mb-0 w-full"
+              rules={[
+                {
+                  required: true,
+                  message: 'Tên không được để trống',
+                },
+              ]}
+            >
+              <Input placeholder="Họ và tên (bắt buộc)" />
+            </Form.Item>
+
+            <Form.Item
+              name="tel"
+              className="mb-0 w-full"
+              rules={[
+                {
+                  required: true,
+                  message: 'Số điện thoại không được để trống',
+                },
+                {
+                  pattern: new RegExp(REGEX_PHONE),
+                  message: 'Vui lòng kiểm tra lại số điện thoại',
+                },
+              ]}
+            >
+              <Input placeholder="Số điện thoại (bắt buộc)" />
+            </Form.Item>
+          </div>
+
+          <CheckoutShippingType />
+
+          <Typography.Title level={5} className="mt-4 font-medium uppercase">
+            Chọn phương thức thanh toán
+          </Typography.Title>
+          <CheckoutPaymentMethodsFormItem paymentMethods={paymentMethods} />
+
+          <Form.Item name="orderNote">
+            <Input.TextArea
+              rows={4}
+              placeholder="Nhập ghi chú (nếu có)"
+              className="mt-2"
+            />
+          </Form.Item>
+        </div>
+
+        <CheckoutPrice offers={offers} onCheckout={onCheckout} />
+      </div>
+    </Form>
+  );
+}
+
+export default CheckoutForm;

@@ -44,8 +44,9 @@ const CheckoutContext = React.createContext<{
   offer: OfferModel | undefined;
   setOffer: (offer: OfferModel | undefined) => void;
 
-  totalRawPrice: number;
-  totalPrice: number;
+  totalPriceAfterDiscountOnProduct: number;
+  totalPriceBeforeDiscountOnProduct: number;
+  offerCodePrice: number;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   checkoutForm?: FormInstance<any>;
@@ -64,8 +65,9 @@ const CheckoutContext = React.createContext<{
   offer: undefined,
   setOffer: () => undefined,
 
-  totalRawPrice: 0,
-  totalPrice: 0,
+  totalPriceAfterDiscountOnProduct: 0,
+  totalPriceBeforeDiscountOnProduct: 0,
+  offerCodePrice: 0,
 
   checkoutForm: undefined,
 });
@@ -107,7 +109,16 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
   const [offer, setOffer] = useState<OfferModel>();
 
-  const totalRawPrice = useMemo(
+  const totalPriceBeforeDiscountOnProduct = useMemo(
+    () =>
+      cartProducts.reduce((total, cartProduct) => {
+        const retailPrice = cartProduct.product.retailPrice || 0;
+        return total + retailPrice * cartProduct.quantity;
+      }, 0),
+    [cartProducts]
+  );
+
+  const totalPriceAfterDiscountOnProduct = useMemo(
     () =>
       cartProducts.reduce((total, cartProduct) => {
         const discountVal = cartProduct.product.promotions?.[0]?.val || 0;
@@ -124,15 +135,15 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
     [cartProducts]
   );
 
-  const totalPrice = useMemo(() => {
-    let calculatedTotal = totalRawPrice;
-
-    if ((offer?.minAmountOffer || 0) <= calculatedTotal) {
-      calculatedTotal = calculatedTotal - (offer?.offerVal || 0);
-    }
-
-    return calculatedTotal;
-  }, [offer?.minAmountOffer, offer?.offerVal, totalRawPrice]);
+  const offerCodePrice = useMemo(() => {
+    return (offer?.minAmountOffer || 0) <= totalPriceBeforeDiscountOnProduct
+      ? offer?.offerVal || 0
+      : 0;
+  }, [
+    offer?.minAmountOffer,
+    offer?.offerVal,
+    totalPriceBeforeDiscountOnProduct,
+  ]);
 
   const getAddressData = () => {
     const { currentProvinceKey, currentDistrictKey, currentWardKey, address } =
@@ -189,7 +200,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
   const checkout = async () => {
     try {
-      if (!(totalPrice > 10000)) {
+      if (!(totalPriceAfterDiscountOnProduct > 10000)) {
         throw new Error('Giá trị đơn hàng phải lớn hơn 10.000đ');
       }
 
@@ -252,7 +263,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
    */
   useEffect(() => {
     if (offer && cartProducts.length > 0) {
-      if (totalRawPrice < (offer.minAmountOffer || 0)) {
+      if (totalPriceAfterDiscountOnProduct < (offer.minAmountOffer || 0)) {
         setOffer(undefined);
 
         setConfirmData({
@@ -276,7 +287,13 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         });
       }
     }
-  }, [offer, setConfirmData, toastSuccess, totalRawPrice, cartProducts]);
+  }, [
+    offer,
+    setConfirmData,
+    toastSuccess,
+    totalPriceAfterDiscountOnProduct,
+    cartProducts,
+  ]);
 
   return (
     <CheckoutContext.Provider
@@ -295,8 +312,9 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         offer,
         setOffer,
 
-        totalRawPrice,
-        totalPrice,
+        totalPriceAfterDiscountOnProduct,
+        totalPriceBeforeDiscountOnProduct,
+        offerCodePrice,
 
         checkoutForm,
       }}
