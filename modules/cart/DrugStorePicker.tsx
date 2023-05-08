@@ -50,16 +50,16 @@ function DrugStorePicker() {
               },
             ]}
           >
-            <div className="max-h-[280px] overflow-auto px-4">
+            <div className="max-h-[280px] overflow-auto px-4 py-2">
               <Radio.Group className={isListLimited ? 'pb-12' : ''}>
                 {showedDrugStores.map((drugStore) => (
-                  <div key={drugStore.key} className="my-3">
+                  <div key={drugStore.key} className="">
                     <Radio value={drugStore.key}>
-                      <div className="ml-2 flex items-start">
+                      <div className="ml-2 flex items-center">
                         <ImageWithFallback
                           src={drugStore.image || ''}
-                          width={32}
-                          height={32}
+                          width={48}
+                          height={48}
                           layout="fixed"
                           objectFit="contain"
                           getMockImage={() =>

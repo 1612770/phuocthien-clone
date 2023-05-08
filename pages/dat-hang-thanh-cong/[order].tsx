@@ -10,9 +10,11 @@ import { GetServerSidePropsContext } from 'next';
 import SessionStorageUtils, {
   SessionStorageKeys,
 } from '@libs/utils/session-storage.utils';
+import { useAuth } from '@providers/AuthProvider';
 
 const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
   const [orderToShow, setOrderToShow] = useState(order);
+  const { isUserLoggedIn } = useAuth();
 
   useEffect(() => {
     if (!orderToShow) {
@@ -99,7 +101,7 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
               </>
             }
             extra={[
-              <Link href="/" key={1}>
+              <Link href={isUserLoggedIn ? '/lich-su-don-hang' : '/'} key={1}>
                 <Button type="primary" className="shadow-none">
                   Xác nhận và quay lại
                 </Button>

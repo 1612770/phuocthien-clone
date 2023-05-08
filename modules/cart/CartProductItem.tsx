@@ -180,7 +180,7 @@ function CartProductItem({
             )}
           </Typography.Text>
           {isDiscount && (
-            <Typography.Text className="text-right text-xs font-semibold text-gray-500 line-through">
+            <Typography.Text className="text-left text-xs font-semibold text-gray-500 line-through sm:text-right">
               {price}
             </Typography.Text>
           )}

@@ -34,6 +34,7 @@ function ProductCarousel({ images }: { images: string[] }) {
                   key={image}
                   src={image}
                   alt="product"
+                  placeholder="blur"
                   layout="fill"
                   objectFit="contain"
                   className="m-auto w-full"
@@ -89,6 +90,7 @@ function ProductCarousel({ images }: { images: string[] }) {
               <ImageWithFallback
                 src={image}
                 alt="product"
+                placeholder="blur"
                 layout="fill"
                 onClick={() => {
                   setActive(index);

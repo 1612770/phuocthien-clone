@@ -1,27 +1,36 @@
-import { Button, Form, Input, Typography } from 'antd';
-import { ArrowRight, Gift } from 'react-feather';
+import { Badge, Button, Drawer, Form, Grid, Input } from 'antd';
 import { useEffect, useState } from 'react';
-import { useCheckout } from '@providers/CheckoutProvider';
 import OfferModel from '@configs/models/offer.model';
-import ProductBonusSection from '@modules/products/ProductBonusSection';
-import { useAppMessage } from '@providers/AppMessageProvider';
+
+import { ArrowRightOutlined, GiftOutlined } from '@ant-design/icons';
+import styled from 'styled-components';
+import ProductBonusPicker from '@modules/gio-hang/ProductBonusPicker';
+import { useCheckout } from '@providers/CheckoutProvider';
 import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
+import { useAppMessage } from '@providers/AppMessageProvider';
+
+const NoPaddingContentDrawer = styled(Drawer)`
+  .ant-drawer-body {
+    padding: 0;
+  }
+`;
 
 function OfferCodeInput({ offers }: { offers: OfferModel[] }) {
-  const [openInput, setOpenInput] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const { offer: checkoutOffer } = useCheckout();
   const [inputValue, setInputValue] = useState('');
 
-  const { offer, setOffer, totalRawPrice } = useCheckout();
+  const { offer, setOffer, totalPriceAfterDiscountOnProduct } = useCheckout();
   const { toastError, toastSuccess } = useAppMessage();
   const { setConfirmData } = useAppConfirmDialog();
 
   useEffect(() => {
     setInputValue('');
-  }, [openInput]);
+  }, [openDrawer]);
 
-  const onUseOffer = () => {
+  const onUseOffer = (offerCode: string) => {
     setInputValue('');
-    const trimmedInput = inputValue.trim();
+    const trimmedInput = offerCode.trim();
 
     if (!trimmedInput) return;
 
@@ -32,13 +41,13 @@ function OfferCodeInput({ offers }: { offers: OfferModel[] }) {
     const offerAlreadyUsed =
       offer && foundOffer && foundOffer?.offerCode === offer?.offerCode;
     if (offerAlreadyUsed) {
-      return toastError({ data: 'Mã giảm giá đang được sử dụng' });
+      return toastError({ data: 'Mã ưu đãi đang được sử dụng' });
     }
 
     if (foundOffer) {
-      if ((foundOffer.minAmountOffer || 0) > totalRawPrice) {
+      if ((foundOffer.minAmountOffer || 0) > totalPriceAfterDiscountOnProduct) {
         return toastError({
-          data: `Mã giảm giá này chỉ áp dụng cho đơn hàng trên ${foundOffer.minAmountOffer?.toLocaleString(
+          data: `Mã ưu đãi này chỉ áp dụng cho đơn hàng trên ${foundOffer.minAmountOffer?.toLocaleString(
             'it-IT',
             {
               style: 'currency',
@@ -50,113 +59,86 @@ function OfferCodeInput({ offers }: { offers: OfferModel[] }) {
 
       if (offer) {
         setConfirmData({
-          title: 'Bạn đang áp dụng một mã giảm giá khác',
-          content: 'Bạn có muốn thay đổi mã giảm giá?',
+          title: 'Bạn đang áp dụng một mã ưu đãi khác',
+          content: 'Bạn có muốn thay đổi mã ưu đãi?',
           onOk: () => {
-            toastSuccess({ data: 'Thay đổi mã giảm giá thành công' });
+            toastSuccess({ data: 'Thay đổi mã ưu đãi thành công' });
             setOffer(foundOffer);
           },
         });
       } else {
-        toastSuccess({ data: 'Áp dụng mã giảm giá thành công' });
+        toastSuccess({ data: 'Áp dụng mã ưu đãi thành công' });
         setOffer(foundOffer);
       }
     } else {
-      toastError({ data: 'Mã giảm giá không hợp lệ' });
+      toastError({ data: 'Mã ưu đãi không hợp lệ' });
     }
   };
 
+  const { md } = Grid.useBreakpoint();
+
   return (
     <div>
-      <Button
-        size={'large'}
-        className="h-[40px]"
-        onClick={() => {
-          setOpenInput(!openInput);
+      <Badge count={checkoutOffer ? 1 : 0} className="w-full">
+        <Button
+          type="primary"
+          ghost
+          block
+          onClick={() => {
+            setOpenDrawer(!openDrawer);
+          }}
+        >
+          <GiftOutlined />
+          Sử dụng mã ưu đãi / phiếu quà tặng
+          <ArrowRightOutlined />
+        </Button>
+      </Badge>
+
+      <NoPaddingContentDrawer
+        title="Sử dụng mã ưu đãi / phiếu quà tặng"
+        placement="right"
+        onClose={() => {
+          setOpenDrawer(false);
         }}
+        open={openDrawer}
+        {...(md
+          ? {
+              width: 400,
+            }
+          : {})}
       >
-        <div className="flex items-center text-primary">
-          <Gift size={16} />
-          <Typography className="mx-2 text-base text-inherit">
-            Sử dụng mã giảm giá / phiếu quà tặng
-          </Typography>
-          <ArrowRight size={16} />
-        </div>
-      </Button>
+        <ProductBonusPicker offers={offers} onUseOffer={onUseOffer} />
 
-      {openInput && (
-        <>
-          <ProductBonusSection offers={offers} />
-          <div>
-            <Input.Group compact className="mt-2 flex">
-              <Input
+        <div className="px-4">
+          <Input.Group compact className="mt-4 flex">
+            <Input
+              size="large"
+              placeholder="Nhập mã ưu đãi"
+              value={inputValue}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  onUseOffer(inputValue);
+                  return false;
+                }
+              }}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+              }}
+            />
+            <Form.Item noStyle>
+              <Button
                 size="large"
-                placeholder="Nhập mã giảm giá"
-                value={inputValue}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    onUseOffer();
-                    return false;
-                  }
-                }}
-                onChange={(e) => {
-                  setInputValue(e.target.value);
-                }}
-              />
-              <Form.Item noStyle>
-                <Button
-                  size="large"
-                  className="rounded-tl-none rounded-bl-none shadow-none"
-                  type="primary"
-                  onClick={onUseOffer}
-                >
-                  Áp dụng
-                </Button>
-              </Form.Item>
-            </Input.Group>
-          </div>
-
-          {offer && (
-            <div className="mt-4">
-              <Typography.Text type="secondary">
-                Mã ưu đãi đã áp dụng:
-              </Typography.Text>
-              <div>
-                <div className="flex items-center justify-between">
-                  <Typography.Text className="text-base">
-                    Mã ưu đãi: {offer.offerCode}
-                  </Typography.Text>
-                  <Button
-                    className="ml-2"
-                    size="small"
-                    onClick={() => {
-                      setConfirmData({
-                        title: 'Xóa mã giảm giá',
-                        content: 'Bạn có chắc muốn xóa mã giảm giá này?',
-                        onOk: () => {
-                          setOffer(undefined);
-                        },
-                      });
-                    }}
-                  >
-                    Xóa
-                  </Button>
-                </div>
-                {totalRawPrice >= (offer.minAmountOffer || 0) && (
-                  <Typography.Text type="secondary" className="text-primary">
-                    -
-                    {offer.offerVal?.toLocaleString('it-IT', {
-                      style: 'currency',
-                      currency: 'VND',
-                    })}
-                  </Typography.Text>
-                )}
-              </div>
-            </div>
-          )}
-        </>
-      )}
+                className="rounded-tl-none rounded-bl-none shadow-none"
+                type="primary"
+                onClick={() => onUseOffer(inputValue)}
+              >
+                Áp dụng
+              </Button>
+            </Form.Item>
+          </Input.Group>
+        </div>
+      </NoPaddingContentDrawer>
     </div>
   );
 }

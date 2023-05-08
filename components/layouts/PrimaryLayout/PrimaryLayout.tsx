@@ -1,20 +1,26 @@
 import { Layout } from 'antd';
 import PrimaryHeader from '../PrimaryHeader';
 import PrimaryFooter from '../PrimaryFooter';
+import React from 'react';
 
 export interface IPrimaryLayout {
   children: React.ReactNode;
   showSearch?: boolean;
+  background?: 'white' | 'primary';
 }
 
 const PrimaryLayout: React.FC<IPrimaryLayout> = ({
   showSearch,
+  background = 'white',
   children,
 }) => {
+  const computedBg =
+    background === 'white' ? 'bg-white' : 'bg-primary-background';
+
   return (
     <>
       <PrimaryHeader showSearch={showSearch} />
-      <Layout.Content>{children}</Layout.Content>
+      <Layout.Content className={computedBg}>{children}</Layout.Content>
       <PrimaryFooter />
     </>
   );
