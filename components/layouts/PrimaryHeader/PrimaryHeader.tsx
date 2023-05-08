@@ -33,8 +33,7 @@ function PrimaryHeader({ showSearch = true }) {
                 <img
                   src={IMAGES.logo}
                   alt="Nhà thuốc Phước Thiện"
-                  className="aspect-[21/16] h-8"
-                  style={{ minHeight: 68 }}
+                  className="aspect-[21/16] h-8 min-h-[48px] lg:min-h-[68px]"
                 />
 
                 <Space direction="vertical" size={0} className="mr-4 w-[92px]">
