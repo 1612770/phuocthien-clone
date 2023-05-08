@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Modal, ModalFuncProps } from 'antd';
-
-const { confirm } = Modal;
+import { App, ModalFuncProps } from 'antd';
 
 const AppConfirmDialogContext = React.createContext<{
   setConfirmData: React.Dispatch<
@@ -15,10 +13,11 @@ function AppConfirmDialogProvider({ children }: { children: React.ReactNode }) {
   const [confirmData, setConfirmData] = useState<ModalFuncProps | undefined>(
     undefined
   );
+  const { modal } = App.useApp();
 
   const showConfirm = useCallback(() => {
     if (confirmData) {
-      confirm({
+      modal.confirm({
         okText: 'Xác nhận',
         cancelText: 'Hủy',
         okButtonProps: {
@@ -27,7 +26,7 @@ function AppConfirmDialogProvider({ children }: { children: React.ReactNode }) {
         ...confirmData,
       });
     }
-  }, [confirmData]);
+  }, [confirmData, modal]);
 
   useEffect(() => {
     showConfirm();

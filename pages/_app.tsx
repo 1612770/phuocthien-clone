@@ -1,4 +1,4 @@
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, App as AntdApp } from 'antd';
 import type { AppContext, AppProps } from 'next/app';
 import Head from 'next/head';
 
@@ -52,22 +52,24 @@ function MyApp({
             },
           }}
         >
-          <AppMessageProvider>
-            <AppConfirmDialogProvider>
-              <AuthProvider>
-                <CartProvider>
-                  <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
-                    <AppDataProvider
-                      mainInfoFooter={pageProps.mainInfoFooter || []}
-                      focusContent={pageProps.focusContent || []}
-                    >
-                      {getLayout(<Component {...pageProps} />)}
-                    </AppDataProvider>
-                  </FullMenuProvider>
-                </CartProvider>
-              </AuthProvider>
-            </AppConfirmDialogProvider>
-          </AppMessageProvider>
+          <AntdApp>
+            <AppMessageProvider>
+              <AppConfirmDialogProvider>
+                <AuthProvider>
+                  <CartProvider>
+                    <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
+                      <AppDataProvider
+                        mainInfoFooter={pageProps.mainInfoFooter || []}
+                        focusContent={pageProps.focusContent || []}
+                      >
+                        {getLayout(<Component {...pageProps} />)}
+                      </AppDataProvider>
+                    </FullMenuProvider>
+                  </CartProvider>
+                </AuthProvider>
+              </AppConfirmDialogProvider>
+            </AppMessageProvider>
+          </AntdApp>
         </ConfigProvider>
       </NProgress>
       <Suspense>
