@@ -119,6 +119,7 @@ function DrugStorePickerInventoryChecking({
     if (drugStoreKey) {
       checkAllProducts();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drugStoreKey]);
 
   /**
@@ -128,6 +129,7 @@ function DrugStorePickerInventoryChecking({
     return () => {
       setProductStatuses([]);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const notAvailableProducts = productStatuses.filter(
@@ -147,7 +149,7 @@ function DrugStorePickerInventoryChecking({
                     name={`action-message`}
                     rules={[{ required: true, message: '' }]}
                   >
-                    <Checkbox></Checkbox>
+                    <Checkbox checked={false}></Checkbox>
                   </Form.Item>
                   <Typography className="font-medium text-red-500">
                     Hãy kiểm tra lại các hành động bên dưới
