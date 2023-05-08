@@ -125,8 +125,8 @@ function PrimaryFooter() {
             </div>
 
             {mainInfoFooter?.map((info) => {
-              return info.groupInfo?.map((groupInfo) => (
-                <div className="w-full" key={info.name}>
+              return info.groupInfo?.map((groupInfo, index) => (
+                <div className="w-full" key={index}>
                   <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                     {groupInfo.name}
                   </Typography.Text>
