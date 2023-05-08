@@ -24,6 +24,7 @@ function EventItem({
           <ImageWithFallback
             src={event.imageUrl || ''}
             layout="fill"
+            placeholder="blur"
             objectFit="cover"
           ></ImageWithFallback>
         </div>

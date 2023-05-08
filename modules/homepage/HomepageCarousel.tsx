@@ -69,6 +69,7 @@ function HomepageCarousel({
                       src={slide.url || ''}
                       alt="carousel image"
                       layout="fill"
+                      placeholder="blur"
                       sizes={
                         type === 'primary'
                           ? '(min-width: 1200px) 100vw, 100vw'
