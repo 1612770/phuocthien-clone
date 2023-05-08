@@ -1,8 +1,13 @@
+import { useRouter } from 'next/router';
 import Script from 'next/script';
 export const ZaloChat = () => {
+  const router = useRouter();
+
+  const onCartPage = router.pathname === '/gio-hang';
+
   return (
     <>
-      <div className="">
+      <div className={onCartPage ? 'hidden lg:block' : ''}>
         <div
           className="zalo-chat-widget"
           data-oaid="2698831418754835289"
