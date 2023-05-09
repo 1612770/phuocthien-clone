@@ -51,7 +51,7 @@ function PromotionProductsList({
       if (data?.length) {
         setPromotionProducts((prev) => [...prev, ...data]);
       }
-      if (data?.length || 0 < 20) {
+      if ((data?.length || 0) < 20) {
         setAllowLoadMore(false);
       }
     } catch (error) {
