@@ -3,7 +3,7 @@ import LinkWrapper from './templates/LinkWrapper';
 import { LeftOutlined } from '@ant-design/icons';
 
 interface Breadcrumb {
-  title: string;
+  title?: string;
   path?: string;
 }
 
@@ -23,7 +23,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps & BreadcrumbProps> = ({
         <Breadcrumb.Item key={index}>
           <LinkWrapper href={br.path}>
             {index === 0 && <LeftOutlined size={20} className="mr-2" />}
-            {br.title}
+            {br.title || ''}
           </LinkWrapper>
         </Breadcrumb.Item>
       ))}
