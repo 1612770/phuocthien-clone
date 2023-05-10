@@ -1,7 +1,5 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Empty, List, Tag, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
-import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
 import { ProductClient } from '@libs/client/Product';
 import UrlUtils from '@libs/utils/url.utils';
@@ -9,61 +7,20 @@ import Product from '@configs/models/product.model';
 import ProductCarousel from '@modules/products/ProductCarousel';
 import React, { useMemo } from 'react';
 import DrugStore from '@configs/models/drug-store.model';
-import AddToCartButton from '@modules/products/AddToCartButton';
-import ProductBonusSection from '@modules/products/ProductBonusSection';
 import { OfferClient } from '@libs/client/Offer';
 import OfferModel from '@configs/models/offer.model';
 import ProductCardDetail from '@modules/products/ProductCardDetail';
 import { DrugstoreClient } from '@libs/client/DrugStore';
-import DrugstoreItem from '@modules/drugstore/DrugstoreItem';
-import COLORS from '@configs/colors';
 import OfferUtils from '@libs/utils/offer.utils';
 import QRApp from '@modules/products/QRApp';
-import PromotionList from '@modules/products/PromotionList';
-import PriceUnit from '@modules/products/PriceUnit';
-import { PromotionPercent } from '@configs/models/promotion.model';
-import { useCart } from '@providers/CartProvider';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import ProductMetaData from '@modules/products/ProductMetaData';
 import { useCacheProduct } from '@libs/utils/hooks/useCacheProduct';
-import ProductList from '@components/templates/ProductList';
-
-const getMaxDiscount = (promotionPercents: PromotionPercent[]): number => {
-  let maxDiscount = 0;
-  promotionPercents.forEach((promotion) => {
-    if (promotion.val > maxDiscount) {
-      maxDiscount = promotion.val;
-    }
-  });
-  return maxDiscount;
-};
-
-const getNextPromotion = (
-  promotionPercents: PromotionPercent[],
-  currentQuantity: number
-): PromotionPercent | undefined => {
-  let nextPromo: PromotionPercent | undefined = undefined;
-
-  promotionPercents.forEach((promotion) => {
-    if (promotion.productQuantityMinCondition > currentQuantity) {
-      nextPromo = promotion;
-    }
-  });
-
-  return nextPromo;
-};
-
-const getInstruction = (
-  promotionPercents: PromotionPercent[],
-  currentQuantity: number
-): string => {
-  const nextPromo = getNextPromotion(promotionPercents, currentQuantity);
-
-  if (!nextPromo) return '';
-  return `Mua ${currentQuantity ? 'thêm' : 'ít nhất'} ${
-    nextPromo.productQuantityMinCondition - currentQuantity
-  } sản phẩm để được giảm ${nextPromo.val * 100}%`;
-};
+import Breadcrumbs from '@components/Breadcrumbs';
+import ProductOthersSection from '@modules/san-pham/chi-tiet/ProductOthersSection';
+import ProductDrugStoresSection from '@modules/san-pham/chi-tiet/ProductDrugStoresSection';
+import ProductMain from '@modules/san-pham/chi-tiet/ProductMain';
+import { REVIEWS_LOAD_PER_TIME } from '@configs/constants/review';
+import ProductCommentSection from '@modules/san-pham/chi-tiet/ProductCommentSection';
+import { Review } from '@configs/models/review.model';
 
 const ProductPage: NextPageWithLayout<{
   product?: Product;
@@ -71,8 +28,15 @@ const ProductPage: NextPageWithLayout<{
   drugStoresAvailable?: DrugStore[];
   drugStores?: DrugStore[];
   offers: OfferModel[];
-}> = ({ product, otherProducts, drugStoresAvailable, offers, drugStores }) => {
-  const { cartProducts } = useCart();
+  reviews: Review[];
+}> = ({
+  product,
+  otherProducts,
+  drugStoresAvailable,
+  offers,
+  drugStores,
+  reviews,
+}) => {
   useCacheProduct(product?.key);
 
   const carouselImages: string[] = useMemo(() => {
@@ -96,18 +60,6 @@ const ProductPage: NextPageWithLayout<{
     return memoCarouselImages;
   }, [product]);
 
-  const curProductIncart = cartProducts.find(
-    (item) => item.product.key === product?.key
-  );
-  const maxDisCount = getMaxDiscount(product?.promotions || []);
-  const nextInstruction = getInstruction(
-    product?.promotions || [],
-    curProductIncart?.quantity || 0
-  );
-
-  const drugstoresToShow =
-    (drugStoresAvailable?.length || 0) > 0 ? drugStoresAvailable : drugStores;
-
   if (!product) return null;
   if (typeof product?.isDestroyed === 'boolean' && product?.isDestroyed) {
     return null;
@@ -115,144 +67,54 @@ const ProductPage: NextPageWithLayout<{
   if (typeof product?.visible === 'boolean' && !product?.visible) return null;
 
   return (
-    <div className="px-4 lg:container lg:px-0">
-      <Breadcrumb className="mt-4 mb-2">
-        <Breadcrumb.Item>
-          <Link href="/">
-            <a>Trang chủ</a>
-          </Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <Link
-            href={`/san-pham/${UrlUtils.generateSlug(
+    <div className="px-4 pt-4 lg:container lg:px-0">
+      <Breadcrumbs
+        breadcrumbs={[
+          {
+            title: 'Trang chủ',
+            path: '/',
+          },
+          {
+            title: product?.productType?.name,
+            path: `/san-pham/${UrlUtils.generateSlug(
               product?.productType?.name,
               product.productType?.key
-            )}`}
-          >
-            <a>{product.productType?.name}</a>
-          </Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <Link
-            href={`/san-pham/${UrlUtils.generateSlug(
+            )}`,
+          },
+          {
+            title: product?.productGroup?.name,
+            path: `/san-pham/${UrlUtils.generateSlug(
               product?.productType?.name,
               product.productType?.key
             )}/${UrlUtils.generateSlug(
-              product.productGroup?.name,
+              product?.productGroup?.name,
               product.productGroup?.key
-            )}`}
-          >
-            <a>{product.productGroup?.name}</a>
-          </Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>{product?.detail?.displayName}</Breadcrumb.Item>
-      </Breadcrumb>
+            )}`,
+          },
+          {
+            title: product?.detail?.displayName,
+          },
+        ]}
+      ></Breadcrumbs>
 
-      <div className="grid  grid-cols-1 gap-4 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[400px_minmax(200px,_1fr)_280px]">
+      <div className="grid grid-cols-1 gap-4 pt-2 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[400px_minmax(200px,_1fr)_280px]">
         <div>
-          <div className=" mb-4 lg:col-span-2 lg:pt-4 xl:col-span-1">
-            <ProductCarousel images={carouselImages} />
-          </div>
+          <ProductCarousel images={carouselImages} />
           <QRApp />
         </div>
 
-        <div className="relative ">
-          <div className="flex flex-col">
-            <Typography.Title className="mx-0 mt-2 text-2xl font-medium">
-              {product?.detail?.displayName}
-            </Typography.Title>
-
-            <ProductBonusSection offers={offers} />
-
-            <div className="relative flex w-full flex-col flex-wrap gap-2 rounded-lg border border-solid border-gray-100 bg-white p-4 shadow-lg md:flex-nowrap lg:gap-2">
-              {maxDisCount > 0 && (
-                <Tag
-                  color={COLORS.red}
-                  className="absolute -top-[8px] -left-[8px]"
-                >
-                  Giảm {maxDisCount * 100}%
-                </Tag>
-              )}
-
-              {nextInstruction && (
-                <div className="flex items-center gap-2 text-blue-500">
-                  <InfoCircleOutlined size={12} />
-                  <Typography.Text className="text-inherit">
-                    {nextInstruction}
-                  </Typography.Text>
-                </div>
-              )}
-
-              <div className="flex w-full flex-1 flex-wrap items-start justify-between">
-                <PriceUnit
-                  price={product.retailPrice}
-                  discountVal={maxDisCount}
-                  unit={product.unit}
-                />
-                {product && (
-                  <div className="w-full md:w-[140px]">
-                    <AddToCartButton
-                      product={product}
-                      className="w-full uppercase"
-                    />
-                  </div>
-                )}
-              </div>
-              {!!product.promotions?.length && (
-                <PromotionList
-                  promotionPercents={product.promotions || []}
-                  retailPrice={product.retailPrice}
-                />
-              )}
-            </div>
-          </div>
-
-          {product && <ProductMetaData product={product} />}
-        </div>
+        <ProductMain offers={offers} product={product} />
 
         <div className="w-full lg:col-span-2 xl:col-span-1">
-          <div className=" rounded-lg border border-solid  border-gray-200">
-            <Typography.Title
-              level={5}
-              className="px-4 pt-6 font-medium uppercase"
-            >
-              {(drugStoresAvailable?.length || 0) > 0 ? (
-                <>
-                  Có{' '}
-                  <b className="text-primary">{drugStoresAvailable?.length}</b>{' '}
-                  nhà thuốc có sẵn
-                </>
-              ) : (
-                <>Hệ thống nhà thuốc Phước Thiện</>
-              )}
-            </Typography.Title>
-            <List className="max-h-[440px] overflow-y-scroll px-0">
-              {drugstoresToShow?.map((drugStore) => (
-                <DrugstoreItem drugstore={drugStore} key={drugStore.key} />
-              ))}
-
-              {!drugstoresToShow?.length && (
-                <Empty
-                  className="my-8"
-                  description={<Typography>Không có nhà thuốc nào</Typography>}
-                ></Empty>
-              )}
-            </List>
-          </div>
+          <ProductDrugStoresSection
+            drugStores={drugStores || []}
+            drugStoresAvailable={drugStoresAvailable || []}
+          />
         </div>
       </div>
 
       {product.detail?.description && (
         <div className="grid grid-cols-1">
-          <div className="lg:container lg:pl-0">
-            <Typography.Title
-              level={3}
-              className="mb-0 mt-6 font-medium uppercase lg:mb-4 lg:mt-12"
-            >
-              Chi tiết sản phẩm
-            </Typography.Title>
-          </div>
-
           <ProductCardDetail
             dangerouslySetInnerHTML={{
               __html: product.detail?.description,
@@ -261,27 +123,13 @@ const ProductPage: NextPageWithLayout<{
         </div>
       )}
 
-      <div className="grid grid-cols-1">
-        <div className="grid grid-cols-1">
-          <div className=" lg:container lg:pl-0">
-            <Typography.Title
-              level={3}
-              className="mb-0 mt-6 inline-block font-medium uppercase lg:mb-4 lg:mt-12"
-            >
-              Các sản phẩm cùng loại
-            </Typography.Title>{' '}
-            <Typography.Title
-              level={3}
-              className="hidden font-medium uppercase lg:inline-block"
-            >
-              trong nhóm {product?.productGroup?.name}
-            </Typography.Title>
-          </div>
-        </div>
+      <ProductCommentSection product={product} defaultReviews={reviews} />
 
-        {(otherProducts?.length || 0) > 0 && (
-          <ProductList products={otherProducts || []} />
-        )}
+      <div className="mb-4 lg:container lg:pl-0">
+        <ProductOthersSection
+          name={product?.productGroup?.name || ''}
+          products={otherProducts || []}
+        />
       </div>
     </div>
   );
@@ -297,6 +145,7 @@ export const getServerSideProps = async (
       drugStoresAvailable: DrugStore[];
       drugStores: DrugStore[];
       offers: OfferModel[];
+      reviews: Review[];
     };
   } = {
     props: {
@@ -304,6 +153,7 @@ export const getServerSideProps = async (
       drugStoresAvailable: [],
       drugStores: [],
       offers: [],
+      reviews: [],
     },
   };
 
@@ -321,7 +171,7 @@ export const getServerSideProps = async (
     if (product.data) {
       serverSideProps.props.product = product.data;
 
-      const [products, offers] = await Promise.all([
+      const [products, offers, getReviewsResponse] = await Promise.all([
         productClient.getProducts({
           page: 1,
           pageSize: 10,
@@ -330,6 +180,11 @@ export const getServerSideProps = async (
           isPrescripted: false,
         }),
         offerClient.getAllActiveOffers(),
+        productClient.getReviews({
+          page: 1,
+          pageSize: REVIEWS_LOAD_PER_TIME,
+          key: product.data.key,
+        }),
       ]);
 
       if (offers.data) {
@@ -342,6 +197,10 @@ export const getServerSideProps = async (
         serverSideProps.props.otherProducts = products.data.data
           .filter((product) => product.key !== productKey)
           .slice(0, 5);
+      }
+
+      if (getReviewsResponse.data) {
+        serverSideProps.props.reviews = getReviewsResponse.data.data;
       }
     }
 

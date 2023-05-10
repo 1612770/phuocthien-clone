@@ -3,7 +3,7 @@ import ImageWithFallback from '@components/templates/ImageWithFallback';
 import TimeUtils from '@libs/utils/time.utils';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import UrlUtils from '@libs/utils/url.utils';
-import EventModel from '@configs/models/EventModel';
+import EventModel from '@configs/models/event.model';
 
 function EventItem({
   event,

@@ -9,7 +9,7 @@ import FocusContentModel from '@configs/models/focus-content.model';
 import SlideBannerModel from '@configs/models/slide-banner.model';
 import MainInfoModel from '@configs/models/main-info.model';
 import ProductSearchKeyword from '@configs/models/product-search-keyword.model';
-import EventModel from '@configs/models/EventModel';
+import EventModel from '@configs/models/event.model';
 import GroupInfoModel from '@configs/models/GroupInfoModel';
 
 export class GeneralClient extends BaseClient {
