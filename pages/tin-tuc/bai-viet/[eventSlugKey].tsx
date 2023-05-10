@@ -4,7 +4,7 @@ import { NextPageWithLayout } from 'pages/page';
 import { GetServerSidePropsContext } from 'next';
 import UrlUtils from '@libs/utils/url.utils';
 import React from 'react';
-import EventModel from '@configs/models/EventModel';
+import EventModel from '@configs/models/event.model';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import { GeneralClient } from '@libs/client/General';
 import EventItem from '@modules/event/EventItem';

@@ -1,4 +1,4 @@
-import EventModel from './EventModel';
+import EventModel from './event.model';
 
 type GroupInfoModel = Partial<{
   code: number;

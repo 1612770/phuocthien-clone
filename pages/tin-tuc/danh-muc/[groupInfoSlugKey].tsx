@@ -8,7 +8,7 @@ import LinkWrapper from '@components/templates/LinkWrapper';
 import { GeneralClient } from '@libs/client/General';
 import GroupInfoModel from '@configs/models/GroupInfoModel';
 import EventItem from '@modules/event/EventItem';
-import EventModel from '@configs/models/EventModel';
+import EventModel from '@configs/models/event.model';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import EVENTS_LOAD_PER_TIME from '@configs/constants/events-load-per-time';
 
