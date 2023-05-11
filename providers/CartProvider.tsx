@@ -199,14 +199,9 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const removeAllChosenProducts = useCallback(() => {
-    const newCartProducts = cartProducts
-      .filter((cartProduct) => !cartProduct.choosen)
-      .map((cartProduct) => {
-        return {
-          ...cartProduct,
-          choosen: true,
-        };
-      });
+    const newCartProducts = cartProducts.filter(
+      (cartProduct) => !cartProduct.choosen
+    );
 
     setCartProducts(newCartProducts);
 
