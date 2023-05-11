@@ -1,35 +1,46 @@
-import Product from '@configs/models/product.model';
+import Product, { CartProduct } from '@configs/models/product.model';
 import LocalStorageUtils, {
   LocalStorageKeys,
 } from '@libs/utils/local-storage.utils';
 import { Button, notification } from 'antd';
 import Link from 'next/link';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppConfirmDialog } from './AppConfirmDialogProvider';
 
+type CartChangeProductData =
+  | {
+      field: 'quantity';
+      value: number;
+    }
+  | {
+      field: 'note';
+      value: string;
+    }
+  | {
+      field: 'choosen';
+      value: boolean;
+    };
+
 const CartContext = React.createContext<{
-  cartProducts: { product: Product; quantity: number; note?: string }[];
-  addToCart: (payload: {
-    product: Product;
-    quantity: number;
-    note?: string;
-  }) => void;
+  cartProducts: CartProduct[];
+  choosenCartProducts: CartProduct[];
+  addToCart: (payload: Omit<CartProduct, 'choosen'>) => void;
   removeFromCart: (
     product: Product,
     options?: {
       isShowConfirm?: boolean;
     }
   ) => void;
-  changeProductData: (
-    product: Product,
-    payload: { field: 'quantity' | 'note'; value: number | string }
-  ) => void;
+  changeProductData: (product: Product, payload: CartChangeProductData) => void;
+  setChoosenAllCartProducts: (choosen: boolean) => void;
   resetCart: () => void;
 }>({
   cartProducts: [],
+  choosenCartProducts: [],
   addToCart: () => undefined,
   removeFromCart: () => undefined,
   changeProductData: () => undefined,
+  setChoosenAllCartProducts: () => undefined,
   resetCart: () => undefined,
 });
 
@@ -38,9 +49,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     maxCount: 1,
   });
 
-  const [cartProducts, setCartProducts] = useState<
-    { product: Product; quantity: number; note?: string }[]
-  >([]);
+  const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
 
   const { setConfirmData } = useAppConfirmDialog();
 
@@ -74,7 +83,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   }, [api]);
 
   const addToCart = useCallback(
-    (payload: { product: Product; quantity: number; note?: string }) => {
+    (payload: Omit<CartProduct, 'choosen'>) => {
       if (
         cartProducts.find(
           (cartProduct) => cartProduct.product.key === payload.product.key
@@ -85,6 +94,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
             return {
               ...cartProduct,
               quantity: payload.quantity,
+              choosen: true,
             };
           }
           return cartProduct;
@@ -97,7 +107,10 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         return;
       } else {
         openNotification();
-        const newCartProducts = [...cartProducts, payload];
+        const newCartProducts = [
+          ...cartProducts,
+          { ...payload, choosen: true },
+        ];
         setCartProducts(newCartProducts);
         LocalStorageUtils.setItem(
           LocalStorageKeys.CART_PRODUCTS,
@@ -147,11 +160,26 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     [cartProducts, setConfirmData]
   );
 
+  const setChoosenAllCartProducts = useCallback(
+    (choosen: boolean) => {
+      const newCartProducts = cartProducts.map((cartProduct) => {
+        return {
+          ...cartProduct,
+          choosen: choosen,
+        };
+      });
+
+      setCartProducts(newCartProducts);
+      LocalStorageUtils.setItem(
+        LocalStorageKeys.CART_PRODUCTS,
+        JSON.stringify(newCartProducts)
+      );
+    },
+    [cartProducts]
+  );
+
   const changeProductData = useCallback(
-    (
-      product: Product,
-      payload: { field: 'quantity' | 'note'; value: number | string }
-    ) => {
+    (product: Product, payload: CartChangeProductData) => {
       const newCartProducts = cartProducts.map((cartProduct) => {
         if (cartProduct.product.key === product.key) {
           return {
@@ -175,13 +203,20 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     LocalStorageUtils.removeItem(LocalStorageKeys.CART_PRODUCTS);
   }, []);
 
+  const choosenCartProducts = useMemo(
+    () => cartProducts.filter((cartProduct) => cartProduct.choosen),
+    [cartProducts]
+  );
+
   return (
     <CartContext.Provider
       value={{
         cartProducts,
+        choosenCartProducts,
         addToCart,
         removeFromCart,
         changeProductData,
+        setChoosenAllCartProducts,
         resetCart,
       }}
     >

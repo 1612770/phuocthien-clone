@@ -20,14 +20,16 @@ import Breadcrumbs from '@components/Breadcrumbs';
 import CheckoutForm from '@modules/gio-hang/CheckoutForm';
 import CheckoutEmptyState from '@modules/gio-hang/CheckoutEmptyState';
 import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
-import { Grid } from 'antd';
+import { Button, Grid } from 'antd';
+import { LeftOutlined } from '@ant-design/icons';
 
 const CartPage: NextPageWithLayout<{
   paymentMethods: PaymentMethodModel[];
   offers: OfferModel[];
 }> = ({ paymentMethods, offers }) => {
   const { cartProducts } = useCart();
-  const { checkoutForm, checkout, setCheckoutError } = useCheckout();
+  const { checkoutForm, checkout, setCheckoutError, cartStep, setCartStep } =
+    useCheckout();
   const { setConfirmData } = useAppConfirmDialog();
   const { lg } = Grid.useBreakpoint();
 
@@ -61,15 +63,31 @@ const CartPage: NextPageWithLayout<{
       <SEO title="Giỏ hàng - Nhà thuốc Phước Thiện" />
 
       <div className="container pb-4">
-        <Breadcrumbs
-          className="pt-4 pb-2"
-          breadcrumbs={[
-            {
-              title: 'Mua thêm sản phẩm khác',
-              path: '/',
-            },
-          ]}
-        ></Breadcrumbs>
+        {cartStep === 'cart' && (
+          <Breadcrumbs
+            className="pt-4 pb-2"
+            breadcrumbs={[
+              {
+                title: 'Mua thêm sản phẩm khác',
+                path: '/',
+              },
+            ]}
+          ></Breadcrumbs>
+        )}
+
+        {cartStep === 'checkout' && (
+          <Button
+            onClick={() => {
+              setCartStep('cart');
+            }}
+            type="primary"
+            ghost
+            className="mt-3 mb-0.5 border-none py-0 px-0"
+            icon={<LeftOutlined size={20} className="" />}
+          >
+            Quay lại giỏ hàng
+          </Button>
+        )}
 
         {cartProducts.length > 0 && (
           <CheckoutForm

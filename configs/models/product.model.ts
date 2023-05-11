@@ -5,6 +5,13 @@ import ProductType from './product-type.model';
 import ProductDetailModel from './product-detail.model';
 import { PromotionPercent } from './promotion.model';
 
+export interface CartProduct {
+  product: Product;
+  quantity: number;
+  note?: string;
+  choosen: boolean;
+}
+
 type Product = Partial<{
   key: string;
   code: string;

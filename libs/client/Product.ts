@@ -5,6 +5,7 @@ import DrugStore from '@configs/models/drug-store.model';
 import WithPagination from '@configs/types/utils/with-pagination';
 import ViralProductsListModel from '@configs/models/viral-products-list.model';
 import { Review } from '@configs/models/review.model';
+import { FAQ } from '@configs/models/faq.model';
 
 export class ProductClient extends BaseClient {
   constructor(ctx: unknown, data: unknown) {
@@ -72,5 +73,9 @@ export class ProductClient extends BaseClient {
     description: string;
   }): Promise<APIResponse<void>> {
     return await super.call('POST', `product/review`, payload);
+  }
+
+  async getFAQs({ key }: { key?: string }): Promise<APIResponse<FAQ[]>> {
+    return await super.call('GET', `product/${key}/faq`, {});
   }
 }

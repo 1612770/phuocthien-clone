@@ -19,7 +19,7 @@ function PrimaryHeader({ showSearch = true }) {
 
   return (
     <header>
-      <div className="bg-primary py-4">
+      <div className="bg-primary py-2">
         <div className="m-auto flex items-center justify-between px-2  lg:container lg:px-0">
           <div className="flex flex-1 items-center">
             <Menu

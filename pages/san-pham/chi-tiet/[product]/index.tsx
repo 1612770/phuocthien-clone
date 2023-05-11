@@ -21,6 +21,8 @@ import ProductMain from '@modules/san-pham/chi-tiet/ProductMain';
 import { REVIEWS_LOAD_PER_TIME } from '@configs/constants/review';
 import ProductCommentSection from '@modules/san-pham/chi-tiet/ProductCommentSection';
 import { Review } from '@configs/models/review.model';
+import ProductFAQsSection from '@modules/san-pham/chi-tiet/ProductFAQsSection';
+import { FAQ } from '@configs/models/faq.model';
 
 const ProductPage: NextPageWithLayout<{
   product?: Product;
@@ -29,6 +31,7 @@ const ProductPage: NextPageWithLayout<{
   drugStores?: DrugStore[];
   offers: OfferModel[];
   reviews: Review[];
+  faqs: FAQ[];
 }> = ({
   product,
   otherProducts,
@@ -36,6 +39,7 @@ const ProductPage: NextPageWithLayout<{
   offers,
   drugStores,
   reviews,
+  faqs,
 }) => {
   useCacheProduct(product?.key);
 
@@ -123,6 +127,7 @@ const ProductPage: NextPageWithLayout<{
         </div>
       )}
 
+      <ProductFAQsSection faqs={faqs} />
       <ProductCommentSection product={product} defaultReviews={reviews} />
 
       <div className="mb-4 lg:container lg:pl-0">
@@ -146,6 +151,7 @@ export const getServerSideProps = async (
       drugStores: DrugStore[];
       offers: OfferModel[];
       reviews: Review[];
+      faqs: FAQ[];
     };
   } = {
     props: {
@@ -154,6 +160,7 @@ export const getServerSideProps = async (
       drugStores: [],
       offers: [],
       reviews: [],
+      faqs: [],
     },
   };
 
@@ -171,21 +178,25 @@ export const getServerSideProps = async (
     if (product.data) {
       serverSideProps.props.product = product.data;
 
-      const [products, offers, getReviewsResponse] = await Promise.all([
-        productClient.getProducts({
-          page: 1,
-          pageSize: 10,
-          productTypeKey: product.data.productType?.key,
-          productGroupKey: product.data.productGroup?.key,
-          isPrescripted: false,
-        }),
-        offerClient.getAllActiveOffers(),
-        productClient.getReviews({
-          page: 1,
-          pageSize: REVIEWS_LOAD_PER_TIME,
-          key: product.data.key,
-        }),
-      ]);
+      const [products, offers, getReviewsResponse, getFAQsResponse] =
+        await Promise.all([
+          productClient.getProducts({
+            page: 1,
+            pageSize: 10,
+            productTypeKey: product.data.productType?.key,
+            productGroupKey: product.data.productGroup?.key,
+            isPrescripted: false,
+          }),
+          offerClient.getAllActiveOffers(),
+          productClient.getReviews({
+            page: 1,
+            pageSize: REVIEWS_LOAD_PER_TIME,
+            key: product.data.key,
+          }),
+          productClient.getFAQs({
+            key: product.data.key,
+          }),
+        ]);
 
       if (offers.data) {
         serverSideProps.props.offers = OfferUtils.filterNonValueOffer(
@@ -201,6 +212,10 @@ export const getServerSideProps = async (
 
       if (getReviewsResponse.data) {
         serverSideProps.props.reviews = getReviewsResponse.data.data;
+      }
+
+      if (getFAQsResponse.data) {
+        serverSideProps.props.faqs = getFAQsResponse.data;
       }
     }
 

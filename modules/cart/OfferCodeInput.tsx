@@ -95,7 +95,7 @@ function OfferCodeInput({ offers }: { offers: OfferModel[] }) {
       </Badge>
 
       <NoPaddingContentDrawer
-        title="Sử dụng mã ưu đãi / phiếu quà tặng"
+        title={md ? 'Sử dụng mã ưu đãi / phiếu quà tặng' : 'Sử dụng mã ưu đãi'}
         placement="right"
         onClose={() => {
           setOpenDrawer(false);
@@ -105,7 +105,9 @@ function OfferCodeInput({ offers }: { offers: OfferModel[] }) {
           ? {
               width: 400,
             }
-          : {})}
+          : {
+              width: '100%',
+            })}
       >
         <ProductBonusPicker offers={offers} onUseOffer={onUseOffer} />
 
