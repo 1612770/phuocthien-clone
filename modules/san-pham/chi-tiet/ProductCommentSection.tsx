@@ -51,6 +51,8 @@ function ProductCommentSection({
           hidden: true,
         },
       });
+
+      setDescription('');
     } catch (error) {
       appMessage.toastError({ data: error });
     } finally {
