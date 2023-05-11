@@ -44,6 +44,9 @@ const CheckoutContext = React.createContext<{
   offer: OfferModel | undefined;
   setOffer: (offer: OfferModel | undefined) => void;
 
+  cartStep: 'cart' | 'checkout';
+  setCartStep: (cartStep: 'cart' | 'checkout') => void;
+
   totalPriceAfterDiscountOnProduct: number;
   totalPriceBeforeDiscountOnProduct: number;
   offerCodePrice: number;
@@ -65,6 +68,9 @@ const CheckoutContext = React.createContext<{
   offer: undefined,
   setOffer: () => undefined,
 
+  cartStep: 'cart',
+  setCartStep: () => undefined,
+
   totalPriceAfterDiscountOnProduct: 0,
   totalPriceBeforeDiscountOnProduct: 0,
   offerCodePrice: 0,
@@ -73,7 +79,7 @@ const CheckoutContext = React.createContext<{
 });
 
 function CheckoutProvider({ children }: { children: React.ReactNode }) {
-  const { cartProducts, resetCart } = useCart();
+  const { choosenCartProducts, resetCart } = useCart();
   const { provinces, wards, districts } = useMasterData();
   const router = useRouter();
   const { setConfirmData } = useAppConfirmDialog();
@@ -106,21 +112,21 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
   const [checkingOut, setCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
-
   const [offer, setOffer] = useState<OfferModel>();
+  const [cartStep, setCartStep] = useState<'cart' | 'checkout'>('cart');
 
   const totalPriceBeforeDiscountOnProduct = useMemo(
     () =>
-      cartProducts.reduce((total, cartProduct) => {
+      choosenCartProducts.reduce((total, cartProduct) => {
         const retailPrice = cartProduct.product.retailPrice || 0;
         return total + retailPrice * cartProduct.quantity;
       }, 0),
-    [cartProducts]
+    [choosenCartProducts]
   );
 
   const totalPriceAfterDiscountOnProduct = useMemo(
     () =>
-      cartProducts.reduce((total, cartProduct) => {
+      choosenCartProducts.reduce((total, cartProduct) => {
         const discountVal = cartProduct.product.promotions?.[0]?.val || 0;
         const productQuantityMinCondition =
           cartProduct.product.promotions?.[0]?.productQuantityMinCondition || 0;
@@ -132,7 +138,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
         return total + retailPrice * cartProduct.quantity;
       }, 0),
-    [cartProducts]
+    [choosenCartProducts]
   );
 
   const offerCodePrice = useMemo(() => {
@@ -224,7 +230,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
           valuesToSubmit.shippingType === ShippingTypes.DELIVERY
             ? getAddressData()
             : undefined,
-        items: cartProducts.map((cartProduct) =>
+        items: choosenCartProducts.map((cartProduct) =>
           getCartProductOrderItem(cartProduct)
         ),
         offerCode: offer?.offerCode || undefined,
@@ -262,7 +268,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
    * Effect trigger when price change to apply offer
    */
   useEffect(() => {
-    if (offer && cartProducts.length > 0) {
+    if (offer && choosenCartProducts.length > 0) {
       if (totalPriceAfterDiscountOnProduct < (offer.minAmountOffer || 0)) {
         setOffer(undefined);
 
@@ -292,7 +298,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
     setConfirmData,
     toastSuccess,
     totalPriceAfterDiscountOnProduct,
-    cartProducts,
+    choosenCartProducts,
   ]);
 
   return (
@@ -311,6 +317,9 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
         offer,
         setOffer,
+
+        cartStep,
+        setCartStep,
 
         totalPriceAfterDiscountOnProduct,
         totalPriceBeforeDiscountOnProduct,

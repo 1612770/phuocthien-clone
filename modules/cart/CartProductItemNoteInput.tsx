@@ -32,13 +32,13 @@ function CartProductItemNoteInput({
     <>
       <Button
         type="link"
-        className={`p-0 text-gray-500`}
+        className={`h-auto p-0 text-gray-500`}
         onClick={() => {
           inputRef.current?.focus();
           setOpen(true);
         }}
       >
-        <div className="flex">
+        <div className="flex gap-2">
           <EditOutlined />
           <Typography.Text
             className={`${

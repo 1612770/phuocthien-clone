@@ -16,7 +16,7 @@ function DrugStorePickerInventoryChecking({
 }) {
   const [checking, setChecking] = useState(false);
 
-  const { cartProducts, changeProductData, removeFromCart } = useCart();
+  const { choosenCartProducts, changeProductData, removeFromCart } = useCart();
   const { productStatuses, setProductStatuses } = useCheckout();
   const { toastError, toastSuccess } = useAppMessage();
 
@@ -57,7 +57,7 @@ function DrugStorePickerInventoryChecking({
     try {
       setChecking(true);
       const inventoryAtDrugStoresResponses = await Promise.all(
-        cartProducts.map((cartProduct) =>
+        choosenCartProducts.map((cartProduct) =>
           product.checkInventoryAtDrugStores({
             key: cartProduct.product.key || '',
           })
@@ -89,11 +89,11 @@ function DrugStorePickerInventoryChecking({
             },
           };
 
-          productStatus.product = cartProducts[index].product;
+          productStatus.product = choosenCartProducts[index].product;
           productStatus.statusData = checkProductStillAvailableAtDrugStore(
             drugStoreKey,
             inventoryAtDrugStore,
-            cartProducts[index]
+            choosenCartProducts[index]
           );
 
           return currentProductStatuses.concat(productStatus);

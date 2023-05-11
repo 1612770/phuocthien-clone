@@ -13,7 +13,7 @@ interface CheckoutPriceProps {
 }
 
 function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
-  const { cartProducts } = useCart();
+  const { choosenCartProducts } = useCart();
   const [isShowInfoMobile, setIsShowInfoMobile] = useState(false);
 
   const {
@@ -22,9 +22,11 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
     totalPriceAfterDiscountOnProduct,
     totalPriceBeforeDiscountOnProduct,
     offerCodePrice,
+    cartStep,
+    setCartStep,
   } = useCheckout();
 
-  const totalProducts = cartProducts.reduce(
+  const totalProducts = choosenCartProducts.reduce(
     (total, cartProduct) => total + (Number(cartProduct.quantity) || 0),
     0
   );
@@ -114,18 +116,38 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
           )}
 
           <Button hidden htmlType="submit" />
-          <Button
-            type="primary"
-            onClick={() => {
-              onCheckout();
-            }}
-            loading={checkingOut}
-            size="large"
-            block
-            className="mt-4 mb-2 h-[48px] bg-primary-light text-base font-medium uppercase shadow-none"
-          >
-            Đặt hàng
-          </Button>
+          {cartStep === 'checkout' && (
+            <Button
+              type="primary"
+              onClick={() => {
+                onCheckout();
+              }}
+              loading={checkingOut}
+              size="large"
+              block
+              className="mt-4 mb-2 h-[48px] bg-primary-light text-base font-medium uppercase shadow-none"
+            >
+              Hoàn tất ({totalProducts})
+            </Button>
+          )}
+
+          {cartStep === 'cart' && (
+            <Button
+              type="primary"
+              onClick={() => {
+                setCartStep('checkout');
+              }}
+              loading={checkingOut}
+              size="large"
+              block
+              disabled={!totalProducts}
+              className={`${
+                totalProducts ? 'bg-primary-light' : 'bg-gray-200'
+              } mt-4 mb-2 h-[48px] text-base font-medium uppercase shadow-none`}
+            >
+              Đặt hàng ({totalProducts})
+            </Button>
+          )}
         </div>
 
         <div className="block lg:hidden">
@@ -152,17 +174,36 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
             </div>
             <div>
               <Button hidden htmlType="submit" />
-              <Button
-                type="primary"
-                onClick={() => {
-                  onCheckout();
-                }}
-                loading={checkingOut}
-                block
-                className="h-[40px] bg-primary-light font-medium uppercase shadow-none"
-              >
-                Đặt hàng
-              </Button>
+              {cartStep === 'checkout' && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    onCheckout();
+                  }}
+                  loading={checkingOut}
+                  block
+                  className="h-[40px] bg-primary-light font-medium uppercase shadow-none"
+                >
+                  Hoàn tất ({totalProducts})
+                </Button>
+              )}
+
+              {cartStep === 'cart' && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setCartStep('checkout');
+                  }}
+                  loading={checkingOut}
+                  block
+                  className={`${
+                    totalProducts ? 'bg-primary-light' : 'bg-gray-200'
+                  } h-[40px] font-medium uppercase shadow-none`}
+                  disabled={!totalProducts}
+                >
+                  Đặt hàng ({totalProducts})
+                </Button>
+              )}
             </div>
           </div>
         </div>
