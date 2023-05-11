@@ -3,7 +3,7 @@ import { REGEX_PHONE } from '@configs/env';
 import OfferModel from '@configs/models/offer.model';
 import PaymentMethodModel from '@configs/models/payment-method.model';
 import { useCheckout } from '@providers/CheckoutProvider';
-import { Form, Divider, Typography, Input } from 'antd';
+import { Form, Typography, Input } from 'antd';
 import React from 'react';
 import CheckoutPaymentMethodsFormItem from './CheckoutPaymentMethodsFormItem';
 import CheckoutShippingType from './CheckoutShippingType';
@@ -37,7 +37,6 @@ function CheckoutForm({
 
             {cartStep === 'checkout' && (
               <>
-                <Divider className="my-2" />
                 <Typography.Title
                   level={5}
                   className="mt-4 font-medium uppercase"

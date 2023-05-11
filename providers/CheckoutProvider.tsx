@@ -79,7 +79,7 @@ const CheckoutContext = React.createContext<{
 });
 
 function CheckoutProvider({ children }: { children: React.ReactNode }) {
-  const { choosenCartProducts, resetCart } = useCart();
+  const { choosenCartProducts, removeAllChosenProducts } = useCart();
   const { provinces, wards, districts } = useMasterData();
   const router = useRouter();
   const { setConfirmData } = useAppConfirmDialog();
@@ -237,7 +237,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         orderNote: valuesToSubmit.orderNote || undefined,
       });
 
-      resetCart();
+      removeAllChosenProducts();
 
       if (!isUserLoggedIn) {
         SessionStorageUtils.setItem(

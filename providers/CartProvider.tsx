@@ -33,7 +33,7 @@ const CartContext = React.createContext<{
   ) => void;
   changeProductData: (product: Product, payload: CartChangeProductData) => void;
   setChoosenAllCartProducts: (choosen: boolean) => void;
-  resetCart: () => void;
+  removeAllChosenProducts: () => void;
 }>({
   cartProducts: [],
   choosenCartProducts: [],
@@ -41,7 +41,7 @@ const CartContext = React.createContext<{
   removeFromCart: () => undefined,
   changeProductData: () => undefined,
   setChoosenAllCartProducts: () => undefined,
-  resetCart: () => undefined,
+  removeAllChosenProducts: () => undefined,
 });
 
 function CartProvider({ children }: { children: React.ReactNode }) {
@@ -198,10 +198,23 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     [cartProducts]
   );
 
-  const resetCart = useCallback(() => {
-    setCartProducts([]);
-    LocalStorageUtils.removeItem(LocalStorageKeys.CART_PRODUCTS);
-  }, []);
+  const removeAllChosenProducts = useCallback(() => {
+    const newCartProducts = cartProducts
+      .filter((cartProduct) => !cartProduct.choosen)
+      .map((cartProduct) => {
+        return {
+          ...cartProduct,
+          choosen: true,
+        };
+      });
+
+    setCartProducts(newCartProducts);
+
+    LocalStorageUtils.setItem(
+      LocalStorageKeys.CART_PRODUCTS,
+      JSON.stringify(newCartProducts)
+    );
+  }, [cartProducts]);
 
   const choosenCartProducts = useMemo(
     () => cartProducts.filter((cartProduct) => cartProduct.choosen),
@@ -217,7 +230,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         removeFromCart,
         changeProductData,
         setChoosenAllCartProducts,
-        resetCart,
+        removeAllChosenProducts,
       }}
     >
       {contextHolder}
