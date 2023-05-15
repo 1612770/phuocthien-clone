@@ -24,7 +24,9 @@ function ProductOthersSection({
       >
         trong nhóm {name}
       </Typography.Title>
-      {(products?.length || 0) > 0 && <ProductList products={products || []} />}
+      {(products?.length || 0) > 0 && (
+        <ProductList forceSlide products={products || []} />
+      )}
     </>
   );
 }

@@ -20,7 +20,7 @@ function PrimaryFooter() {
   return (
     <>
       {!!products.length && (
-        <div className="py-8 lg:container">
+        <div className="py-8 px-4 lg:container lg:px-0">
           <Typography.Title
             level={3}
             className={
@@ -29,7 +29,7 @@ function PrimaryFooter() {
           >
             Sản phẩm vừa xem
           </Typography.Title>
-          <ProductList products={products} />
+          <ProductList products={products} forceSlide />
         </div>
       )}
       <div className={`block ${router.asPath === '/' ? 'lg:hidden' : ''}`}>
