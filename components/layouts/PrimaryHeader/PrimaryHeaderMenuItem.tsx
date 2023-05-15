@@ -1,8 +1,8 @@
 import { Popover, Space, Typography } from 'antd';
 import Link from 'next/link';
-import { ChevronDown } from 'react-feather';
 import PrimaryHeaderMenuList from './PrimaryHeaderMenuList';
 import ProductGroupModel from '@configs/models/product-group.model';
+import { DownOutlined } from '@ant-design/icons';
 
 function PrimaryHeaderMenuItem({
   label,
@@ -45,9 +45,7 @@ function PrimaryHeaderMenuItem({
             <Typography.Text className="whitespace-nowrap font-medium uppercase">
               {label}
             </Typography.Text>
-            {!onlyClick && (
-              <ChevronDown className="-ml-1 text-stone-800" size={16} />
-            )}
+            {!onlyClick && <DownOutlined className="text-stone-800" />}
           </Space>
         </Popover>
       </a>

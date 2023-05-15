@@ -1,6 +1,5 @@
 import { Popover, Space, Typography } from 'antd';
 import Link from 'next/link';
-import { Book, ChevronDown, MapPin } from 'react-feather';
 import { useState } from 'react';
 import { IMPORTANT_MENU_KEYS } from '@configs/env';
 import ProductGroupModel from '@configs/models/product-group.model';
@@ -10,6 +9,7 @@ import PrimaryHeaderMenuAllPopoverContent from './PrimaryHeaderMenuAllPopoverCon
 import PrimaryHeaderMenuItem from './PrimaryHeaderMenuItem';
 import MenuModel from '@configs/models/menu.model';
 import LinkWrapper from '@components/templates/LinkWrapper';
+import { BookOutlined, DownOutlined, ShopOutlined } from '@ant-design/icons';
 
 function PrimaryHeaderMenu() {
   const { fullMenu, open, setOpen, intoPopover } = useFullMenu();
@@ -51,7 +51,7 @@ function PrimaryHeaderMenu() {
             <Typography.Text className="whitespace-nowrap font-medium uppercase">
               Tất cả danh mục
             </Typography.Text>
-            <ChevronDown className="-ml-1" size={16} />
+            <DownOutlined size={16} />
           </Space>
 
           {fullMenu.map((menu) =>
@@ -88,7 +88,7 @@ function PrimaryHeaderMenu() {
           </Typography.Text>
           <LinkWrapper href={'/tin-tuc'} className="hidden xl:flex">
             <Space align="center">
-              <Book className="text-stone-800" size={16} />
+              <BookOutlined className="text-stone-800" />
               <Typography.Text className="whitespace-nowrap font-medium uppercase ">
                 Góc tin tức
               </Typography.Text>
@@ -97,7 +97,7 @@ function PrimaryHeaderMenu() {
           <Link href={'/nha-thuoc'} style={{ color: 'white' }}>
             <a className="hidden xl:flex">
               <Space align="center">
-                <MapPin className="text-stone-800" size={16} />
+                <ShopOutlined className="text-stone-800" />
                 <Typography.Text className="whitespace-nowrap font-medium uppercase ">
                   Chuỗi nhà thuốc
                 </Typography.Text>
