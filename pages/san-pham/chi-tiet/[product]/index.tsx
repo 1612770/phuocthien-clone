@@ -205,9 +205,9 @@ export const getServerSideProps = async (
       }
 
       if (products.data) {
-        serverSideProps.props.otherProducts = products.data.data
-          .filter((product) => product.key !== productKey)
-          .slice(0, 5);
+        serverSideProps.props.otherProducts = products.data.data.filter(
+          (product) => product.key !== productKey
+        );
       }
 
       if (getReviewsResponse.data) {
