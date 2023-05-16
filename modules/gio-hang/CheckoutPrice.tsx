@@ -6,6 +6,8 @@ import { useCart } from '@providers/CartProvider';
 import { useCheckout } from '@providers/CheckoutProvider';
 import { Typography, Button, Divider, Grid } from 'antd';
 import React, { useState } from 'react';
+import DeliveryFee from './DeliveryFee';
+import { useDeliveryConfigs } from '@providers/DeliveryConfigsProvider';
 
 interface CheckoutPriceProps {
   offers: OfferModel[];
@@ -26,12 +28,17 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
     setCartStep,
   } = useCheckout();
 
+  const { shippingFee } = useDeliveryConfigs();
+
   const totalProducts = choosenCartProducts.reduce(
     (total, cartProduct) => total + (Number(cartProduct.quantity) || 0),
     0
   );
 
   const { lg } = Grid.useBreakpoint();
+  const totalLabel = cartStep === 'cart' ? 'Tạm tính' : 'Thành tiền';
+  const totalAmount =
+    totalPriceAfterDiscountOnProduct - offerCodePrice + shippingFee;
 
   return (
     <div
@@ -53,7 +60,7 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
 
             <div className="my-1 flex justify-between">
               <Typography.Text className="text-gray-500">
-                Tạm tính
+                Tổng tiền
               </Typography.Text>
               <Typography.Text className="font-bold text-primary-light">
                 {CurrencyUtils.format(totalPriceBeforeDiscountOnProduct)}
@@ -92,6 +99,8 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
               </Typography.Text>
             </div>
 
+            {cartStep === 'checkout' && <DeliveryFee />}
+
             <Divider className="my-2 lg:my-4"></Divider>
             <OfferCodeInput offers={offers} />
             <Divider className="my-2 lg:my-4"></Divider>
@@ -100,12 +109,10 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
         <div className="hidden lg:block">
           <div className="mt-4 flex items-center justify-between gap-4">
             <Typography.Title className="m-0" level={4}>
-              Tổng tiền
+              {totalLabel}
             </Typography.Title>
             <Typography.Title level={4} className="m-0 text-primary">
-              {CurrencyUtils.format(
-                totalPriceAfterDiscountOnProduct - offerCodePrice
-              )}
+              {CurrencyUtils.format(totalAmount)}
             </Typography.Title>
           </div>
 
@@ -164,12 +171,11 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
                 onClick={() => setIsShowInfoMobile(!isShowInfoMobile)}
                 level={5}
               >
-                Tổng tiền {isShowInfoMobile ? <DownOutlined /> : <UpOutlined />}
+                {totalLabel}{' '}
+                {isShowInfoMobile ? <DownOutlined /> : <UpOutlined />}
               </Typography.Title>
               <Typography.Title level={5} className="m-0 text-primary">
-                {CurrencyUtils.format(
-                  totalPriceAfterDiscountOnProduct - offerCodePrice
-                )}
+                {CurrencyUtils.format(totalAmount)}
               </Typography.Title>
             </div>
             <div>

@@ -22,6 +22,7 @@ import CheckoutEmptyState from '@modules/gio-hang/CheckoutEmptyState';
 import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
 import { Button, Grid } from 'antd';
 import { LeftOutlined } from '@ant-design/icons';
+import DeliveryConfigsProvider from '@providers/DeliveryConfigsProvider';
 
 const CartPage: NextPageWithLayout<{
   paymentMethods: PaymentMethodModel[];
@@ -110,9 +111,11 @@ CartPage.getLayout = (page) => {
     <PrimaryLayout background="primary">
       <MasterDataProvider defaultProvinces={page.props.provinces}>
         <CheckoutProvider>
-          <AddressesProvider defaultAddresses={page.props.addresses}>
-            {page}
-          </AddressesProvider>
+          <DeliveryConfigsProvider>
+            <AddressesProvider defaultAddresses={page.props.addresses}>
+              {page}
+            </AddressesProvider>
+          </DeliveryConfigsProvider>
         </CheckoutProvider>
       </MasterDataProvider>
     </PrimaryLayout>
