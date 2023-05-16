@@ -45,7 +45,7 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
       className={
         lg
           ? ''
-          : ' fixed bottom-0 left-0 right-0 z-10 overflow-hidden rounded-tl-xl rounded-tr-xl'
+          : ' fixed bottom-0 left-0 right-0 z-20 overflow-hidden rounded-tl-xl rounded-tr-xl'
       }
       style={{
         boxShadow: lg ? '' : '0 -2px 8px rgb(0 0 0 / 10%)',
