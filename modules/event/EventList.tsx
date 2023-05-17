@@ -9,17 +9,14 @@ function EventList({ group }: { group: GroupInfoModel }) {
     <div className="">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-4">
         {group.eventInfos?.map((event, index) => (
-          <EventItem event={event} key={index} />
+          <EventItem event={event} groupInfo={group} key={index} />
         ))}
       </div>
 
       {!!group.eventInfos?.length && (
         <div className="flex justify-center">
           <LinkWrapper
-            href={`/tin-tuc/danh-muc/${UrlUtils.generateSlug(
-              group.name,
-              group.key
-            )}`}
+            href={`/tin-tuc/${UrlUtils.generateSlug(group.name, group.key)}`}
           >
             <Button type="primary" className="mt-4 inline-block" ghost>
               Xem tất cả các bài viết

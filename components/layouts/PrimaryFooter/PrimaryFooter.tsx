@@ -44,7 +44,7 @@ function PrimaryFooter() {
                   <img
                     src={IMAGES.logo}
                     alt="Nhà thuốc Phước Thiện"
-                    className="mr-2 aspect-[21/16] h-8"
+                    className="mr-2 h-8"
                     style={{ minHeight: 60 }}
                   />
 
@@ -133,10 +133,10 @@ function PrimaryFooter() {
                   {groupInfo.eventInfos?.map((event) => (
                     <LinkWrapper
                       key={event.name}
-                      href={`/tin-tuc/bai-viet/${UrlUtils.generateSlug(
-                        event.name,
-                        event.key
-                      )}`}
+                      href={`/tin-tuc/${UrlUtils.generateSlug(
+                        groupInfo.name,
+                        groupInfo.key
+                      )}/${UrlUtils.generateSlug(event.name, event.key)}`}
                     >
                       <Space className="my-1 w-full text-white">
                         <div

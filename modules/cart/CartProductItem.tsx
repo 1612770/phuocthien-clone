@@ -241,7 +241,13 @@ function CartProductItem({ cartProduct }: { cartProduct: CartProduct }) {
 
             <div className="flex flex-col">
               <LinkWrapper
-                href={`/san-pham/chi-tiet/${UrlUtils.generateSlug(
+                href={`/${UrlUtils.generateSlug(
+                  cartProduct.product.productType?.name,
+                  cartProduct.product.productTypeKey
+                )}/${UrlUtils.generateSlug(
+                  cartProduct.product.productGroup?.name,
+                  cartProduct.product.productGroupKey
+                )}/${UrlUtils.generateSlug(
                   displayName,
                   cartProduct.product.key
                 )}`}

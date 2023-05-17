@@ -27,6 +27,7 @@ function ProductList({
 
       <div className={`relative ${forceSlide ? '' : 'lg:hidden'}`}>
         <Carousel
+          infinite={products.length > 5}
           arrows={true}
           responsive={[
             {
@@ -34,6 +35,7 @@ function ProductList({
               settings: {
                 slidesToShow: 2,
                 slidesToScroll: 2,
+                infinite: products.length > 2,
               },
             },
             {
@@ -41,6 +43,7 @@ function ProductList({
               settings: {
                 slidesToShow: 3,
                 slidesToScroll: 3,
+                infinite: products.length > 3,
               },
             },
           ]}

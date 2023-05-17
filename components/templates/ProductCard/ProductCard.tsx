@@ -50,10 +50,13 @@ function ProductCard({
 
   const isDiscount = productDiscountVal > 0;
 
-  const href = `/san-pham/chi-tiet/${UrlUtils.generateSlug(
-    displayName,
-    product?.key
-  )}`;
+  const href = `/${UrlUtils.generateSlug(
+    product.productType?.name,
+    product.productType?.key
+  )}/${UrlUtils.generateSlug(
+    product.productGroup?.name,
+    product.productGroup?.key
+  )}/${UrlUtils.generateSlug(displayName, product?.key)}`;
 
   const disCountText = showMinQuantity ? (
     <>

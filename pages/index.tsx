@@ -76,7 +76,7 @@ const Home: NextPageWithLayout<{
     <div className="mb-0 lg:mb-8">
       <div className="w-screen overflow-hidden pb-6">
         <div
-          className={`px-2 md:px-0 ${
+          className={`px-0 ${
             sliderImages.length && screens.md ? `container` : ''
           }`}
         >

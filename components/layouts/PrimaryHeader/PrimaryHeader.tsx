@@ -1,21 +1,35 @@
-import { Badge, Button, Input, Space, Typography } from 'antd';
+import { Badge, Button, Input, Popover, Space, Typography } from 'antd';
 import Link from 'next/link';
 import { Menu, Search, ShoppingCart, User } from 'react-feather';
 import IMAGES from 'configs/assests/images';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCart } from '@providers/CartProvider';
 import { useRouter } from 'next/router';
 import PrimaryHeaderMenu from './PrimaryHeaderMenu';
 import ProductSearchInput from './ProductSearchInput';
 import ProductSearchInputMobile from './ProductSearchInputMobile';
 import PrimaryHeaderMenuDrawer from './MenuDrawer';
+import { useIntersectionObserver } from '@libs/utils/hooks';
+import CartPopupContent from '@modules/gio-hang/CartPopupContent';
 
 function PrimaryHeader({ showSearch = true }) {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const [openMobileSearch, setOpenMobileSearch] = useState(false);
 
-  const { cartProducts } = useCart();
+  const { cartProducts, setModeShowPopup, modeShowPopup, isOpenNotification } =
+    useCart();
   const router = useRouter();
+  const cartButtonRef = useRef<HTMLAnchorElement | null>(null);
+  const entry = useIntersectionObserver(cartButtonRef, {});
+  const isVisible = !!entry?.isIntersecting;
+
+  useEffect(() => {
+    if (isVisible) {
+      setModeShowPopup('cart-button');
+    } else {
+      setModeShowPopup('fixed');
+    }
+  }, [isVisible, setModeShowPopup]);
 
   return (
     <header>
@@ -66,23 +80,28 @@ function PrimaryHeader({ showSearch = true }) {
           </Link>
 
           <Space size={0} className="hidden md:flex">
-            <Link href="/gio-hang">
-              <a className="hidden md:block">
-                <Badge count={cartProducts.length}>
-                  <Button
-                    type="primary"
-                    className="ml-8 h-10 bg-primary-dark shadow-none "
-                  >
-                    <Space align="center" className="h-full w-full">
-                      <ShoppingCart className="text-white" size={20} />
-                      <Typography.Text className="text-white">
-                        Giỏ hàng
-                      </Typography.Text>
-                    </Space>
-                  </Button>
-                </Badge>
-              </a>
-            </Link>
+            <Popover
+              content={<CartPopupContent />}
+              open={modeShowPopup === 'cart-button' && isOpenNotification}
+            >
+              <Link href="/gio-hang">
+                <a className="hidden md:block" ref={cartButtonRef}>
+                  <Badge count={cartProducts.length}>
+                    <Button
+                      type="primary"
+                      className="ml-8 h-10 bg-primary-dark shadow-none "
+                    >
+                      <Space align="center" className="h-full w-full">
+                        <ShoppingCart className="text-white" size={20} />
+                        <Typography.Text className="text-white">
+                          Giỏ hàng
+                        </Typography.Text>
+                      </Space>
+                    </Button>
+                  </Badge>
+                </a>
+              </Link>
+            </Popover>
 
             <Link href={'/lich-su-don-hang'}>
               <a className="ml-4 inline-block">
@@ -152,6 +171,20 @@ function PrimaryHeader({ showSearch = true }) {
           setOpenMobileMenu(false);
         }}
       />
+
+      {modeShowPopup === 'fixed' && (
+        <div
+          className={`fixed left-[32px] right-[32px] bottom-[32px] z-50 rounded-xl bg-white p-4 shadow-lg transition-all duration-1000 ease-in-out sm:left-auto`}
+          style={{
+            transform: isOpenNotification
+              ? 'translateY(0)'
+              : 'translateY(100%)',
+            opacity: isOpenNotification ? 1 : 0,
+          }}
+        >
+          <CartPopupContent />
+        </div>
+      )}
     </header>
   );
 }

@@ -72,7 +72,7 @@ function ProductMain({
     <div className="relative">
       <div className="flex flex-col">
         <Typography.Title className="mx-0 mt-2 text-2xl font-medium">
-          {product?.detail?.displayName}
+          {product?.detail?.displayName || product?.name}
         </Typography.Title>
 
         <ProductBonusSection offers={offers} />

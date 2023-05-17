@@ -16,14 +16,9 @@ function ProductOthersSection({
         level={3}
         className="mb-0 mt-6 inline-block font-medium uppercase lg:mb-4 lg:mt-12"
       >
-        Các sản phẩm cùng loại{' '}
+        Các sản phẩm cùng loại trong nhóm {name}
       </Typography.Title>
-      <Typography.Title
-        level={3}
-        className="hidden font-medium uppercase lg:inline-block"
-      >
-        trong nhóm {name}
-      </Typography.Title>
+
       {(products?.length || 0) > 0 && (
         <ProductList forceSlide products={products || []} />
       )}
