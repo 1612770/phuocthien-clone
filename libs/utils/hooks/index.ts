@@ -74,14 +74,22 @@ export function useIntersectionObserver(
     const hasIOSupport = !!window.IntersectionObserver;
 
     if (!hasIOSupport || frozen || !node) return;
-
     const observerParams = { threshold, root, rootMargin };
     const observer = new IntersectionObserver(updateEntry, observerParams);
 
     observer.observe(node);
 
     return () => observer.disconnect();
-  }, [root, rootMargin, frozen, elementRef, threshold]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    elementRef?.current,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    JSON.stringify(threshold),
+    root,
+    rootMargin,
+    frozen,
+  ]);
 
   return entry;
 }
