@@ -42,7 +42,7 @@ const Home: NextPageWithLayout<{
   const promotions = campaign.promotions;
 
   return (
-    <div className="pb-0 lg:pb-8">
+    <div className="pb-0 lg:container lg:pb-8">
       <div className="relative h-[200px] w-full lg:h-[400px]">
         <ImageWithFallback
           src={campaign.imgUrl}
