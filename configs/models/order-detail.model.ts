@@ -13,6 +13,18 @@ type OrderDetailModel = Partial<{
   imageUrl: string;
   sumOrder: number;
   promoInfo: string;
+  productGroup: {
+    code?: string;
+    image?: string;
+    key?: string;
+    name?: string;
+  };
+  productType: {
+    code?: string;
+    image?: string;
+    key?: string;
+    name?: string;
+  };
 }>;
 
 export default OrderDetailModel;

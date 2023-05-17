@@ -19,6 +19,7 @@ import TimeUtils from '@libs/utils/time.utils';
 import OrderStatusUtils from '@libs/utils/order-status.utils';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import CurrencyUtils from '@libs/utils/currency.utils';
+import UrlUtils from '@libs/utils/url.utils';
 
 const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
   return (
@@ -132,7 +133,13 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
 
               return (
                 <LinkWrapper
-                  href={`/san-pham/chi-tiet/${detail.productKey}`}
+                  href={`/${UrlUtils.generateSlug(
+                    detail.productType?.name,
+                    detail.productType?.key
+                  )}/${UrlUtils.generateSlug(
+                    detail.productGroup?.name,
+                    detail.productGroup?.key
+                  )}/${detail.productKey}`}
                   key={detail.key}
                 >
                   <div

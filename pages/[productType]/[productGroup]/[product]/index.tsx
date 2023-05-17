@@ -80,14 +80,14 @@ const ProductPage: NextPageWithLayout<{
           },
           {
             title: product?.productType?.name,
-            path: `/san-pham/${UrlUtils.generateSlug(
+            path: `/${UrlUtils.generateSlug(
               product?.productType?.name,
               product.productType?.key
             )}`,
           },
           {
             title: product?.productGroup?.name,
-            path: `/san-pham/${UrlUtils.generateSlug(
+            path: `/${UrlUtils.generateSlug(
               product?.productType?.name,
               product.productType?.key
             )}/${UrlUtils.generateSlug(

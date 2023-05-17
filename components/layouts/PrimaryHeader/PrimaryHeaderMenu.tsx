@@ -70,10 +70,7 @@ function PrimaryHeaderMenu() {
                 key={menu?.key}
               >
                 <PrimaryHeaderMenuItem
-                  href={`/san-pham/${UrlUtils.generateSlug(
-                    menu?.name,
-                    menu?.key
-                  )}`}
+                  href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}
                   label={menu.name || ''}
                   productGroups={
                     (menu?.productGroups as ProductGroupModel[]) || []
