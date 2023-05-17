@@ -4,19 +4,25 @@ import TimeUtils from '@libs/utils/time.utils';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import UrlUtils from '@libs/utils/url.utils';
 import EventModel from '@configs/models/event.model';
+import GroupInfoModel from '@configs/models/GroupInfoModel';
 
 function EventItem({
   event,
   className,
+  groupInfo,
 }: {
   className?: string;
   event?: EventModel;
+  groupInfo?: GroupInfoModel;
 }): JSX.Element {
   if (!event) return <></>;
 
   return (
     <LinkWrapper
-      href={`/tin-tuc/bai-viet/${UrlUtils.generateSlug(event.name, event.key)}`}
+      href={`/tin-tuc/${UrlUtils.generateSlug(
+        groupInfo?.name,
+        groupInfo?.key
+      )}/${UrlUtils.generateSlug(event.name, event.key)}`}
       className={className}
     >
       <div className={`group flex gap-2 lg:gap-4`} title={event.name}>

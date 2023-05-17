@@ -17,6 +17,7 @@ const nextConfig = withBundleAnalyzer({
     MS_PATH: process.env.MS_PATH,
     HOST_IMAGE: process.env.HOST_IMAGE,
     NEXT_PUBLIC_REGEX_PHONE: process.env.NEXT_PUBLIC_REGEX_PHONE,
+    NEXT_PUBLIC_GROUP_INFO_KEYS: process.env.NEXT_PUBLIC_GROUP_INFO_KEYS,
   },
   images: {
     domains: [`${process.env.HOST_IMAGE}`, 'pt-storage.hn.ss.bfcplatform.vn'],

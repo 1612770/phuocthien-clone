@@ -80,7 +80,7 @@ const GroupInfoPage: NextPageWithLayout<{
           {(eventInfos?.length || 0) > 0 && (
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-4 lg:gap-6 xl:grid-cols-2">
               {eventInfos?.map((event, index) => (
-                <EventItem event={event} key={index} />
+                <EventItem event={event} key={index} groupInfo={groupInfo} />
               ))}
             </div>
           )}
