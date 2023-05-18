@@ -73,6 +73,7 @@ function ProductSearchInput() {
   useEffect(() => {
     if (!searchFocus) {
       setSearchedProducts(undefined);
+      return;
     }
 
     if (searchValue) {
@@ -90,6 +91,12 @@ function ProductSearchInput() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchFocus]);
+
+  useEffect(() => {
+    if (router.query['tu-khoa']) {
+      setSearchValue(router.query['tu-khoa'] as string);
+    }
+  }, [router]);
 
   const backdrop = (
     <div

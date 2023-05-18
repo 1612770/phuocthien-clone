@@ -4,6 +4,8 @@ import Product from '@configs/models/product.model';
 import DrugStore from '@configs/models/drug-store.model';
 import WithPagination from '@configs/types/utils/with-pagination';
 import ViralProductsListModel from '@configs/models/viral-products-list.model';
+import { Review } from '@configs/models/review.model';
+import { FAQ } from '@configs/models/faq.model';
 
 export class ProductClient extends BaseClient {
   constructor(ctx: unknown, data: unknown) {
@@ -18,6 +20,7 @@ export class ProductClient extends BaseClient {
     productGroupKey?: string;
     productionBrandKeys?: string[];
     filterByName?: string;
+    filterByIds?: string[];
     sortBy?: 'GIA_BAN_LE';
     sortOrder?: 'ASC' | 'DESC';
   }): Promise<APIResponse<WithPagination<Product[]>>> {
@@ -55,5 +58,24 @@ export class ProductClient extends BaseClient {
     key?: string;
   }): Promise<APIResponse<ViralProductsListModel[]>> {
     return await super.call('POST', `product/viral`, payload);
+  }
+
+  async getReviews(payload: {
+    page: number;
+    pageSize: number;
+    key?: string;
+  }): Promise<APIResponse<WithPagination<Review[]>>> {
+    return await super.call('POST', `product/review/list`, payload);
+  }
+
+  async createReview(payload: {
+    productKey: string;
+    description: string;
+  }): Promise<APIResponse<void>> {
+    return await super.call('POST', `product/review`, payload);
+  }
+
+  async getFAQs({ key }: { key?: string }): Promise<APIResponse<FAQ[]>> {
+    return await super.call('GET', `product/${key}/faq`, {});
   }
 }

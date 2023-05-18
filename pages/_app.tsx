@@ -1,4 +1,4 @@
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, App as AntdApp } from 'antd';
 import type { AppContext, AppProps } from 'next/app';
 import Head from 'next/head';
 
@@ -21,6 +21,7 @@ import AppConfirmDialogProvider from '@providers/AppConfirmDialogProvider';
 import FocusContentModel from '@configs/models/focus-content.model';
 import AppDataProvider from '@providers/AppDataProvider';
 import { ZaloChat } from '@modules/zaloChat';
+import MainInfoModel from '@configs/models/main-info.model';
 
 interface AppPropsWithLayout<T> extends AppProps<T> {
   Component: NextPageWithLayout<T>;
@@ -32,6 +33,7 @@ function MyApp({
 }: AppPropsWithLayout<{
   fullMenu?: MenuModel[];
   focusContent?: FocusContentModel[];
+  mainInfoFooter?: MainInfoModel[];
 }>) {
   const getLayout = Component.getLayout || ((page) => page);
 
@@ -50,21 +52,24 @@ function MyApp({
             },
           }}
         >
-          <AppMessageProvider>
-            <AppConfirmDialogProvider>
-              <AuthProvider>
-                <CartProvider>
-                  <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
-                    <AppDataProvider
-                      focusContent={pageProps.focusContent || []}
-                    >
-                      {getLayout(<Component {...pageProps} />)}
-                    </AppDataProvider>
-                  </FullMenuProvider>
-                </CartProvider>
-              </AuthProvider>
-            </AppConfirmDialogProvider>
-          </AppMessageProvider>
+          <AntdApp>
+            <AppMessageProvider>
+              <AppConfirmDialogProvider>
+                <AuthProvider>
+                  <CartProvider>
+                    <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
+                      <AppDataProvider
+                        mainInfoFooter={pageProps.mainInfoFooter || []}
+                        focusContent={pageProps.focusContent || []}
+                      >
+                        {getLayout(<Component {...pageProps} />)}
+                      </AppDataProvider>
+                    </FullMenuProvider>
+                  </CartProvider>
+                </AuthProvider>
+              </AppConfirmDialogProvider>
+            </AppMessageProvider>
+          </AntdApp>
         </ConfigProvider>
       </NProgress>
       <Suspense>
@@ -81,19 +86,26 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
     props: {
       fullMenu: MenuModel[];
       focusContent: FocusContentModel[];
+      mainInfoFooter: MainInfoModel[];
     };
   } = {
     props: {
       fullMenu: [],
       focusContent: [],
+      mainInfoFooter: [],
     },
   };
 
   const generalClient = new GeneralClient(ctx, {});
 
-  const [fullMenu, focusContent] = await Promise.allSettled([
+  const [fullMenu, focusContent, mainInfoFooter] = await Promise.allSettled([
     generalClient.getMenu(),
     generalClient.getFocusContent(),
+    generalClient.getMainInfos({
+      page: 1,
+      pageSize: 10,
+      mainInfoCode: 1,
+    }),
   ]);
 
   if (fullMenu.status === 'fulfilled' && fullMenu.value.data) {
@@ -103,6 +115,9 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
     appInitalProps.props.focusContent = focusContent.value.data || [];
   }
 
+  if (mainInfoFooter.status === 'fulfilled' && mainInfoFooter.value.data) {
+    appInitalProps.props.mainInfoFooter = mainInfoFooter.value.data || [];
+  }
   initalProps.pageProps = {
     ...initalProps.pageProps,
     ...appInitalProps.props,

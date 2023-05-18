@@ -73,24 +73,26 @@ const SearchPage: NextPageWithLayout<{
         </div>
       )}
 
-      <div className="flex justify-center">
-        <Pagination
-          defaultCurrent={searchedProducts?.page}
-          pageSize={20}
-          onChange={(page) => {
-            router.replace({
-              pathname: '/tim-kiem',
-              query: {
-                ...router.query,
-                trang: page,
-              },
-            });
-          }}
-          total={searchedProducts?.total}
-          className="mt-4"
-          showSizeChanger={false}
-        />
-      </div>
+      {(searchedProducts?.total || 0) > 0 && (
+        <div className="flex justify-center">
+          <Pagination
+            defaultCurrent={searchedProducts?.page}
+            pageSize={20}
+            onChange={(page) => {
+              router.replace({
+                pathname: '/tim-kiem',
+                query: {
+                  ...router.query,
+                  trang: page,
+                },
+              });
+            }}
+            total={searchedProducts?.total}
+            className="mt-4"
+            showSizeChanger={false}
+          />
+        </div>
+      )}
     </div>
   );
 };

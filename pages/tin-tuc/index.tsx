@@ -1,13 +1,14 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Typography } from 'antd';
+import { Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import { GetServerSidePropsContext } from 'next';
 import React from 'react';
-import LinkWrapper from '@components/templates/LinkWrapper';
 import { GeneralClient } from '@libs/client/General';
 import EVENTS_LOAD_PER_TIME from '@configs/constants/events-load-per-time';
 import MainInfoModel from '@configs/models/main-info.model';
 import EventList from '@modules/event/EventList';
+import Breadcrumbs from '@components/Breadcrumbs';
+import { NEXT_PUBLIC_GROUP_INFO_KEYS } from '@configs/env';
 
 const EventPage: NextPageWithLayout<{
   mainInfos?: MainInfoModel[];
@@ -15,12 +16,18 @@ const EventPage: NextPageWithLayout<{
   return (
     <>
       <div className="px-4 pb-4 lg:container lg:px-0">
-        <Breadcrumb className="mt-4 mb-2">
-          <Breadcrumb.Item>
-            <LinkWrapper href="/">Trang chủ</LinkWrapper>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>Góc tin tức</Breadcrumb.Item>
-        </Breadcrumb>
+        <Breadcrumbs
+          className="pt-4 pb-2"
+          breadcrumbs={[
+            {
+              title: 'Trang chủ',
+              path: '/',
+            },
+            {
+              title: 'Góc tin tức',
+            },
+          ]}
+        ></Breadcrumbs>
       </div>
 
       <div className="px-4 pb-4 lg:container lg:px-0">
@@ -35,11 +42,15 @@ const EventPage: NextPageWithLayout<{
 
           return (
             <div key={index}>
-              <div className="mb-2">
-                {mainInfo.groupInfo?.map(
-                  (groupInfo, index) =>
-                    !!groupInfo.eventInfos?.length && (
-                      <div key={index}>
+              <div className="">
+                {mainInfo.groupInfo?.map((groupInfo, index) => {
+                  if (
+                    !!groupInfo.eventInfos?.length &&
+                    groupInfo.key &&
+                    NEXT_PUBLIC_GROUP_INFO_KEYS.includes(groupInfo.key)
+                  ) {
+                    return (
+                      <div key={index} className="mb-6">
                         <Typography.Title
                           level={1}
                           className="m-0 mb-2 text-2xl font-medium md:text-4xl"
@@ -48,8 +59,10 @@ const EventPage: NextPageWithLayout<{
                         </Typography.Title>
                         <EventList group={groupInfo} />
                       </div>
-                    )
-                )}
+                    );
+                  }
+                  return null;
+                })}
               </div>
             </div>
           );

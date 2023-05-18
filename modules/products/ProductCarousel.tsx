@@ -15,7 +15,7 @@ function ProductCarousel({ images }: { images: string[] }) {
   const imagesToShow = images?.length > 0 ? images : [''];
 
   return (
-    <div>
+    <div className="mb-4 lg:col-span-2 xl:col-span-1">
       <div className="relative">
         <Carousel
           className="overflow-hidden  rounded-lg border border-solid border-gray-200"
@@ -34,6 +34,7 @@ function ProductCarousel({ images }: { images: string[] }) {
                   key={image}
                   src={image}
                   alt="product"
+                  placeholder="blur"
                   layout="fill"
                   objectFit="contain"
                   className="m-auto w-full"
@@ -89,6 +90,7 @@ function ProductCarousel({ images }: { images: string[] }) {
               <ImageWithFallback
                 src={image}
                 alt="product"
+                placeholder="blur"
                 layout="fill"
                 onClick={() => {
                   setActive(index);

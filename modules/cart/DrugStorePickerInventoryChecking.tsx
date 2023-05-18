@@ -16,7 +16,7 @@ function DrugStorePickerInventoryChecking({
 }) {
   const [checking, setChecking] = useState(false);
 
-  const { cartProducts, changeProductData, removeFromCart } = useCart();
+  const { choosenCartProducts, changeProductData, removeFromCart } = useCart();
   const { productStatuses, setProductStatuses } = useCheckout();
   const { toastError, toastSuccess } = useAppMessage();
 
@@ -57,7 +57,7 @@ function DrugStorePickerInventoryChecking({
     try {
       setChecking(true);
       const inventoryAtDrugStoresResponses = await Promise.all(
-        cartProducts.map((cartProduct) =>
+        choosenCartProducts.map((cartProduct) =>
           product.checkInventoryAtDrugStores({
             key: cartProduct.product.key || '',
           })
@@ -89,11 +89,11 @@ function DrugStorePickerInventoryChecking({
             },
           };
 
-          productStatus.product = cartProducts[index].product;
+          productStatus.product = choosenCartProducts[index].product;
           productStatus.statusData = checkProductStillAvailableAtDrugStore(
             drugStoreKey,
             inventoryAtDrugStore,
-            cartProducts[index]
+            choosenCartProducts[index]
           );
 
           return currentProductStatuses.concat(productStatus);
@@ -119,6 +119,7 @@ function DrugStorePickerInventoryChecking({
     if (drugStoreKey) {
       checkAllProducts();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drugStoreKey]);
 
   /**
@@ -128,6 +129,7 @@ function DrugStorePickerInventoryChecking({
     return () => {
       setProductStatuses([]);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const notAvailableProducts = productStatuses.filter(
@@ -147,7 +149,7 @@ function DrugStorePickerInventoryChecking({
                     name={`action-message`}
                     rules={[{ required: true, message: '' }]}
                   >
-                    <Checkbox></Checkbox>
+                    <Checkbox checked={false}></Checkbox>
                   </Form.Item>
                   <Typography className="font-medium text-red-500">
                     Hãy kiểm tra lại các hành động bên dưới

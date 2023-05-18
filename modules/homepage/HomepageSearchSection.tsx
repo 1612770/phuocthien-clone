@@ -16,6 +16,7 @@ import {
   Typography,
 } from 'antd';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Search } from 'react-feather';
 
@@ -31,6 +32,7 @@ function HomepageSearchSection() {
   const ignoreFirstCall = useRef(false);
   const searchInput = useRef<InputRef | null>(null);
   const { toastError } = useAppMessage();
+  const router = useRouter();
   const { productSearchKeywords } = useAppData();
 
   const searchProducts = useCallback(async () => {
@@ -119,7 +121,7 @@ function HomepageSearchSection() {
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                scrollSectionIntoView();
+                router.push(`/tim-kiem?tu-khoa=${searchValue}`);
               } else if (e.key === 'Escape') {
                 setSearchFocus(false);
               }

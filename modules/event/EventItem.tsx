@@ -3,20 +3,26 @@ import ImageWithFallback from '@components/templates/ImageWithFallback';
 import TimeUtils from '@libs/utils/time.utils';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import UrlUtils from '@libs/utils/url.utils';
-import EventModel from '@configs/models/EventModel';
+import EventModel from '@configs/models/event.model';
+import GroupInfoModel from '@configs/models/GroupInfoModel';
 
 function EventItem({
   event,
   className,
+  groupInfo,
 }: {
   className?: string;
   event?: EventModel;
+  groupInfo?: GroupInfoModel;
 }): JSX.Element {
   if (!event) return <></>;
 
   return (
     <LinkWrapper
-      href={`/tin-tuc/bai-viet/${UrlUtils.generateSlug(event.name, event.key)}`}
+      href={`/tin-tuc/${UrlUtils.generateSlug(
+        groupInfo?.name,
+        groupInfo?.key
+      )}/${UrlUtils.generateSlug(event.name, event.key)}`}
       className={className}
     >
       <div className={`group flex gap-2 lg:gap-4`} title={event.name}>
@@ -24,16 +30,19 @@ function EventItem({
           <ImageWithFallback
             src={event.imageUrl || ''}
             layout="fill"
+            placeholder="blur"
             objectFit="cover"
           ></ImageWithFallback>
         </div>
-        <div className="">
-          <Typography.Text className="two-line-text min-h-[40px] font-medium group-hover:text-primary">
-            {event.name}
-          </Typography.Text>
-          <Typography.Text className=" two-line-text  text-gray-700">
-            {event.summary}
-          </Typography.Text>
+        <div className="flex flex-col py-1">
+          <div className="flex-1">
+            <Typography.Text className="two-line-text font-medium group-hover:text-primary">
+              {event.name}
+            </Typography.Text>
+            <Typography.Text className=" two-line-text  text-gray-700">
+              {event.summary}
+            </Typography.Text>
+          </div>
           <div className="mt-1 flex items-center">
             <Typography.Text className="text-xs text-gray-500">
               {TimeUtils.formatDate(event.eventDate, {

@@ -44,8 +44,12 @@ const CheckoutContext = React.createContext<{
   offer: OfferModel | undefined;
   setOffer: (offer: OfferModel | undefined) => void;
 
-  totalRawPrice: number;
-  totalPrice: number;
+  cartStep: 'cart' | 'checkout';
+  setCartStep: (cartStep: 'cart' | 'checkout') => void;
+
+  totalPriceAfterDiscountOnProduct: number;
+  totalPriceBeforeDiscountOnProduct: number;
+  offerCodePrice: number;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   checkoutForm?: FormInstance<any>;
@@ -64,14 +68,18 @@ const CheckoutContext = React.createContext<{
   offer: undefined,
   setOffer: () => undefined,
 
-  totalRawPrice: 0,
-  totalPrice: 0,
+  cartStep: 'cart',
+  setCartStep: () => undefined,
+
+  totalPriceAfterDiscountOnProduct: 0,
+  totalPriceBeforeDiscountOnProduct: 0,
+  offerCodePrice: 0,
 
   checkoutForm: undefined,
 });
 
 function CheckoutProvider({ children }: { children: React.ReactNode }) {
-  const { cartProducts, resetCart } = useCart();
+  const { choosenCartProducts, removeAllChosenProducts } = useCart();
   const { provinces, wards, districts } = useMasterData();
   const router = useRouter();
   const { setConfirmData } = useAppConfirmDialog();
@@ -104,12 +112,21 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
   const [checkingOut, setCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
-
   const [offer, setOffer] = useState<OfferModel>();
+  const [cartStep, setCartStep] = useState<'cart' | 'checkout'>('cart');
 
-  const totalRawPrice = useMemo(
+  const totalPriceBeforeDiscountOnProduct = useMemo(
     () =>
-      cartProducts.reduce((total, cartProduct) => {
+      choosenCartProducts.reduce((total, cartProduct) => {
+        const retailPrice = cartProduct.product.retailPrice || 0;
+        return total + retailPrice * cartProduct.quantity;
+      }, 0),
+    [choosenCartProducts]
+  );
+
+  const totalPriceAfterDiscountOnProduct = useMemo(
+    () =>
+      choosenCartProducts.reduce((total, cartProduct) => {
         const discountVal = cartProduct.product.promotions?.[0]?.val || 0;
         const productQuantityMinCondition =
           cartProduct.product.promotions?.[0]?.productQuantityMinCondition || 0;
@@ -121,18 +138,18 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
         return total + retailPrice * cartProduct.quantity;
       }, 0),
-    [cartProducts]
+    [choosenCartProducts]
   );
 
-  const totalPrice = useMemo(() => {
-    let calculatedTotal = totalRawPrice;
-
-    if ((offer?.minAmountOffer || 0) <= calculatedTotal) {
-      calculatedTotal = calculatedTotal - (offer?.offerVal || 0);
-    }
-
-    return calculatedTotal;
-  }, [offer?.minAmountOffer, offer?.offerVal, totalRawPrice]);
+  const offerCodePrice = useMemo(() => {
+    return (offer?.minAmountOffer || 0) <= totalPriceBeforeDiscountOnProduct
+      ? offer?.offerVal || 0
+      : 0;
+  }, [
+    offer?.minAmountOffer,
+    offer?.offerVal,
+    totalPriceBeforeDiscountOnProduct,
+  ]);
 
   const getAddressData = () => {
     const { currentProvinceKey, currentDistrictKey, currentWardKey, address } =
@@ -189,7 +206,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
   const checkout = async () => {
     try {
-      if (!(totalPrice > 10000)) {
+      if (!(totalPriceAfterDiscountOnProduct > 10000)) {
         throw new Error('Giá trị đơn hàng phải lớn hơn 10.000đ');
       }
 
@@ -213,14 +230,14 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
           valuesToSubmit.shippingType === ShippingTypes.DELIVERY
             ? getAddressData()
             : undefined,
-        items: cartProducts.map((cartProduct) =>
+        items: choosenCartProducts.map((cartProduct) =>
           getCartProductOrderItem(cartProduct)
         ),
         offerCode: offer?.offerCode || undefined,
         orderNote: valuesToSubmit.orderNote || undefined,
       });
 
-      resetCart();
+      removeAllChosenProducts();
 
       if (!isUserLoggedIn) {
         SessionStorageUtils.setItem(
@@ -251,8 +268,8 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
    * Effect trigger when price change to apply offer
    */
   useEffect(() => {
-    if (offer && cartProducts.length > 0) {
-      if (totalRawPrice < (offer.minAmountOffer || 0)) {
+    if (offer && choosenCartProducts.length > 0) {
+      if (totalPriceAfterDiscountOnProduct < (offer.minAmountOffer || 0)) {
         setOffer(undefined);
 
         setConfirmData({
@@ -276,7 +293,13 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         });
       }
     }
-  }, [offer, setConfirmData, toastSuccess, totalRawPrice, cartProducts]);
+  }, [
+    offer,
+    setConfirmData,
+    toastSuccess,
+    totalPriceAfterDiscountOnProduct,
+    choosenCartProducts,
+  ]);
 
   return (
     <CheckoutContext.Provider
@@ -295,8 +318,12 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         offer,
         setOffer,
 
-        totalRawPrice,
-        totalPrice,
+        cartStep,
+        setCartStep,
+
+        totalPriceAfterDiscountOnProduct,
+        totalPriceBeforeDiscountOnProduct,
+        offerCodePrice,
 
         checkoutForm,
       }}

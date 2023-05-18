@@ -19,6 +19,7 @@ import ProductCard from '@components/templates/ProductCard';
 import WithPagination from '@configs/types/utils/with-pagination';
 import Link from 'next/link';
 import { useAppData } from '@providers/AppDataProvider';
+import { useRouter } from 'next/router';
 
 function ProductSearchInputMobile({ onBack = () => undefined }) {
   const [searchValue, setSearchValue] = useState('');
@@ -29,6 +30,7 @@ function ProductSearchInputMobile({ onBack = () => undefined }) {
   const debouncedCurrentFocusGroup = useDebounce(searchValue, 500);
   const searchInput = useRef<InputRef | null>(null);
   const { toastError } = useAppMessage();
+  const router = useRouter();
   const { productSearchKeywords, getProductSearchKeywords } = useAppData();
 
   const searchProducts = useCallback(async () => {
@@ -65,6 +67,12 @@ function ProductSearchInputMobile({ onBack = () => undefined }) {
     getProductSearchKeywords();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (router.query['tu-khoa']) {
+      setSearchValue(router.query['tu-khoa'] as string);
+    }
+  }, [router]);
 
   return (
     <div className="fixed top-0 left-0 bottom-0 right-0 z-10 h-full w-full overflow-auto overscroll-contain bg-white px-4">

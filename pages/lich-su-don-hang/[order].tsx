@@ -19,6 +19,7 @@ import TimeUtils from '@libs/utils/time.utils';
 import OrderStatusUtils from '@libs/utils/order-status.utils';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import CurrencyUtils from '@libs/utils/currency.utils';
+import UrlUtils from '@libs/utils/url.utils';
 
 const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
   return (
@@ -132,7 +133,13 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
 
               return (
                 <LinkWrapper
-                  href={`/san-pham/chi-tiet/${detail.productKey}`}
+                  href={`/${UrlUtils.generateSlug(
+                    detail.productType?.name,
+                    detail.productType?.key
+                  )}/${UrlUtils.generateSlug(
+                    detail.productGroup?.name,
+                    detail.productGroup?.key
+                  )}/${detail.productKey}`}
                   key={detail.key}
                 >
                   <div
@@ -188,7 +195,7 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
                             </Typography.Text>
                             <Typography.Text className="text-sm text-gray-400">
                               <Typography.Text className="mr-2 font-medium text-inherit">
-                                Tạm tính
+                                Tổng tiền
                               </Typography.Text>
                               <Typography.Text className="inline-block min-w-[80px] text-right text-inherit line-through">
                                 {CurrencyUtils.format(detail.sumOrder)}
@@ -212,7 +219,7 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
                         </Typography.Text>
                         <Typography.Text className="text-sm text-gray-500">
                           <Typography.Text className="mr-2 font-medium">
-                            Tổng tiền
+                            Thành tiền
                           </Typography.Text>
                           <Typography.Text className="inline-block min-w-[80px] text-right">
                             {CurrencyUtils.format(detail.totalAmount)}
@@ -230,13 +237,23 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
           {order?.subTotalAmount != order?.totalAmount && (
             <div className="my-2 flex items-end justify-between px-2">
               <Typography.Text className="text-right  text-base text-gray-500">
-                Tạm tính
+                Tổng tiền
               </Typography.Text>
               <Typography.Text className="m-0 text-base font-medium ">
                 {order?.subTotalAmount?.toLocaleString('it-IT', {
                   style: 'currency',
                   currency: 'VND',
                 })}
+              </Typography.Text>
+            </div>
+          )}
+          {order?.shippingFee && (
+            <div className="my-2 flex items-end justify-between px-2">
+              <Typography.Text className="text-right  text-base text-gray-500">
+                Phí vận chuyển
+              </Typography.Text>
+              <Typography.Text className="m-0 text-base font-medium ">
+                {CurrencyUtils.format(order?.shippingFee)}
               </Typography.Text>
             </div>
           )}
@@ -255,7 +272,7 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
           )}
           <div className="my-2 flex items-end justify-between px-2 ">
             <Typography.Text className="text-right text-base text-gray-500">
-              Tổng tiền
+              Thành tiền
             </Typography.Text>
             <Typography.Text className="m-0 text-3xl font-bold text-primary">
               {CurrencyUtils.format(order?.totalAmount)}

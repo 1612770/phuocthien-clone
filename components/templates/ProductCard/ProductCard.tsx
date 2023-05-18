@@ -50,10 +50,13 @@ function ProductCard({
 
   const isDiscount = productDiscountVal > 0;
 
-  const href = `/san-pham/chi-tiet/${UrlUtils.generateSlug(
-    displayName,
-    product?.key
-  )}`;
+  const href = `/${UrlUtils.generateSlug(
+    product.productType?.name,
+    product.productType?.key
+  )}/${UrlUtils.generateSlug(
+    product.productGroup?.name,
+    product.productGroup?.key
+  )}/${UrlUtils.generateSlug(displayName, product?.key)}`;
 
   const disCountText = showMinQuantity ? (
     <>
@@ -77,6 +80,7 @@ function ProductCard({
                 } w-full bg-white transition-transform duration-300 group-hover:scale-110`}
               >
                 <ImageWithFallback
+                  placeholder="blur"
                   alt={displayName || ''}
                   src={product?.detail?.image || ''}
                   layout="fill"
@@ -160,6 +164,7 @@ function ProductCard({
               } overflow-hidden rounded-lg border border-solid border-gray-200 bg-gray-100`}
             >
               <ImageWithFallback
+                placeholder="blur"
                 alt={displayName || ''}
                 src={product?.detail?.image || ''}
                 layout="fill"

@@ -75,23 +75,25 @@ const Home: NextPageWithLayout<{
   return (
     <div className="mb-0 lg:mb-8">
       <div className="w-screen overflow-hidden pb-6">
-        {!!sliderImages.length && (
-          <HomepageCarousel
-            sliderImages={sliderImages}
-            numberSlidePerPage={1}
-            type="primary"
-          />
-        )}
         <div
-          className={`px-2 md:px-0 ${
-            sliderImages.length && screens.md ? `container -mt-[100px]` : ''
+          className={`px-0 ${
+            sliderImages.length && screens.md ? `container` : ''
           }`}
         >
-          <HomepageCarousel
-            sliderImages={visibleSlides}
-            numberSlidePerPage={sliderImages.length && screens.md ? 2 : 1}
-            type={sliderImages.length ? 'secondary' : 'primary'}
-          />
+          {!!sliderImages.length && (
+            <HomepageCarousel
+              sliderImages={sliderImages}
+              numberSlidePerPage={1}
+              type="primary"
+            />
+          )}
+          <div className={`${sliderImages.length && screens.md ? `mt-4` : ''}`}>
+            <HomepageCarousel
+              sliderImages={visibleSlides}
+              numberSlidePerPage={sliderImages.length && screens.md ? 2 : 1}
+              type={sliderImages.length ? 'secondary' : 'primary'}
+            />
+          </div>
         </div>
       </div>
 

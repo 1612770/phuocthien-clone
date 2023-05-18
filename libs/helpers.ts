@@ -67,3 +67,15 @@ export function getVisibleItems<T extends { visible?: boolean }>(array: T[]) {
     (item) => !(typeof item?.visible === 'boolean' && !item?.visible)
   );
 }
+
+export function getAvatarCharacters(name?: string) {
+  if (!name) return '';
+  let returnName = '';
+
+  const nameArray = name.split(' ');
+  if (nameArray.length === 1) returnName = nameArray[0][0];
+
+  returnName = `${nameArray[0][0]}${nameArray[nameArray.length - 1][0]}`;
+
+  return returnName.toUpperCase();
+}

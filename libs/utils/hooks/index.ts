@@ -52,7 +52,7 @@ interface Args extends IntersectionObserverInit {
   freezeOnceVisible?: boolean;
 }
 
-function useIntersectionObserver(
+export function useIntersectionObserver(
   elementRef: RefObject<Element>,
   {
     threshold = 0,
@@ -74,7 +74,6 @@ function useIntersectionObserver(
     const hasIOSupport = !!window.IntersectionObserver;
 
     if (!hasIOSupport || frozen || !node) return;
-
     const observerParams = { threshold, root, rootMargin };
     const observer = new IntersectionObserver(updateEntry, observerParams);
 
@@ -85,6 +84,7 @@ function useIntersectionObserver(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     elementRef?.current,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     JSON.stringify(threshold),
     root,
     rootMargin,
@@ -93,5 +93,3 @@ function useIntersectionObserver(
 
   return entry;
 }
-
-export default useIntersectionObserver;

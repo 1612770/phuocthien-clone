@@ -1,48 +1,75 @@
-import Product from '@configs/models/product.model';
+import Product, { CartProduct } from '@configs/models/product.model';
 import LocalStorageUtils, {
   LocalStorageKeys,
 } from '@libs/utils/local-storage.utils';
-import { Button, notification } from 'antd';
-import Link from 'next/link';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useAppConfirmDialog } from './AppConfirmDialogProvider';
+import { useRouter } from 'next/router';
+
+type CartChangeProductData =
+  | {
+      field: 'quantity';
+      value: number;
+    }
+  | {
+      field: 'note';
+      value: string;
+    }
+  | {
+      field: 'choosen';
+      value: boolean;
+    };
 
 const CartContext = React.createContext<{
-  cartProducts: { product: Product; quantity: number; note?: string }[];
-  addToCart: (payload: {
-    product: Product;
-    quantity: number;
-    note?: string;
-  }) => void;
+  cartProducts: CartProduct[];
+  choosenCartProducts: CartProduct[];
+  addToCart: (payload: Omit<CartProduct, 'choosen'>) => void;
   removeFromCart: (
     product: Product,
     options?: {
       isShowConfirm?: boolean;
     }
   ) => void;
-  changeProductData: (
-    product: Product,
-    payload: { field: 'quantity' | 'note'; value: number | string }
-  ) => void;
-  resetCart: () => void;
+  changeProductData: (product: Product, payload: CartChangeProductData) => void;
+  setChoosenAllCartProducts: (choosen: boolean) => void;
+  removeAllChosenProducts: () => void;
+
+  modeShowPopup: 'cart-button' | 'fixed';
+  setModeShowPopup: React.Dispatch<
+    React.SetStateAction<'cart-button' | 'fixed'>
+  >;
+  isOpenNotification: boolean;
 }>({
   cartProducts: [],
+  choosenCartProducts: [],
   addToCart: () => undefined,
   removeFromCart: () => undefined,
   changeProductData: () => undefined,
-  resetCart: () => undefined,
+  setChoosenAllCartProducts: () => undefined,
+  removeAllChosenProducts: () => undefined,
+
+  modeShowPopup: 'cart-button',
+  setModeShowPopup: () => undefined,
+  isOpenNotification: false,
 });
 
 function CartProvider({ children }: { children: React.ReactNode }) {
-  const [api, contextHolder] = notification.useNotification({
-    maxCount: 1,
-  });
+  const [modeShowPopup, setModeShowPopup] = useState<'cart-button' | 'fixed'>(
+    'cart-button'
+  );
+  const [recentAddedProductKey, setRecentAddedProductKey] = useState('');
 
-  const [cartProducts, setCartProducts] = useState<
-    { product: Product; quantity: number; note?: string }[]
-  >([]);
+  const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
 
   const { setConfirmData } = useAppConfirmDialog();
+  const router = useRouter();
+  const showPopupIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const cartProducts = JSON.parse(
@@ -51,30 +78,8 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     setCartProducts(cartProducts);
   }, []);
 
-  const openNotification = useCallback(() => {
-    const key = `open${Date.now()}`;
-    const action = (
-      <Link href="/gio-hang">
-        <a>
-          <Button type="link" size="small" onClick={() => api.destroy()}>
-            Đi tới giỏ hàng
-          </Button>
-        </a>
-      </Link>
-    );
-
-    api.open({
-      message: '',
-      type: 'success',
-      description: 'Thêm sản phẩm vào giỏ hàng thành công',
-      btn: action,
-      placement: 'bottomRight',
-      key,
-    });
-  }, [api]);
-
   const addToCart = useCallback(
-    (payload: { product: Product; quantity: number; note?: string }) => {
+    (payload: Omit<CartProduct, 'choosen'>) => {
       if (
         cartProducts.find(
           (cartProduct) => cartProduct.product.key === payload.product.key
@@ -85,6 +90,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
             return {
               ...cartProduct,
               quantity: payload.quantity,
+              choosen: true,
             };
           }
           return cartProduct;
@@ -96,8 +102,11 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         );
         return;
       } else {
-        openNotification();
-        const newCartProducts = [...cartProducts, payload];
+        setRecentAddedProductKey(payload.product.key || '');
+        const newCartProducts = [
+          ...cartProducts,
+          { ...payload, choosen: true },
+        ];
         setCartProducts(newCartProducts);
         LocalStorageUtils.setItem(
           LocalStorageKeys.CART_PRODUCTS,
@@ -106,7 +115,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         return;
       }
     },
-    [cartProducts, openNotification]
+    [cartProducts]
   );
 
   const removeFromCart = useCallback(
@@ -147,11 +156,26 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     [cartProducts, setConfirmData]
   );
 
+  const setChoosenAllCartProducts = useCallback(
+    (choosen: boolean) => {
+      const newCartProducts = cartProducts.map((cartProduct) => {
+        return {
+          ...cartProduct,
+          choosen: choosen,
+        };
+      });
+
+      setCartProducts(newCartProducts);
+      LocalStorageUtils.setItem(
+        LocalStorageKeys.CART_PRODUCTS,
+        JSON.stringify(newCartProducts)
+      );
+    },
+    [cartProducts]
+  );
+
   const changeProductData = useCallback(
-    (
-      product: Product,
-      payload: { field: 'quantity' | 'note'; value: number | string }
-    ) => {
+    (product: Product, payload: CartChangeProductData) => {
       const newCartProducts = cartProducts.map((cartProduct) => {
         if (cartProduct.product.key === product.key) {
           return {
@@ -170,22 +194,68 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     [cartProducts]
   );
 
-  const resetCart = useCallback(() => {
-    setCartProducts([]);
-    LocalStorageUtils.removeItem(LocalStorageKeys.CART_PRODUCTS);
-  }, []);
+  const removeAllChosenProducts = useCallback(() => {
+    const newCartProducts = cartProducts.filter(
+      (cartProduct) => !cartProduct.choosen
+    );
+
+    setCartProducts(newCartProducts);
+
+    LocalStorageUtils.setItem(
+      LocalStorageKeys.CART_PRODUCTS,
+      JSON.stringify(newCartProducts)
+    );
+  }, [cartProducts]);
+
+  const choosenCartProducts = useMemo(
+    () => cartProducts.filter((cartProduct) => cartProduct.choosen),
+    [cartProducts]
+  );
+
+  useEffect(() => {
+    if (recentAddedProductKey) {
+      // interval to hidden after 3s
+      showPopupIntervalRef.current = setInterval(() => {
+        setRecentAddedProductKey('');
+      }, 3000);
+
+      return () => {
+        if (showPopupIntervalRef.current)
+          clearInterval(showPopupIntervalRef.current);
+      };
+    }
+  }, [recentAddedProductKey]);
+
+  /**
+   * Stop all popup when change route
+   */
+  useEffect(() => {
+    if (showPopupIntervalRef.current) {
+      setRecentAddedProductKey('');
+      clearInterval(showPopupIntervalRef.current);
+    }
+  }, [router.asPath]);
+
+  const isOpenNotification = useMemo(() => {
+    return !!recentAddedProductKey;
+  }, [recentAddedProductKey]);
 
   return (
     <CartContext.Provider
       value={{
         cartProducts,
+        choosenCartProducts,
         addToCart,
         removeFromCart,
         changeProductData,
-        resetCart,
+        setChoosenAllCartProducts,
+        removeAllChosenProducts,
+
+        modeShowPopup,
+        setModeShowPopup,
+        isOpenNotification,
       }}
     >
-      {contextHolder}
       {children}
     </CartContext.Provider>
   );

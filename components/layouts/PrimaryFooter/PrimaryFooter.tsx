@@ -5,27 +5,47 @@ import IMAGES from 'configs/assests/images';
 import { useAppData } from '@providers/AppDataProvider';
 import FocusContentSection from '@modules/homepage/FocusContentSection';
 import { useRouter } from 'next/router';
+import { useWatchCacheProduct } from '@libs/utils/hooks/useWatchCacheProduct';
+import ProductList from '@components/templates/ProductList';
+import LinkWrapper from '@components/templates/LinkWrapper';
+import UrlUtils from '@libs/utils/url.utils';
 
 function PrimaryFooter() {
-  const { focusContent } = useAppData();
+  const { focusContent, mainInfoFooter } = useAppData();
+
   const router = useRouter();
+
+  const [products] = useWatchCacheProduct();
 
   return (
     <>
+      {!!products.length && (
+        <div className="py-8 px-4 lg:container lg:px-0">
+          <Typography.Title
+            level={3}
+            className={
+              'm-0 my-4 text-center font-medium uppercase lg:text-left'
+            }
+          >
+            Sản phẩm vừa xem
+          </Typography.Title>
+          <ProductList products={products} forceSlide />
+        </div>
+      )}
       <div className={`block ${router.asPath === '/' ? 'lg:hidden' : ''}`}>
         <FocusContentSection focusContent={focusContent || []} />
       </div>
       <footer className="bg-primary px-4">
         <div className="py-8 lg:container">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div>
               <Link href="/" style={{ color: 'white' }}>
                 <a className="flex items-center">
                   <img
                     src={IMAGES.logo}
                     alt="Nhà thuốc Phước Thiện"
-                    className="mr-2 h-8 object-contain"
-                    style={{ width: 42, height: 32 }}
+                    className="mr-2 h-8"
+                    style={{ minHeight: 60 }}
                   />
 
                   <Space
@@ -71,39 +91,66 @@ function PrimaryFooter() {
                   </a>
                 </Link>
               </Space>
-            </div>
-
-            <div>
-              <Typography.Text className=" font-semibold uppercase text-white">
-                Tải ứng dụng
-              </Typography.Text>
-              <div className="mt-2 flex gap-1 lg:gap-2">
-                <a
-                  href="https://play.google.com/store/apps/details?id=com.esuspharmacy.phuocthien&hl=en"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <img
-                    src="/chplay.png"
-                    alt=""
-                    className="w-[120px]"
-                    style={{ width: 120, height: 40 }}
-                  />
-                </a>
-                <a
-                  target="_blank"
-                  href="https://apps.apple.com/us/app/nh%C3%A0-thu%E1%BB%91c-ph%C6%B0%E1%BB%9Bc-thi%E1%BB%87n/id1662328703"
-                  rel="noreferrer"
-                >
-                  <img
-                    src="/appstore.png"
-                    alt=""
-                    className="w-[120px]"
-                    style={{ width: 120, height: 40 }}
-                  />
-                </a>
+              <div className="mt-4">
+                <Typography.Text className=" font-semibold uppercase text-white">
+                  Tải ứng dụng
+                </Typography.Text>
+                <div className="mt-2 flex gap-1 lg:gap-2">
+                  <a
+                    href="https://play.google.com/store/apps/details?id=com.esuspharmacy.phuocthien&hl=en"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <img
+                      src="/chplay.png"
+                      alt=""
+                      className="w-[120px]"
+                      style={{ width: 120, height: 40 }}
+                    />
+                  </a>
+                  <a
+                    target="_blank"
+                    href="https://apps.apple.com/us/app/nh%C3%A0-thu%E1%BB%91c-ph%C6%B0%E1%BB%9Bc-thi%E1%BB%87n/id1662328703"
+                    rel="noreferrer"
+                  >
+                    <img
+                      src="/appstore.png"
+                      alt=""
+                      className="w-[120px]"
+                      style={{ width: 120, height: 40 }}
+                    />
+                  </a>
+                </div>
               </div>
             </div>
+
+            {mainInfoFooter?.map((info) => {
+              return info.groupInfo?.map((groupInfo, index) => (
+                <div className="w-full" key={index}>
+                  <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
+                    {groupInfo.name}
+                  </Typography.Text>
+                  {groupInfo.eventInfos?.map((event) => (
+                    <LinkWrapper
+                      key={event.name}
+                      href={`/tin-tuc/${UrlUtils.generateSlug(
+                        groupInfo.name,
+                        groupInfo.key
+                      )}/${UrlUtils.generateSlug(event.name, event.key)}`}
+                    >
+                      <Space className="my-1 w-full text-white">
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: event.name || '',
+                          }}
+                        ></div>
+                      </Space>
+                    </LinkWrapper>
+                  ))}
+                </div>
+              ));
+            })}
+
             <div className="w-full">
               <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
                 Thông tin liên hệ
@@ -111,7 +158,7 @@ function PrimaryFooter() {
               <Space className="my-0.5 w-full">
                 <MapPin className="text-white" size={16} />
                 <Typography.Text className="text-white">
-                  170 Ông Ích Khiêm - Thành phố Đà Nẵng
+                  170 Ông Ích Khiêm - Tp. Đà Nẵng
                 </Typography.Text>
               </Space>
               <Space className="my-0.5 w-full">

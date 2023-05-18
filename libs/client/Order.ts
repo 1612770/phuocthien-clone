@@ -1,7 +1,7 @@
 import APIResponse from '@configs/types/api-response.type';
 import BaseClient from './BaseClient';
 import ShippingTypes from '@configs/enums/shipping-types.enum';
-import OrderModel from '@configs/models/order.model';
+import OrderModel, { DeliveryConfigs } from '@configs/models/order.model';
 import WithPagination from '@configs/types/utils/with-pagination';
 import OrderStatuses from '@configs/enums/order-statuses.enum';
 
@@ -53,5 +53,9 @@ export class OrderClient extends BaseClient {
     }
 
     return await super.call('POST', `order/filter`, payload);
+  }
+
+  async getDeliveryConfigs(): Promise<APIResponse<DeliveryConfigs>> {
+    return await super.call('GET', `order/configs/delivery`, {});
   }
 }

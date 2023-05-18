@@ -43,7 +43,7 @@ function HomepageCarousel({
   const pairedSlides = getPairedSlides(sliderImages, numberSlidePerPage);
 
   return (
-    <div className="relative -m-6">
+    <div className="relative">
       <Carousel
         autoplay
         dots={false}
@@ -52,20 +52,14 @@ function HomepageCarousel({
         ref={(ref) => (carouselRef.current = ref)}
       >
         {pairedSlides.map((slides, index) => (
-          <div className="flex gap-2 p-6 lg:gap-4" key={index}>
+          <div className="flex gap-2 lg:gap-4" key={index}>
             {slides.map((slide, index) => (
               <LinkWrapper
                 key={index}
                 href={slide.link || ''}
                 className="w-full"
               >
-                <div
-                  className={`flex-1 overflow-hidden ${
-                    sliderImages.length > 1 && type != 'primary'
-                      ? 'rounded-lg shadow-lg'
-                      : ''
-                  }`}
-                >
+                <div className={`flex-1 overflow-hidden`}>
                   <div
                     className={`relative aspect-[16/9] h-[${
                       type === 'primary' ? 120 : 80
@@ -75,6 +69,7 @@ function HomepageCarousel({
                       src={slide.url || ''}
                       alt="carousel image"
                       layout="fill"
+                      placeholder="blur"
                       sizes={
                         type === 'primary'
                           ? '(min-width: 1200px) 100vw, 100vw'
@@ -99,7 +94,7 @@ function HomepageCarousel({
             size="large"
             onClick={() => carouselRef.current?.prev()}
             icon={<ChevronLeft />}
-            className="absolute top-1/2 left-[64px] -translate-y-1/2 -translate-x-1/2"
+            className="absolute top-1/2 left-[32px] -translate-y-1/2 -translate-x-1/2"
           />
 
           <Button
@@ -107,7 +102,7 @@ function HomepageCarousel({
             size="large"
             onClick={() => carouselRef.current?.next()}
             icon={<ChevronRight />}
-            className="absolute top-1/2 right-[64px] -translate-y-1/2 translate-x-1/2"
+            className="absolute top-1/2 right-[32px] -translate-y-1/2 translate-x-1/2"
           />
         </>
       )}

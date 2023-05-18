@@ -17,6 +17,15 @@ function ProductCardDetail(
 
   return (
     <div className="relative">
+      <div className="lg:container lg:pl-0">
+        <Typography.Title
+          level={3}
+          className="mb-0 mt-6 font-medium uppercase lg:mb-4 lg:mt-12"
+        >
+          Chi tiết sản phẩm
+        </Typography.Title>
+      </div>
+
       <div
         {...props}
         className=" max-h-[500px] overflow-hidden"

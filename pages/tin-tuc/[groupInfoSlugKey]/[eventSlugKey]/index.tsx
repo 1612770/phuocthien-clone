@@ -4,18 +4,21 @@ import { NextPageWithLayout } from 'pages/page';
 import { GetServerSidePropsContext } from 'next';
 import UrlUtils from '@libs/utils/url.utils';
 import React from 'react';
-import EventModel from '@configs/models/EventModel';
+import EventModel from '@configs/models/event.model';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import { GeneralClient } from '@libs/client/General';
 import EventItem from '@modules/event/EventItem';
 import TimeUtils from '@libs/utils/time.utils';
 import { Clock } from 'react-feather';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
+import GroupInfoModel from '@configs/models/GroupInfoModel';
+import { NEXT_PUBLIC_GROUP_INFO_KEYS } from '@configs/env';
 
 const EventPage: NextPageWithLayout<{
   event?: EventModel;
   otherEvents?: EventModel[];
-}> = ({ event, otherEvents }) => {
+  groupInfo?: GroupInfoModel;
+}> = ({ event, otherEvents, groupInfo }) => {
   if (!event) return null;
   if (typeof event?.visible === 'boolean' && !event?.visible) return null;
 
@@ -33,18 +36,19 @@ const EventPage: NextPageWithLayout<{
         </Breadcrumb>
       </div>
 
-      <div className="mb-6">
-        <Divider className="m-0" />
-        <div className="relative h-[400px]">
-          <ImageWithFallback
-            src={event?.imageUrl || ''}
-            layout="fill"
-            objectFit="contain"
-          ></ImageWithFallback>
+      {event?.imageUrl && (
+        <div className="mb-6">
+          <Divider className="m-0" />
+          <div className="relative h-[400px]">
+            <ImageWithFallback
+              src={event?.imageUrl || ''}
+              layout="fill"
+              objectFit="contain"
+            ></ImageWithFallback>
+          </div>
+          <Divider className="m-0" />
         </div>
-        <Divider className="m-0" />
-      </div>
-
+      )}
       <div className="px-4 pb-4 lg:container lg:px-0">
         <div className="mb-6">
           <Typography.Title
@@ -69,26 +73,32 @@ const EventPage: NextPageWithLayout<{
           }}
         ></div>
 
-        {(otherEvents?.length || 0) > 0 && (
-          <div className="mb-8 grid grid-cols-1">
-            <div className=" lg:container lg:pl-0">
-              <Typography.Title
-                level={3}
-                className="mb-4 mt-6 inline-block uppercase lg:mt-12"
-              >
-                Các tin tức liên quan
-              </Typography.Title>{' '}
-            </div>
+        {groupInfo?.key &&
+          NEXT_PUBLIC_GROUP_INFO_KEYS.includes(groupInfo?.key) &&
+          (otherEvents?.length || 0) > 0 && (
+            <div className="mb-8 grid grid-cols-1">
+              <div className=" lg:container lg:pl-0">
+                <Typography.Title
+                  level={3}
+                  className="mb-4 mt-6 inline-block uppercase lg:mt-12"
+                >
+                  Các tin tức liên quan
+                </Typography.Title>{' '}
+              </div>
 
-            <div className="lg:container">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-3">
-                {otherEvents?.map((event, index) => (
-                  <EventItem event={event} key={index} />
-                ))}
+              <div className="lg:container">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6 xl:grid-cols-3">
+                  {otherEvents?.map((event, index) => (
+                    <EventItem
+                      event={event}
+                      key={index}
+                      groupInfo={groupInfo}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
     </>
   );
@@ -101,6 +111,7 @@ export const getServerSideProps = async (
     props: {
       event?: EventModel;
       otherEvents?: EventModel[];
+      groupInfo?: GroupInfoModel;
     };
   } = {
     props: {
@@ -111,6 +122,7 @@ export const getServerSideProps = async (
   const currentEventKey = UrlUtils.getKeyFromParam(
     context.params?.eventSlugKey as string
   );
+
   const generalClient = new GeneralClient(context, {});
 
   try {
@@ -129,6 +141,8 @@ export const getServerSideProps = async (
         });
 
         if (otherEvents.data) {
+          serverSideProps.props.groupInfo = otherEvents.data[0];
+
           const otherEventList = (otherEvents.data || [])
             .reduce((events, currentGroup) => {
               return [
