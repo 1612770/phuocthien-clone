@@ -1,9 +1,15 @@
 import MainInfoModel from '@configs/models/main-info.model';
 import { Empty, Tabs, Typography } from 'antd';
 import EventList from '../event/EventList';
+import { NEXT_PUBLIC_GROUP_INFO_KEYS } from '@configs/env';
 
 function MainInfoSection({ mainInfo }: { mainInfo?: MainInfoModel }) {
   if (!mainInfo) return null;
+
+  const allowedGroupInfoKeys = (mainInfo.groupInfo || []).filter(
+    (groupInfo) =>
+      groupInfo.key && NEXT_PUBLIC_GROUP_INFO_KEYS.includes(groupInfo.key)
+  );
 
   return (
     <div className={'my-2 py-4'}>
@@ -21,15 +27,15 @@ function MainInfoSection({ mainInfo }: { mainInfo?: MainInfoModel }) {
 
         <Tabs
           type="card"
-          items={(mainInfo.groupInfo || []).map((group, index) => {
+          items={allowedGroupInfoKeys.map((groupInfo, index) => {
             return {
               key: String(index),
-              label: group.name,
+              label: groupInfo.name,
               children: (
                 <>
-                  <EventList group={group} />
+                  <EventList group={groupInfo} />
 
-                  {!group.eventInfos?.length && (
+                  {!groupInfo.eventInfos?.length && (
                     <div className="w-full py-8">
                       <Empty
                         description={
