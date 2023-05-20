@@ -11,10 +11,20 @@ import SessionStorageUtils, {
   SessionStorageKeys,
 } from '@libs/utils/session-storage.utils';
 import { useAuth } from '@providers/AuthProvider';
+import { HomeOutlined } from '@ant-design/icons';
+import { useAppMessage } from '@providers/AppMessageProvider';
+import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
+import CurrencyUtils from '@libs/utils/currency.utils';
+import ShippingTypes from '@configs/enums/shipping-types.enum';
+import OrderStatuses from '@configs/enums/order-statuses.enum';
 
 const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
   const [orderToShow, setOrderToShow] = useState(order);
+  const [loading, setLoading] = useState(false);
+
+  const appConfirmDialog = useAppConfirmDialog();
   const { isUserLoggedIn } = useAuth();
+  const appMessage = useAppMessage();
 
   useEffect(() => {
     if (!orderToShow) {
@@ -28,6 +38,70 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const cancelOrder = async () => {
+    try {
+      if (orderToShow?.key) {
+        const orderClient = new OrderClient(null, {});
+        setLoading(true);
+        await orderClient.cancelOrder({ orderKey: orderToShow.key });
+
+        appMessage.toastSuccess({
+          data: 'Hủy đơn hàng thành công',
+        });
+        setOrderToShow({
+          ...orderToShow,
+          status: OrderStatuses.CANCELLED,
+        });
+      }
+    } catch (error) {
+      appMessage.toastError({ data: error });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onConfirmCancelOrder = () => {
+    appConfirmDialog.setConfirmData({
+      title: 'Xác nhận hủy đơn hàng',
+      content: 'Bạn có chắc chắn muốn hủy đơn hàng này?',
+      onOk: cancelOrder,
+    });
+  };
+
+  const getTitleByStatus = (status?: OrderStatuses) => {
+    switch (status) {
+      case OrderStatuses.WAIT_FOR_CONFIRM:
+        return 'Đơn hàng của bạn đã được đặt thành công!';
+      case OrderStatuses.CANCELLED:
+        return 'Đơn hàng của bạn đã bị hủy!';
+      case OrderStatuses.SHIPPING:
+        return 'Đơn hàng của bạn đang được giao!';
+      case OrderStatuses.PROCESSING:
+        return 'Đơn hàng của bạn đang được xử lý!';
+      case OrderStatuses.COMPLETED:
+        return 'Đơn hàng của bạn đã được giao thành công!';
+      default:
+        return 'Đơn hàng của bạn đã được đặt thành công!';
+    }
+  };
+
+  const getResultStatusByStatus = (status?: OrderStatuses) => {
+    switch (status) {
+      case OrderStatuses.WAIT_FOR_CONFIRM:
+        return 'success';
+      case OrderStatuses.CANCELLED:
+        return 'error';
+      case OrderStatuses.SHIPPING:
+        return 'info';
+      case OrderStatuses.PROCESSING:
+        return 'info';
+      case OrderStatuses.COMPLETED:
+        return 'success';
+      default:
+        return 'success';
+    }
+  };
 
   return (
     <div className="container max-w-[720px] px-2 pb-4">
@@ -48,64 +122,142 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
         <div className="md:border-1 border-none px-0 py-0 shadow-none md:rounded-lg md:border-solid md:border-gray-200 md:py-4 md:shadow-lg lg:px-4">
           <Result
             className="px-2 lg:px-4"
-            status="success"
-            title="Đơn hàng của bạn đã được đặt thành công!"
+            status={getResultStatusByStatus(orderToShow.status)}
+            title={getTitleByStatus(orderToShow.status)}
             subTitle={
               <>
-                <Typography className="text-center">
-                  Mã đơn hàng: #<b>{orderToShow?.code}</b>. Chúng tôi sẽ xử lý
-                  đơn hàng và giao cho bạn trong thời gian sớm nhất.
-                </Typography>
-
-                <div className="mt-4 rounded-xl bg-primary-background p-4">
-                  <Typography className="text-left">
-                    <span className="text-gray-600">Người nhận hàng:</span>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <Typography.Text className="font-medium">
-                      {orderToShow?.receiverName}, {orderToShow?.receiverTel}
-                    </Typography.Text>
+                {orderToShow.status === OrderStatuses.WAIT_FOR_CONFIRM && (
+                  <Typography className="text-center">
+                    Chúng tôi sẽ xử lý đơn hàng và giao cho bạn trong thời gian
+                    sớm nhất.
                   </Typography>
-                  {orderToShow?.deliveryDetail && (
+                )}
+
+                <div className="my-4 flex items-center justify-between gap-2 rounded-lg bg-primary-background px-4 py-2">
+                  <Typography>
+                    Mã đơn hàng: #<b>{orderToShow?.code}</b>
+                  </Typography>
+                  <div className="flex gap-2">
+                    {isUserLoggedIn && (
+                      <Link href="/lich-su-don-hang">
+                        <Button className="px-2" type="link">
+                          Quản lý đơn hàng
+                        </Button>
+                      </Link>
+                    )}
+                    {orderToShow.status === OrderStatuses.WAIT_FOR_CONFIRM && (
+                      <Button
+                        className="px-2"
+                        type="link"
+                        danger
+                        loading={loading}
+                        onClick={onConfirmCancelOrder}
+                      >
+                        Hủy đơn
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                <ul className="mt-4 rounded-xl bg-primary-background p-4 pl-8">
+                  <li>
                     <Typography className="text-left">
-                      <span className="text-gray-600">Địa chỉ nhận hàng:</span>
-                      &nbsp;&nbsp;&nbsp;&nbsp;
+                      <span className="text-gray-600">
+                        Người nhận hàng&nbsp;
+                      </span>
                       <Typography.Text className="font-medium">
-                        {orderToShow?.deliveryDetail},{' '}
-                        {orderToShow?.deliveryWard},{' '}
-                        {orderToShow?.deliveryDistrict},{' '}
-                        {orderToShow?.deliveryProvince}
+                        {orderToShow?.receiverName}
+                      </Typography.Text>
+                      <span className="text-gray-600">
+                        , số điện thoại&nbsp;
+                      </span>
+                      <Typography.Text className="font-medium">
+                        {orderToShow?.receiverTel}
                       </Typography.Text>
                     </Typography>
+                  </li>
+                  {orderToShow?.deliveryDetail && (
+                    <li>
+                      <Typography className="text-left">
+                        <span className="text-gray-600">
+                          Nhận hàng tại&nbsp;
+                        </span>
+                        <Typography.Text className="font-medium">
+                          {orderToShow?.deliveryDetail},{' '}
+                          {orderToShow?.deliveryWard},{' '}
+                          {orderToShow?.deliveryDistrict},{' '}
+                          {orderToShow?.deliveryProvince}
+                        </Typography.Text>
+                      </Typography>
+                    </li>
                   )}
                   {orderToShow?.drugstore?.key && (
-                    <Typography className="text-left">
-                      <span className="text-gray-600">Nhận tại nhà thuốc:</span>
-                      &nbsp;&nbsp;&nbsp;&nbsp;
-                      <Typography.Text className="font-medium">
-                        {orderToShow?.drugstore.name},{' '}
-                        {orderToShow?.drugstore.address}
-                      </Typography.Text>
-                    </Typography>
+                    <li>
+                      <Typography className="text-left">
+                        <span className="text-gray-600">
+                          Nhận tại nhà thuốc&nbsp;
+                        </span>
+                        <Typography.Text className="font-medium">
+                          {orderToShow?.drugstore.name},{' '}
+                          {orderToShow?.drugstore.address}
+                        </Typography.Text>
+                      </Typography>
+                    </li>
                   )}
-                  <Typography className="text-left">
-                    <span className="text-gray-600">Tổng tiền:</span>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <span className="font-bold text-primary">
-                      {orderToShow?.totalAmount?.toLocaleString('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND',
-                      })}
-                    </span>
-                  </Typography>
-                </div>
+                  {orderToShow.shippingType === ShippingTypes.DELIVERY && (
+                    <li>
+                      <Typography className="text-left">
+                        <span className="text-gray-600">
+                          Phí vận chuyển&nbsp;
+                        </span>
+                        <span className="font-bold text-primary">
+                          {orderToShow?.shippingFee
+                            ? CurrencyUtils.format(orderToShow?.shippingFee)
+                            : 'Miễn phí'}
+                        </span>
+                      </Typography>
+                    </li>
+                  )}
+                  <li>
+                    <Typography className="text-left">
+                      <span className="text-gray-600">Thành tiền&nbsp;</span>
+                      <span className="font-bold text-primary">
+                        {CurrencyUtils.format(orderToShow?.totalAmount)}
+                      </span>
+                    </Typography>
+                  </li>
+                </ul>
               </>
             }
             extra={[
-              <Link href={isUserLoggedIn ? '/lich-su-don-hang' : '/'} key={1}>
-                <Button type="primary" className="shadow-none">
-                  Xác nhận và quay lại
-                </Button>
-              </Link>,
+              <div
+                key="actions"
+                className="flex flex-wrap items-center justify-center gap-2"
+              >
+                {isUserLoggedIn && (
+                  <Link
+                    href={
+                      isUserLoggedIn
+                        ? `/lich-su-don-hang/${orderToShow?.key}`
+                        : '/'
+                    }
+                  >
+                    <Button type="primary" className="shadow-none">
+                      Chi tiết đơn hàng
+                    </Button>
+                  </Link>
+                )}
+                <Link href={'/'}>
+                  <Button
+                    type="primary"
+                    ghost
+                    className="shadow-none"
+                    icon={<HomeOutlined />}
+                  >
+                    Về trang chủ
+                  </Button>
+                </Link>
+              </div>,
             ]}
           />
         </div>

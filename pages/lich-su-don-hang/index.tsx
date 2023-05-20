@@ -146,7 +146,7 @@ export const getServerSideProps: GetServerSideProps = async (
       pageSize: 10,
       status: context.query['trang-thai']
         ? (+context.query['trang-thai'] as OrderStatuses)
-        : undefined,
+        : OrderStatuses.WAIT_FOR_CONFIRM,
     });
 
     if (ordersResponse?.data) {
