@@ -133,11 +133,11 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
                   </Typography>
                 )}
 
-                <div className="my-4 flex items-center justify-between gap-2 rounded-lg bg-primary-background px-4 py-2">
+                <div className="my-4 flex flex-wrap items-center justify-center gap-2 rounded-lg bg-primary-background px-4 py-2 sm:justify-between">
                   <Typography>
                     Mã đơn hàng: #<b>{orderToShow?.code}</b>
                   </Typography>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {isUserLoggedIn && (
                       <Link href="/lich-su-don-hang">
                         <Button className="px-2" type="link">
@@ -145,17 +145,18 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
                         </Button>
                       </Link>
                     )}
-                    {orderToShow.status === OrderStatuses.WAIT_FOR_CONFIRM && (
-                      <Button
-                        className="px-2"
-                        type="link"
-                        danger
-                        loading={loading}
-                        onClick={onConfirmCancelOrder}
-                      >
-                        Hủy đơn
-                      </Button>
-                    )}
+                    {isUserLoggedIn &&
+                      orderToShow.status === OrderStatuses.WAIT_FOR_CONFIRM && (
+                        <Button
+                          className="px-2"
+                          type="link"
+                          danger
+                          loading={loading}
+                          onClick={onConfirmCancelOrder}
+                        >
+                          Hủy đơn
+                        </Button>
+                      )}
                   </div>
                 </div>
 
