@@ -58,4 +58,10 @@ export class OrderClient extends BaseClient {
   async getDeliveryConfigs(): Promise<APIResponse<DeliveryConfigs>> {
     return await super.call('GET', `order/configs/delivery`, {});
   }
+
+  async cancelOrder(payload: {
+    orderKey: string;
+  }): Promise<APIResponse<DeliveryConfigs>> {
+    return await super.call('PUT', `order/cancelled`, payload);
+  }
 }

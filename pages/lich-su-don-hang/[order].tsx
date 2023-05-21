@@ -1,5 +1,5 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Divider, Tag, Typography } from 'antd';
+import { Breadcrumb, Button, Divider, Tag, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import Link from 'next/link';
 import {
@@ -9,7 +9,7 @@ import {
   ShoppingBag,
   User,
 } from 'react-feather';
-import React from 'react';
+import React, { useState } from 'react';
 import { GetServerSidePropsContext } from 'next';
 import OrderModel from '@configs/models/order.model';
 import { OrderClient } from '@libs/client/Order';
@@ -20,8 +20,49 @@ import OrderStatusUtils from '@libs/utils/order-status.utils';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import CurrencyUtils from '@libs/utils/currency.utils';
 import UrlUtils from '@libs/utils/url.utils';
+import OrderStatuses from '@configs/enums/order-statuses.enum';
+import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
+import { useAppMessage } from '@providers/AppMessageProvider';
+import { DeleteOutlined } from '@ant-design/icons';
 
 const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
+  const [orderToShow, setOrderToShow] = useState(order);
+
+  const [loading, setLoading] = useState(false);
+
+  const appConfirmDialog = useAppConfirmDialog();
+  const appMessage = useAppMessage();
+
+  const cancelOrder = async () => {
+    try {
+      if (orderToShow?.key) {
+        const orderClient = new OrderClient(null, {});
+        setLoading(true);
+        await orderClient.cancelOrder({ orderKey: orderToShow.key });
+
+        appMessage.toastSuccess({
+          data: 'Hủy đơn hàng thành công',
+        });
+        setOrderToShow({
+          ...orderToShow,
+          status: OrderStatuses.CANCELLED,
+        });
+      }
+    } catch (error) {
+      appMessage.toastError({ data: error });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onConfirmCancelOrder = () => {
+    appConfirmDialog.setConfirmData({
+      title: 'Xác nhận hủy đơn hàng',
+      content: 'Bạn có chắc chắn muốn hủy đơn hàng này?',
+      onOk: cancelOrder,
+    });
+  };
+
   return (
     <div className="container px-2 pb-4 lg:px-0">
       <Breadcrumb className="mt-4 mb-2">
@@ -45,27 +86,46 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
       </Breadcrumb>
 
       <UserLayout>
-        <Typography>
-          <Tag
-            color={OrderStatusUtils.formatOrderStatus(order?.status).tagColor}
-            className="mb-2 shadow-none"
-          >
-            {OrderStatusUtils.formatOrderStatus(order?.status).label}
-          </Tag>{' '}
-          <Typography.Title
-            level={5}
-            className="m-0 inline-block align-middle font-medium"
-          >
-            #{order?.code}
-            <Typography.Text className="font-normal text-gray-600"></Typography.Text>
-          </Typography.Title>
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center">
+              <Tag
+                color={
+                  OrderStatusUtils.formatOrderStatus(orderToShow?.status)
+                    .tagColor
+                }
+                className="shadow-none"
+              >
+                {OrderStatusUtils.formatOrderStatus(orderToShow?.status).label}
+              </Tag>{' '}
+              <Typography.Title
+                level={5}
+                className="m-0 inline-block align-middle font-medium"
+              >
+                #{orderToShow?.code}
+                <Typography.Text className="font-normal text-gray-600"></Typography.Text>
+              </Typography.Title>
+            </div>
+            {orderToShow?.status === OrderStatuses.WAIT_FOR_CONFIRM && (
+              <Button
+                className="px-2"
+                icon={<DeleteOutlined />}
+                danger
+                loading={loading}
+                onClick={onConfirmCancelOrder}
+              >
+                Hủy đơn
+              </Button>
+            )}
+          </div>
           <Typography.Paragraph className="m-0 mb-4 text-gray-600">
             <Clock size={16} className=" align-text-top" /> Ngày đặt &nbsp;
             <Typography.Text className="font-medium">
-              {TimeUtils.formatDate(order?.createdTime, {})}
+              {TimeUtils.formatDate(orderToShow?.createdTime, {})}
             </Typography.Text>
           </Typography.Paragraph>
-        </Typography>
+        </div>
+
         <div className="grid grid-cols-1 gap-2 md:grid-cols-[1fr_minmax(200px,_300px)] md:gap-4">
           <div className="rounded-lg border border-solid border-gray-200 bg-white p-4">
             <div className="mb-2 flex items-center">
@@ -75,27 +135,27 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
             </div>
             <Typography className="mb-2 text-left">
               <Typography.Text className="text-base font-medium">
-                {order?.receiverName}
+                {orderToShow?.receiverName}
               </Typography.Text>
             </Typography>
             <Typography className="text-left text-gray-800">
-              {order?.receiverTel}
+              {orderToShow?.receiverTel}
             </Typography>
-            {order?.deliveryDetail && (
+            {orderToShow?.deliveryDetail && (
               <Typography className="text-left text-gray-800">
-                {order?.deliveryDetail}, {order?.deliveryWard},{' '}
-                {order?.deliveryDistrict}, {order?.deliveryProvince}
+                {orderToShow?.deliveryDetail}, {orderToShow?.deliveryWard},{' '}
+                {orderToShow?.deliveryDistrict}, {orderToShow?.deliveryProvince}
               </Typography>
             )}
-            {order?.drugstore?.key && (
+            {orderToShow?.drugstore?.key && (
               <Typography className="text-left text-gray-800">
-                {order?.drugstore.name}, {order?.drugstore.address}
+                {orderToShow?.drugstore.name}, {orderToShow?.drugstore.address}
               </Typography>
             )}
-            {order?.orderNote && (
+            {orderToShow?.orderNote && (
               <Typography className="mb-2 text-left">
                 <Typography.Text className=" text-gray-600">
-                  Ghi chú: {order?.orderNote}
+                  Ghi chú: {orderToShow?.orderNote}
                 </Typography.Text>
               </Typography>
             )}
@@ -108,13 +168,13 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
               <Typography className="text-lg">Hình thức thanh toán</Typography>
             </div>
             <ImageWithFallback
-              src={order?.paymentMethod?.image || ''}
+              src={orderToShow?.paymentMethod?.image || ''}
               width={60}
               height={60}
             ></ImageWithFallback>
             <Typography className="text-left">
               <Typography.Text className="">
-                {order?.paymentMethod?.name}
+                {orderToShow?.paymentMethod?.name}
               </Typography.Text>
             </Typography>
           </div>
@@ -128,7 +188,7 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
           </div>
 
           <div className="divide-y divide-x-0 divide-solid divide-gray-200">
-            {order?.details?.map((detail) => {
+            {orderToShow?.details?.map((detail) => {
               const discountVal = +(detail.promoInfo?.split('#').pop() || 0);
 
               return (
@@ -234,48 +294,44 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
           </div>
         </div>
         <div className="mr-0 ml-auto w-full px-0 py-4 md:w-[400px] md:px-2">
-          {order?.subTotalAmount != order?.totalAmount && (
+          {orderToShow?.subTotalAmount != orderToShow?.totalAmount && (
             <div className="my-2 flex items-end justify-between px-2">
               <Typography.Text className="text-right  text-base text-gray-500">
                 Tổng tiền
               </Typography.Text>
               <Typography.Text className="m-0 text-base font-medium ">
-                {order?.subTotalAmount?.toLocaleString('it-IT', {
-                  style: 'currency',
-                  currency: 'VND',
-                })}
+                {CurrencyUtils.format(orderToShow?.subTotalAmount)}
               </Typography.Text>
             </div>
           )}
-          {order?.shippingFee && (
+          {(orderToShow?.shippingFee || 0) > 0 && (
             <div className="my-2 flex items-end justify-between px-2">
               <Typography.Text className="text-right  text-base text-gray-500">
                 Phí vận chuyển
               </Typography.Text>
               <Typography.Text className="m-0 text-base font-medium ">
-                {CurrencyUtils.format(order?.shippingFee)}
+                {CurrencyUtils.format(orderToShow?.shippingFee)}
               </Typography.Text>
             </div>
           )}
-          {order?.offerCode && (
+          {orderToShow?.offerCode && (
             <div className="my-2 flex items-end justify-between px-2 ">
               <Typography.Text className="text-right text-base text-gray-500">
                 Mã ưu đãi
               </Typography.Text>
               <Typography.Text className="m-0 text-base font-medium ">
-                {order?.offerCode}
+                {orderToShow?.offerCode}
               </Typography.Text>
             </div>
           )}
-          {order?.subTotalAmount != order?.totalAmount && order?.offerCode && (
-            <Divider className="mt-4 mb-0" />
-          )}
+          {orderToShow?.subTotalAmount != orderToShow?.totalAmount &&
+            orderToShow?.offerCode && <Divider className="mt-4 mb-0" />}
           <div className="my-2 flex items-end justify-between px-2 ">
             <Typography.Text className="text-right text-base text-gray-500">
               Thành tiền
             </Typography.Text>
             <Typography.Text className="m-0 text-3xl font-bold text-primary">
-              {CurrencyUtils.format(order?.totalAmount)}
+              {CurrencyUtils.format(orderToShow?.totalAmount)}
             </Typography.Text>
           </div>
         </div>
