@@ -5,7 +5,6 @@ import { ProductClient } from '@libs/client/Product';
 import HomepageCarousel from '@modules/homepage/HomepageCarousel';
 import HomepageSearchSection from '@modules/homepage/HomepageSearchSection';
 import ViralProductsListModel from '@configs/models/viral-products-list.model';
-import FocusContentSection from '@modules/homepage/FocusContentSection';
 import VIRAL_PRODUCTS_LOAD_PER_TIME from '@configs/constants/viral-products-load-per-time';
 import dynamic from 'next/dynamic';
 import { useAppData } from '@providers/AppDataProvider';
@@ -52,7 +51,7 @@ const Home: NextPageWithLayout<{
   campaigns,
   listProducts,
 }) => {
-  const { focusContent, setProductSearchKeywords } = useAppData();
+  const { setProductSearchKeywords } = useAppData();
 
   const promotionSliderImages =
     campaigns?.map((campaign) => ({
@@ -121,30 +120,24 @@ const Home: NextPageWithLayout<{
         </div>
       )}
 
-      <div className="hidden lg:block">
-        <FocusContentSection focusContent={focusContent || []} />
-      </div>
+      {listProducts?.map((listProduct, index) => {
+        if (!listProducts.length) return null;
+        const keyPromo = listProduct[0].keyPromo;
+        const promotion = promotions.find(
+          (promotion) => promotion.key === keyPromo
+        );
+        if (!promotion) return null;
 
-      <div className="container mt-[24px]">
-        {listProducts?.map((listProduct, index) => {
-          if (!listProducts.length) return null;
-          const keyPromo = listProduct[0].keyPromo;
-          const promotion = promotions.find(
-            (promotion) => promotion.key === keyPromo
-          );
-          if (!promotion) return null;
-
-          return (
-            <PromotionProductsList
-              key={promotion.key}
-              promotion={promotion}
-              isPrimaryBackground={index === 0}
-              scrollable={!screens.md}
-              defaultProducts={listProduct}
-            />
-          );
-        })}
-      </div>
+        return (
+          <PromotionProductsList
+            key={promotion.key}
+            promotion={promotion}
+            isPrimaryBackground={index === 0}
+            scrollable={!screens.md}
+            defaultProducts={listProduct}
+          />
+        );
+      })}
 
       {viralProductsLists?.map((viralProductsList, index) => (
         <ViralProductsList
