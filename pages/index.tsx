@@ -53,14 +53,18 @@ const Home: NextPageWithLayout<{
   listProducts,
 }) => {
   const { focusContent, setProductSearchKeywords } = useAppData();
-  const sliderImages =
+
+  const promotionSliderImages =
     campaigns?.map((campaign) => ({
       url: campaign.imgUrl,
       link: '/chuong-trinh-khuyen-mai/' + campaign.key,
     })) || [];
-  const visibleSlides = getVisibleItems(slideBanner || []).map((slide) => ({
-    url: (slide.imageUrl as string) || '',
-  }));
+  const bannerVisibleSlides = getVisibleItems(slideBanner || []).map(
+    (slide) => ({
+      url: (slide.imageUrl as string) || '',
+    })
+  );
+
   const promotions = (campaigns || []).reduce((acc, curCampaign) => {
     return [...acc, ...curCampaign.promotions];
   }, [] as CampaignPromotion[]);
@@ -77,58 +81,70 @@ const Home: NextPageWithLayout<{
       <div className="w-screen overflow-hidden pb-6">
         <div
           className={`px-0 ${
-            sliderImages.length && screens.md ? `container` : ''
+            promotionSliderImages.length && screens.md ? `container` : ''
           }`}
         >
-          {!!sliderImages.length && (
+          {!!promotionSliderImages.length && (
             <HomepageCarousel
-              sliderImages={sliderImages}
+              sliderImages={promotionSliderImages}
               numberSlidePerPage={1}
               type="primary"
             />
           )}
-          <div className={`${sliderImages.length && screens.md ? `mt-4` : ''}`}>
-            <HomepageCarousel
-              sliderImages={visibleSlides}
-              numberSlidePerPage={sliderImages.length && screens.md ? 2 : 1}
-              type={sliderImages.length ? 'secondary' : 'primary'}
-            />
-          </div>
+          {!!slideBanner?.length && (
+            <div
+              className={`${
+                promotionSliderImages.length && screens.md ? `mt-4` : ''
+              }`}
+            >
+              <HomepageCarousel
+                sliderImages={bannerVisibleSlides}
+                numberSlidePerPage={
+                  promotionSliderImages.length && screens.md ? 2 : 1
+                }
+                type={promotionSliderImages.length ? 'secondary' : 'primary'}
+              />
+            </div>
+          )}
         </div>
       </div>
 
       {!campaigns?.length && (
         <div
-          className={`hidden lg:block ${
-            !sliderImages.length ? `-mt-[100px]` : 'mt-[32px]'
+          className={`mb-[32px] hidden lg:block ${
+            !!promotionSliderImages.length || !!bannerVisibleSlides.length
+              ? '-mt-[100px]'
+              : 'mt-[32px]'
           }`}
         >
           <HomepageSearchSection />
         </div>
       )}
 
-      <div className="mt-[32px] hidden lg:block">
+      <div className="hidden lg:block">
         <FocusContentSection focusContent={focusContent || []} />
       </div>
 
-      {listProducts?.map((listProduct, index) => {
-        if (!listProducts.length) return null;
-        const keyPromo = listProduct[0].keyPromo;
-        const promotion = promotions.find(
-          (promotion) => promotion.key === keyPromo
-        );
-        if (!promotion) return null;
+      <div className="container mt-[24px]">
+        {listProducts?.map((listProduct, index) => {
+          if (!listProducts.length) return null;
+          const keyPromo = listProduct[0].keyPromo;
+          const promotion = promotions.find(
+            (promotion) => promotion.key === keyPromo
+          );
+          if (!promotion) return null;
 
-        return (
-          <PromotionProductsList
-            key={promotion.key}
-            promotion={promotion}
-            isPrimaryBackground={index === 0}
-            scrollable={!screens.md}
-            defaultProducts={listProduct}
-          />
-        );
-      })}
+          return (
+            <PromotionProductsList
+              key={promotion.key}
+              promotion={promotion}
+              isPrimaryBackground={index === 0}
+              scrollable={!screens.md}
+              defaultProducts={listProduct}
+            />
+          );
+        })}
+      </div>
 
       {viralProductsLists?.map((viralProductsList, index) => (
         <ViralProductsList
@@ -191,7 +207,9 @@ export const getServerSideProps = async (
         page: 1,
         pageSize: VIRAL_PRODUCTS_LOAD_PER_TIME,
       }),
-      generalClient.getSlideBanner(),
+      +(process.env.BANNER_ENABLED || 0)
+        ? generalClient.getSlideBanner()
+        : Promise.resolve({ data: [] }),
       generalClient.getProductSearchKeywords(),
       generalClient.getMainInfos({
         page: 1,

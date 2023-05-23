@@ -16,6 +16,9 @@ const nextConfig = withBundleAnalyzer({
     API_HOST: process.env.API_HOST,
     MS_PATH: process.env.MS_PATH,
     HOST_IMAGE: process.env.HOST_IMAGE,
+
+    BANNER_ENABLED: process.env.BANNER_ENABLED,
+
     NEXT_PUBLIC_REGEX_PHONE: process.env.NEXT_PUBLIC_REGEX_PHONE,
     NEXT_PUBLIC_GROUP_INFO_KEYS: process.env.NEXT_PUBLIC_GROUP_INFO_KEYS,
   },
