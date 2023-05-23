@@ -4,16 +4,14 @@ import { Facebook, Mail, MapPin, Phone, Twitter, Youtube } from 'react-feather';
 import IMAGES from 'configs/assests/images';
 import { useAppData } from '@providers/AppDataProvider';
 import FocusContentSection from '@modules/homepage/FocusContentSection';
-import { useRouter } from 'next/router';
 import { useWatchCacheProduct } from '@libs/utils/hooks/useWatchCacheProduct';
 import ProductList from '@components/templates/ProductList';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import UrlUtils from '@libs/utils/url.utils';
+import AppDangerouslySetInnerHTML from '@components/AppDangerouslySetInnerHTML';
 
 function PrimaryFooter() {
   const { focusContent, mainInfoFooter } = useAppData();
-
-  const router = useRouter();
 
   const [products] = useWatchCacheProduct();
 
@@ -32,9 +30,9 @@ function PrimaryFooter() {
           <ProductList products={products} forceSlide />
         </div>
       )}
-      <div className={`block ${router.asPath === '/' ? 'lg:hidden' : ''}`}>
-        <FocusContentSection focusContent={focusContent || []} />
-      </div>
+
+      <FocusContentSection focusContent={focusContent || []} />
+
       <footer className="bg-primary px-4">
         <div className="py-8 lg:container">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -139,11 +137,11 @@ function PrimaryFooter() {
                       )}/${UrlUtils.generateSlug(event.name, event.key)}`}
                     >
                       <Space className="my-1 w-full text-white">
-                        <div
+                        <AppDangerouslySetInnerHTML
                           dangerouslySetInnerHTML={{
                             __html: event.name || '',
                           }}
-                        ></div>
+                        ></AppDangerouslySetInnerHTML>
                       </Space>
                     </LinkWrapper>
                   ))}

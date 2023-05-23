@@ -5,7 +5,6 @@ import { ProductClient } from '@libs/client/Product';
 import HomepageCarousel from '@modules/homepage/HomepageCarousel';
 import HomepageSearchSection from '@modules/homepage/HomepageSearchSection';
 import ViralProductsListModel from '@configs/models/viral-products-list.model';
-import FocusContentSection from '@modules/homepage/FocusContentSection';
 import VIRAL_PRODUCTS_LOAD_PER_TIME from '@configs/constants/viral-products-load-per-time';
 import dynamic from 'next/dynamic';
 import { useAppData } from '@providers/AppDataProvider';
@@ -19,6 +18,7 @@ import { Campaign, CampaignPromotion } from '@configs/models/promotion.model';
 import { getVisibleItems } from '@libs/helpers';
 import { Grid } from 'antd';
 import Product from '@configs/models/product.model';
+import { BANNER_ENABLED } from '@configs/env';
 
 const { useBreakpoint } = Grid;
 
@@ -52,15 +52,20 @@ const Home: NextPageWithLayout<{
   campaigns,
   listProducts,
 }) => {
-  const { focusContent, setProductSearchKeywords } = useAppData();
-  const sliderImages =
+  const { setProductSearchKeywords } = useAppData();
+
+  const promotionSliderImages =
     campaigns?.map((campaign) => ({
       url: campaign.imgUrl,
       link: '/chuong-trinh-khuyen-mai/' + campaign.key,
     })) || [];
-  const visibleSlides = getVisibleItems(slideBanner || []).map((slide) => ({
-    url: (slide.imageUrl as string) || '',
-  }));
+  const bannerVisibleSlides =
+    BANNER_ENABLED || !promotionSliderImages.length
+      ? getVisibleItems(slideBanner || []).map((slide) => ({
+          url: (slide.imageUrl as string) || '',
+        }))
+      : [];
+
   const promotions = (campaigns || []).reduce((acc, curCampaign) => {
     return [...acc, ...curCampaign.promotions];
   }, [] as CampaignPromotion[]);
@@ -77,39 +82,45 @@ const Home: NextPageWithLayout<{
       <div className="w-screen overflow-hidden pb-6">
         <div
           className={`px-0 ${
-            sliderImages.length && screens.md ? `container` : ''
+            promotionSliderImages.length && screens.md ? `container` : ''
           }`}
         >
-          {!!sliderImages.length && (
+          {!!promotionSliderImages.length && (
             <HomepageCarousel
-              sliderImages={sliderImages}
+              sliderImages={promotionSliderImages}
               numberSlidePerPage={1}
               type="primary"
             />
           )}
-          <div className={`${sliderImages.length && screens.md ? `mt-4` : ''}`}>
-            <HomepageCarousel
-              sliderImages={visibleSlides}
-              numberSlidePerPage={sliderImages.length && screens.md ? 2 : 1}
-              type={sliderImages.length ? 'secondary' : 'primary'}
-            />
-          </div>
+          {!!bannerVisibleSlides?.length && (
+            <div
+              className={`${
+                promotionSliderImages.length && screens.md ? `mt-4` : ''
+              }`}
+            >
+              <HomepageCarousel
+                sliderImages={bannerVisibleSlides}
+                numberSlidePerPage={
+                  promotionSliderImages.length && screens.md ? 2 : 1
+                }
+                type={promotionSliderImages.length ? 'secondary' : 'primary'}
+              />
+            </div>
+          )}
         </div>
       </div>
 
-      {!campaigns?.length && (
+      {!promotionSliderImages?.length && (
         <div
-          className={`hidden lg:block ${
-            !sliderImages.length ? `-mt-[100px]` : 'mt-[32px]'
+          className={`mb-[32px] hidden lg:block ${
+            !!promotionSliderImages.length || !!bannerVisibleSlides.length
+              ? '-mt-[100px]'
+              : 'mt-[32px]'
           }`}
         >
           <HomepageSearchSection />
         </div>
       )}
-
-      <div className="mt-[32px] hidden lg:block">
-        <FocusContentSection focusContent={focusContent || []} />
-      </div>
 
       {listProducts?.map((listProduct, index) => {
         if (!listProducts.length) return null;

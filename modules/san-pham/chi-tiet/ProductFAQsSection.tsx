@@ -1,4 +1,5 @@
 import { InfoCircleFilled } from '@ant-design/icons';
+import AppDangerouslySetInnerHTML from '@components/AppDangerouslySetInnerHTML';
 import { FAQ } from '@configs/models/faq.model';
 import { Collapse, Typography } from 'antd';
 import React from 'react';
@@ -37,11 +38,11 @@ function ProductFAQsSection({ faqs }: { faqs: FAQ[] }) {
               </Typography.Title>
             }
           >
-            <div
+            <AppDangerouslySetInnerHTML
               dangerouslySetInnerHTML={{
                 __html: faq.description,
               }}
-            ></div>
+            ></AppDangerouslySetInnerHTML>
           </Collapse.Panel>
         ))}
       </Collapse>
