@@ -231,7 +231,7 @@ function CartProductItem({ cartProduct }: { cartProduct: CartProduct }) {
 
         <div className="flex flex-1 flex-col">
           <div className="flex">
-            <div className="relative flex h-[60px] min-h-[60px] w-[60px] min-w-[60px] flex-col">
+            <div className="relative mr-2 flex h-[60px] min-h-[60px] w-[60px] min-w-[60px] flex-col">
               <ImageWithFallback
                 src={cartProduct.product.detail?.image || ''}
                 alt="product image"
