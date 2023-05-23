@@ -23,7 +23,7 @@ const nextConfig = withBundleAnalyzer({
     NEXT_PUBLIC_GROUP_INFO_KEYS: process.env.NEXT_PUBLIC_GROUP_INFO_KEYS,
   },
   images: {
-    domains: [`${process.env.HOST_IMAGE}`, 'pt-storage.hn.ss.bfcplatform.vn'],
+    domains: [`${process.env.HOST_IMAGE}`, process.env.INTERNAL_HOST_IMAGE],
   },
 
   rewrites() {
