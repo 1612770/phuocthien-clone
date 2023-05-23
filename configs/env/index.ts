@@ -16,3 +16,5 @@ export const NEXT_PUBLIC_GROUP_INFO_KEYS = process.env
       key.trim().toUpperCase()
     )
   : [];
+
+export const BANNER_ENABLED = !!+(process.env.BANNER_ENABLED || 0);

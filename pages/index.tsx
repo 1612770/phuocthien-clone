@@ -18,6 +18,7 @@ import { Campaign, CampaignPromotion } from '@configs/models/promotion.model';
 import { getVisibleItems } from '@libs/helpers';
 import { Grid } from 'antd';
 import Product from '@configs/models/product.model';
+import { BANNER_ENABLED } from '@configs/env';
 
 const { useBreakpoint } = Grid;
 
@@ -58,11 +59,12 @@ const Home: NextPageWithLayout<{
       url: campaign.imgUrl,
       link: '/chuong-trinh-khuyen-mai/' + campaign.key,
     })) || [];
-  const bannerVisibleSlides = getVisibleItems(slideBanner || []).map(
-    (slide) => ({
-      url: (slide.imageUrl as string) || '',
-    })
-  );
+  const bannerVisibleSlides =
+    BANNER_ENABLED || !promotionSliderImages.length
+      ? getVisibleItems(slideBanner || []).map((slide) => ({
+          url: (slide.imageUrl as string) || '',
+        }))
+      : [];
 
   const promotions = (campaigns || []).reduce((acc, curCampaign) => {
     return [...acc, ...curCampaign.promotions];
@@ -90,7 +92,7 @@ const Home: NextPageWithLayout<{
               type="primary"
             />
           )}
-          {!!slideBanner?.length && (
+          {!!bannerVisibleSlides?.length && (
             <div
               className={`${
                 promotionSliderImages.length && screens.md ? `mt-4` : ''
@@ -108,7 +110,7 @@ const Home: NextPageWithLayout<{
         </div>
       </div>
 
-      {!campaigns?.length && (
+      {!promotionSliderImages?.length && (
         <div
           className={`mb-[32px] hidden lg:block ${
             !!promotionSliderImages.length || !!bannerVisibleSlides.length
@@ -200,9 +202,7 @@ export const getServerSideProps = async (
         page: 1,
         pageSize: VIRAL_PRODUCTS_LOAD_PER_TIME,
       }),
-      +(process.env.BANNER_ENABLED || 0)
-        ? generalClient.getSlideBanner()
-        : Promise.resolve({ data: [] }),
+      generalClient.getSlideBanner(),
       generalClient.getProductSearchKeywords(),
       generalClient.getMainInfos({
         page: 1,
