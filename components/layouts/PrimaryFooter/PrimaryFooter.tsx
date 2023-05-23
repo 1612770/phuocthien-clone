@@ -9,6 +9,7 @@ import { useWatchCacheProduct } from '@libs/utils/hooks/useWatchCacheProduct';
 import ProductList from '@components/templates/ProductList';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import UrlUtils from '@libs/utils/url.utils';
+import AppDangerouslySetInnerHTML from '@components/AppDangerouslySetInnerHTML';
 
 function PrimaryFooter() {
   const { focusContent, mainInfoFooter } = useAppData();
@@ -139,11 +140,11 @@ function PrimaryFooter() {
                       )}/${UrlUtils.generateSlug(event.name, event.key)}`}
                     >
                       <Space className="my-1 w-full text-white">
-                        <div
+                        <AppDangerouslySetInnerHTML
                           dangerouslySetInnerHTML={{
                             __html: event.name || '',
                           }}
-                        ></div>
+                        ></AppDangerouslySetInnerHTML>
                       </Space>
                     </LinkWrapper>
                   ))}
