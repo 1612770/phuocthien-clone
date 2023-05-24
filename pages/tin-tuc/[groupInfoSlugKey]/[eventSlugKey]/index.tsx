@@ -27,6 +27,20 @@ const EventPage: NextPageWithLayout<{
   if (!event) return null;
   if (typeof event?.visible === 'boolean' && !event?.visible) return null;
 
+  const allMainInfoFooterEventKeys = mainInfoFooter.reduce((acc, curr) => {
+    const groupInfoEventKeys =
+      curr.groupInfo?.reduce((acc, cur) => {
+        const eventKeys =
+          cur.eventInfos?.map((event) => event?.key || '') || [];
+
+        return [...acc, ...eventKeys];
+      }, [] as string[]) || [];
+
+    return [...acc, ...groupInfoEventKeys];
+  }, [] as string[]);
+
+  const isEventArticle = !allMainInfoFooterEventKeys.includes(event?.key || '');
+
   return (
     <>
       <div className="px-4 lg:container lg:px-0">
@@ -54,13 +68,23 @@ const EventPage: NextPageWithLayout<{
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4 px-4 pb-4 md:grid-cols-[300px_minmax(200px,_1fr)] lg:container lg:px-0">
-        <div className="md:hidden">
-          <MainInfoMenuButton mainInfo={mainInfoFooter} />
-        </div>
-        <div className="hidden h-fit py-2 md:block">
-          <MainInfoMenu mainInfo={mainInfoFooter} />
-        </div>
+      <div
+        className={`grid grid-cols-1 gap-4 px-4 pb-4 md:${
+          isEventArticle
+            ? 'grid-cols-1'
+            : 'grid-cols-[300px_minmax(200px,_1fr)]'
+        } lg:container lg:px-0`}
+      >
+        {!isEventArticle && (
+          <>
+            <div className="md:hidden">
+              <MainInfoMenuButton mainInfo={mainInfoFooter} />
+            </div>
+            <div className="hidden h-fit py-2 md:block">
+              <MainInfoMenu mainInfo={mainInfoFooter} />
+            </div>
+          </>
+        )}
         <div className="">
           <div className="mb-6">
             <Typography.Title
@@ -79,7 +103,11 @@ const EventPage: NextPageWithLayout<{
           </div>
 
           <AppDangerouslySetInnerHTML
-            className="w-full overflow-y-auto rounded-lg border border-gray-500 md:max-h-[80vh] md:border-solid md:p-4"
+            className={`w-full ${
+              isEventArticle
+                ? ''
+                : 'overflow-y-auto rounded-lg border border-gray-500 md:max-h-[80vh] md:border-solid md:p-4'
+            }`}
             dangerouslySetInnerHTML={{
               __html: event.description || '',
             }}
