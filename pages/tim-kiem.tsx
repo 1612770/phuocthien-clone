@@ -32,9 +32,16 @@ const SearchPage: NextPageWithLayout<{
         className="mt-4 mb-0 text-2xl font-medium md:mt-8 md:text-4xl"
       >
         {router.query['tu-khoa'] ? (
-          <>
-            Tìm thấy <b>{searchedProducts?.total || 0}</b> sản phẩm
-          </>
+          searchedProducts?.total ? (
+            <>
+              Tìm thấy <b>{searchedProducts?.total || 0}</b> sản phẩm
+            </>
+          ) : (
+            <>
+              Không tìm thấy sản phẩm nào với từ khóa &quot;
+              <b>{router.query['tu-khoa']}</b>&quot;
+            </>
+          )
         ) : (
           <>Các sản phẩm phổ biến</>
         )}
