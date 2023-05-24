@@ -7,7 +7,6 @@ import FocusContentSection from '@modules/homepage/FocusContentSection';
 import { useWatchCacheProduct } from '@libs/utils/hooks/useWatchCacheProduct';
 import ProductList from '@components/templates/ProductList';
 import LinkWrapper from '@components/templates/LinkWrapper';
-import UrlUtils from '@libs/utils/url.utils';
 import AppDangerouslySetInnerHTML from '@components/AppDangerouslySetInnerHTML';
 
 function PrimaryFooter() {
@@ -131,10 +130,7 @@ function PrimaryFooter() {
                   {groupInfo.eventInfos?.map((event) => (
                     <LinkWrapper
                       key={event.name}
-                      href={`/tin-tuc/${UrlUtils.generateSlug(
-                        groupInfo.name,
-                        groupInfo.key
-                      )}/${UrlUtils.generateSlug(event.name, event.key)}`}
+                      href={`/tin-tuc/${groupInfo.seoUrl}/${event.seoUrl}`}
                     >
                       <Space className="my-1 w-full text-white">
                         <AppDangerouslySetInnerHTML

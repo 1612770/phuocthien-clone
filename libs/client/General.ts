@@ -27,19 +27,19 @@ export class GeneralClient extends BaseClient {
   }
 
   async getProductTypeDetail({
-    key,
+    seoUrl,
   }: {
-    key: string;
+    seoUrl: string;
   }): Promise<APIResponse<ProductType>> {
-    return await super.call('GET', `product-type/${key}`, {});
+    return await super.call('GET', `product-type/${seoUrl}`, {});
   }
 
   async getProductGroupDetail({
-    key,
+    seoUrl,
   }: {
-    key: string;
+    seoUrl: string;
   }): Promise<APIResponse<ProductGroupModel>> {
-    return await super.call('GET', `product-group/${key}`, {});
+    return await super.call('GET', `product-group/${seoUrl}`, {});
   }
 
   async getPaymentMethods(): Promise<APIResponse<PaymentMethodModel[]>> {
@@ -65,13 +65,13 @@ export class GeneralClient extends BaseClient {
   async getGroupInfos(payload: {
     page: number;
     pageSize: number;
-    keyGroup?: string;
+    groupSeoUrl?: string;
   }): Promise<APIResponse<GroupInfoModel[]>> {
     return await super.call('GET', `group-info`, payload);
   }
 
   async getEvent(payload: {
-    keyEvent: string;
+    eventSeoUrl: string;
   }): Promise<APIResponse<EventModel>> {
     return await super.call('GET', `event`, payload);
   }

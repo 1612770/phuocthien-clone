@@ -2,7 +2,6 @@ import { SearchOutlined } from '@ant-design/icons';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import MainInfoModel from '@configs/models/main-info.model';
 import { convertStringToASCII } from '@libs/helpers';
-import UrlUtils from '@libs/utils/url.utils';
 import { Empty, Input, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
@@ -26,8 +25,8 @@ function MainInfoMenu({
     query: { groupInfoSlugKey, eventSlugKey },
   } = router;
 
-  const groupInfoKey = UrlUtils.getKeyFromParam(groupInfoSlugKey as string);
-  const eventInfoKey = UrlUtils.getKeyFromParam(eventSlugKey as string);
+  const groupInfoSeoUrl = groupInfoSlugKey as string;
+  const eventInfoSeoUrl = eventSlugKey as string;
 
   const isSearchHasNoResult = mainInfo.every((info) =>
     info.groupInfo?.every((group) =>
@@ -77,16 +76,13 @@ function MainInfoMenu({
                           <LinkWrapper
                             className=""
                             key={index}
-                            href={`/tin-tuc/${UrlUtils.generateSlug(
-                              group.name,
-                              group.key
-                            )}/${UrlUtils.generateSlug(event.name, event.key)}`}
+                            href={`/tin-tuc/${group.seoUrl}/${event.seoUrl}`}
                           >
                             <span
                               onClick={onItemClick}
                               className={`${
-                                groupInfoKey === group.key &&
-                                eventInfoKey === event.key
+                                groupInfoSeoUrl === group.seoUrl &&
+                                eventInfoSeoUrl === event.seoUrl
                                   ? 'bg-gray-100'
                                   : 'bg-white'
                               } my-1 ml-2 block rounded-lg p-2 transition-all duration-200 ease-in-out hover:bg-gray-100 hover:text-black`}

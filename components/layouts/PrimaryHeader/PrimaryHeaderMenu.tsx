@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { IMPORTANT_MENU_KEYS } from '@configs/env';
 import ProductGroupModel from '@configs/models/product-group.model';
-import UrlUtils from '@libs/utils/url.utils';
 import { useFullMenu } from '@providers/FullMenuProvider';
 import PrimaryHeaderMenuAllPopoverContent from './PrimaryHeaderMenuAllPopoverContent';
 import PrimaryHeaderMenuItem from './PrimaryHeaderMenuItem';
@@ -70,7 +69,7 @@ function PrimaryHeaderMenu() {
                 key={menu?.key}
               >
                 <PrimaryHeaderMenuItem
-                  href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}
+                  href={`/${menu?.seoUrl}`}
                   label={menu.name || ''}
                   productGroups={
                     (menu?.productGroups as ProductGroupModel[]) || []

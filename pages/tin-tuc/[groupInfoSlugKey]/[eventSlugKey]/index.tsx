@@ -2,7 +2,6 @@ import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { Divider, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import { GetServerSidePropsContext } from 'next';
-import UrlUtils from '@libs/utils/url.utils';
 import React from 'react';
 import EventModel from '@configs/models/event.model';
 import { GeneralClient } from '@libs/client/General';
@@ -133,15 +132,14 @@ export const getServerSideProps = async (
     },
   };
 
-  const currentEventKey = UrlUtils.getKeyFromParam(
-    context.params?.eventSlugKey as string
-  );
+  const currentEventSeoUrl = context.params?.eventSlugKey as string;
+  const currentGroupInfoSeoUrl = context.params?.groupInfoSlugKey as string;
 
   const generalClient = new GeneralClient(context, {});
 
   try {
     const event = await generalClient.getEvent({
-      keyEvent: currentEventKey,
+      eventSeoUrl: currentEventSeoUrl,
     });
 
     if (event.data) {
@@ -151,7 +149,7 @@ export const getServerSideProps = async (
         const otherEvents = await generalClient.getGroupInfos({
           page: 1,
           pageSize: 5,
-          keyGroup: event.data?.keyGroup,
+          groupSeoUrl: currentGroupInfoSeoUrl,
         });
 
         if (otherEvents.data) {
@@ -162,7 +160,7 @@ export const getServerSideProps = async (
               return [
                 ...events,
                 ...(currentGroup.eventInfos || []).filter(
-                  (event) => event.key !== currentEventKey
+                  (event) => event.seoUrl !== currentEventSeoUrl
                 ),
               ];
             }, [] as EventModel[])

@@ -7,6 +7,7 @@ type ProductType = Partial<{
   name: string;
   image: string;
   visible: boolean;
+  seoUrl: string;
   productGroups: ProductGroupModel[];
 }>;
 

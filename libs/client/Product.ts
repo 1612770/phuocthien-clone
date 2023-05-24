@@ -33,8 +33,12 @@ export class ProductClient extends BaseClient {
     return await super.call('POST', `product/filter`, payload);
   }
 
-  async getProduct({ key }: { key: string }): Promise<APIResponse<Product>> {
-    return await super.call('GET', `product/${key}`, {});
+  async getProduct({
+    seoUrl,
+  }: {
+    seoUrl: string;
+  }): Promise<APIResponse<Product>> {
+    return await super.call('GET', `product/${seoUrl}`, {});
   }
 
   async checkInventoryAtDrugStores({ key }: { key: string }): Promise<
@@ -63,7 +67,7 @@ export class ProductClient extends BaseClient {
   async getReviews(payload: {
     page: number;
     pageSize: number;
-    key?: string;
+    key: string;
   }): Promise<APIResponse<WithPagination<Review[]>>> {
     return await super.call('POST', `product/review/list`, payload);
   }
@@ -75,7 +79,7 @@ export class ProductClient extends BaseClient {
     return await super.call('POST', `product/review`, payload);
   }
 
-  async getFAQs({ key }: { key?: string }): Promise<APIResponse<FAQ[]>> {
+  async getFAQs({ key }: { key: string }): Promise<APIResponse<FAQ[]>> {
     return await super.call('GET', `product/${key}/faq`, {});
   }
 }

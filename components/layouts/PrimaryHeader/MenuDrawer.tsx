@@ -12,7 +12,6 @@ import { Book, ChevronDown, LogOut, User, X } from 'react-feather';
 import IMAGES from '@configs/assests/images';
 import Link from 'next/link';
 import { useFullMenu } from '@providers/FullMenuProvider';
-import UrlUtils from '@libs/utils/url.utils';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import { useAuth } from '@providers/AuthProvider';
 
@@ -135,7 +134,7 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
                 onClose?.(e);
               }}
             >
-              <Link href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}>
+              <Link href={`/${menu.seoUrl}`}>
                 <a className="my-2 -mx-4 flex items-center">
                   <ImageWithFallback
                     src={menu?.image || ''}
@@ -150,13 +149,7 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
 
               {!!menu.productGroups?.length &&
                 menu.productGroups?.map((group, idx) => (
-                  <Link
-                    key={idx}
-                    href={`/${UrlUtils.generateSlug(
-                      menu?.name,
-                      menu?.key
-                    )}/${UrlUtils.generateSlug(group?.name, group?.key)}`}
-                  >
+                  <Link key={idx} href={`/${menu.seoUrl}/${group?.seoUrl}`}>
                     <a className="my-2 -mx-4 flex items-center">
                       <ImageWithFallback
                         src={group?.image || ''}
