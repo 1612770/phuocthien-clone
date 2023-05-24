@@ -1,7 +1,6 @@
 import APIResponse from '@configs/types/api-response.type';
 import BaseClient from './BaseClient';
-import Product from '@configs/models/product.model';
-import DrugStore from '@configs/models/drug-store.model';
+import Product, { InventoryAtDrugStore } from '@configs/models/product.model';
 import WithPagination from '@configs/types/utils/with-pagination';
 import ViralProductsListModel from '@configs/models/viral-products-list.model';
 import { Review } from '@configs/models/review.model';
@@ -33,18 +32,19 @@ export class ProductClient extends BaseClient {
     return await super.call('POST', `product/filter`, payload);
   }
 
-  async getProduct({ key }: { key: string }): Promise<APIResponse<Product>> {
-    return await super.call('GET', `product/${key}`, {});
+  async getProduct({
+    seoUrl,
+  }: {
+    seoUrl: string;
+  }): Promise<APIResponse<Product>> {
+    return await super.call('GET', `product/${seoUrl}`, {});
   }
 
-  async checkInventoryAtDrugStores({ key }: { key: string }): Promise<
-    APIResponse<
-      {
-        drugstore: DrugStore;
-        quantity: number;
-      }[]
-    >
-  > {
+  async checkInventoryAtDrugStores({
+    key,
+  }: {
+    key: string;
+  }): Promise<APIResponse<InventoryAtDrugStore[]>> {
     return await super.call(
       'GET',
       `product/${key}/inventory-at-drugstores`,
@@ -63,7 +63,7 @@ export class ProductClient extends BaseClient {
   async getReviews(payload: {
     page: number;
     pageSize: number;
-    key?: string;
+    key: string;
   }): Promise<APIResponse<WithPagination<Review[]>>> {
     return await super.call('POST', `product/review/list`, payload);
   }
@@ -75,7 +75,7 @@ export class ProductClient extends BaseClient {
     return await super.call('POST', `product/review`, payload);
   }
 
-  async getFAQs({ key }: { key?: string }): Promise<APIResponse<FAQ[]>> {
+  async getFAQs({ key }: { key: string }): Promise<APIResponse<FAQ[]>> {
     return await super.call('GET', `product/${key}/faq`, {});
   }
 }

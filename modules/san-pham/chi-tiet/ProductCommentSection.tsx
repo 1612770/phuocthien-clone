@@ -66,7 +66,7 @@ function ProductCommentSection({
   }, [defaultReviews]);
 
   const loadMore = async () => {
-    if (loadingMore) return;
+    if (loadingMore || !product.key) return;
 
     try {
       const productClient = new ProductClient(null, {});
@@ -90,7 +90,7 @@ function ProductCommentSection({
   };
 
   return (
-    <div className="container my-4 w-full rounded-lg border border-solid border-white p-0 shadow-none md:max-w-[1200px] md:border-gray-100 md:p-6 md:shadow-lg">
+    <div className="my-4 w-full rounded-lg border border-solid border-white p-0 shadow-none md:max-w-[1200px] md:border-gray-100 md:p-6 md:shadow-lg lg:container">
       <Typography.Title level={5} className="font-medium uppercase">
         Hỏi đáp về sản phẩm {product?.detail?.displayName}
       </Typography.Title>

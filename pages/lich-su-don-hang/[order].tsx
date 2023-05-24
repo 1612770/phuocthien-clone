@@ -19,7 +19,6 @@ import TimeUtils from '@libs/utils/time.utils';
 import OrderStatusUtils from '@libs/utils/order-status.utils';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import CurrencyUtils from '@libs/utils/currency.utils';
-import UrlUtils from '@libs/utils/url.utils';
 import OrderStatuses from '@configs/enums/order-statuses.enum';
 import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
 import { useAppMessage } from '@providers/AppMessageProvider';
@@ -193,13 +192,7 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
 
               return (
                 <LinkWrapper
-                  href={`/${UrlUtils.generateSlug(
-                    detail.productType?.name,
-                    detail.productType?.key
-                  )}/${UrlUtils.generateSlug(
-                    detail.productGroup?.name,
-                    detail.productGroup?.key
-                  )}/${detail.productKey}`}
+                  href={`/${detail.productType?.seoUrl}/${detail.productType?.seoUrl}/${detail.seoUrl}`}
                   key={detail.key}
                 >
                   <div

@@ -120,6 +120,7 @@ export const getServerSideProps = async (
         page: 1,
         pageSize: 20,
         keyCampaign: campaignId,
+        isHide: false,
       }),
     ]);
 
@@ -142,6 +143,7 @@ export const getServerSideProps = async (
             page: 1,
             pageSize: 20,
             keyPromo: promotion.key,
+            isHide: false,
           })
         )
       );

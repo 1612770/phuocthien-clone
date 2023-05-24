@@ -2,7 +2,6 @@ import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { Divider, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import { GetServerSidePropsContext } from 'next';
-import UrlUtils from '@libs/utils/url.utils';
 import React from 'react';
 import EventModel from '@configs/models/event.model';
 import { GeneralClient } from '@libs/client/General';
@@ -27,6 +26,20 @@ const EventPage: NextPageWithLayout<{
 
   if (!event) return null;
   if (typeof event?.visible === 'boolean' && !event?.visible) return null;
+
+  const allMainInfoFooterEventKeys = mainInfoFooter.reduce((acc, curr) => {
+    const groupInfoEventKeys =
+      curr.groupInfo?.reduce((acc, cur) => {
+        const eventKeys =
+          cur.eventInfos?.map((event) => event?.key || '') || [];
+
+        return [...acc, ...eventKeys];
+      }, [] as string[]) || [];
+
+    return [...acc, ...groupInfoEventKeys];
+  }, [] as string[]);
+
+  const isEventArticle = !allMainInfoFooterEventKeys.includes(event?.key || '');
 
   return (
     <>
@@ -55,13 +68,23 @@ const EventPage: NextPageWithLayout<{
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4 px-4 pb-4 md:grid-cols-[300px_minmax(200px,_1fr)] lg:container lg:px-0">
-        <div className="md:hidden">
-          <MainInfoMenuButton mainInfo={mainInfoFooter} />
-        </div>
-        <div className="hidden h-fit py-2 md:block">
-          <MainInfoMenu mainInfo={mainInfoFooter} />
-        </div>
+      <div
+        className={`grid grid-cols-1 gap-4 px-4 pb-4 md:${
+          isEventArticle
+            ? 'grid-cols-1'
+            : 'grid-cols-[300px_minmax(200px,_1fr)]'
+        } lg:container lg:px-0`}
+      >
+        {!isEventArticle && (
+          <>
+            <div className="md:hidden">
+              <MainInfoMenuButton mainInfo={mainInfoFooter} />
+            </div>
+            <div className="hidden h-fit py-2 md:block">
+              <MainInfoMenu mainInfo={mainInfoFooter} />
+            </div>
+          </>
+        )}
         <div className="">
           <div className="mb-6">
             <Typography.Title
@@ -80,7 +103,11 @@ const EventPage: NextPageWithLayout<{
           </div>
 
           <AppDangerouslySetInnerHTML
-            className="w-full overflow-y-auto rounded-lg border border-gray-500 md:max-h-[80vh] md:border-solid md:p-4"
+            className={`w-full ${
+              isEventArticle
+                ? ''
+                : 'overflow-y-auto rounded-lg border border-gray-500 md:max-h-[80vh] md:border-solid md:p-4'
+            }`}
             dangerouslySetInnerHTML={{
               __html: event.description || '',
             }}
@@ -133,15 +160,14 @@ export const getServerSideProps = async (
     },
   };
 
-  const currentEventKey = UrlUtils.getKeyFromParam(
-    context.params?.eventSlugKey as string
-  );
+  const currentEventSeoUrl = context.params?.eventSlugKey as string;
+  const currentGroupInfoSeoUrl = context.params?.groupInfoSlugKey as string;
 
   const generalClient = new GeneralClient(context, {});
 
   try {
     const event = await generalClient.getEvent({
-      keyEvent: currentEventKey,
+      eventSeoUrl: currentEventSeoUrl,
     });
 
     if (event.data) {
@@ -151,7 +177,7 @@ export const getServerSideProps = async (
         const otherEvents = await generalClient.getGroupInfos({
           page: 1,
           pageSize: 5,
-          keyGroup: event.data?.keyGroup,
+          groupSeoUrl: currentGroupInfoSeoUrl,
         });
 
         if (otherEvents.data) {
@@ -162,7 +188,7 @@ export const getServerSideProps = async (
               return [
                 ...events,
                 ...(currentGroup.eventInfos || []).filter(
-                  (event) => event.key !== currentEventKey
+                  (event) => event.seoUrl !== currentEventSeoUrl
                 ),
               ];
             }, [] as EventModel[])

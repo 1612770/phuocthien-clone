@@ -85,7 +85,7 @@ function ViralProductsList({
           >
             {viralProductsList?.name}
           </Typography.Title>
-          <Link href={`/san-pham-noi-bat/${viralProductsList?.key}`}>
+          <Link href={`/san-pham-noi-bat/${viralProductsList?.seoUrl}`}>
             <a className="hidden lg:inline-block">
               <Typography
                 className={
@@ -98,7 +98,7 @@ function ViralProductsList({
           </Link>
         </div>
         {viralProductsList?.imageUrl && (
-          <Link href={`/san-pham-noi-bat/${viralProductsList?.key}`}>
+          <Link href={`/san-pham-noi-bat/${viralProductsList?.seoUrl}`}>
             <a>
               <div className="relative mb-4 aspect-[21/9] h-[200px] w-full">
                 <ImageWithFallback
@@ -152,7 +152,7 @@ function ViralProductsList({
               Xem thêm
             </Button>
           )}
-          <Link href={`/san-pham-noi-bat/${viralProductsList?.key}`}>
+          <Link href={`/san-pham-noi-bat/${viralProductsList?.seoUrl}`}>
             <a>
               <Button
                 type="primary"

@@ -1,5 +1,4 @@
 import ProductGroupModel from '@configs/models/product-group.model';
-import UrlUtils from '@libs/utils/url.utils';
 import ProductChildGroup from '@modules/products/ProductChildGroup';
 import { Empty, Space, Typography } from 'antd';
 
@@ -16,10 +15,7 @@ function PrimaryHeaderMenuList({
         {!!productGroups?.length &&
           productGroups?.map((productGroup) => (
             <ProductChildGroup
-              href={`/${parentHref}/${UrlUtils.generateSlug(
-                productGroup?.name,
-                productGroup?.key
-              )}`}
+              href={`/${parentHref}/${productGroup.seoUrl}`}
               key={productGroup?.key}
               label={productGroup?.name || ''}
             />

@@ -1,6 +1,5 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import {
-  Breadcrumb,
   Checkbox,
   Drawer,
   Empty,
@@ -12,19 +11,18 @@ import {
 import { NextPageWithLayout } from 'pages/page';
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { GeneralClient } from '@libs/client/General';
-import UrlUtils from '@libs/utils/url.utils';
 import ProductType from '@configs/models/product-type.model';
 import ProductGroupModel from '@configs/models/product-group.model';
 import Product from '@configs/models/product.model';
 import { ProductClient } from '@libs/client/Product';
 import ProductCard from '@components/templates/ProductCard';
-import Link from 'next/link';
 import BrandModel from '@configs/models/brand.model';
 import { useRouter } from 'next/router';
 import { Filter, X } from 'react-feather';
 import { useState } from 'react';
 import WithPagination from '@configs/types/utils/with-pagination';
 import PRODUCTS_LOAD_PER_TIME from '@configs/constants/products-load-per-time';
+import Breadcrumbs from '@components/Breadcrumbs';
 
 function FilterOptions({
   productBrands,
@@ -95,24 +93,22 @@ const ProductGroupPage: NextPageWithLayout<{
 
   return (
     <div className="px-4 pb-4 lg:container lg:px-0">
-      <Breadcrumb className="mt-4 mb-2">
-        <Breadcrumb.Item>
-          <Link href="/">
-            <a>Trang chủ</a>
-          </Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <Link
-            href={`/${UrlUtils.generateSlug(
-              productType?.name,
-              productType?.key
-            )}`}
-          >
-            <a>{productType?.name}</a>
-          </Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>{productGroup?.name}</Breadcrumb.Item>
-      </Breadcrumb>
+      <Breadcrumbs
+        className="mt-4 mb-2"
+        breadcrumbs={[
+          {
+            title: 'Trang chủ',
+            path: '/',
+          },
+          {
+            title: productType?.name,
+            path: `/${productType?.seoUrl}`,
+          },
+          {
+            title: productGroup?.name,
+          },
+        ]}
+      ></Breadcrumbs>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[300px_minmax(600px,_1fr)]">
         <div className="sticky top-0 hidden h-[100vh] grid-flow-row md:h-auto lg:block">
@@ -264,10 +260,10 @@ export const getServerSideProps: GetServerSideProps = async (
   try {
     const [productType, productGroup, productBrands] = await Promise.all([
       generalClient.getProductTypeDetail({
-        key: UrlUtils.getKeyFromParam(String(context.params?.productType)),
+        seoUrl: String(context.params?.productType),
       }),
       generalClient.getProductGroupDetail({
-        key: UrlUtils.getKeyFromParam(String(context.params?.productGroup)),
+        seoUrl: String(context.params?.productGroup),
       }),
       generalClient.getProductionBrands(),
     ]);

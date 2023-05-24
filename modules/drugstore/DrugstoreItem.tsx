@@ -8,9 +8,11 @@ import ImageUtils from '@libs/utils/image.utils';
 function DrugstoreItem({
   drugstore,
   variant = 'list-item',
+  quantity,
 }: {
   drugstore: DrugStore;
   variant?: 'list-item' | 'card';
+  quantity?: number;
 }) {
   return (
     <Link href={`/nha-thuoc/${drugstore.key}`}>
@@ -27,9 +29,15 @@ function DrugstoreItem({
                 getMockImage={() => ImageUtils.getRandomMockDrugstoreUrl()}
               />
               <div className="ml-2">
-                <Typography className=" text-xs font-medium">
+                <Typography className=" text-sm font-medium">
                   {drugstore.name}
                 </Typography>
+
+                {!!quantity && (
+                  <Typography className="text-sm text-primary">
+                    Có sẵn <b className="text-inherit">{quantity}</b> sản phẩm
+                  </Typography>
+                )}
 
                 <Typography className="text-xs text-gray-600">
                   {drugstore.tel}

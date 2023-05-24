@@ -46,6 +46,7 @@ function PromotionProductsList({
         page: Math.ceil(promotionProducts.length / 20) + 1,
         pageSize: 20,
         keyPromo: promotion?.key,
+        isHide: false,
       });
 
       if (data?.length) {

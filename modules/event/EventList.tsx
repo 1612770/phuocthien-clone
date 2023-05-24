@@ -1,6 +1,5 @@
 import { Button } from 'antd';
 import LinkWrapper from '@components/templates/LinkWrapper';
-import UrlUtils from '@libs/utils/url.utils';
 import EventItem from '@modules/event/EventItem';
 import GroupInfoModel from '@configs/models/GroupInfoModel';
 
@@ -15,9 +14,7 @@ function EventList({ group }: { group: GroupInfoModel }) {
 
       {!!group.eventInfos?.length && (
         <div className="flex justify-center">
-          <LinkWrapper
-            href={`/tin-tuc/${UrlUtils.generateSlug(group.name, group.key)}`}
-          >
+          <LinkWrapper href={`/tin-tuc/${group.seoUrl}`}>
             <Button type="primary" className="mt-4 inline-block" ghost>
               Xem tất cả các bài viết
             </Button>

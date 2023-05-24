@@ -124,7 +124,12 @@ function AddToCartButton({
 
       {!productIncart && (
         <Button
-          className={`px-4 shadow-none ${className}`}
+          disabled={!product.retailPrice}
+          className={`px-4 shadow-none ${className} ${
+            !product.retailPrice
+              ? 'bg-gray-100 hover:bg-gray-100 group-hover:border-gray-100 group-hover:bg-gray-100 group-hover:text-gray-800 '
+              : ''
+          }`}
           type="primary"
           onClick={(e) => {
             e.preventDefault();

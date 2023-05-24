@@ -212,6 +212,7 @@ export const getServerSideProps = async (
       promotionClient.getPromo({
         page: 1,
         pageSize: 20,
+        isHide: false,
       }),
     ]);
 
@@ -255,6 +256,7 @@ export const getServerSideProps = async (
             page: 1,
             pageSize: 20,
             keyPromo: promotion.key,
+            isHide: false,
           })
         )
       );

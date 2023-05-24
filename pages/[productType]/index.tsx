@@ -1,36 +1,36 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Empty, Typography } from 'antd';
+import { Empty, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next';
 import { GeneralClient } from '@libs/client/General';
-import UrlUtils from '@libs/utils/url.utils';
 import MenuModel from '@configs/models/menu.model';
 import ProductGroup from '@modules/categories/ProductGroup';
-import Link from 'next/link';
+import Breadcrumbs from '@components/Breadcrumbs';
 
 const ProductTypesPage: NextPageWithLayout<{
   productType?: MenuModel;
 }> = ({ productType }) => {
   return (
     <div className="grid px-4 pb-4 lg:container lg:px-0">
-      <Breadcrumb className="mt-4 mb-2">
-        <Breadcrumb.Item>
-          <Link href="/">
-            <a>Trang chủ</a>
-          </Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>{productType?.name}</Breadcrumb.Item>
-      </Breadcrumb>
+      <Breadcrumbs
+        className="mt-4 mb-2"
+        breadcrumbs={[
+          {
+            title: 'Trang chủ',
+            path: '/',
+          },
+          {
+            title: productType?.name,
+          },
+        ]}
+      ></Breadcrumbs>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6 md:gap-4 lg:grid-cols-6 xl:grid-cols-8">
         {productType?.productGroups?.map((productGroup) => (
           <ProductGroup
             key={productGroup?.key}
             productGroup={productGroup}
-            href={`/${UrlUtils.generateSlug(
-              productType?.name,
-              productType?.key
-            )}/${UrlUtils.generateSlug(productGroup?.name, productGroup?.key)}`}
+            href={`/${productType.seoUrl}/${productGroup?.seoUrl}`}
           />
         ))}
       </div>
@@ -59,7 +59,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const paths = (fullMenu.data || []).map((menu) => {
     return {
       params: {
-        productType: UrlUtils.generateSlug(menu?.name, menu?.key),
+        productType: menu.seoUrl,
       },
     };
   });
@@ -85,10 +85,7 @@ export const getStaticProps: GetStaticProps = async (
   try {
     const fullMenu = await generalClient.getMenu();
     const productType = (fullMenu.data || []).find((menu) => {
-      return (
-        UrlUtils.generateSlug(menu?.name, menu?.key) ===
-        context.params?.productType
-      );
+      return menu.seoUrl === context.params?.productType;
     });
 
     staticProps.props.productType = productType;
