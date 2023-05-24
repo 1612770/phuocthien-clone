@@ -2,7 +2,7 @@ import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { NextPageWithLayout } from 'pages/page';
 import { GetServerSidePropsContext } from 'next';
 import { ProductClient } from '@libs/client/Product';
-import Product from '@configs/models/product.model';
+import Product, { InventoryAtDrugStore } from '@configs/models/product.model';
 import ProductCarousel from '@modules/products/ProductCarousel';
 import React, { useMemo } from 'react';
 import DrugStore from '@configs/models/drug-store.model';
@@ -26,7 +26,7 @@ import { FAQ } from '@configs/models/faq.model';
 const ProductPage: NextPageWithLayout<{
   product?: Product;
   otherProducts?: Product[];
-  drugStoresAvailable?: DrugStore[];
+  drugStoresAvailable?: InventoryAtDrugStore[];
   drugStores?: DrugStore[];
   offers: OfferModel[];
   reviews: Review[];
@@ -137,7 +137,7 @@ export const getServerSideProps = async (
     props: {
       product?: Product;
       otherProducts: Product[];
-      drugStoresAvailable: DrugStore[];
+      drugStoresAvailable: InventoryAtDrugStore[];
       drugStores: DrugStore[];
       offers: OfferModel[];
       reviews: Review[];
@@ -196,7 +196,7 @@ export const getServerSideProps = async (
 
       if (drugStoresAvailable.data?.length) {
         serverSideProps.props.drugStoresAvailable =
-          drugStoresAvailable.data.map((drugStore) => drugStore.drugstore);
+          drugStoresAvailable.data.map((drugStore) => drugStore);
       } else {
         const drugstoreClient = new DrugstoreClient(context, {});
         const drugStores = await drugstoreClient.getAllDrugStores();

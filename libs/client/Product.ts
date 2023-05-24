@@ -1,7 +1,6 @@
 import APIResponse from '@configs/types/api-response.type';
 import BaseClient from './BaseClient';
-import Product from '@configs/models/product.model';
-import DrugStore from '@configs/models/drug-store.model';
+import Product, { InventoryAtDrugStore } from '@configs/models/product.model';
 import WithPagination from '@configs/types/utils/with-pagination';
 import ViralProductsListModel from '@configs/models/viral-products-list.model';
 import { Review } from '@configs/models/review.model';
@@ -41,14 +40,11 @@ export class ProductClient extends BaseClient {
     return await super.call('GET', `product/${seoUrl}`, {});
   }
 
-  async checkInventoryAtDrugStores({ key }: { key: string }): Promise<
-    APIResponse<
-      {
-        drugstore: DrugStore;
-        quantity: number;
-      }[]
-    >
-  > {
+  async checkInventoryAtDrugStores({
+    key,
+  }: {
+    key: string;
+  }): Promise<APIResponse<InventoryAtDrugStore[]>> {
     return await super.call(
       'GET',
       `product/${key}/inventory-at-drugstores`,
