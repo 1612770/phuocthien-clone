@@ -1,3 +1,6 @@
+import ProductGroupModel from './product-group.model';
+import ProductType from './product-type.model';
+
 type OrderDetailModel = Partial<{
   key: string;
   orderKey: string;
@@ -13,18 +16,9 @@ type OrderDetailModel = Partial<{
   imageUrl: string;
   sumOrder: number;
   promoInfo: string;
-  productGroup: {
-    code?: string;
-    image?: string;
-    key?: string;
-    name?: string;
-  };
-  productType: {
-    code?: string;
-    image?: string;
-    key?: string;
-    name?: string;
-  };
+  productGroup: ProductGroupModel;
+  productType: ProductType;
+  seoUrl: string;
 }>;
 
 export default OrderDetailModel;

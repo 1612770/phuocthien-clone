@@ -1,18 +1,5 @@
-type MenuModel = Partial<{
-  key: string;
-  index: number;
-  code: string;
-  name: string;
-  image: string;
-  productGroups: Partial<
-    {
-      key: string;
-      index: number;
-      code: string;
-      name: string;
-      image: string;
-    }[]
-  >;
-}>;
+import ProductType from './product-type.model';
+
+type MenuModel = ProductType;
 
 export default MenuModel;

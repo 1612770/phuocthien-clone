@@ -13,6 +13,7 @@ export class PromotionClient extends BaseClient {
     pageSize: number;
     keyPromo?: string;
     keyCampaign?: string;
+    isHide?: boolean;
   }): Promise<APIResponse<Campaign[]>> {
     return await super.call('POST', `promo`, payload);
   }
@@ -22,6 +23,7 @@ export class PromotionClient extends BaseClient {
     pageSize: number;
     keyPromo: string;
     keyPromoPercent?: string;
+    isHide?: boolean;
   }): Promise<APIResponse<Product[]>> {
     return await super.call('POST', `promo/products`, payload);
   }

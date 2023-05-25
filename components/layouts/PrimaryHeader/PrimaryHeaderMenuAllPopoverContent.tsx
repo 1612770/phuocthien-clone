@@ -3,7 +3,6 @@ import { useFullMenu } from '@providers/FullMenuProvider';
 import { useCallback, useEffect, useState } from 'react';
 import MenuModel from '@configs/models/menu.model';
 import ProductChildGroup from '@modules/products/ProductChildGroup';
-import UrlUtils from '@libs/utils/url.utils';
 import ProductGroupModel from '@configs/models/product-group.model';
 import { ProductClient } from '@libs/client/Product';
 import ProductCard from '@components/templates/ProductCard';
@@ -134,13 +133,7 @@ function PrimaryHeaderMenuAllPopoverContent({
               currentMenu &&
               currentMenu.productGroups?.map((productGroup) => (
                 <PrimaryHeaderMenuAllPopoverContentLeftItem
-                  href={`/${UrlUtils.generateSlug(
-                    currentMenu?.name,
-                    currentMenu?.key
-                  )}/${UrlUtils.generateSlug(
-                    productGroup?.name,
-                    productGroup?.key
-                  )}`}
+                  href={`/${currentMenu.seoUrl}/${productGroup?.seoUrl}`}
                   key={productGroup?.key}
                   active={productGroup?.key === currentFocusGroup?.key}
                   onMouseEnter={() => {
@@ -154,7 +147,7 @@ function PrimaryHeaderMenuAllPopoverContent({
             {mode === 'all' &&
               fullMenu.map((menu) => (
                 <PrimaryHeaderMenuAllPopoverContentLeftItem
-                  href={`/${UrlUtils.generateSlug(menu?.name, menu?.key)}`}
+                  href={`/${menu.seoUrl}`}
                   key={menu?.key}
                   active={menu?.key === currentFocusMenu?.key}
                   onMouseEnter={() => {
@@ -181,13 +174,7 @@ function PrimaryHeaderMenuAllPopoverContent({
                 key={productGroup?.key}
               >
                 <ProductChildGroup
-                  href={`/${UrlUtils.generateSlug(
-                    currentFocusMenu?.name,
-                    currentFocusMenu?.key
-                  )}/${UrlUtils.generateSlug(
-                    productGroup?.name,
-                    productGroup?.key
-                  )}`}
+                  href={`/${currentFocusMenu.seoUrl}/${productGroup?.seoUrl}`}
                   label={productGroup?.name || ''}
                   image={productGroup?.image}
                 />
@@ -208,13 +195,7 @@ function PrimaryHeaderMenuAllPopoverContent({
                   }}
                 >
                   <Link
-                    href={`/${UrlUtils.generateSlug(
-                      currentMenu?.name,
-                      currentMenu?.key
-                    )}/${UrlUtils.generateSlug(
-                      currentFocusGroup?.name,
-                      currentFocusGroup?.key
-                    )}`}
+                    href={`/${currentMenu.seoUrl}/${currentFocusGroup?.seoUrl}`}
                   >
                     <a>
                       <Typography className="pr-3 text-blue-500">

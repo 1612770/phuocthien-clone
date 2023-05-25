@@ -7,7 +7,6 @@ import CartProductItemNoteInput from './CartProductItemNoteInput';
 import { useCheckout } from '@providers/CheckoutProvider';
 import { ProductClient } from '@libs/client/Product';
 import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
-import UrlUtils from '@libs/utils/url.utils';
 import CurrencyUtils from '@libs/utils/currency.utils';
 import CartProductItemCollapse from './CartProductItemCollapse';
 import { DeleteOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
@@ -231,7 +230,7 @@ function CartProductItem({ cartProduct }: { cartProduct: CartProduct }) {
 
         <div className="flex flex-1 flex-col">
           <div className="flex">
-            <div className="relative flex h-[60px] min-h-[60px] w-[60px] min-w-[60px] flex-col">
+            <div className="relative mr-2 flex h-[60px] min-h-[60px] w-[60px] min-w-[60px] flex-col">
               <ImageWithFallback
                 src={cartProduct.product.detail?.image || ''}
                 alt="product image"
@@ -241,16 +240,7 @@ function CartProductItem({ cartProduct }: { cartProduct: CartProduct }) {
 
             <div className="flex flex-col">
               <LinkWrapper
-                href={`/${UrlUtils.generateSlug(
-                  cartProduct.product.productType?.name,
-                  cartProduct.product.productTypeKey
-                )}/${UrlUtils.generateSlug(
-                  cartProduct.product.productGroup?.name,
-                  cartProduct.product.productGroupKey
-                )}/${UrlUtils.generateSlug(
-                  displayName,
-                  cartProduct.product.key
-                )}`}
+                href={`/${cartProduct.product.productType?.seoUrl}/${cartProduct.product.productGroup?.seoUrl}/${cartProduct.product.detail?.seoUrl}`}
               >
                 <Typography.Text className="mt-2">
                   {displayName}

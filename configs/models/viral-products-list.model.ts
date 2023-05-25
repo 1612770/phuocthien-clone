@@ -13,6 +13,7 @@ type ViralProductsListModel = Partial<{
     productKey?: string;
     productInfo?: Product;
   }[];
+  seoUrl: string;
 }>;
 
 export default ViralProductsListModel;

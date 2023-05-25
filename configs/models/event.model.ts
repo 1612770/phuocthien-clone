@@ -13,6 +13,7 @@ type EventModel = Partial<{
   isNew: boolean;
   isHot: boolean;
   isTop: boolean;
+  seoUrl: string;
 }>;
 
 export default EventModel;

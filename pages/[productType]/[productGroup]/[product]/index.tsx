@@ -2,8 +2,7 @@ import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { NextPageWithLayout } from 'pages/page';
 import { GetServerSidePropsContext } from 'next';
 import { ProductClient } from '@libs/client/Product';
-import UrlUtils from '@libs/utils/url.utils';
-import Product from '@configs/models/product.model';
+import Product, { InventoryAtDrugStore } from '@configs/models/product.model';
 import ProductCarousel from '@modules/products/ProductCarousel';
 import React, { useMemo } from 'react';
 import DrugStore from '@configs/models/drug-store.model';
@@ -27,7 +26,7 @@ import { FAQ } from '@configs/models/faq.model';
 const ProductPage: NextPageWithLayout<{
   product?: Product;
   otherProducts?: Product[];
-  drugStoresAvailable?: DrugStore[];
+  drugStoresAvailable?: InventoryAtDrugStore[];
   drugStores?: DrugStore[];
   offers: OfferModel[];
   reviews: Review[];
@@ -80,20 +79,11 @@ const ProductPage: NextPageWithLayout<{
           },
           {
             title: product?.productType?.name,
-            path: `/${UrlUtils.generateSlug(
-              product?.productType?.name,
-              product.productType?.key
-            )}`,
+            path: `/${product?.productType?.seoUrl}`,
           },
           {
             title: product?.productGroup?.name,
-            path: `/${UrlUtils.generateSlug(
-              product?.productType?.name,
-              product.productType?.key
-            )}/${UrlUtils.generateSlug(
-              product?.productGroup?.name,
-              product.productGroup?.key
-            )}`,
+            path: `/${product?.productType?.seoUrl}/${product?.productGroup?.seoUrl}`,
           },
           {
             title: product?.detail?.displayName,
@@ -147,7 +137,7 @@ export const getServerSideProps = async (
     props: {
       product?: Product;
       otherProducts: Product[];
-      drugStoresAvailable: DrugStore[];
+      drugStoresAvailable: InventoryAtDrugStore[];
       drugStores: DrugStore[];
       offers: OfferModel[];
       reviews: Review[];
@@ -166,37 +156,54 @@ export const getServerSideProps = async (
 
   const productClient = new ProductClient(context, {});
   const offerClient = new OfferClient(context, {});
-  const productKey = UrlUtils.getKeyFromParam(
-    context.params?.product as string
-  );
+  const productSeoUrl = context.params?.product as string;
 
   try {
     const product = await productClient.getProduct({
-      key: productKey,
+      seoUrl: productSeoUrl,
     });
 
-    if (product.data) {
+    if (product.data && product.data.key) {
       serverSideProps.props.product = product.data;
 
-      const [products, offers, getReviewsResponse, getFAQsResponse] =
-        await Promise.all([
-          productClient.getProducts({
-            page: 1,
-            pageSize: 10,
-            productTypeKey: product.data.productType?.key,
-            productGroupKey: product.data.productGroup?.key,
-            isPrescripted: false,
-          }),
-          offerClient.getAllActiveOffers(),
-          productClient.getReviews({
-            page: 1,
-            pageSize: REVIEWS_LOAD_PER_TIME,
-            key: product.data.key,
-          }),
-          productClient.getFAQs({
-            key: product.data.key,
-          }),
-        ]);
+      const [
+        products,
+        offers,
+        getReviewsResponse,
+        getFAQsResponse,
+        drugStoresAvailable,
+      ] = await Promise.all([
+        productClient.getProducts({
+          page: 1,
+          pageSize: 10,
+          productTypeKey: product.data.productType?.key,
+          productGroupKey: product.data.productGroup?.key,
+          isPrescripted: false,
+        }),
+        offerClient.getAllActiveOffers(),
+        productClient.getReviews({
+          page: 1,
+          pageSize: REVIEWS_LOAD_PER_TIME,
+          key: product.data.key,
+        }),
+        productClient.getFAQs({
+          key: product.data.key,
+        }),
+        productClient.checkInventoryAtDrugStores({
+          key: product.data.key,
+        }),
+      ]);
+
+      if (drugStoresAvailable.data?.length) {
+        serverSideProps.props.drugStoresAvailable =
+          drugStoresAvailable.data.map((drugStore) => drugStore);
+      } else {
+        const drugstoreClient = new DrugstoreClient(context, {});
+        const drugStores = await drugstoreClient.getAllDrugStores();
+        if (drugStores.data) {
+          serverSideProps.props.drugStores = drugStores.data;
+        }
+      }
 
       if (offers.data) {
         serverSideProps.props.offers = OfferUtils.filterNonValueOffer(
@@ -206,7 +213,7 @@ export const getServerSideProps = async (
 
       if (products.data) {
         serverSideProps.props.otherProducts = products.data.data.filter(
-          (product) => product.key !== productKey
+          (product) => product.detail?.seoUrl !== productSeoUrl
         );
       }
 
@@ -216,22 +223,6 @@ export const getServerSideProps = async (
 
       if (getFAQsResponse.data) {
         serverSideProps.props.faqs = getFAQsResponse.data;
-      }
-    }
-
-    const drugStoresAvailable = await productClient.checkInventoryAtDrugStores({
-      key: productKey,
-    });
-
-    if (drugStoresAvailable.data?.length) {
-      serverSideProps.props.drugStoresAvailable = drugStoresAvailable.data.map(
-        (drugStore) => drugStore.drugstore
-      );
-    } else {
-      const drugstoreClient = new DrugstoreClient(context, {});
-      const drugStores = await drugstoreClient.getAllDrugStores();
-      if (drugStores.data) {
-        serverSideProps.props.drugStores = drugStores.data;
       }
     }
   } catch (error) {

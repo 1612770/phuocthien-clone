@@ -2,7 +2,6 @@ import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { Breadcrumb, Button, Empty, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import { GetServerSidePropsContext } from 'next';
-import UrlUtils from '@libs/utils/url.utils';
 import React, { useState } from 'react';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import { GeneralClient } from '@libs/client/General';
@@ -33,7 +32,7 @@ const GroupInfoPage: NextPageWithLayout<{
       const groupInfos = await generalClient.getGroupInfos({
         page: Math.floor(+(eventInfos?.length || 0) / EVENTS_LOAD_PER_TIME) + 1,
         pageSize: EVENTS_LOAD_PER_TIME,
-        keyGroup: groupInfo?.key,
+        groupSeoUrl: groupInfo?.seoUrl,
       });
 
       if (groupInfos.data?.[0]) {
@@ -122,9 +121,7 @@ export const getServerSideProps = async (
     props: {},
   };
 
-  const currentGroupInfoKey = UrlUtils.getKeyFromParam(
-    context.params?.groupInfoSlugKey as string
-  );
+  const currentGroupInfoSeoUrl = context.params?.groupInfoSlugKey as string;
 
   const generalClient = new GeneralClient(context, {});
 
@@ -132,7 +129,7 @@ export const getServerSideProps = async (
     const groupInfos = await generalClient.getGroupInfos({
       page: +(context.query.trang || 1),
       pageSize: EVENTS_LOAD_PER_TIME,
-      keyGroup: currentGroupInfoKey,
+      groupSeoUrl: currentGroupInfoSeoUrl,
     });
 
     if (groupInfos.data?.[0]) {

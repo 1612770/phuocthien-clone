@@ -4,6 +4,7 @@ import ProductBrand from './product-brand.model';
 import ProductType from './product-type.model';
 import ProductDetailModel from './product-detail.model';
 import { PromotionPercent } from './promotion.model';
+import DrugStore from './drug-store.model';
 
 export interface CartProduct {
   product: Product;
@@ -53,5 +54,10 @@ type Product = Partial<{
   keyPromo: string;
   keyPromoPercent: string;
 }>;
+
+export interface InventoryAtDrugStore {
+  drugstore: DrugStore;
+  quantity: number;
+}
 
 export default Product;

@@ -5,6 +5,7 @@ type ProductGroupModel = Partial<{
   name: string;
   image: string;
   visible: boolean;
+  seoUrl: string;
 }>;
 
 export default ProductGroupModel;

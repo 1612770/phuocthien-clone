@@ -6,7 +6,6 @@ import ImageWithFallback from '../ImageWithFallback';
 import ImageUtils from '@libs/utils/image.utils';
 import COLORS from '@configs/colors';
 import AddToCartButton from '@modules/products/AddToCartButton';
-import UrlUtils from '@libs/utils/url.utils';
 import CurrencyUtils from '@libs/utils/currency.utils';
 import { PromotionPercent } from '@configs/models/promotion.model';
 import { GiftFilled } from '@ant-design/icons';
@@ -50,13 +49,7 @@ function ProductCard({
 
   const isDiscount = productDiscountVal > 0;
 
-  const href = `/${UrlUtils.generateSlug(
-    product.productType?.name,
-    product.productType?.key
-  )}/${UrlUtils.generateSlug(
-    product.productGroup?.name,
-    product.productGroup?.key
-  )}/${UrlUtils.generateSlug(displayName, product?.key)}`;
+  const href = `/${product.productType?.seoUrl}/${product.productGroup?.seoUrl}/${product.detail?.seoUrl}`;
 
   const disCountText = showMinQuantity ? (
     <>

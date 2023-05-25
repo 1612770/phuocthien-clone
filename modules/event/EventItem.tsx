@@ -2,7 +2,6 @@ import { Typography } from 'antd';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import TimeUtils from '@libs/utils/time.utils';
 import LinkWrapper from '@components/templates/LinkWrapper';
-import UrlUtils from '@libs/utils/url.utils';
 import EventModel from '@configs/models/event.model';
 import GroupInfoModel from '@configs/models/GroupInfoModel';
 
@@ -19,10 +18,7 @@ function EventItem({
 
   return (
     <LinkWrapper
-      href={`/tin-tuc/${UrlUtils.generateSlug(
-        groupInfo?.name,
-        groupInfo?.key
-      )}/${UrlUtils.generateSlug(event.name, event.key)}`}
+      href={`/tin-tuc/${groupInfo?.seoUrl}/${event.seoUrl}`}
       className={className}
     >
       <div className={`group flex gap-2 lg:gap-4`} title={event.name}>
