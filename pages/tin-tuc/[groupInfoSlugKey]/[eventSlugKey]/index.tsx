@@ -69,10 +69,10 @@ const EventPage: NextPageWithLayout<{
       )}
 
       <div
-        className={`grid grid-cols-1 gap-4 px-4 pb-4 md:${
+        className={`grid grid-cols-1 gap-4 px-4 pb-4 ${
           isEventArticle
-            ? 'grid-cols-1'
-            : 'grid-cols-[300px_minmax(200px,_1fr)]'
+            ? 'md:grid-cols-1'
+            : 'md:grid-cols-[300px_minmax(200px,_1fr)]'
         } lg:container lg:px-0`}
       >
         {!isEventArticle && (
