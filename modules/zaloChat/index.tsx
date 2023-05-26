@@ -1,13 +1,8 @@
-import { useRouter } from 'next/router';
 import Script from 'next/script';
 export const ZaloChat = () => {
-  const router = useRouter();
-
-  const onCartPage = router.pathname === '/gio-hang';
-
   return (
     <>
-      <div className={onCartPage ? 'hidden lg:block' : ''}>
+      <div className="app__zalo-chat-widget-container">
         <div
           className="zalo-chat-widget"
           data-oaid="2698831418754835289"
@@ -17,22 +12,7 @@ export const ZaloChat = () => {
           data-width="220"
         ></div>
         <Script src="https://sp.zalo.me/plugins/sdk.js" async></Script>
-        <p
-          style={{
-            color: '#2962ff',
-            fontSize: '16px',
-            position: 'fixed',
-            bottom: '110px',
-            right: '60px',
-            background: '#fff',
-            borderRadius: '10px',
-            padding: '3px 10px',
-            boxShadow: '0 1px 2px rgba(0,0,0,.25)',
-            zIndex: '2147483644',
-          }}
-        >
-          (7h - 21h)
-        </p>
+        <p className="zalo-chat-widget-time">(7h - 21h)</p>
       </div>
     </>
   );
