@@ -43,8 +43,8 @@ function PromotionProductsList({
       setLoadingMore(true);
 
       const { data } = await promotionClient.getPromoProducts({
-        page: Math.ceil(promotionProducts.length / 20) + 1,
-        pageSize: 20,
+        page: Math.ceil(promotionProducts.length / 8) + 1,
+        pageSize: 8,
         keyPromo: promotion?.key,
         isHide: false,
       });
@@ -52,7 +52,7 @@ function PromotionProductsList({
       if (data?.length) {
         setPromotionProducts((prev) => [...prev, ...data]);
       }
-      if ((data?.length || 0) < 20) {
+      if ((data?.length || 0) < 8) {
         setAllowLoadMore(false);
       }
     } catch (error) {
