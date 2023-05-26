@@ -55,10 +55,17 @@ const Home: NextPageWithLayout<{
   const { setProductSearchKeywords } = useAppData();
 
   const promotionSliderImages =
-    campaigns?.map((campaign) => ({
-      url: campaign.imgUrl,
-      link: '/chuong-trinh-khuyen-mai/' + campaign.key,
-    })) || [];
+    campaigns?.map((campaign) => {
+      let link;
+      if (campaign.promotions.length > 0) {
+        link = '/chuong-trinh-khuyen-mai/' + campaign.key;
+      }
+
+      return {
+        url: campaign.imgUrl,
+        link,
+      };
+    }) || [];
   const bannerVisibleSlides =
     BANNER_ENABLED || !promotionSliderImages.length
       ? getVisibleItems(slideBanner || []).map((slide) => ({
