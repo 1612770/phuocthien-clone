@@ -261,7 +261,7 @@ export const getServerSideProps = async (
         promotions.map((promotion) =>
           promotionClient.getPromoProducts({
             page: 1,
-            pageSize: 20,
+            pageSize: 8,
             keyPromo: promotion.key,
             isHide: false,
           })
