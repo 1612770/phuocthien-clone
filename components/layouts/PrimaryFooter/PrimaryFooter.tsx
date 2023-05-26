@@ -1,6 +1,5 @@
 import { Divider, Space, Typography } from 'antd';
 import Link from 'next/link';
-import { Facebook, Mail, MapPin, Phone, Twitter, Youtube } from 'react-feather';
 import IMAGES from 'configs/assests/images';
 import { useAppData } from '@providers/AppDataProvider';
 import FocusContentSection from '@modules/homepage/FocusContentSection';
@@ -8,6 +7,14 @@ import { useWatchCacheProduct } from '@libs/utils/hooks/useWatchCacheProduct';
 import ProductList from '@components/templates/ProductList';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import AppDangerouslySetInnerHTML from '@components/AppDangerouslySetInnerHTML';
+import {
+  FacebookFilled,
+  GlobalOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  TwitterOutlined,
+  YoutubeFilled,
+} from '@ant-design/icons';
 
 function PrimaryFooter() {
   const { focusContent, mainInfoFooter } = useAppData();
@@ -69,21 +76,21 @@ function PrimaryFooter() {
                 >
                   <a target={'_blank'}>
                     <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
-                      <Facebook color="white" size={16} />
+                      <FacebookFilled className="text-white" size={16} />
                     </span>
                   </a>
                 </Link>
                 <Link href="/">
                   <a>
                     <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
-                      <Youtube color="white" size={16} />
+                      <YoutubeFilled className="text-white" size={16} />
                     </span>
                   </a>
                 </Link>
                 <Link href="/">
                   <a>
                     <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
-                      <Twitter color="white" size={16} />
+                      <TwitterOutlined className="text-white" size={16} />
                     </span>
                   </a>
                 </Link>
@@ -150,21 +157,22 @@ function PrimaryFooter() {
                 Thông tin liên hệ
               </Typography.Text>
               <Space className="my-0.5 w-full">
-                <MapPin className="text-white" size={16} />
+                <GlobalOutlined className="text-white" size={16} />
                 <Typography.Text className="text-white">
-                  170 Ông Ích Khiêm - Tp. Đà Nẵng
+                  Tầng 2, 170 Ông Ích Khiêm, Phường Tam Thuận, Quận Thanh Khê,
+                  Thành Phố Đà Nẵng, Việt Nam
                 </Typography.Text>
               </Space>
               <Space className="my-0.5 w-full">
-                <Phone className="text-white" size={16} />
+                <PhoneOutlined className="text-white" size={16} />
                 <Typography.Text className="text-white">
                   1800599964
                 </Typography.Text>
               </Space>
               <Space className="my-0.5 w-full">
-                <Mail className="text-white" size={16} />
+                <MailOutlined className="text-white" size={16} />
                 <Typography.Text className="text-white">
-                  phuocthiendn@yahoo.com
+                  lienhe@nhathuocphuocthien.com
                 </Typography.Text>
               </Space>
             </div>
@@ -173,14 +181,11 @@ function PrimaryFooter() {
           <Divider className="bg-white" />
           <div>
             <Typography className="text-center text-xs text-white">
-              © 2023 HỆ THỐNG NHÀ THUỐC PHƯỚC THIỆN. Giấy phép kinh doanh:
-              32A8031215 - được cấp ngày: 16/04/2020. Địa chỉ: 370 Trưng Nữ
-              Vương, Quận Hải Châu, TP Đà Nẵng. Điện thoại: (0236) 3827.772 -
-              Fax: (0236) 3827.772. Email: phuocthien.pharmacy@gmail.com. Người
-              quản lý nội dung: Ds Ngô Thị Huyền Trâm. All rights reserved.
-            </Typography>
-            <Typography className="text-center text-xs text-white">
-              (Phiên bản chạy thử)
+              © 2023 CÔNG TY TNHH PHƯỚC THIỆN 3T. Số ĐKKD: 0402173059 ngày cấp
+              25/11/2022 Địa chỉ: Tầng 2, 170 Ông Ích Khiêm, Phường Tam Thuận,
+              Quận Thanh Khê, Thành Phố Đà Nẵng, Việt Nam. Điện thoại: (0236)
+              3745.488 - Email: lienhe@nhathuocphuocthien.com. Người quản lý nội
+              dung: Đoàn Phước Lân
             </Typography>
           </div>
           <div className="mt-4 flex items-center justify-center">

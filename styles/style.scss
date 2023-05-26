@@ -119,3 +119,37 @@
 
 .app__dangerously-set-inner-html {
 }
+
+.app__zalo-chat-widget-container {
+  .zalo-chat-widget {
+    bottom: 128px !important;
+    right: 128px !important;
+  }
+
+  .zalo-chat-widget-time {
+    position: fixed;
+    bottom: 90px;
+    right: 112px;
+
+    color: #2962ff;
+    background: #fff;
+    border-radius: 10px;
+    padding: 3px 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    margin: 0;
+  }
+}
+
+@media only screen and (max-width: 728px) {
+  .app__zalo-chat-widget-container {
+    .zalo-chat-widget {
+      bottom: 54px !important;
+      right: 54px !important;
+    }
+
+    .zalo-chat-widget-time {
+      bottom: 20px;
+      right: 38px;
+    }
+  }
+}
