@@ -20,19 +20,30 @@ import Breadcrumbs from '@components/Breadcrumbs';
 import CheckoutForm from '@modules/gio-hang/CheckoutForm';
 import CheckoutEmptyState from '@modules/gio-hang/CheckoutEmptyState';
 import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
-import { Button, Grid } from 'antd';
+import { Button, Grid, Spin } from 'antd';
 import { LeftOutlined } from '@ant-design/icons';
 import DeliveryConfigsProvider from '@providers/DeliveryConfigsProvider';
+import { useEffect } from 'react';
 
 const CartPage: NextPageWithLayout<{
   paymentMethods: PaymentMethodModel[];
   offers: OfferModel[];
 }> = ({ paymentMethods, offers }) => {
-  const { cartProducts } = useCart();
+  const {
+    cartProducts,
+    loadingCartProducts,
+    loadCartProductsByDataFromLocalStorage,
+  } = useCart();
   const { checkoutForm, checkout, setCheckoutError, cartStep, setCartStep } =
     useCheckout();
   const { setConfirmData } = useAppConfirmDialog();
   const { lg } = Grid.useBreakpoint();
+
+  useEffect(() => {
+    loadCartProductsByDataFromLocalStorage();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onCheckoutButtonClick = async () => {
     try {
@@ -62,44 +73,45 @@ const CartPage: NextPageWithLayout<{
   return (
     <>
       <SEO title="Giỏ hàng - Nhà thuốc Phước Thiện" />
+      <Spin spinning={loadingCartProducts}>
+        <div className="container pb-4">
+          {cartStep === 'cart' && (
+            <Breadcrumbs
+              className="pt-4 pb-2"
+              breadcrumbs={[
+                {
+                  title: 'Mua thêm sản phẩm khác',
+                  path: '/',
+                },
+              ]}
+            ></Breadcrumbs>
+          )}
 
-      <div className="container pb-4">
-        {cartStep === 'cart' && (
-          <Breadcrumbs
-            className="pt-4 pb-2"
-            breadcrumbs={[
-              {
-                title: 'Mua thêm sản phẩm khác',
-                path: '/',
-              },
-            ]}
-          ></Breadcrumbs>
-        )}
+          {cartStep === 'checkout' && (
+            <Button
+              onClick={() => {
+                setCartStep('cart');
+              }}
+              type="primary"
+              ghost
+              className="mt-3 mb-0.5 border-none py-0 px-0"
+              icon={<LeftOutlined size={20} className="" />}
+            >
+              Quay lại giỏ hàng
+            </Button>
+          )}
 
-        {cartStep === 'checkout' && (
-          <Button
-            onClick={() => {
-              setCartStep('cart');
-            }}
-            type="primary"
-            ghost
-            className="mt-3 mb-0.5 border-none py-0 px-0"
-            icon={<LeftOutlined size={20} className="" />}
-          >
-            Quay lại giỏ hàng
-          </Button>
-        )}
+          {cartProducts.length > 0 && (
+            <CheckoutForm
+              paymentMethods={paymentMethods}
+              offers={offers}
+              onCheckout={onCheckoutButtonClick}
+            />
+          )}
 
-        {cartProducts.length > 0 && (
-          <CheckoutForm
-            paymentMethods={paymentMethods}
-            offers={offers}
-            onCheckout={onCheckoutButtonClick}
-          />
-        )}
-
-        {!cartProducts.length && <CheckoutEmptyState />}
-      </div>
+          {!cartProducts.length && <CheckoutEmptyState />}
+        </div>
+      </Spin>
     </>
   );
 };

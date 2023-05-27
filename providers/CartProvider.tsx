@@ -11,6 +11,7 @@ import React, {
 } from 'react';
 import { useAppConfirmDialog } from './AppConfirmDialogProvider';
 import { useRouter } from 'next/router';
+import { ProductClient } from '@libs/client/Product';
 
 type CartChangeProductData =
   | {
@@ -45,6 +46,9 @@ const CartContext = React.createContext<{
     React.SetStateAction<'cart-button' | 'fixed'>
   >;
   isOpenNotification: boolean;
+
+  loadingCartProducts: boolean;
+  loadCartProductsByDataFromLocalStorage: () => Promise<void>;
 }>({
   cartProducts: [],
   choosenCartProducts: [],
@@ -57,6 +61,9 @@ const CartContext = React.createContext<{
   modeShowPopup: 'cart-button',
   setModeShowPopup: () => undefined,
   isOpenNotification: false,
+
+  loadingCartProducts: false,
+  loadCartProductsByDataFromLocalStorage: () => Promise.resolve(),
 });
 
 function CartProvider({ children }: { children: React.ReactNode }) {
@@ -66,6 +73,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   const [recentAddedProductKey, setRecentAddedProductKey] = useState('');
 
   const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
+  const [loadingCartProducts, setloadingCartProducts] = useState(false);
 
   const { setConfirmData } = useAppConfirmDialog();
   const router = useRouter();
@@ -78,8 +86,59 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     setCartProducts(cartProducts);
   }, []);
 
+  const loadCartProductsByDataFromLocalStorage = useCallback(async () => {
+    const cartProducts: CartProduct[] = JSON.parse(
+      LocalStorageUtils.getItem(LocalStorageKeys.CART_PRODUCTS) || '[]'
+    );
+
+    try {
+      setloadingCartProducts(true);
+      const productClient = new ProductClient(null, {});
+      const products = await productClient.getProducts({
+        page: 1,
+        pageSize: 100,
+        filterByIds: cartProducts.map(
+          (cartProduct) => cartProduct.product.key || ''
+        ),
+        isPrescripted: false,
+      });
+
+      const newCartProducts = cartProducts.map((cartProduct) => {
+        const product = products.data?.data.find(
+          (product) => product.key === cartProduct.product.key
+        );
+        return {
+          ...cartProduct,
+          product: product || cartProduct.product,
+        };
+      });
+      setCartProducts(newCartProducts);
+    } catch (error) {
+      console.error(
+        'Error while loading cart products by data from local storage',
+        error
+      );
+    } finally {
+      setloadingCartProducts(false);
+    }
+  }, []);
+
   const addToCart = useCallback(
     (payload: Omit<CartProduct, 'choosen'>) => {
+      // if cartProducts is over 100 items, do not add more
+      if (cartProducts.length > 100) {
+        setConfirmData({
+          title: 'Giỏ hàng đã đầy',
+          content:
+            'Bạn không thể thêm sản phẩm vào giỏ hàng. Hãy kiểm tra lại giỏ hàng của bạn và thanh toán hoặc xóa bớt sản phẩm để tiếp tục mua sắm.',
+          okText: 'Đã hiểu',
+          cancelButtonProps: {
+            hidden: true,
+          },
+        });
+        return;
+      }
+
       if (
         cartProducts.find(
           (cartProduct) => cartProduct.product.key === payload.product.key
@@ -115,7 +174,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         return;
       }
     },
-    [cartProducts]
+    [cartProducts, setConfirmData]
   );
 
   const removeFromCart = useCallback(
@@ -254,6 +313,9 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         modeShowPopup,
         setModeShowPopup,
         isOpenNotification,
+
+        loadingCartProducts,
+        loadCartProductsByDataFromLocalStorage,
       }}
     >
       {children}

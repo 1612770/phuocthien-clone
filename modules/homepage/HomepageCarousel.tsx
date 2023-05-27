@@ -48,7 +48,7 @@ function HomepageCarousel({
         autoplay
         dots={false}
         fade={type === 'primary'}
-        autoplaySpeed={type === 'primary' ? 4000 : 6000}
+        autoplaySpeed={type === 'primary' ? 2000 : 3500}
         ref={(ref) => (carouselRef.current = ref)}
       >
         {pairedSlides.map((slides, index) => (
