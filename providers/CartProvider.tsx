@@ -11,6 +11,7 @@ import React, {
 } from 'react';
 import { useAppConfirmDialog } from './AppConfirmDialogProvider';
 import { useRouter } from 'next/router';
+import { ProductClient } from '@libs/client/Product';
 
 type CartChangeProductData =
   | {
@@ -45,6 +46,9 @@ const CartContext = React.createContext<{
     React.SetStateAction<'cart-button' | 'fixed'>
   >;
   isOpenNotification: boolean;
+
+  loadingCartProducts: boolean;
+  loadCartProductsByDataFromLocalStorage: () => Promise<void>;
 }>({
   cartProducts: [],
   choosenCartProducts: [],
@@ -57,6 +61,9 @@ const CartContext = React.createContext<{
   modeShowPopup: 'cart-button',
   setModeShowPopup: () => undefined,
   isOpenNotification: false,
+
+  loadingCartProducts: false,
+  loadCartProductsByDataFromLocalStorage: () => Promise.resolve(),
 });
 
 function CartProvider({ children }: { children: React.ReactNode }) {
@@ -66,6 +73,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   const [recentAddedProductKey, setRecentAddedProductKey] = useState('');
 
   const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
+  const [loadingCartProducts, setloadingCartProducts] = useState(false);
 
   const { setConfirmData } = useAppConfirmDialog();
   const router = useRouter();
@@ -76,6 +84,43 @@ function CartProvider({ children }: { children: React.ReactNode }) {
       LocalStorageUtils.getItem(LocalStorageKeys.CART_PRODUCTS) || '[]'
     );
     setCartProducts(cartProducts);
+  }, []);
+
+  const loadCartProductsByDataFromLocalStorage = useCallback(async () => {
+    const cartProducts: CartProduct[] = JSON.parse(
+      LocalStorageUtils.getItem(LocalStorageKeys.CART_PRODUCTS) || '[]'
+    );
+
+    try {
+      setloadingCartProducts(true);
+      const productClient = new ProductClient(null, {});
+      const products = await productClient.getProducts({
+        page: 1,
+        pageSize: 100,
+        filterByIds: cartProducts.map(
+          (cartProduct) => cartProduct.product.key || ''
+        ),
+        isPrescripted: false,
+      });
+
+      const newCartProducts = cartProducts.map((cartProduct) => {
+        const product = products.data?.data.find(
+          (product) => product.key === cartProduct.product.key
+        );
+        return {
+          ...cartProduct,
+          product: product || cartProduct.product,
+        };
+      });
+      setCartProducts(newCartProducts);
+    } catch (error) {
+      console.error(
+        'Error while loading cart products by data from local storage',
+        error
+      );
+    } finally {
+      setloadingCartProducts(false);
+    }
   }, []);
 
   const addToCart = useCallback(
@@ -254,6 +299,9 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         modeShowPopup,
         setModeShowPopup,
         isOpenNotification,
+
+        loadingCartProducts,
+        loadCartProductsByDataFromLocalStorage,
       }}
     >
       {children}
