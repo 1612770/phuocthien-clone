@@ -125,6 +125,20 @@ function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addToCart = useCallback(
     (payload: Omit<CartProduct, 'choosen'>) => {
+      // if cartProducts is over 100 items, do not add more
+      if (cartProducts.length > 100) {
+        setConfirmData({
+          title: 'Giỏ hàng đã đầy',
+          content:
+            'Bạn không thể thêm sản phẩm vào giỏ hàng. Hãy kiểm tra lại giỏ hàng của bạn và thanh toán hoặc xóa bớt sản phẩm để tiếp tục mua sắm.',
+          okText: 'Đã hiểu',
+          cancelButtonProps: {
+            hidden: true,
+          },
+        });
+        return;
+      }
+
       if (
         cartProducts.find(
           (cartProduct) => cartProduct.product.key === payload.product.key
@@ -160,7 +174,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         return;
       }
     },
-    [cartProducts]
+    [cartProducts, setConfirmData]
   );
 
   const removeFromCart = useCallback(
