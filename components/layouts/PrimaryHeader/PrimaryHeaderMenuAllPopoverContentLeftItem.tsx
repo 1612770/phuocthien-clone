@@ -19,7 +19,7 @@ function PrimaryHeaderMenuAllPopoverContentLeftItem({
     <Link href={href}>
       <a
         className={
-          'primary-popover-menu-item block cursor-pointer ' +
+          'primary-popover-menu-item block cursor-pointer px-4 ' +
           (active
             ? `active bg-primary-background hover:bg-primary-background `
             : `hover:bg-primary-background`)
