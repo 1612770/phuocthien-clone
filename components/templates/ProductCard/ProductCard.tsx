@@ -41,6 +41,7 @@ function ProductCard({
     promotionPercent?.val || getMaxDiscount(product?.promotions || []) || 0;
 
   const displayName = product?.detail?.displayName || product.name;
+  const image = product?.detail?.image || product.images?.[0]?.url || '';
   const price = CurrencyUtils.format(product?.retailPrice);
   const priceWithDiscount = CurrencyUtils.formatWithDiscount(
     product?.retailPrice,
@@ -75,7 +76,7 @@ function ProductCard({
                 <ImageWithFallback
                   placeholder="blur"
                   alt={displayName || ''}
-                  src={product?.detail?.image || ''}
+                  src={image || ''}
                   layout="fill"
                   objectFit="contain"
                   loading="lazy"
@@ -159,7 +160,7 @@ function ProductCard({
               <ImageWithFallback
                 placeholder="blur"
                 alt={displayName || ''}
-                src={product?.detail?.image || ''}
+                src={image || ''}
                 layout="fill"
                 objectFit="cover"
                 loading="lazy"
