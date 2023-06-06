@@ -224,9 +224,24 @@ export const getServerSideProps = async (
       if (getFAQsResponse.data) {
         serverSideProps.props.faqs = getFAQsResponse.data;
       }
+    } else {
+      // redirect to /
+      return {
+        redirect: {
+          destination: '/',
+          permanent: false,
+        },
+      };
     }
   } catch (error) {
-    console.error(error);
+    console.error('getProduct', error);
+    // redirect to /
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
   }
 
   return serverSideProps;
