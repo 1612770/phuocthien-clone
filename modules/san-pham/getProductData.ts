@@ -24,6 +24,8 @@ const getProductData = async (
     faqs?: FAQ[];
   } = {};
 
+  if (!product.key) throw new Error('Không tìm thấy sản phẩm');
+
   const productClient = new ProductClient(null, {});
   const offerClient = new OfferClient(context, {});
   const productGroupProductSeoUrl = context.params
