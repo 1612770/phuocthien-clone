@@ -13,8 +13,7 @@ export interface CartProduct {
   choosen: boolean;
 }
 
-type Product = Partial<{
-  key: string;
+type Product = { key: string } & Partial<{
   code: string;
   name: string;
   productionCode: string;

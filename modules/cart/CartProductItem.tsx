@@ -240,7 +240,7 @@ function CartProductItem({ cartProduct }: { cartProduct: CartProduct }) {
 
             <div className="flex flex-col">
               <LinkWrapper
-                href={`/${cartProduct.product.productType?.seoUrl}/${cartProduct.product.productGroup?.seoUrl}/${cartProduct.product.detail?.seoUrl}`}
+                href={`/${cartProduct.product.productType?.seoUrl}/${cartProduct.product.detail?.seoUrl}`}
               >
                 <Typography.Text className="mt-2">
                   {displayName}
