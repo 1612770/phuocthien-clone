@@ -192,7 +192,7 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
 
               return (
                 <LinkWrapper
-                  href={`/${detail.productType?.seoUrl}/${detail.productType?.seoUrl}/${detail.seoUrl}`}
+                  href={`/${detail.productType?.seoUrl}/${detail.seoUrl}`}
                   key={detail.key}
                 >
                   <div

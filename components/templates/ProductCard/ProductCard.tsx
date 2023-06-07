@@ -50,7 +50,7 @@ function ProductCard({
 
   const isDiscount = productDiscountVal > 0;
 
-  const href = `/${product.productType?.seoUrl}/${product.productGroup?.seoUrl}/${product.detail?.seoUrl}`;
+  const href = `/${product.productType?.seoUrl}/${product.detail?.seoUrl}`;
 
   const disCountText = showMinQuantity ? (
     <>

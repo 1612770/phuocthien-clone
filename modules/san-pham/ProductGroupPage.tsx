@@ -1,93 +1,28 @@
-import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import {
-  Checkbox,
-  Drawer,
-  Empty,
-  Pagination,
-  Space,
-  Tag,
-  Typography,
-} from 'antd';
-import { NextPageWithLayout } from 'pages/page';
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
-import { GeneralClient } from '@libs/client/General';
-import ProductType from '@configs/models/product-type.model';
+import Breadcrumbs from '@components/Breadcrumbs';
+import ProductCard from '@components/templates/ProductCard';
+import PRODUCTS_LOAD_PER_TIME from '@configs/constants/products-load-per-time';
+import BrandModel from '@configs/models/brand.model';
 import ProductGroupModel from '@configs/models/product-group.model';
 import Product from '@configs/models/product.model';
-import { ProductClient } from '@libs/client/Product';
-import ProductCard from '@components/templates/ProductCard';
-import BrandModel from '@configs/models/brand.model';
-import { useRouter } from 'next/router';
-import { Filter, X } from 'react-feather';
-import { useState } from 'react';
 import WithPagination from '@configs/types/utils/with-pagination';
-import PRODUCTS_LOAD_PER_TIME from '@configs/constants/products-load-per-time';
-import Breadcrumbs from '@components/Breadcrumbs';
+import { Typography, Space, Tag, Drawer, Pagination, Empty } from 'antd';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import { Filter, X } from 'react-feather';
+import ProductType from '@configs/models/product-type.model';
+import FilterOptions from './FilterOptions';
 
-function FilterOptions({
+const ProductGroupPage = ({
+  productType,
+  productGroup,
+  products,
   productBrands,
-  onFilterClick,
 }: {
-  productBrands: BrandModel[];
-  onFilterClick?: () => void;
-}) {
-  const router = useRouter();
-  const selectedBrands = ((router.query.brands as string) || '')
-    .split(',')
-    .filter((brand) => !!brand);
-
-  return (
-    <div className="py-4">
-      <div className="flex gap-4">
-        <Typography.Text className="font-medium">Hãng sản xuất</Typography.Text>
-      </div>
-      <div className="mt-2 flex flex-col">
-        {productBrands.map((brand) => {
-          const isActive = !!brand?.key && selectedBrands.includes(brand?.key);
-
-          return (
-            <div key={brand.key}>
-              <Checkbox
-                className="my-2 cursor-pointer"
-                checked={isActive}
-                onClick={() => {
-                  onFilterClick?.();
-                  if (isActive) {
-                    const newBrands = selectedBrands.filter(
-                      (selectedBrand) => selectedBrand !== brand.key
-                    );
-                    router.push({
-                      query: {
-                        ...router.query,
-                        brands: newBrands.join(','),
-                      },
-                    });
-                  } else {
-                    router.push({
-                      query: {
-                        ...router.query,
-                        brands: [...selectedBrands, brand.key].join(','),
-                      },
-                    });
-                  }
-                }}
-              >
-                {brand.name}
-              </Checkbox>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-const ProductGroupPage: NextPageWithLayout<{
   productType?: ProductType;
   productGroup?: ProductGroupModel;
   productBrands?: BrandModel[];
   products?: WithPagination<Product[]>;
-}> = ({ productType, productGroup, products, productBrands }) => {
+}) => {
   const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
   const router = useRouter();
 
@@ -235,62 +170,3 @@ const ProductGroupPage: NextPageWithLayout<{
 };
 
 export default ProductGroupPage;
-
-ProductGroupPage.getLayout = (page) => {
-  return <PrimaryLayout>{page}</PrimaryLayout>;
-};
-
-export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  const staticProps: {
-    props: {
-      productType?: ProductType;
-      productGroup?: ProductGroupModel;
-      productBrands?: BrandModel[];
-      products?: WithPagination<Product[]>;
-    };
-  } = {
-    props: {},
-  };
-
-  const generalClient = new GeneralClient(null, {});
-  const productClient = new ProductClient(null, {});
-
-  try {
-    const [productType, productGroup, productBrands] = await Promise.all([
-      generalClient.getProductTypeDetail({
-        seoUrl: String(context.params?.productType),
-      }),
-      generalClient.getProductGroupDetail({
-        seoUrl: String(context.params?.productGroup),
-      }),
-      generalClient.getProductionBrands(),
-    ]);
-
-    staticProps.props.productType = productType.data;
-    staticProps.props.productGroup = productGroup.data;
-    staticProps.props.productBrands = productBrands.data;
-
-    const products = await productClient.getProducts({
-      page: context.query.trang ? Number(context.query.trang) : 1,
-      pageSize: PRODUCTS_LOAD_PER_TIME,
-      isPrescripted: false,
-      productTypeKey: productType.data?.key,
-      productGroupKey: productGroup.data?.key,
-      productionBrandKeys: context.query.brands
-        ? (context.query.brands as string).split(',')
-        : undefined,
-      sortBy: (context.query['sap-xep-theo'] as 'GIA_BAN_LE') || undefined,
-      sortOrder: (context.query['sap-xep'] as 'ASC' | 'DESC') || undefined,
-    });
-
-    if (products.data) {
-      staticProps.props.products = products.data;
-    }
-  } catch (error) {
-    console.error(error);
-  }
-
-  return staticProps;
-};
