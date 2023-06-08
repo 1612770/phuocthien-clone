@@ -10,10 +10,7 @@ import { ProductClient } from '@libs/client/Product';
 import OfferUtils from '@libs/utils/offer.utils';
 import { GetServerSidePropsContext } from 'next';
 
-const getProductData = async (
-  context: GetServerSidePropsContext,
-  product: Product
-) => {
+const getProductData = async (context: GetServerSidePropsContext) => {
   const productData: {
     product?: Product;
     otherProducts?: Product[];
@@ -24,12 +21,20 @@ const getProductData = async (
     faqs?: FAQ[];
   } = {};
 
-  if (!product.key) throw new Error('Không tìm thấy sản phẩm');
-
   const productClient = new ProductClient(null, {});
+  const lv2ParamSeoUrl = context.params?.lv2Param as string;
   const offerClient = new OfferClient(context, {});
-  const productGroupProductSeoUrl = context.params
-    ?.productGroupProduct as string;
+  const productResponse = await productClient.getProduct({
+    seoUrl: lv2ParamSeoUrl,
+  });
+
+  const product = productResponse.data;
+
+  if (product && product.key) {
+    productData.product = product;
+  } else {
+    throw new Error('Không tìm thấy sản phẩm');
+  }
 
   const [
     products,
@@ -77,7 +82,7 @@ const getProductData = async (
 
   if (products.data) {
     productData.otherProducts = products.data.data.filter(
-      (product) => product.detail?.seoUrl !== productGroupProductSeoUrl
+      (product) => product.detail?.seoUrl !== lv2ParamSeoUrl
     );
   }
 

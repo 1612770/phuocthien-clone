@@ -137,7 +137,7 @@ function PrimaryFooter() {
                   {groupInfo.eventInfos?.map((event) => (
                     <LinkWrapper
                       key={event.name}
-                      href={`/tin-tuc/${groupInfo.seoUrl}/${event.seoUrl}`}
+                      href={`/${groupInfo.seoUrl}/${event.seoUrl}`}
                     >
                       <Space className="my-1 w-full text-white">
                         <AppDangerouslySetInnerHTML

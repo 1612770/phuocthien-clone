@@ -1,21 +1,17 @@
-import PrimaryLayout from 'components/layouts/PrimaryLayout';
+import AppDangerouslySetInnerHTML from '@components/AppDangerouslySetInnerHTML';
+import Breadcrumbs from '@components/Breadcrumbs';
+import ImageWithFallback from '@components/templates/ImageWithFallback';
+import { NEXT_PUBLIC_GROUP_INFO_KEYS } from '@configs/env';
+import GroupInfoModel from '@configs/models/GroupInfoModel';
+import EventModel from '@configs/models/event.model';
+import TimeUtils from '@libs/utils/time.utils';
+import EventItem from '@modules/event/EventItem';
+import { useAppData } from '@providers/AppDataProvider';
 import { Divider, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
-import { GetServerSidePropsContext } from 'next';
-import React from 'react';
-import EventModel from '@configs/models/event.model';
-import { GeneralClient } from '@libs/client/General';
-import EventItem from '@modules/event/EventItem';
-import TimeUtils from '@libs/utils/time.utils';
 import { Clock } from 'react-feather';
-import ImageWithFallback from '@components/templates/ImageWithFallback';
-import GroupInfoModel from '@configs/models/GroupInfoModel';
-import { NEXT_PUBLIC_GROUP_INFO_KEYS } from '@configs/env';
-import Breadcrumbs from '@components/Breadcrumbs';
-import MainInfoMenu from '@modules/tin-tuc/danh-muc/chi-tiet/MainInfoMenu';
-import { useAppData } from '@providers/AppDataProvider';
-import AppDangerouslySetInnerHTML from '@components/AppDangerouslySetInnerHTML';
-import MainInfoMenuButton from '@modules/tin-tuc/danh-muc/chi-tiet/MainInfoMenuButton';
+import MainInfoMenu from './MainInfoMenu';
+import MainInfoMenuButton from './MainInfoMenuButton';
 
 const EventPage: NextPageWithLayout<{
   event?: EventModel;
@@ -145,68 +141,4 @@ const EventPage: NextPageWithLayout<{
   );
 };
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  const serverSideProps: {
-    props: {
-      event?: EventModel;
-      otherEvents?: EventModel[];
-      groupInfo?: GroupInfoModel;
-    };
-  } = {
-    props: {
-      otherEvents: [],
-    },
-  };
-
-  const currentEventSeoUrl = context.params?.eventSlugKey as string;
-  const currentGroupInfoSeoUrl = context.params?.groupInfoSlugKey as string;
-
-  const generalClient = new GeneralClient(context, {});
-
-  try {
-    const event = await generalClient.getEvent({
-      eventSeoUrl: currentEventSeoUrl,
-    });
-
-    if (event.data) {
-      serverSideProps.props.event = event.data;
-
-      if (event.data?.keyGroup) {
-        const otherEvents = await generalClient.getGroupInfos({
-          page: 1,
-          pageSize: 5,
-          groupSeoUrl: currentGroupInfoSeoUrl,
-        });
-
-        if (otherEvents.data) {
-          serverSideProps.props.groupInfo = otherEvents.data[0];
-
-          const otherEventList = (otherEvents.data || [])
-            .reduce((events, currentGroup) => {
-              return [
-                ...events,
-                ...(currentGroup.eventInfos || []).filter(
-                  (event) => event.seoUrl !== currentEventSeoUrl
-                ),
-              ];
-            }, [] as EventModel[])
-            .slice(0, 3);
-
-          serverSideProps.props.otherEvents = otherEventList;
-        }
-      }
-    }
-  } catch (error) {
-    console.error(error);
-  }
-
-  return serverSideProps;
-};
-
 export default EventPage;
-
-EventPage.getLayout = (page) => {
-  return <PrimaryLayout>{page}</PrimaryLayout>;
-};
