@@ -18,16 +18,15 @@ const getProductGroupData = async (context: GetServerSidePropsContext) => {
 
   const generalClient = new GeneralClient(null, {});
   const productClient = new ProductClient(null, {});
-  const productGroupProductSeoUrl = context.params
-    ?.productGroupProduct as string;
-  const productTypeSeoUrl = context.params?.productType as string;
+  const lv2ParamSeoUrl = context.params?.lv2Param as string;
+  const lv1ParamSeoUrl = context.params?.lv1Param as string;
 
   const [productType, productGroup, productBrands] = await Promise.all([
     generalClient.getProductTypeDetail({
-      seoUrl: productTypeSeoUrl,
+      seoUrl: lv1ParamSeoUrl,
     }),
     generalClient.getProductGroupDetail({
-      seoUrl: productGroupProductSeoUrl,
+      seoUrl: lv2ParamSeoUrl,
     }),
     generalClient.getProductionBrands(),
   ]);

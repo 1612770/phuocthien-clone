@@ -13,11 +13,11 @@ function MainInfoMenu({
   const router = useRouter();
 
   const {
-    query: { groupInfoSlugKey, eventSlugKey },
+    query: { lv1Param, lv2Param },
   } = router;
 
-  const groupInfoSeoUrl = groupInfoSlugKey as string;
-  const eventInfoSeoUrl = eventSlugKey as string;
+  const groupInfoSeoUrl = lv1Param as string;
+  const eventInfoSeoUrl = lv2Param as string;
 
   return (
     <div>
@@ -46,7 +46,7 @@ function MainInfoMenu({
                         <LinkWrapper
                           className=""
                           key={index}
-                          href={`/tin-tuc/${group.seoUrl}/${event.seoUrl}`}
+                          href={`/${group.seoUrl}/${event.seoUrl}`}
                         >
                           <span
                             onClick={onItemClick}

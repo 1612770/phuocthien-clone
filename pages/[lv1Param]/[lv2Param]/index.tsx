@@ -4,7 +4,6 @@ import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import ProductType from '@configs/models/product-type.model';
 import ProductGroupModel from '@configs/models/product-group.model';
 import Product, { InventoryAtDrugStore } from '@configs/models/product.model';
-import { ProductClient } from '@libs/client/Product';
 import BrandModel from '@configs/models/brand.model';
 import WithPagination from '@configs/types/utils/with-pagination';
 import DrugStore from '@configs/models/drug-store.model';
@@ -15,8 +14,12 @@ import getProductGroupData from '@modules/san-pham/getProductGroupData';
 import getProductData from '@modules/san-pham/getProductData';
 import ProductPage from '@modules/san-pham/ProductPage';
 import ProductGroupPage from '@modules/san-pham/ProductGroupPage';
+import EventModel from '@configs/models/event.model';
+import GroupInfoModel from '@configs/models/GroupInfoModel';
+import getEventData from '@modules/san-pham/getEventData';
+import EventPage from '@modules/tin-tuc/danh-muc/chi-tiet/EventPage';
 
-const ProductGroupProductPage: NextPageWithLayout<{
+const lv2ParamPage: NextPageWithLayout<{
   productGroup: {
     productType?: ProductType;
     productGroup?: ProductGroupModel;
@@ -33,7 +36,23 @@ const ProductGroupProductPage: NextPageWithLayout<{
     reviews?: Review[];
     faqs?: FAQ[];
   };
-}> = ({ product, productGroup }) => {
+
+  event: {
+    event?: EventModel;
+    otherEvents?: EventModel[];
+    groupInfo?: GroupInfoModel;
+  };
+}> = ({ product, productGroup, event }) => {
+  if (event.event?.key) {
+    return (
+      <EventPage
+        event={event.event}
+        otherEvents={event.otherEvents}
+        groupInfo={event.groupInfo}
+      />
+    );
+  }
+
   if (product.product?.key) {
     return (
       <ProductPage
@@ -58,9 +77,9 @@ const ProductGroupProductPage: NextPageWithLayout<{
   );
 };
 
-export default ProductGroupProductPage;
+export default lv2ParamPage;
 
-ProductGroupProductPage.getLayout = (page) => {
+lv2ParamPage.getLayout = (page) => {
   return <PrimaryLayout>{page}</PrimaryLayout>;
 };
 
@@ -85,52 +104,38 @@ export const getServerSideProps: GetServerSideProps = async (
         reviews?: Review[];
         faqs?: FAQ[];
       };
+
+      event: {
+        event?: EventModel;
+        otherEvents?: EventModel[];
+        groupInfo?: GroupInfoModel;
+      };
     };
   } = {
     props: {
       productGroup: {},
       product: {},
+      event: {},
     },
   };
 
-  const productClient = new ProductClient(null, {});
-  const productGroupProductSeoUrl = context.params
-    ?.productGroupProduct as string;
-
   try {
-    const product = await productClient.getProduct({
-      seoUrl: productGroupProductSeoUrl,
-    });
-
-    if (product.data && product.data.key) {
-      serverSideProps.props.product.product = product.data;
-
-      const productData = await getProductData(context, product.data);
-
-      serverSideProps.props.product = {
-        ...serverSideProps.props.product,
-        ...productData,
-      };
-    } else {
-      // redirect to /
-      return {
-        redirect: {
-          destination: '/',
-          permanent: false,
-        },
-      };
-    }
+    serverSideProps.props.product = await getProductData(context);
   } catch (error) {
     try {
-      serverSideProps.props.productGroup = await getProductGroupData(context);
+      serverSideProps.props.event = await getEventData(context);
     } catch (error) {
-      // redirect to /
-      return {
-        redirect: {
-          destination: '/',
-          permanent: false,
-        },
-      };
+      try {
+        serverSideProps.props.productGroup = await getProductGroupData(context);
+      } catch (error) {
+        // redirect to /
+        return {
+          redirect: {
+            destination: '/',
+            permanent: false,
+          },
+        };
+      }
     }
 
     console.error('getProduct', error);

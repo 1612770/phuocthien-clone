@@ -18,7 +18,7 @@ function EventItem({
 
   return (
     <LinkWrapper
-      href={`/tin-tuc/${groupInfo?.seoUrl}/${event.seoUrl}`}
+      href={`/${groupInfo?.seoUrl}/${event.seoUrl}`}
       className={className}
     >
       <div className={`group flex gap-2 lg:gap-4`} title={event.name}>

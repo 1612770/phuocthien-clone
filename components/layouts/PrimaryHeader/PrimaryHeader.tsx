@@ -174,8 +174,9 @@ function PrimaryHeader({ showSearch = true }) {
 
       {modeShowPopup === 'fixed' && (
         <div
-          className={`fixed left-[32px] right-[32px] bottom-[32px] z-50 rounded-xl bg-white p-4 shadow-lg transition-all duration-1000 ease-in-out sm:left-auto`}
+          className={`fixed left-[32px] right-[32px] bottom-[32px] z-[10000] rounded-xl bg-white p-4 shadow-lg transition-all duration-1000 ease-in-out sm:left-auto`}
           style={{
+            visibility: isOpenNotification ? 'visible' : 'hidden',
             transform: isOpenNotification
               ? 'translateY(0)'
               : 'translateY(100%)',

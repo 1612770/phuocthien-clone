@@ -57,24 +57,22 @@ function DrugstoreItem({
             <div className="flex items-start">
               <ImageWithFallback
                 src={drugstore.image || ''}
-                width={32}
-                height={32}
+                width={48}
+                height={48}
                 layout="fixed"
                 objectFit="contain"
                 getMockImage={() => ImageUtils.getRandomMockDrugstoreUrl()}
               />
               <div className="ml-2">
-                <Typography className="  font-medium">
-                  {drugstore.name}
+                <Typography className="text-sm">{drugstore.name}</Typography>
+                <Typography className="text-sm font-medium ">
+                  {drugstore.address}
                 </Typography>
                 <a href={`tel:${drugstore.tel}`}>
                   <Typography className=" text-gray-600">
                     {drugstore.tel}
                   </Typography>
                 </a>
-                <Typography className=" text-gray-600">
-                  {drugstore.address}
-                </Typography>
               </div>
             </div>
           </div>

@@ -1,28 +1,20 @@
+import { ShopOutlined } from '@ant-design/icons';
 import DrugStore from '@configs/models/drug-store.model';
 import { InventoryAtDrugStore } from '@configs/models/product.model';
 import DrugstoreItem from '@modules/drugstore/DrugstoreItem';
-import { Typography, List, Empty } from 'antd';
-import React from 'react';
+import { Typography, List, Empty, Modal, ModalProps } from 'antd';
+import React, { useState } from 'react';
 
-function ProductDrugStoresSection({
+function ProductDrugStoresModal({
   drugStoresAvailable,
   drugStores,
-}: {
+  ...modalProps
+}: ModalProps & {
   drugStoresAvailable: InventoryAtDrugStore[];
   drugStores: DrugStore[];
 }) {
   return (
-    <div className="rounded-lg border border-solid border-gray-200">
-      <Typography.Title level={5} className="px-4 pt-6 font-medium uppercase">
-        {(drugStoresAvailable?.length || 0) > 0 ? (
-          <>
-            Có <b className="text-primary">{drugStoresAvailable?.length}</b> nhà
-            thuốc có sẵn
-          </>
-        ) : (
-          <>Hệ thống nhà thuốc Phước Thiện</>
-        )}
-      </Typography.Title>
+    <Modal {...modalProps} footer={null}>
       <List className="max-h-[440px] overflow-y-scroll px-0">
         {!!drugStores.length &&
           drugStores?.map((drugStore) => (
@@ -45,7 +37,46 @@ function ProductDrugStoresSection({
           ></Empty>
         )}
       </List>
-    </div>
+    </Modal>
+  );
+}
+
+function ProductDrugStoresSection({
+  drugStoresAvailable,
+  drugStores,
+}: {
+  drugStoresAvailable: InventoryAtDrugStore[];
+  drugStores: DrugStore[];
+}) {
+  const [openDrugStoresModal, setOpenDrugStoresModal] = useState(false);
+
+  if (!drugStoresAvailable?.length && !drugStores.length) return null;
+
+  return (
+    <>
+      <Typography.Text
+        className="mt-4 cursor-pointer text-primary underline"
+        onClick={() => setOpenDrugStoresModal(true)}
+      >
+        <ShopOutlined className="mr-2" />
+        {(drugStoresAvailable?.length || 0) > 0 ? (
+          <>
+            Có <b className="text-primary">{drugStoresAvailable?.length}</b> nhà
+            thuốc có sẵn sản phẩm
+          </>
+        ) : (
+          <>Hệ thống nhà thuốc Phước Thiện</>
+        )}
+      </Typography.Text>
+
+      <ProductDrugStoresModal
+        title="Danh sách nhà thuốc"
+        drugStores={drugStores}
+        drugStoresAvailable={drugStoresAvailable}
+        open={openDrugStoresModal}
+        onCancel={() => setOpenDrugStoresModal(false)}
+      />
+    </>
   );
 }
 

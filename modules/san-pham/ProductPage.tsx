@@ -10,7 +10,6 @@ import ProductCarousel from '@modules/products/ProductCarousel';
 import QRApp from '@modules/products/QRApp';
 import { useMemo } from 'react';
 import ProductCommentSection from './chi-tiet/ProductCommentSection';
-import ProductDrugStoresSection from './chi-tiet/ProductDrugStoresSection';
 import ProductFAQsSection from './chi-tiet/ProductFAQsSection';
 import ProductMain from './chi-tiet/ProductMain';
 import ProductOthersSection from './chi-tiet/ProductOthersSection';
@@ -83,20 +82,18 @@ const ProductPage = ({
         ]}
       ></Breadcrumbs>
 
-      <div className="grid grid-cols-1 gap-4 pt-2 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[400px_minmax(200px,_1fr)_280px]">
+      <div className="grid grid-cols-1 gap-4 pt-2 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[600px_minmax(200px,_1fr)]">
         <div>
           <ProductCarousel images={carouselImages} />
           <QRApp />
         </div>
 
-        <ProductMain offers={offers} product={product} />
-
-        <div className="w-full lg:col-span-2 xl:col-span-1">
-          <ProductDrugStoresSection
-            drugStores={drugStores || []}
-            drugStoresAvailable={drugStoresAvailable || []}
-          />
-        </div>
+        <ProductMain
+          offers={offers}
+          product={product}
+          drugStoresAvailable={drugStoresAvailable}
+          drugStores={drugStores}
+        />
       </div>
 
       {product.detail?.description && (

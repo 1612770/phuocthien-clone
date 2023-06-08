@@ -14,7 +14,7 @@ function EventList({ group }: { group: GroupInfoModel }) {
 
       {!!group.eventInfos?.length && (
         <div className="flex justify-center">
-          <LinkWrapper href={`/tin-tuc/${group.seoUrl}`}>
+          <LinkWrapper href={`/${group.seoUrl}`}>
             <Button type="primary" className="mt-4 inline-block" ghost>
               Xem tất cả các bài viết
             </Button>

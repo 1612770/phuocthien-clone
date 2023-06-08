@@ -4,9 +4,9 @@ import React from 'react';
 
 function ProductMetaData({ product }: { product: Product }) {
   return (
-    <div className="mb-2 mt-8">
+    <div>
       {!!product?.productionBrand?.name && (
-        <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+        <div className="my-2 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-medium ">
             Thương hiệu
           </Typography.Text>
@@ -16,7 +16,7 @@ function ProductMetaData({ product }: { product: Product }) {
         </div>
       )}
       {!!product?.registrationNumber && (
-        <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+        <div className="my-2 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-medium ">
             Số đăng ký
           </Typography.Text>
@@ -26,7 +26,7 @@ function ProductMetaData({ product }: { product: Product }) {
         </div>
       )}
       {!!product?.packagingProcess && (
-        <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+        <div className="my-2 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-medium ">
             Quy cách đóng gói
           </Typography.Text>
@@ -40,7 +40,7 @@ function ProductMetaData({ product }: { product: Product }) {
       )}
 
       {!!product?.detail?.drugUsers && (
-        <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+        <div className="my-2 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-medium ">
             Đối tượng sử dụng
           </Typography.Text>
@@ -50,7 +50,7 @@ function ProductMetaData({ product }: { product: Product }) {
         </div>
       )}
       {!!product?.ingredient && (
-        <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+        <div className="my-2 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" whitespace-nowrap font-medium">
             Hoạt chất
           </Typography.Text>
@@ -61,7 +61,7 @@ function ProductMetaData({ product }: { product: Product }) {
       )}
 
       {!!product?.drugContent && (
-        <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+        <div className="my-2 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-medium ">Hàm lượng</Typography.Text>
           <Typography.Text className=" ml-0 md:ml-2">
             {product?.drugContent}
@@ -69,7 +69,7 @@ function ProductMetaData({ product }: { product: Product }) {
         </div>
       )}
 
-      <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+      <div className="my-2 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
         <Typography.Text className=" font-medium ">
           Là thuốc kê đơn
         </Typography.Text>
@@ -79,7 +79,7 @@ function ProductMetaData({ product }: { product: Product }) {
       </div>
 
       {product?.isSpecial && (
-        <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+        <div className="my-2 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-medium ">
             Là thuốc đặc biệt
           </Typography.Text>
@@ -90,7 +90,7 @@ function ProductMetaData({ product }: { product: Product }) {
       )}
 
       {product?.isMental && (
-        <div className="my-2 grid grid-cols-1 md:grid-cols-[120px,_1fr]">
+        <div className="my-2 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-medium ">
             Là thuốc tâm thần
           </Typography.Text>

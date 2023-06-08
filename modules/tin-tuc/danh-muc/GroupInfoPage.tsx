@@ -1,15 +1,13 @@
-import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Button, Empty, Typography } from 'antd';
-import { NextPageWithLayout } from 'pages/page';
-import { GetServerSidePropsContext } from 'next';
-import React, { useState } from 'react';
 import LinkWrapper from '@components/templates/LinkWrapper';
-import { GeneralClient } from '@libs/client/General';
-import GroupInfoModel from '@configs/models/GroupInfoModel';
-import EventItem from '@modules/event/EventItem';
-import EventModel from '@configs/models/event.model';
-import { useAppMessage } from '@providers/AppMessageProvider';
 import EVENTS_LOAD_PER_TIME from '@configs/constants/events-load-per-time';
+import GroupInfoModel from '@configs/models/GroupInfoModel';
+import EventModel from '@configs/models/event.model';
+import { GeneralClient } from '@libs/client/General';
+import EventItem from '@modules/event/EventItem';
+import { useAppMessage } from '@providers/AppMessageProvider';
+import { Breadcrumb, Typography, Button, Empty } from 'antd';
+import { NextPageWithLayout } from 'pages/page';
+import { useState } from 'react';
 
 const GroupInfoPage: NextPageWithLayout<{
   groupInfo?: GroupInfoModel;
@@ -110,40 +108,4 @@ const GroupInfoPage: NextPageWithLayout<{
   );
 };
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  const serverSideProps: {
-    props: {
-      groupInfo?: GroupInfoModel;
-    };
-  } = {
-    props: {},
-  };
-
-  const currentGroupInfoSeoUrl = context.params?.groupInfoSlugKey as string;
-
-  const generalClient = new GeneralClient(context, {});
-
-  try {
-    const groupInfos = await generalClient.getGroupInfos({
-      page: +(context.query.trang || 1),
-      pageSize: EVENTS_LOAD_PER_TIME,
-      groupSeoUrl: currentGroupInfoSeoUrl,
-    });
-
-    if (groupInfos.data?.[0]) {
-      serverSideProps.props.groupInfo = groupInfos.data?.[0];
-    }
-  } catch (error) {
-    console.error(error);
-  }
-
-  return serverSideProps;
-};
-
 export default GroupInfoPage;
-
-GroupInfoPage.getLayout = (page) => {
-  return <PrimaryLayout>{page}</PrimaryLayout>;
-};
