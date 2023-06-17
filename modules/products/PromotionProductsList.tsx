@@ -74,7 +74,9 @@ function PromotionProductsList({
         {promotion.imgUrl && (
           <LinkWrapper
             className="relative mt-4 mb-2 block h-[100px] w-full lg:h-[200px]"
-            href={`/chuong-trinh-khuyen-mai/${promotion.campaignKey}?anchor=${promotion.key}`}
+            href={`/khuyen-mai/${
+              promotion.slug || promotion.campaignKey
+            }?anchor=${promotion.key}`}
           >
             <ImageWithFallback
               src={promotion.imgUrl}
@@ -141,7 +143,9 @@ function PromotionProductsList({
           )}
           {scrollable && (
             <LinkWrapper
-              href={`/chuong-trinh-khuyen-mai/${promotion.campaignKey}?anchor=${promotion.key}`}
+              href={`/khuyen-mai/${
+                promotion.slug || promotion.campaignKey
+              }?anchor=${promotion.key}`}
             >
               <Button
                 type="primary"

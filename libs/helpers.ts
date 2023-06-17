@@ -1,4 +1,5 @@
 import { getCookie as _getCookie, setCookie as _setCookie } from 'cookies-next';
+import parse from 'html-react-parser';
 
 export enum COOKIE_KEYS {
   TOKEN = 'token',
@@ -78,4 +79,8 @@ export function getAvatarCharacters(name?: string) {
   returnName = `${nameArray[0][0]}${nameArray[nameArray.length - 1][0]}`;
 
   return returnName.toUpperCase();
+}
+
+export function convertFromStringToHTML(text: string) {
+  return parse(text);
 }

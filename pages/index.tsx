@@ -58,7 +58,7 @@ const Home: NextPageWithLayout<{
     campaigns?.map((campaign) => {
       let link;
       if (campaign.promotions.length > 0) {
-        link = '/chuong-trinh-khuyen-mai/' + campaign.key;
+        link = '/khuyen-mai/' + (campaign.slug || campaign.key);
       }
 
       return {

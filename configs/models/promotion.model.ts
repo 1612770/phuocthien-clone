@@ -40,6 +40,8 @@ export interface Campaign {
   isActive: boolean;
   key: string;
   name: string;
+  slug?: string;
+  metaSeo?: string;
   promotions: CampaignPromotion[];
   startDate: string;
   updatedAt: string;
@@ -53,6 +55,8 @@ export interface CampaignPromotion {
   imgUrl: string | null;
   key: string;
   name: string;
+  slug?: string;
+  metaSeo?: string;
   promoPercent: CampaignpromotionPercent[];
   startDate: string;
   status: string;
