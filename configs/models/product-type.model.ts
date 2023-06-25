@@ -9,6 +9,8 @@ type ProductType = Partial<{
   visible: boolean;
   seoUrl: string;
   productGroups: ProductGroupModel[];
+  titleSeo: string;
+  metaSeo: string;
 }>;
 
 export default ProductType;

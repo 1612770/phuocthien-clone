@@ -16,6 +16,8 @@ type ProductDetailModel = Partial<{
   packedType: string;
   useOfDrugs: string;
   seoUrl: string;
+  titleSeo: string;
+  metaSeo: string;
 }>;
 
 export default ProductDetailModel;

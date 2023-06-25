@@ -18,6 +18,7 @@ import EventModel from '@configs/models/event.model';
 import GroupInfoModel from '@configs/models/GroupInfoModel';
 import getEventData from '@modules/san-pham/getEventData';
 import EventPage from '@modules/tin-tuc/danh-muc/chi-tiet/EventPage';
+import PagePropsWithSeo from '@configs/types/page-props-with-seo';
 
 const lv2ParamPage: NextPageWithLayout<{
   productGroup: {
@@ -83,50 +84,65 @@ lv2ParamPage.getLayout = (page) => {
   return <PrimaryLayout>{page}</PrimaryLayout>;
 };
 
-export const getServerSideProps: GetServerSideProps = async (
+interface PageProps extends PagePropsWithSeo {
+  productGroup: {
+    productType?: ProductType;
+    productGroup?: ProductGroupModel;
+    productBrands?: BrandModel[];
+    products?: WithPagination<Product[]>;
+  };
+
+  product: {
+    product?: Product;
+    otherProducts?: Product[];
+    drugStoresAvailable?: InventoryAtDrugStore[];
+    drugStores?: DrugStore[];
+    offers?: OfferModel[];
+    reviews?: Review[];
+    faqs?: FAQ[];
+  };
+
+  event: {
+    event?: EventModel;
+    otherEvents?: EventModel[];
+    groupInfo?: GroupInfoModel;
+  };
+}
+
+export const getServerSideProps: GetServerSideProps<PageProps> = async (
   context: GetServerSidePropsContext
 ) => {
   const serverSideProps: {
-    props: {
-      productGroup: {
-        productType?: ProductType;
-        productGroup?: ProductGroupModel;
-        productBrands?: BrandModel[];
-        products?: WithPagination<Product[]>;
-      };
-
-      product: {
-        product?: Product;
-        otherProducts?: Product[];
-        drugStoresAvailable?: InventoryAtDrugStore[];
-        drugStores?: DrugStore[];
-        offers?: OfferModel[];
-        reviews?: Review[];
-        faqs?: FAQ[];
-      };
-
-      event: {
-        event?: EventModel;
-        otherEvents?: EventModel[];
-        groupInfo?: GroupInfoModel;
-      };
-    };
+    props: PageProps;
   } = {
     props: {
       productGroup: {},
       product: {},
       event: {},
+      SEOData: {},
     },
   };
 
   try {
     serverSideProps.props.product = await getProductData(context);
+    serverSideProps.props.SEOData.titleSeo =
+      serverSideProps.props.product.product?.detail?.titleSeo;
+    serverSideProps.props.SEOData.metaSeo =
+      serverSideProps.props.product.product?.detail?.metaSeo;
   } catch (error) {
     try {
       serverSideProps.props.event = await getEventData(context);
+      serverSideProps.props.SEOData.titleSeo =
+        serverSideProps.props.event.event?.titleSeo;
+      serverSideProps.props.SEOData.metaSeo =
+        serverSideProps.props.event.event?.metaSeo;
     } catch (error) {
       try {
         serverSideProps.props.productGroup = await getProductGroupData(context);
+        serverSideProps.props.SEOData.titleSeo =
+          serverSideProps.props.productGroup.productGroup?.titleSeo;
+        serverSideProps.props.SEOData.metaSeo =
+          serverSideProps.props.productGroup.productGroup?.metaSeo;
       } catch (error) {
         // redirect to /
         return {
