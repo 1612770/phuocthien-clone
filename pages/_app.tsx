@@ -22,6 +22,9 @@ import FocusContentModel from '@configs/models/focus-content.model';
 import AppDataProvider from '@providers/AppDataProvider';
 import { ZaloChat } from '@modules/zaloChat';
 import MainInfoModel from '@configs/models/main-info.model';
+import { convertFromStringToHTML } from '@libs/helpers';
+
+const DEFAUT_PAGE_TITLE = 'Nhà thuốc Phước Thiện';
 
 interface AppPropsWithLayout<T> extends AppProps<T> {
   Component: NextPageWithLayout<T>;
@@ -34,13 +37,23 @@ function MyApp({
   fullMenu?: MenuModel[];
   focusContent?: FocusContentModel[];
   mainInfoFooter?: MainInfoModel[];
+  SEOData?: {
+    titleSeo?: string;
+    metaSeo?: string;
+  };
 }>) {
   const getLayout = Component.getLayout || ((page) => page);
+
+  const titleSeo = pageProps?.SEOData?.titleSeo || DEFAUT_PAGE_TITLE;
+  const metaSeo = pageProps?.SEOData?.metaSeo
+    ? convertFromStringToHTML(pageProps.SEOData.metaSeo)
+    : null;
 
   return (
     <>
       <Head>
-        <title>Nhà thuốc Phước Thiện</title>
+        <title>{titleSeo}</title>
+        {metaSeo}
         <meta name="robots" content="noindex,nofollow" />
       </Head>
       <NProgress>
