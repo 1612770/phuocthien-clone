@@ -12,6 +12,8 @@ type GroupInfoModel = Partial<{
   visible: boolean;
   eventInfos: EventModel[];
   seoUrl: string;
+  titleSeo: string;
+  metaSeo: string;
 }>;
 
 export default GroupInfoModel;

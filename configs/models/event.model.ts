@@ -14,6 +14,8 @@ type EventModel = Partial<{
   isHot: boolean;
   isTop: boolean;
   seoUrl: string;
+  titleSeo: string;
+  metaSeo: string;
 }>;
 
 export default EventModel;

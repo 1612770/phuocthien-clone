@@ -6,6 +6,8 @@ type ProductGroupModel = Partial<{
   image: string;
   visible: boolean;
   seoUrl: string;
+  titleSeo: string;
+  metaSeo: string;
 }>;
 
 export default ProductGroupModel;
