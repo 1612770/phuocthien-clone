@@ -1,12 +1,13 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { NextPageWithLayout } from 'pages/page';
-import { GetServerSidePropsContext } from 'next';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { GeneralClient } from '@libs/client/General';
 import MenuModel from '@configs/models/menu.model';
 import EVENTS_LOAD_PER_TIME from '@configs/constants/events-load-per-time';
 import GroupInfoModel from '@configs/models/GroupInfoModel';
 import GroupInfoPage from '@modules/tin-tuc/danh-muc/GroupInfoPage';
 import ProductTypePage from '@modules/san-pham/ProductTypePage';
+import PagePropsWithSeo from '@configs/types/page-props-with-seo';
 
 const ProductTypesPage: NextPageWithLayout<{
   productType: { productType?: MenuModel };
@@ -31,22 +32,25 @@ ProductTypesPage.getLayout = (page) => {
   return <PrimaryLayout>{page}</PrimaryLayout>;
 };
 
-export const getServerSideProps = async (
+interface PageProps extends PagePropsWithSeo {
+  groupInfo: {
+    groupInfo?: GroupInfoModel;
+  };
+  productType: {
+    productType?: MenuModel;
+  };
+}
+
+export const getServerSideProps: GetServerSideProps<PageProps> = async (
   context: GetServerSidePropsContext
 ) => {
   const serverSideProps: {
-    props: {
-      groupInfo: {
-        groupInfo?: GroupInfoModel;
-      };
-      productType: {
-        productType?: MenuModel;
-      };
-    };
+    props: PageProps;
   } = {
     props: {
       groupInfo: {},
       productType: {},
+      SEOData: {},
     },
   };
 
@@ -61,8 +65,12 @@ export const getServerSideProps = async (
       groupSeoUrl: lv1ParamSeoUrl,
     });
 
-    if (groupInfos.data?.[0]) {
-      serverSideProps.props.groupInfo.groupInfo = groupInfos.data?.[0];
+    const groupData = groupInfos.data?.[0];
+
+    if (groupData) {
+      serverSideProps.props.groupInfo.groupInfo = groupData;
+      serverSideProps.props.SEOData.titleSeo = groupData.titleSeo;
+      serverSideProps.props.SEOData.metaSeo = groupData.metaSeo;
     } else {
       throw new Error('Không tìm thấy groupInfo');
     }
@@ -74,6 +82,8 @@ export const getServerSideProps = async (
 
       if (productType.data) {
         serverSideProps.props.productType.productType = productType.data;
+        serverSideProps.props.SEOData.titleSeo = productType.data.titleSeo;
+        serverSideProps.props.SEOData.metaSeo = productType.data.metaSeo;
       } else {
         return {
           redirect: {
