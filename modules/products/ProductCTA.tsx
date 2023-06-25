@@ -1,7 +1,7 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import Product from '@configs/models/product.model';
 import { useCart } from '@providers/CartProvider';
-import { Grid, Typography, Drawer } from 'antd';
+import { Grid, Typography } from 'antd';
 import React, { ReactNode } from 'react';
 import AddToCartButton from './AddToCartButton';
 import { PromotionPercent } from '@configs/models/promotion.model';
@@ -75,15 +75,16 @@ function ProductCTA({
       </div>
 
       {!lg && (
-        <Drawer
-          placement={'bottom'}
-          open={true}
-          mask={false}
-          height={'auto'}
-          headerStyle={{
-            display: 'none',
-          }}
-          bodyStyle={{
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 100,
+            height: 'auto',
+            background: '#fff',
+            boxShadow: '0 -2px 8px rgb(0 0 0 / 15%)',
             padding: '16px',
           }}
         >
@@ -108,7 +109,7 @@ function ProductCTA({
               </div>
             )}
           </div>
-        </Drawer>
+        </div>
       )}
     </>
   );
