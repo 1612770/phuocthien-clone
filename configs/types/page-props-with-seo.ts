@@ -1,3 +1,3 @@
 export default interface PagePropsWithSeo {
-  SEOData: { titleSeo?: string; metaSeo?: string };
+  SEOData: { titleSeo?: string; metaSeo?: string; keywordSeo?: string };
 }

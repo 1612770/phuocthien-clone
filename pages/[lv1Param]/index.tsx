@@ -71,6 +71,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
       serverSideProps.props.groupInfo.groupInfo = groupData;
       serverSideProps.props.SEOData.titleSeo = groupData.titleSeo;
       serverSideProps.props.SEOData.metaSeo = groupData.metaSeo;
+      serverSideProps.props.SEOData.keywordSeo = groupData.keywordSeo;
     } else {
       throw new Error('Không tìm thấy groupInfo');
     }
@@ -84,6 +85,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
         serverSideProps.props.productType.productType = productType.data;
         serverSideProps.props.SEOData.titleSeo = productType.data.titleSeo;
         serverSideProps.props.SEOData.metaSeo = productType.data.metaSeo;
+        serverSideProps.props.SEOData.keywordSeo = productType.data.keywordSeo;
       } else {
         return {
           redirect: {

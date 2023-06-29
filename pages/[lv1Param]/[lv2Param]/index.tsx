@@ -129,6 +129,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
       serverSideProps.props.product.product?.detail?.titleSeo;
     serverSideProps.props.SEOData.metaSeo =
       serverSideProps.props.product.product?.detail?.metaSeo;
+    serverSideProps.props.SEOData.keywordSeo =
+      serverSideProps.props.product.product?.detail?.keywordSeo;
   } catch (error) {
     try {
       serverSideProps.props.event = await getEventData(context);
@@ -136,6 +138,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
         serverSideProps.props.event.event?.titleSeo;
       serverSideProps.props.SEOData.metaSeo =
         serverSideProps.props.event.event?.metaSeo;
+      serverSideProps.props.SEOData.keywordSeo =
+        serverSideProps.props.event.event?.keywordSeo;
     } catch (error) {
       try {
         serverSideProps.props.productGroup = await getProductGroupData(context);
@@ -143,6 +147,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
           serverSideProps.props.productGroup.productGroup?.titleSeo;
         serverSideProps.props.SEOData.metaSeo =
           serverSideProps.props.productGroup.productGroup?.metaSeo;
+        serverSideProps.props.SEOData.keywordSeo =
+          serverSideProps.props.productGroup.productGroup?.keywordSeo;
       } catch (error) {
         // redirect to /
         return {

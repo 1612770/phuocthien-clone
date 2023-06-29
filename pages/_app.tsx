@@ -22,7 +22,6 @@ import FocusContentModel from '@configs/models/focus-content.model';
 import AppDataProvider from '@providers/AppDataProvider';
 import { ZaloChat } from '@modules/zaloChat';
 import MainInfoModel from '@configs/models/main-info.model';
-import { convertFromStringToHTML } from '@libs/helpers';
 
 const DEFAUT_PAGE_TITLE = 'Nhà thuốc Phước Thiện';
 
@@ -40,20 +39,25 @@ function MyApp({
   SEOData?: {
     titleSeo?: string;
     metaSeo?: string;
+    keywordSeo?: string;
   };
 }>) {
   const getLayout = Component.getLayout || ((page) => page);
 
   const titleSeo = pageProps?.SEOData?.titleSeo || DEFAUT_PAGE_TITLE;
-  const metaSeo = pageProps?.SEOData?.metaSeo
-    ? convertFromStringToHTML(pageProps.SEOData.metaSeo)
-    : null;
+  const metaSeo = pageProps?.SEOData?.metaSeo ? (
+    <meta name="description" content={pageProps?.SEOData?.metaSeo} />
+  ) : null;
+  const keywordSeo = pageProps?.SEOData?.keywordSeo ? (
+    <meta name="keywords" content={pageProps?.SEOData?.keywordSeo} />
+  ) : null;
 
   return (
     <>
       <Head>
         <title>{titleSeo}</title>
         {metaSeo}
+        {keywordSeo}
         <meta name="robots" content="noindex,nofollow" />
       </Head>
       <NProgress>
