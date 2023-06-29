@@ -28,7 +28,7 @@ function ProductSearchInput() {
   const [searchedProducts, setSearchedProducts] =
     useState<WithPagination<Product[]>>();
 
-  const debouncedCurrentFocusGroup = useDebounce(searchValue, 500);
+  const debouncedCurrentFocusGroup = useDebounce(searchValue, 300);
   const ignoreFirstCall = useRef(false);
   const searchInput = useRef<InputRef | null>(null);
   const { toastError } = useAppMessage();
@@ -134,7 +134,7 @@ function ProductSearchInput() {
                 ? 'rounded-bl-none rounded-br-none'
                 : 'rounded-bl-md rounded-br-md'
             }`}
-            readOnly={searching}
+            // readOnly={searching}
             suffix={
               <Spin spinning={searching}>
                 <Search size={20} />
