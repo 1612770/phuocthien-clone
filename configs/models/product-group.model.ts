@@ -8,6 +8,7 @@ type ProductGroupModel = Partial<{
   seoUrl: string;
   titleSeo: string;
   metaSeo: string;
+  keywordSeo: string;
 }>;
 
 export default ProductGroupModel;

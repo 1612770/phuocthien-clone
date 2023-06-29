@@ -11,6 +11,7 @@ type ProductType = Partial<{
   productGroups: ProductGroupModel[];
   titleSeo: string;
   metaSeo: string;
+  keywordSeo: string;
 }>;
 
 export default ProductType;

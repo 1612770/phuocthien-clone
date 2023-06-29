@@ -18,6 +18,7 @@ type ProductDetailModel = Partial<{
   seoUrl: string;
   titleSeo: string;
   metaSeo: string;
+  keywordSeo: string;
 }>;
 
 export default ProductDetailModel;
