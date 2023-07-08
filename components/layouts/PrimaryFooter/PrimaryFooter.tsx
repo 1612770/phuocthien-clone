@@ -190,7 +190,7 @@ function PrimaryFooter() {
           </div>
           <div className="mt-4 flex items-center justify-center">
             <a
-              href="http://online.gov.vn/(X(1)S(m3qt0ctfachyjjpv1g2sbk23))/Home/WebDetails/53823?AspxAutoDetectCookieSupport=1"
+              href="http://online.gov.vn/Home/WebDetails/106523"
               target="_blank"
               rel="noreferrer"
             >
