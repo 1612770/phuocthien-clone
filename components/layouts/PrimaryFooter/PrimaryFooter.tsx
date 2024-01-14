@@ -39,7 +39,7 @@ function PrimaryFooter() {
 
       <FocusContentSection focusContent={focusContent || []} />
 
-      <footer className="bg-primary px-4">
+      <footer className="bg-white px-4">
         <div className="py-8 lg:container">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div>
@@ -51,22 +51,6 @@ function PrimaryFooter() {
                     className="mr-2 h-8"
                     style={{ minHeight: 60 }}
                   />
-
-                  <Space
-                    direction="vertical"
-                    size={0}
-                    className="mr-4 w-[92px]"
-                  >
-                    <Typography.Text className="m-0 -mb-2 inline-block text-base text-white">
-                      Nhà thuốc
-                    </Typography.Text>
-                    <Typography.Text
-                      strong
-                      className="whitespace-nowrap uppercase text-white"
-                    >
-                      Phước Thiện
-                    </Typography.Text>
-                  </Space>
                 </a>
               </Link>
               <Space className="mt-2">
@@ -96,7 +80,7 @@ function PrimaryFooter() {
                 </Link>
               </Space>
               <div className="mt-4">
-                <Typography.Text className=" font-semibold uppercase text-white">
+                <Typography.Text className=" font-semibold uppercase text-primary">
                   Tải ứng dụng
                 </Typography.Text>
                 <div className="mt-2 flex gap-1 lg:gap-2">
@@ -131,15 +115,16 @@ function PrimaryFooter() {
             {mainInfoFooter?.map((info) => {
               return info.groupInfo?.map((groupInfo, index) => (
                 <div className="w-full" key={index}>
-                  <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
+                  <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-primary">
                     {groupInfo.name}
                   </Typography.Text>
                   {groupInfo.eventInfos?.map((event) => (
                     <LinkWrapper
                       key={event.name}
                       href={`/${groupInfo.seoUrl}/${event.seoUrl}`}
+                      className="hover:text-primary"
                     >
-                      <Space className="my-1 w-full text-white">
+                      <Space className="my-1 w-full">
                         <AppDangerouslySetInnerHTML
                           dangerouslySetInnerHTML={{
                             __html: event.name || '',
@@ -153,42 +138,42 @@ function PrimaryFooter() {
             })}
 
             <div className="w-full">
-              <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-white">
+              <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-primary">
                 Thông tin liên hệ
               </Typography.Text>
               <Space className="my-0.5 w-full">
-                <GlobalOutlined className="text-white" size={16} />
-                <Typography.Text className="text-white">
+                <GlobalOutlined className="text-primary" size={16} />
+                <Typography.Text className="">
                   Tầng 2, 170 Ông Ích Khiêm, Phường Tam Thuận, Quận Thanh Khê,
                   Thành Phố Đà Nẵng, Việt Nam
                 </Typography.Text>
               </Space>
               <Space className="my-0.5 w-full">
-                <PhoneOutlined className="text-white" size={16} />
-                <Typography.Text className="text-white">
-                  1800599964
-                </Typography.Text>
+                <PhoneOutlined className="text-primary" size={16} />
+                <Typography.Text className="">1800 599 964</Typography.Text>
               </Space>
               <Space className="my-0.5 w-full">
-                <MailOutlined className="text-white" size={16} />
-                <Typography.Text className="text-white">
+                <MailOutlined className="text-primary" size={16} />
+                <Typography.Text className="">
                   lienhe@nhathuocphuocthien.com
                 </Typography.Text>
               </Space>
             </div>
           </div>
 
-          <Divider className="bg-white" />
+          <Divider className="bg-primary" />
           <div>
-            <Typography className="text-center text-xs text-white">
+            <Typography className="text-center text-xs text-primary">
               © 2023 CÔNG TY TNHH PHƯỚC THIỆN 3T. Số ĐKKD: 0402173059 ngày cấp
               25/11/2022 Địa chỉ: Tầng 2, 170 Ông Ích Khiêm, Phường Tam Thuận,
-              Quận Thanh Khê, Thành Phố Đà Nẵng, Việt Nam. Điện thoại: (0236)
-              3745.488 - Email: lienhe@nhathuocphuocthien.com. Người quản lý nội
-              dung: Đoàn Phước Lân
+              Quận Thanh Khê, Thành Phố Đà Nẵng, Việt Nam.
+              <br />
+              <br /> Điện thoại: (0236) 3745.488 - Email:
+              lienhe@nhathuocphuocthien.com. Người quản lý nội dung: Đoàn Phước
+              Lân
             </Typography>
           </div>
-          <div className="mt-4 flex items-center justify-center">
+          <div className="mt-4 flex items-center justify-center ">
             <a
               href="http://online.gov.vn/Home/WebDetails/106523"
               target="_blank"

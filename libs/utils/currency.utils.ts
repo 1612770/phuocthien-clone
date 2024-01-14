@@ -1,6 +1,6 @@
 const CurrencyUtils = {
   format: (price?: number): string => {
-    return (price || 0)?.toLocaleString('it-IT', {
+    return (price || 0)?.toLocaleString('vi-VN', {
       style: 'currency',
       currency: 'VND',
     });
@@ -10,7 +10,7 @@ const CurrencyUtils = {
     if (!price) price = 0;
     if (!discountVal) discountVal = 0;
 
-    return (price * (1 - discountVal)).toLocaleString('it-IT', {
+    return (price * (1 - discountVal)).toLocaleString('vi-VN', {
       style: 'currency',
       currency: 'VND',
     });

@@ -11,6 +11,8 @@ import { useState } from 'react';
 import { Filter, X } from 'react-feather';
 import ProductType from '@configs/models/product-type.model';
 import FilterOptions from './FilterOptions';
+import { ListProductTypeGroup } from './ListProductTypeGroup';
+import ProductTypeGroupModel from '@configs/models/product-type-group.model';
 
 const ProductGroupPage = ({
   productType,
@@ -29,7 +31,7 @@ const ProductGroupPage = ({
   return (
     <div className="px-4 pb-4 lg:container lg:px-0">
       <Breadcrumbs
-        className="mt-4 mb-2"
+        className="mb-4 pt-4 text-primary"
         breadcrumbs={[
           {
             title: 'Trang chủ',
@@ -44,9 +46,28 @@ const ProductGroupPage = ({
           },
         ]}
       ></Breadcrumbs>
-
+      <div>
+        <Typography.Title
+          level={4}
+          className="mb-0 whitespace-nowrap lg:mt-2 lg:mb-2"
+        >
+          {productGroup?.name}
+        </Typography.Title>
+        <ListProductTypeGroup
+          productType={productType as ProductType}
+          productTypeGroupData={
+            (productGroup?.productTypeGroup || []) as ProductTypeGroupModel[]
+          }
+        />
+      </div>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[300px_minmax(600px,_1fr)]">
-        <div className="sticky top-0 hidden h-[100vh] grid-flow-row md:h-auto lg:block">
+        <div className="sticky top-0 hidden h-[100vh] grid-flow-row rounded-xl bg-white px-4 md:h-auto lg:block">
+          <Typography.Title
+            level={4}
+            className="mb-0 whitespace-nowrap lg:mt-4 lg:mb-2"
+          >
+            Bộ lọc
+          </Typography.Title>
           <FilterOptions productBrands={productBrands || []} />
         </div>
         <div>
@@ -54,16 +75,16 @@ const ProductGroupPage = ({
             <div className="flex flex-col justify-between lg:flex-row">
               <Typography.Title
                 level={4}
-                className="mb-0 whitespace-nowrap uppercase lg:mt-4 lg:mb-4"
+                className="mb-0 whitespace-nowrap lg:mt-4 lg:mb-4"
               >
-                {productGroup?.name}
+                Danh sách sản phẩm
               </Typography.Title>
 
               <Space wrap size={4} className="my-2">
                 <Tag.CheckableTag
                   onClick={() => setOpenFilterDrawer(true)}
                   checked={false}
-                  className="mr-0 inline-block rounded-full border border-solid border-gray-200 px-4 py-1 lg:hidden"
+                  className="mr-0 inline-block rounded-full border border-solid border-gray-200 bg-white px-4 py-1 lg:hidden"
                 >
                   <Filter size={12} className="mr-1 align-middle" />
                   <Typography.Text className="text-xs lg:text-sm">
@@ -88,12 +109,13 @@ const ProductGroupPage = ({
                 {[
                   {
                     label: 'Giá thấp',
+                    value: 'ASC',
                     onClick: () => {
                       router.push({
                         query: {
                           ...router.query,
                           'sap-xep-theo': 'GIA_BAN_LE',
-                          'sap-xep': 'ASC',
+                          sort: 'ASC',
                           trang: 1,
                         },
                       });
@@ -101,12 +123,13 @@ const ProductGroupPage = ({
                   },
                   {
                     label: 'Giá cao',
+                    value: 'DESC',
                     onClick: () => {
                       router.push({
                         query: {
                           ...router.query,
                           'sap-xep-theo': 'GIA_BAN_LE',
-                          'sap-xep': 'DESC',
+                          sort: 'DESC',
                           trang: 1,
                         },
                       });
@@ -116,10 +139,20 @@ const ProductGroupPage = ({
                   <Tag.CheckableTag
                     key={tag.label}
                     onClick={tag.onClick}
-                    checked={false}
-                    className="mr-0 rounded-full border border-solid border-gray-200 px-4 py-1"
+                    checked={(router.query?.sort as string) == tag.value}
+                    className={`mr-0 rounded-full border border-solid border-gray-200 bg-white px-4 py-1 ${
+                      (router.query?.sort as string) == tag.value
+                        ? 'bg-primary '
+                        : ''
+                    }`}
                   >
-                    <Typography.Text className="text-xs lg:text-sm">
+                    <Typography.Text
+                      className={`"text-xs lg:text-sm" ${
+                        (router.query?.sort as string) == tag.value
+                          ? 'text-white '
+                          : ''
+                      }`}
+                    >
                       {tag.label}
                     </Typography.Text>
                   </Tag.CheckableTag>

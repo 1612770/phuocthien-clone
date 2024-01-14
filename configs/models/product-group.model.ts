@@ -1,3 +1,5 @@
+import ProductTypeGroupModel from './product-type-group.model';
+
 type ProductGroupModel = Partial<{
   key: string;
   index: number;
@@ -9,6 +11,7 @@ type ProductGroupModel = Partial<{
   titleSeo: string;
   metaSeo: string;
   keywordSeo: string;
+  productTypeGroup: ProductTypeGroupModel[];
 }>;
 
 export default ProductGroupModel;

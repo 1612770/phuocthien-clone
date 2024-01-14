@@ -18,33 +18,34 @@ function DrugstoreItem({
     <Link href={`/nha-thuoc/${drugstore.key}`}>
       <a>
         {variant === 'list-item' && (
-          <List.Item className="py-3 px-4 transition duration-200 ease-in-out hover:bg-gray-100">
+          <List.Item className="py-3 px-3 transition duration-200 ease-in-out hover:bg-gray-100">
             <div className="flex items-start">
               <div className="min-w-[40px]">
                 <ImageWithFallback
                   src={drugstore.image || ''}
-                  width={40}
-                  height={40}
+                  width={72}
+                  height={72}
                   layout="fixed"
                   objectFit="contain"
                   getMockImage={() => ImageUtils.getRandomMockDrugstoreUrl()}
                 />
               </div>
               <div className="ml-2">
-                <Typography className=" text-xs font-semibold">
-                  {drugstore.name}
-                </Typography>
                 <Typography className="text-sm font-medium text-gray-600">
                   {drugstore.address}
                 </Typography>
 
-                {!!quantity && (
-                  <Typography className="text-sm text-primary">
-                    Có sẵn <b className="text-inherit">{quantity}</b> sản phẩm
+                {quantity && quantity > 0 ? (
+                  <Typography className="text-sm font-bold text-primary">
+                    Còn hàng
+                  </Typography>
+                ) : (
+                  <Typography className="text-sm font-bold text-red-600">
+                    Hết hàng
                   </Typography>
                 )}
 
-                <Typography className="text-xs text-gray-600">
+                <Typography className="text-sm text-gray-600">
                   {drugstore.tel}
                 </Typography>
               </div>

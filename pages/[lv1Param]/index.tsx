@@ -8,9 +8,18 @@ import GroupInfoModel from '@configs/models/GroupInfoModel';
 import GroupInfoPage from '@modules/tin-tuc/danh-muc/GroupInfoPage';
 import ProductTypePage from '@modules/san-pham/ProductTypePage';
 import PagePropsWithSeo from '@configs/types/page-props-with-seo';
+import BrandModel from '@configs/models/brand.model';
+import Product from '@configs/models/product.model';
+import WithPagination from '@configs/types/utils/with-pagination';
+import { ProductClient } from '@libs/client/Product';
+import PRODUCTS_LOAD_PER_TIME from '@configs/constants/products-load-per-time';
 
 const ProductTypesPage: NextPageWithLayout<{
-  productType: { productType?: MenuModel };
+  productType: {
+    productType?: MenuModel;
+    productBrands?: BrandModel[];
+    products?: WithPagination<Product[]>;
+  };
   groupInfo: {
     groupInfo?: GroupInfoModel;
   };
@@ -22,6 +31,8 @@ const ProductTypesPage: NextPageWithLayout<{
   return (
     <ProductTypePage
       productTypeSeoUrlToGetFromFullMenu={productType.productType?.seoUrl}
+      products={productType?.products}
+      productBrands={productType?.productBrands}
     />
   );
 };
@@ -38,6 +49,8 @@ interface PageProps extends PagePropsWithSeo {
   };
   productType: {
     productType?: MenuModel;
+    productBrands?: BrandModel[];
+    products?: WithPagination<Product[]>;
   };
 }
 
@@ -57,45 +70,66 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   const lv1ParamSeoUrl = context.params?.lv1Param as string;
 
   const generalClient = new GeneralClient(context, {});
+  const productClient = new ProductClient(null, {});
 
   try {
-    const groupInfos = await generalClient.getGroupInfos({
-      page: +(context.query.trang || 1),
-      pageSize: EVENTS_LOAD_PER_TIME,
-      groupSeoUrl: lv1ParamSeoUrl,
-    });
+    const [productType, productBrands] = await Promise.all([
+      generalClient.getProductTypeDetail({
+        seoUrl: lv1ParamSeoUrl,
+      }),
+      generalClient.getProductionBrands(),
+    ]);
 
-    const groupData = groupInfos.data?.[0];
+    if (productType.data) {
+      serverSideProps.props.productType.productType = productType.data;
+      serverSideProps.props.productType.productBrands = productBrands.data;
+      serverSideProps.props.SEOData.titleSeo = productType.data.titleSeo;
+      serverSideProps.props.SEOData.metaSeo = productType.data.metaSeo;
+      serverSideProps.props.SEOData.keywordSeo = productType.data.keywordSeo;
 
-    if (groupData) {
-      serverSideProps.props.groupInfo.groupInfo = groupData;
-      serverSideProps.props.SEOData.titleSeo = groupData.titleSeo;
-      serverSideProps.props.SEOData.metaSeo = groupData.metaSeo;
-      serverSideProps.props.SEOData.keywordSeo = groupData.keywordSeo;
+      const products = await productClient.getProducts({
+        page: context.query.trang ? Number(context.query.trang) : 1,
+        pageSize: PRODUCTS_LOAD_PER_TIME,
+        isPrescripted: false,
+        productTypeKey: productType.data?.key,
+        productionBrandKeys: context.query.brands
+          ? (context.query.brands as string).split(',')
+          : undefined,
+        sortBy: (context.query['sap-xep-theo'] as 'GIA_BAN_LE') || undefined,
+        sortOrder: (context.query['sort'] as 'ASC' | 'DESC') || undefined,
+      });
+
+      if (products.data) {
+        serverSideProps.props.productType.products = products.data;
+      }
     } else {
-      throw new Error('Không tìm thấy groupInfo');
+      return {
+        redirect: {
+          destination: '/',
+          permanent: false,
+        },
+      };
     }
   } catch (error) {
     try {
-      const productType = await generalClient.getProductTypeDetail({
-        seoUrl: lv1ParamSeoUrl,
+      const groupInfos = await generalClient.getGroupInfos({
+        page: +(context.query.trang || 1),
+        pageSize: EVENTS_LOAD_PER_TIME,
+        groupSeoUrl: lv1ParamSeoUrl,
       });
 
-      if (productType.data) {
-        serverSideProps.props.productType.productType = productType.data;
-        serverSideProps.props.SEOData.titleSeo = productType.data.titleSeo;
-        serverSideProps.props.SEOData.metaSeo = productType.data.metaSeo;
-        serverSideProps.props.SEOData.keywordSeo = productType.data.keywordSeo;
+      const groupData = groupInfos.data?.[0];
+
+      if (groupData) {
+        serverSideProps.props.groupInfo.groupInfo = groupData;
+        serverSideProps.props.SEOData.titleSeo = groupData.titleSeo;
+        serverSideProps.props.SEOData.metaSeo = groupData.metaSeo;
+        serverSideProps.props.SEOData.keywordSeo = groupData.keywordSeo;
       } else {
-        return {
-          redirect: {
-            destination: '/',
-            permanent: false,
-          },
-        };
+        throw new Error('Không tìm thấy groupInfo');
       }
     } catch (error) {
-      console.error('getProductTypeDetail', error);
+      console.error('groupInfo', error);
       return {
         redirect: {
           destination: '/',

@@ -15,7 +15,7 @@ const PrimaryLayout: React.FC<IPrimaryLayout> = ({
   children,
 }) => {
   const computedBg =
-    background === 'white' ? 'bg-white' : 'bg-primary-background';
+    background === 'white' ? 'bg-gray-50' : 'bg-primary-background';
 
   return (
     <>

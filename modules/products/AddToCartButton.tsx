@@ -83,9 +83,9 @@ function AddToCartButton({
       <div onClick={(e) => e.preventDefault()} className="w-full">
         {!!productIncart && (
           <div className="flex items-center">
-            <Typography.Text className="whitespace-nowrap">
+            {/* <Typography.Text className="mr-2 whitespace-nowrap">
               Số lượng:&nbsp;
-            </Typography.Text>
+            </Typography.Text> */}
             <div className="flex w-full items-center justify-between">
               <Input.Group
                 className={`flex w-full justify-between ${'rounded-full border border-solid border-primary'}`}

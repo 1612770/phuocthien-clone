@@ -8,14 +8,20 @@ import PrimaryHeaderMenuAllPopoverContent from './PrimaryHeaderMenuAllPopoverCon
 import PrimaryHeaderMenuItem from './PrimaryHeaderMenuItem';
 import MenuModel from '@configs/models/menu.model';
 import LinkWrapper from '@components/templates/LinkWrapper';
-import { BookOutlined, DownOutlined, ShopOutlined } from '@ant-design/icons';
+import {
+  BookOutlined,
+  CaretDownOutlined,
+  ShopOutlined,
+} from '@ant-design/icons';
 
 function PrimaryHeaderMenu() {
   const { fullMenu, open, setOpen, intoPopover } = useFullMenu();
 
   const [mode, setMode] = useState<'all' | 'menu'>('all');
   const [currentMenu, setCurrentMenu] = useState<MenuModel>();
-
+  const handleOpenMenu = (open: boolean) => {
+    setOpen(open);
+  };
   return (
     <Popover
       open={open || intoPopover}
@@ -32,25 +38,22 @@ function PrimaryHeaderMenu() {
       destroyTooltipOnHide
       showArrow={false}
       popupVisible={true}
+      onOpenChange={handleOpenMenu}
       overlayClassName="primary-header xl:w-[1200px] lg:w-[1000px]"
     >
-      <div className="relative z-10 hidden bg-white shadow-lg lg:block">
-        <div className="m-auto flex items-center justify-between lg:container">
+      <div className="relative z-10 hidden bg-primary shadow-lg lg:block">
+        <div className="m-auto flex items-center justify-between lg:container ">
           <Space
             align="center"
             className="inline-flex cursor-pointer py-2"
-            onMouseLeave={() => {
-              setOpen(false);
-            }}
             onMouseEnter={() => {
-              setOpen(true);
               setMode('all');
             }}
           >
-            <Typography.Text className="whitespace-nowrap font-medium uppercase">
+            <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
               Tất cả danh mục
             </Typography.Text>
-            <DownOutlined size={16} />
+            <CaretDownOutlined size={8} className="text-white" />
           </Space>
 
           {fullMenu.map((menu) =>
@@ -58,11 +61,7 @@ function PrimaryHeaderMenu() {
             IMPORTANT_MENU_KEYS.includes((menu?.key || '').toUpperCase()) ? (
               <span
                 className="inline-block py-2"
-                onMouseLeave={() => {
-                  setOpen(false);
-                }}
                 onMouseEnter={() => {
-                  setOpen(true);
                   setCurrentMenu(menu);
                   setMode('menu');
                 }}
@@ -79,13 +78,16 @@ function PrimaryHeaderMenu() {
             ) : null
           )}
 
-          <Typography.Text className="mx-4 hidden xl:flex" type="secondary">
+          <Typography.Text
+            className="mx-4 hidden text-white xl:flex"
+            type="secondary"
+          >
             |
           </Typography.Text>
           <LinkWrapper href={'/tin-tuc'} className="hidden xl:flex">
             <Space align="center">
-              <BookOutlined className="text-stone-800" />
-              <Typography.Text className="whitespace-nowrap font-medium uppercase ">
+              <BookOutlined className="text-white" />
+              <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
                 Góc tin tức
               </Typography.Text>
             </Space>
@@ -93,8 +95,8 @@ function PrimaryHeaderMenu() {
           <Link href={'/nha-thuoc'} style={{ color: 'white' }}>
             <a className="hidden xl:flex">
               <Space align="center">
-                <ShopOutlined className="text-stone-800" />
-                <Typography.Text className="whitespace-nowrap font-medium uppercase ">
+                <ShopOutlined className="text-white" />
+                <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
                   Chuỗi nhà thuốc
                 </Typography.Text>
               </Space>

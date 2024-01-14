@@ -12,10 +12,15 @@ import React, {
 import { useAppConfirmDialog } from './AppConfirmDialogProvider';
 import { useRouter } from 'next/router';
 import { ProductClient } from '@libs/client/Product';
+import { PromotionPercent } from '@configs/models/promotion.model';
 
 type CartChangeProductData =
   | {
       field: 'quantity';
+      value: number;
+    }
+  | {
+      field: 'finalPrice';
       value: number;
     }
   | {
@@ -26,8 +31,24 @@ type CartChangeProductData =
       field: 'choosen';
       value: boolean;
     };
+const getMaxDiscount = (
+  promotionPercents: PromotionPercent[],
+  quantity: number
+): number => {
+  let maxDiscount = 0;
 
+  promotionPercents.forEach((promotionPercent) => {
+    if (quantity < promotionPercent.productQuantityMinCondition) {
+      maxDiscount = 0;
+      return maxDiscount;
+    } else if (promotionPercent.val > maxDiscount) {
+      maxDiscount = promotionPercent.val;
+    }
+  });
+  return maxDiscount;
+};
 const CartContext = React.createContext<{
+  totalPrice: number;
   cartProducts: CartProduct[];
   choosenCartProducts: CartProduct[];
   addToCart: (payload: Omit<CartProduct, 'choosen'>) => void;
@@ -50,6 +71,7 @@ const CartContext = React.createContext<{
   loadingCartProducts: boolean;
   loadCartProductsByDataFromLocalStorage: () => Promise<void>;
 }>({
+  totalPrice: 0,
   cartProducts: [],
   choosenCartProducts: [],
   addToCart: () => undefined,
@@ -71,7 +93,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     'cart-button'
   );
   const [recentAddedProductKey, setRecentAddedProductKey] = useState('');
-
+  const [totalPrice, setTotalPrice] = useState(0);
   const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
   const [loadingCartProducts, setloadingCartProducts] = useState(false);
 
@@ -83,6 +105,12 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     const cartProducts = JSON.parse(
       LocalStorageUtils.getItem(LocalStorageKeys.CART_PRODUCTS) || '[]'
     );
+    const calcTotalPrice = cartProducts.reduce(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (sum: any, item: any) => sum + item.finalPrice * item.quantity,
+      0
+    );
+    setTotalPrice(calcTotalPrice);
     setCartProducts(cartProducts);
   }, []);
 
@@ -112,6 +140,11 @@ function CartProvider({ children }: { children: React.ReactNode }) {
           product: product || cartProduct.product,
         };
       });
+      const calcTotalPrice = newCartProducts.reduce(
+        (sum, item) => sum + (item?.finalPrice || 0) * item.quantity,
+        0
+      );
+      setTotalPrice(calcTotalPrice);
       setCartProducts(newCartProducts);
     } catch (error) {
       console.error(
@@ -146,15 +179,32 @@ function CartProvider({ children }: { children: React.ReactNode }) {
       ) {
         const newCartProducts = cartProducts.map((cartProduct) => {
           if (cartProduct.product.key === payload.product.key) {
+            const discountValue =
+              payload.product?.promotions &&
+              payload.product?.promotions.length > 0
+                ? (payload.product.retailPrice || 0) *
+                  (1 -
+                    getMaxDiscount(
+                      payload.product.promotions,
+                      payload.quantity
+                    ))
+                : payload.product.retailPrice || 0;
             return {
               ...cartProduct,
               quantity: payload.quantity,
               choosen: true,
+              finalPrice: discountValue,
             };
           }
           return cartProduct;
         });
+
         setCartProducts(newCartProducts);
+        const calcTotalPrice = newCartProducts.reduce(
+          (sum, item) => sum + (item?.finalPrice || 0) * item.quantity,
+          0
+        );
+        setTotalPrice(calcTotalPrice);
         LocalStorageUtils.setItem(
           LocalStorageKeys.CART_PRODUCTS,
           JSON.stringify(newCartProducts)
@@ -162,10 +212,20 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         return;
       } else {
         setRecentAddedProductKey(payload.product.key || '');
+        const discountValue =
+          payload.product?.promotions && payload.product?.promotions.length > 0
+            ? (payload.product.retailPrice || 0) *
+              (1 - getMaxDiscount(payload.product.promotions, payload.quantity))
+            : payload.product.retailPrice || 0;
         const newCartProducts = [
           ...cartProducts,
-          { ...payload, choosen: true },
+          { ...payload, choosen: true, finalPrice: discountValue },
         ];
+        const calcTotalPrice = newCartProducts.reduce(
+          (sum, item) => sum + (item?.finalPrice || 0) * item.quantity,
+          0
+        );
+        setTotalPrice(calcTotalPrice);
         setCartProducts(newCartProducts);
         LocalStorageUtils.setItem(
           LocalStorageKeys.CART_PRODUCTS,
@@ -194,6 +254,11 @@ function CartProvider({ children }: { children: React.ReactNode }) {
             const newCartProducts = cartProducts.filter(
               (cartProduct) => cartProduct.product.key !== product.key
             );
+            const calcTotalPrice = newCartProducts.reduce(
+              (sum, item) => sum + (item?.finalPrice || 0) * item.quantity,
+              0
+            );
+            setTotalPrice(calcTotalPrice);
             setCartProducts(newCartProducts);
             LocalStorageUtils.setItem(
               LocalStorageKeys.CART_PRODUCTS,
@@ -205,6 +270,11 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         const newCartProducts = cartProducts.filter(
           (cartProduct) => cartProduct.product.key !== product.key
         );
+        const calcTotalPrice = newCartProducts.reduce(
+          (sum, item) => sum + (item?.finalPrice || 0) * item.quantity,
+          0
+        );
+        setTotalPrice(calcTotalPrice);
         setCartProducts(newCartProducts);
         LocalStorageUtils.setItem(
           LocalStorageKeys.CART_PRODUCTS,
@@ -244,6 +314,11 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         }
         return cartProduct;
       });
+      const calcTotalPrice = newCartProducts.reduce(
+        (sum, item) => sum + (item?.finalPrice || 0) * item.quantity,
+        0
+      );
+      setTotalPrice(calcTotalPrice);
       setCartProducts(newCartProducts);
       LocalStorageUtils.setItem(
         LocalStorageKeys.CART_PRODUCTS,
@@ -257,7 +332,11 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     const newCartProducts = cartProducts.filter(
       (cartProduct) => !cartProduct.choosen
     );
-
+    const calcTotalPrice = newCartProducts.reduce(
+      (sum, item) => sum + (item?.finalPrice || 0) * item.quantity,
+      0
+    );
+    setTotalPrice(calcTotalPrice);
     setCartProducts(newCartProducts);
 
     LocalStorageUtils.setItem(
@@ -302,6 +381,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   return (
     <CartContext.Provider
       value={{
+        totalPrice,
         cartProducts,
         choosenCartProducts,
         addToCart,

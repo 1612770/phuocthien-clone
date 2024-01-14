@@ -53,7 +53,7 @@ function ProductCTA({
 
   return (
     <>
-      <div className="mt-2 hidden flex-col gap-1 lg:flex">
+      <div className="mt-2 hidden flex-col items-center gap-1 lg:flex">
         {product && (
           <div className=" w-full md:w-[200px]">
             <AddToCartButton

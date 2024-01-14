@@ -19,8 +19,18 @@ import GroupInfoModel from '@configs/models/GroupInfoModel';
 import getEventData from '@modules/san-pham/getEventData';
 import EventPage from '@modules/tin-tuc/danh-muc/chi-tiet/EventPage';
 import PagePropsWithSeo from '@configs/types/page-props-with-seo';
+import ProductTypeGroupModel from '@configs/models/product-type-group.model';
+import getProductTypeGroupData from '@modules/san-pham/getProductTypeGroupData';
+import ProductTypeGroupPage from '@modules/san-pham/ProductTypeGroupPage';
 
 const lv2ParamPage: NextPageWithLayout<{
+  productTypeGroup: {
+    productType?: ProductType;
+
+    productTypeGroup?: ProductTypeGroupModel;
+    products?: WithPagination<Product[]>;
+    productBrands?: BrandModel[];
+  };
   productGroup: {
     productType?: ProductType;
     productGroup?: ProductGroupModel;
@@ -43,7 +53,7 @@ const lv2ParamPage: NextPageWithLayout<{
     otherEvents?: EventModel[];
     groupInfo?: GroupInfoModel;
   };
-}> = ({ product, productGroup, event }) => {
+}> = ({ product, productGroup, event, productTypeGroup }) => {
   if (event.event?.key) {
     return (
       <EventPage
@@ -67,13 +77,22 @@ const lv2ParamPage: NextPageWithLayout<{
       />
     );
   }
-
+  if (productGroup.productGroup?.key) {
+    return (
+      <ProductGroupPage
+        productGroup={productGroup.productGroup}
+        productType={productGroup.productType}
+        productBrands={productGroup.productBrands}
+        products={productGroup.products}
+      />
+    );
+  }
   return (
-    <ProductGroupPage
-      productGroup={productGroup.productGroup}
-      productType={productGroup.productType}
-      productBrands={productGroup.productBrands}
-      products={productGroup.products}
+    <ProductTypeGroupPage
+      productTypeGroup={productTypeGroup?.productTypeGroup}
+      productType={productTypeGroup?.productType}
+      productBrands={productTypeGroup?.productBrands}
+      products={productTypeGroup?.products}
     />
   );
 };
@@ -85,6 +104,12 @@ lv2ParamPage.getLayout = (page) => {
 };
 
 interface PageProps extends PagePropsWithSeo {
+  productTypeGroup: {
+    productType?: ProductType;
+    productTypeGroup?: ProductTypeGroupModel;
+    products?: WithPagination<Product[]>;
+    productBrands?: BrandModel[];
+  };
   productGroup: {
     productType?: ProductType;
     productGroup?: ProductGroupModel;
@@ -116,6 +141,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     props: PageProps;
   } = {
     props: {
+      productTypeGroup: {},
       productGroup: {},
       product: {},
       event: {},
@@ -132,35 +158,49 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     serverSideProps.props.SEOData.keywordSeo =
       serverSideProps.props.product.product?.detail?.keywordSeo;
   } catch (error) {
+    console.error('getProductData', error);
     try {
-      serverSideProps.props.event = await getEventData(context);
+      serverSideProps.props.productGroup = await getProductGroupData(context);
       serverSideProps.props.SEOData.titleSeo =
-        serverSideProps.props.event.event?.titleSeo;
+        serverSideProps.props.productGroup.productGroup?.titleSeo;
       serverSideProps.props.SEOData.metaSeo =
-        serverSideProps.props.event.event?.metaSeo;
+        serverSideProps.props.productGroup.productGroup?.metaSeo;
       serverSideProps.props.SEOData.keywordSeo =
-        serverSideProps.props.event.event?.keywordSeo;
+        serverSideProps.props.productGroup.productGroup?.keywordSeo;
     } catch (error) {
+      console.error('getProductGroup', error);
+
       try {
-        serverSideProps.props.productGroup = await getProductGroupData(context);
+        serverSideProps.props.productTypeGroup = await getProductTypeGroupData(
+          context
+        );
         serverSideProps.props.SEOData.titleSeo =
-          serverSideProps.props.productGroup.productGroup?.titleSeo;
+          serverSideProps.props.productTypeGroup.productTypeGroup?.titleSeo;
         serverSideProps.props.SEOData.metaSeo =
-          serverSideProps.props.productGroup.productGroup?.metaSeo;
+          serverSideProps.props.productTypeGroup?.productTypeGroup?.metaSeo;
         serverSideProps.props.SEOData.keywordSeo =
-          serverSideProps.props.productGroup.productGroup?.keywordSeo;
+          serverSideProps.props.productTypeGroup?.productTypeGroup?.keywordSeo;
       } catch (error) {
-        // redirect to /
-        return {
-          redirect: {
-            destination: '/',
-            permanent: false,
-          },
-        };
+        try {
+          serverSideProps.props.event = await getEventData(context);
+          serverSideProps.props.SEOData.titleSeo =
+            serverSideProps.props.event.event?.titleSeo;
+          serverSideProps.props.SEOData.metaSeo =
+            serverSideProps.props.event.event?.metaSeo;
+          serverSideProps.props.SEOData.keywordSeo =
+            serverSideProps.props.event.event?.keywordSeo;
+        } catch (error) {
+          // redirect to /
+          console.error('Failed All', error);
+          return {
+            redirect: {
+              destination: '/',
+              permanent: false,
+            },
+          };
+        }
       }
     }
-
-    console.error('getProduct', error);
     return serverSideProps;
   }
 

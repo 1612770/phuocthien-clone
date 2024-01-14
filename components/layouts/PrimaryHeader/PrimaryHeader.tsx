@@ -11,13 +11,19 @@ import ProductSearchInputMobile from './ProductSearchInputMobile';
 import PrimaryHeaderMenuDrawer from './MenuDrawer';
 import { useIntersectionObserver } from '@libs/utils/hooks';
 import CartPopupContent from '@modules/gio-hang/CartPopupContent';
+import CurrencyUtils from '@libs/utils/currency.utils';
 
 function PrimaryHeader({ showSearch = true }) {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const [openMobileSearch, setOpenMobileSearch] = useState(false);
 
-  const { cartProducts, setModeShowPopup, modeShowPopup, isOpenNotification } =
-    useCart();
+  const {
+    cartProducts,
+    setModeShowPopup,
+    modeShowPopup,
+    isOpenNotification,
+    totalPrice,
+  } = useCart();
   const router = useRouter();
   const cartButtonRef = useRef<HTMLAnchorElement | null>(null);
   const entry = useIntersectionObserver(cartButtonRef, {});
@@ -33,39 +39,27 @@ function PrimaryHeader({ showSearch = true }) {
 
   return (
     <header>
-      <div className="bg-primary py-2">
+      <div className="bg-white py-4">
         <div className="m-auto flex items-center justify-between px-2  lg:container lg:px-0">
           <div className="flex flex-1 items-center">
             <Menu
               size={40}
-              className="mr-2 cursor-pointer text-white lg:hidden"
+              className="mr-2 cursor-pointer text-primary lg:hidden"
               onClick={() => setOpenMobileMenu(!openMobileMenu)}
             />
 
-            <Link href="/" style={{ color: 'white' }}>
-              <a className="flex items-center">
+            <Link href="/">
+              <div className="w-[200px] cursor-pointer px-1 pb-2 lg:min-w-[128px]">
                 <img
                   src={IMAGES.logo}
                   alt="Nhà thuốc Phước Thiện"
-                  className="aspect-[21/16] h-8 min-h-[48px] object-contain lg:min-h-[68px]"
+                  className="w-full "
                 />
-
-                <Space direction="vertical" size={0} className="mr-4 w-[92px]">
-                  <Typography.Text className="m-0 -mb-2 inline-block text-base text-white">
-                    Nhà thuốc
-                  </Typography.Text>
-                  <Typography.Text
-                    strong
-                    className="whitespace-nowrap uppercase text-white"
-                  >
-                    Phước Thiện
-                  </Typography.Text>
-                </Space>
-              </a>
+              </div>
             </Link>
 
             {showSearch && (
-              <div className="hidden h-10 w-full flex-1 lg:block">
+              <div className="ml-4 hidden h-10 w-full flex-1 lg:block">
                 <ProductSearchInput />
               </div>
             )}
@@ -74,7 +68,7 @@ function PrimaryHeader({ showSearch = true }) {
           <Link href="/gio-hang">
             <a className="mr-2 block md:hidden">
               <Badge count={cartProducts.length}>
-                <ShoppingCart className="text-white" size={32} />
+                <ShoppingCart className="text-primary" size={32} />
               </Badge>
             </a>
           </Link>
@@ -87,16 +81,24 @@ function PrimaryHeader({ showSearch = true }) {
               <Link href="/gio-hang">
                 <a className="hidden md:block" ref={cartButtonRef}>
                   <Badge count={cartProducts.length}>
-                    <Button
-                      type="primary"
-                      className="ml-8 h-10 bg-primary-dark shadow-none "
-                    >
-                      <Space align="center" className="h-full w-full">
-                        <ShoppingCart className="text-white" size={20} />
-                        <Typography.Text className="text-white">
-                          Giỏ hàng
-                        </Typography.Text>
-                      </Space>
+                    <Button className="ml-8 h-12 min-w-[64px] shadow-none">
+                      <div className="flex items-center justify-between">
+                        <ShoppingCart size={28} className="text-primary" />
+                        <div className="column ml-2 flex flex-col">
+                          <div
+                            className={`${
+                              totalPrice > 0 ? 'text-xs' : 'text-sm'
+                            }`}
+                          >
+                            Giỏ hàng
+                          </div>
+                          {totalPrice > 0 && (
+                            <div className="text-primary">
+                              {CurrencyUtils.format(totalPrice)}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </Button>
                   </Badge>
                 </a>
@@ -105,16 +107,15 @@ function PrimaryHeader({ showSearch = true }) {
 
             <Link href={'/lich-su-don-hang'}>
               <a className="ml-4 inline-block">
-                <Button
-                  type="primary"
-                  className="hidden h-10 bg-primary-dark shadow-none md:block"
-                >
-                  <Space align="center" className="h-full w-full">
-                    <User className="text-white" width={20} height={20} />
-                    <Typography.Text className="text-white">
-                      Lịch sử đơn hàng
+                <Button className="hidden h-12  shadow-none md:block">
+                  <div className="flex items-center justify-between text-center">
+                    <User size={28} className="text-primary" />
+                    <Typography.Text className="ml-2 text-sm">
+                      Lịch sử
+                      <br />
+                      đơn hàng
                     </Typography.Text>
-                  </Space>
+                  </div>
                 </Button>
               </a>
             </Link>
@@ -129,11 +130,11 @@ function PrimaryHeader({ showSearch = true }) {
                 href="tel:1800599964"
                 className="ml-4 inline-flex flex-col text-center"
               >
-                <Typography.Text className="text-center text-sm text-white">
-                  Hotline (08h00 - 20h30)
+                <Typography.Text className="text-center text-sm font-bold text-primary">
+                  Hotline (07h00 - 21h00)
                 </Typography.Text>
-                <Typography.Text className="text-center text-base font-semibold text-yellow-500">
-                  1800599964
+                <Typography.Text className="text-center text-base font-bold text-orange-600">
+                  1800 599 964
                 </Typography.Text>
               </a>
             </Space>

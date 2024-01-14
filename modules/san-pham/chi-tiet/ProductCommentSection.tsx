@@ -90,7 +90,7 @@ function ProductCommentSection({
   };
 
   return (
-    <div className="my-4 w-full rounded-lg border border-solid border-white p-0 shadow-none md:max-w-[1200px] md:border-gray-100 md:p-6 md:shadow-lg lg:container">
+    <div className="my-8 w-full rounded-lg border border-solid border-white p-0 shadow-none md:max-w-[1200px] md:border-gray-100 md:p-6 md:shadow-lg lg:container">
       <Typography.Title level={5} className="font-medium uppercase">
         Hỏi đáp về sản phẩm {product?.detail?.displayName}
       </Typography.Title>

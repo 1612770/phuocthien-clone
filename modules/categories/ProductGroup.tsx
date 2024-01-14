@@ -19,16 +19,16 @@ function ProductGroup({
   return (
     <Link href={href}>
       <a className="group w-full">
-        <div className="flex min-h-[164px] w-full flex-col items-center justify-center rounded-lg border border-solid border-gray-200 px-2 py-4 transition duration-300 group-hover:border-primary-light">
+        <div className="flex min-h-[130px] w-full flex-col items-center justify-center rounded-lg border border-solid border-gray-200 bg-white px-1 py-4 transition duration-300 group-hover:border-primary-light">
           <div className="transition-transform duration-300 group-hover:scale-110">
             <ImageWithFallback
               src={ImageUtils.getFullImageUrl(productGroup?.image)}
               alt={productGroup?.name || 'product group image'}
-              width={48}
-              height={48}
+              width={40}
+              height={40}
             />
           </div>
-          <Typography className="mb-1 mt-3 max-h-[20px] overflow-visible text-center">
+          <Typography className="mb-1 mt-3 max-h-[20px] overflow-visible text-center text-sm">
             {productGroup?.name}
           </Typography>
         </div>

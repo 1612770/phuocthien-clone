@@ -11,6 +11,7 @@ import MainInfoModel from '@configs/models/main-info.model';
 import ProductSearchKeyword from '@configs/models/product-search-keyword.model';
 import EventModel from '@configs/models/event.model';
 import GroupInfoModel from '@configs/models/GroupInfoModel';
+import ProductTypeGroupModel from '@configs/models/product-type-group.model';
 
 export class GeneralClient extends BaseClient {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,6 +41,14 @@ export class GeneralClient extends BaseClient {
     seoUrl: string;
   }): Promise<APIResponse<ProductGroupModel>> {
     return await super.call('GET', `product-group/${seoUrl}`, {});
+  }
+
+  async getProductTypeGroupDetail({
+    seoUrl,
+  }: {
+    seoUrl: string;
+  }): Promise<APIResponse<ProductTypeGroupModel>> {
+    return await super.call('GET', `product-type-group/${seoUrl}`, {});
   }
 
   async getPaymentMethods(): Promise<APIResponse<PaymentMethodModel[]>> {

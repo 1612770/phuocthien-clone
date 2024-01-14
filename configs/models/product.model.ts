@@ -5,10 +5,12 @@ import ProductType from './product-type.model';
 import ProductDetailModel from './product-detail.model';
 import { PromotionPercent } from './promotion.model';
 import DrugStore from './drug-store.model';
+import ProductTypeGroupModel from './product-type-group.model';
 
 export interface CartProduct {
   product: Product;
   quantity: number;
+  finalPrice?: number;
   note?: string;
   choosen: boolean;
 }
@@ -48,11 +50,13 @@ type Product = Partial<{
   productType: ProductType;
   productGroup: ProductGroupModel;
   productionBrand: ProductBrand;
+  productTypeGroup: ProductTypeGroupModel;
   images: ProductImage[];
   detail: ProductDetailModel;
   promotions: PromotionPercent[];
   keyPromo: string;
   keyPromoPercent: string;
+  promoValue: number;
 }>;
 
 export interface InventoryAtDrugStore {

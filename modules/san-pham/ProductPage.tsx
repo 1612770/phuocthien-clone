@@ -13,6 +13,7 @@ import ProductCommentSection from './chi-tiet/ProductCommentSection';
 import ProductFAQsSection from './chi-tiet/ProductFAQsSection';
 import ProductMain from './chi-tiet/ProductMain';
 import ProductOthersSection from './chi-tiet/ProductOthersSection';
+import ProductMetaData from '@modules/products/ProductMetaData';
 
 const ProductPage = ({
   product,
@@ -85,7 +86,7 @@ const ProductPage = ({
       <div className="grid grid-cols-1 gap-4 pt-2 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[600px_minmax(200px,_1fr)]">
         <div>
           <ProductCarousel images={carouselImages} />
-          <QRApp />
+          {/* <QRApp /> */}
         </div>
 
         <ProductMain
@@ -95,16 +96,16 @@ const ProductPage = ({
           drugStores={drugStores}
         />
       </div>
-
-      {product.detail?.description && (
-        <div className="grid grid-cols-1">
+      <div className="grid grid-cols-1 gap-4 pt-2 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[600px_minmax(200px,_1fr)]">
+        {product.detail?.description && (
           <ProductCardDetail
             dangerouslySetInnerHTML={{
               __html: product.detail?.description,
             }}
           />
-        </div>
-      )}
+        )}
+        {product && <ProductMetaData product={product} />}
+      </div>
 
       <ProductFAQsSection faqs={faqs} />
       <ProductCommentSection product={product} defaultReviews={reviews} />
