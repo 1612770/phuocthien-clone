@@ -1,5 +1,6 @@
+import COLORS from '@configs/colors';
 import CurrencyUtils from '@libs/utils/currency.utils';
-import { Typography } from 'antd';
+import { Tag, Typography } from 'antd';
 import React from 'react';
 
 function PriceUnit({
@@ -18,7 +19,7 @@ function PriceUnit({
   const discountPrice = price * (1 - discountVal);
 
   return (
-    <div>
+    <div className="mr-8">
       <div className="flex items-end">
         <Typography.Title
           level={size === 'small' ? 5 : 3}
@@ -40,6 +41,12 @@ function PriceUnit({
           }`}
         >
           {CurrencyUtils.format(price)}
+          <Tag
+            color={COLORS.red}
+            className="m-0 mt-[-2px] ml-2 rounded-full align-middle text-xs"
+          >
+            -{discountVal * 100}%
+          </Tag>
         </Typography.Text>
       )}
     </div>

@@ -16,7 +16,7 @@ function ProductOthersSection({
         level={3}
         className="mb-0 mt-6 inline-block font-medium uppercase lg:mb-4 lg:mt-12"
       >
-        Các sản phẩm cùng loại trong nhóm {name}
+        Các sản phẩm nhóm {name} khác
       </Typography.Title>
 
       {(products?.length || 0) > 0 && (

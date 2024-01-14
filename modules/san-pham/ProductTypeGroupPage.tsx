@@ -2,35 +2,35 @@ import Breadcrumbs from '@components/Breadcrumbs';
 import ProductCard from '@components/templates/ProductCard';
 import PRODUCTS_LOAD_PER_TIME from '@configs/constants/products-load-per-time';
 import BrandModel from '@configs/models/brand.model';
+import ProductGroupModel from '@configs/models/product-group.model';
 import Product from '@configs/models/product.model';
 import WithPagination from '@configs/types/utils/with-pagination';
-import ProductGroup from '@modules/categories/ProductGroup';
-import { useFullMenu } from '@providers/FullMenuProvider';
-import { Drawer, Empty, Pagination, Space, Tag, Typography } from 'antd';
+import { Typography, Space, Tag, Drawer, Pagination, Empty } from 'antd';
 import { useRouter } from 'next/router';
-import { Filter, X } from 'react-feather';
-import FilterOptions from './FilterOptions';
 import { useState } from 'react';
+import { Filter, X } from 'react-feather';
+import ProductType from '@configs/models/product-type.model';
+import FilterOptions from './FilterOptions';
+import ProductTypeGroupModel from '@configs/models/product-type-group.model';
 
-function ProductTypePage({
-  productTypeSeoUrlToGetFromFullMenu,
+const ProductTypeGroupPage = ({
+  productType,
+  productTypeGroup,
   products,
   productBrands,
 }: {
-  productTypeSeoUrlToGetFromFullMenu?: string;
+  productType?: ProductType;
+  productTypeGroup?: ProductTypeGroupModel;
   productBrands?: BrandModel[];
   products?: WithPagination<Product[]>;
-}) {
-  const { fullMenu } = useFullMenu();
+}) => {
   const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
-  const productType = (fullMenu || []).find((menu) => {
-    return menu.seoUrl === productTypeSeoUrlToGetFromFullMenu;
-  });
   const router = useRouter();
+
   return (
-    <div className="grid px-4 pb-4 lg:container lg:px-0">
+    <div className="px-4 pb-4 lg:container lg:px-0">
       <Breadcrumbs
-        className="mb-4 pt-4"
+        className="mb-4 pt-4 text-primary"
         breadcrumbs={[
           {
             title: 'Trang chủ',
@@ -38,22 +38,22 @@ function ProductTypePage({
           },
           {
             title: productType?.name,
+            path: `/${productType?.seoUrl}`,
+          },
+          {
+            title: productTypeGroup?.name,
           },
         ]}
       ></Breadcrumbs>
-
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6 md:gap-4 lg:grid-cols-6 xl:grid-cols-8">
-        {productType?.productGroups?.map((productGroup) => (
-          <>
-            <ProductGroup
-              key={productGroup?.key}
-              productGroup={productGroup}
-              href={`/${productType.seoUrl}/${productGroup?.seoUrl}`}
-            />
-          </>
-        ))}
+      <div>
+        <Typography.Title
+          level={4}
+          className="mb-0 whitespace-nowrap lg:mt-2 lg:mb-2"
+        >
+          {productTypeGroup?.name}
+        </Typography.Title>
       </div>
-      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[300px_minmax(600px,_1fr)]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[300px_minmax(600px,_1fr)]">
         <div className="sticky top-0 hidden h-[100vh] grid-flow-row rounded-xl bg-white px-4 md:h-auto lg:block">
           <Typography.Title
             level={4}
@@ -157,7 +157,7 @@ function ProductTypePage({
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:gap-4">
               {products?.data.map((product, index) => (
                 <div className="w-full" key={index}>
-                  <ProductCard product={product} />
+                  <ProductCard product={product} isProductTypeGroup={true} />
                 </div>
               ))}
             </div>
@@ -191,15 +191,8 @@ function ProductTypePage({
           </div>
         </div>
       </div>
-      {!productType?.productGroups?.length && (
-        <div className="flex min-h-[400px] w-full items-center justify-center py-8">
-          <Empty
-            description={<Typography>Không tìm thấy danh mục nào</Typography>}
-          ></Empty>
-        </div>
-      )}
     </div>
   );
-}
+};
 
-export default ProductTypePage;
+export default ProductTypeGroupPage;

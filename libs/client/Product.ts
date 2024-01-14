@@ -17,6 +17,7 @@ export class ProductClient extends BaseClient {
     isPrescripted: boolean;
     productTypeKey?: string;
     productGroupKey?: string;
+    productTypeGroupKey?: string;
     productionBrandKeys?: string[];
     filterByName?: string;
     filterByIds?: string[];

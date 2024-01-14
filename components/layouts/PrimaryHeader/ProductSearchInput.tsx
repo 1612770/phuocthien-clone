@@ -137,7 +137,7 @@ function ProductSearchInput() {
             // readOnly={searching}
             suffix={
               <Spin spinning={searching}>
-                <Search size={20} />
+                <Search size={20} className="text-primary" />
               </Spin>
             }
             onClick={() => {

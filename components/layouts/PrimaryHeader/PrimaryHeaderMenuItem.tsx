@@ -2,7 +2,7 @@ import { Popover, Space, Typography } from 'antd';
 import Link from 'next/link';
 import PrimaryHeaderMenuList from './PrimaryHeaderMenuList';
 import ProductGroupModel from '@configs/models/product-group.model';
-import { DownOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, DownOutlined } from '@ant-design/icons';
 
 function PrimaryHeaderMenuItem({
   label,
@@ -42,10 +42,12 @@ function PrimaryHeaderMenuItem({
         >
           <Space align="center">
             {icon}
-            <Typography.Text className="whitespace-nowrap font-medium uppercase">
+            <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
               {label}
             </Typography.Text>
-            {!onlyClick && <DownOutlined className="text-stone-800" />}
+            {!onlyClick && (
+              <CaretDownOutlined className="text-white" size={8} />
+            )}
           </Space>
         </Popover>
       </a>

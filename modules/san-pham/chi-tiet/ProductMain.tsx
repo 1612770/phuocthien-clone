@@ -11,6 +11,8 @@ import React from 'react';
 import ProductDrugStoresSection from './ProductDrugStoresSection';
 import DrugStore from '@configs/models/drug-store.model';
 import ProductCTA from '@modules/products/ProductCTA';
+import { useAppData } from '@providers/AppDataProvider';
+import FocusContentSection from '@modules/homepage/FocusContentSection';
 
 const getMaxDiscount = (promotionPercents: PromotionPercent[]): number => {
   let maxDiscount = 0;
@@ -34,7 +36,7 @@ function ProductMain({
   drugStores?: DrugStore[];
 }) {
   const maxDisCount = getMaxDiscount(product?.promotions || []);
-
+  const { focusContent } = useAppData();
   return (
     <div className="relative flex flex-col gap-2">
       <div className="flex flex-col gap-2">
@@ -51,39 +53,48 @@ function ProductMain({
         </Typography.Title>
 
         <ProductBonusSection offers={offers} />
-
-        <PriceUnit
-          price={product.retailPrice}
-          discountVal={maxDisCount}
-          unit={product.unit}
-        />
-
+        <div className="mb-4 flex items-center justify-around rounded-3xl border-2 border-solid border-gray-100 p-2 shadow-md">
+          <PriceUnit
+            price={product.retailPrice}
+            discountVal={maxDisCount}
+            unit={product.unit}
+          />
+          <ProductCTA
+            product={product}
+            price={
+              <PriceUnit
+                price={product.retailPrice}
+                discountVal={maxDisCount}
+                unit={product.unit}
+                size="small"
+              />
+            }
+          />
+        </div>
         {!!product.promotions?.length && (
           <PromotionList
             promotionPercents={product.promotions || []}
             retailPrice={product.retailPrice}
           />
         )}
-
-        <ProductCTA
-          product={product}
-          price={
-            <PriceUnit
-              price={product.retailPrice}
-              discountVal={maxDisCount}
-              unit={product.unit}
-              size="small"
-            />
-          }
-        />
       </div>
-
       <ProductDrugStoresSection
         drugStores={drugStores || []}
         drugStoresAvailable={drugStoresAvailable || []}
       />
+      {/* {product && <ProductMetaData product={product} />} */}
 
-      {product && <ProductMetaData product={product} />}
+      <p className="py-2">
+        Gọi nhận tư vấn với dược sĩ
+        <a href="tel:1800599964" className="px-2 font-bold text-primary">
+          1800 599 964
+        </a>
+        (7:00 - 22:00 - <b className="text-primary">Miễn phí</b>)
+      </p>
+      <FocusContentSection
+        focusContent={focusContent || []}
+        isProductPage={true}
+      />
     </div>
   );
 }

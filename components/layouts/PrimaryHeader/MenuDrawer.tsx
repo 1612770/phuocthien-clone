@@ -21,36 +21,23 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
 
   return (
     <Drawer
-      rootClassName="primary-header-menu-drawer"
+      rootClassName=""
       title={
-        <Link href="/" style={{ color: 'white' }}>
-          <a className="flex items-center" onClick={onClose}>
+        <div>
+          <Link href="/" style={{ color: 'white' }}>
             <img
               src={IMAGES.logo}
-              style={{ width: 42, height: 32 }}
               alt="Nhà thuốc Phước Thiện"
               className="mr-2 h-8 object-contain"
             />
-
-            <Space direction="vertical" size={0} className="mr-4 w-[92px]">
-              <Typography.Text className="m-0 -mb-2 inline-block text-base font-normal text-white">
-                Nhà thuốc
-              </Typography.Text>
-              <Typography.Text
-                strong
-                className="whitespace-nowrap uppercase text-white"
-              >
-                Phước Thiện
-              </Typography.Text>
-            </Space>
-          </a>
-        </Link>
+          </Link>
+        </div>
       }
       placement="left"
       onClose={onClose}
       open={open}
       closable
-      closeIcon={<X size={40} className="mr-0 text-white" />}
+      closeIcon={<X size={40} className="mr-0 text-primary" />}
     >
       <Space size={16} direction="vertical" className="w-full">
         <Link href={'/lich-su-don-hang'}>
@@ -58,11 +45,11 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
             <Button
               onClick={onClose}
               type="primary"
-              className="h-10 w-full bg-primary-dark shadow-none"
+              className="h-10 w-full bg-white shadow-none"
             >
               <Space align="center" className="h-full w-full">
-                <User className="text-white" width={20} height={20} />
-                <Typography.Text className="text-white">
+                <User className="text-primary" width={20} height={20} />
+                <Typography.Text className="text-primary">
                   Lịch sử đơn hàng
                 </Typography.Text>
               </Space>

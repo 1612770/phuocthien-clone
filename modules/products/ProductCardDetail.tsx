@@ -23,7 +23,7 @@ function ProductCardDetail(
           level={3}
           className="mb-0 mt-6 font-medium uppercase lg:mb-4 lg:mt-12"
         >
-          Chi tiết sản phẩm
+          Thông tin sản phẩm
         </Typography.Title>
       </div>
 
@@ -39,7 +39,7 @@ function ProductCardDetail(
           <div className="flex h-full w-full items-center justify-center bg-transparent pt-16">
             <Button
               type="primary"
-              ghost
+              className="shadown-none"
               onClick={() => {
                 setOpenFullModal(true);
               }}
@@ -53,7 +53,7 @@ function ProductCardDetail(
       <Modal
         title={
           <Typography>
-            <Typography.Title level={4}>Chi tiết sản phẩm</Typography.Title>
+            <Typography.Title level={4}>Thông tin sản phẩm</Typography.Title>
           </Typography>
         }
         footer={null}

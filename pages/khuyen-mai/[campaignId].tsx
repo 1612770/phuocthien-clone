@@ -130,7 +130,6 @@ export const getServerSideProps = async (
         isHide: false,
       }),
     ]);
-
     if (campaigns.status === 'fulfilled' && campaigns.value.data) {
       if (!campaigns.value.data.length) {
         return {
@@ -154,7 +153,6 @@ export const getServerSideProps = async (
           })
         )
       );
-
       serverSideProps.props.listProducts = listProducts.map(
         (listProducts) => listProducts.data
       ) as Product[][];

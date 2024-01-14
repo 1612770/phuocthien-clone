@@ -62,7 +62,7 @@ function ProductDrugStoresSection({
         {(drugStoresAvailable?.length || 0) > 0 ? (
           <>
             Có <b className="text-primary">{drugStoresAvailable?.length}</b> nhà
-            thuốc có sẵn sản phẩm
+            thuốc có sẵn hàng
           </>
         ) : (
           <>Hệ thống nhà thuốc Phước Thiện</>

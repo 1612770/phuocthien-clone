@@ -21,8 +21,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps & BreadcrumbProps> = ({
     <Breadcrumb {...props}>
       {breadcrumbs.map((br, index) => (
         <Breadcrumb.Item key={index}>
-          <LinkWrapper href={br.path}>
-            {index === 0 && <LeftOutlined size={20} className="mr-2" />}
+          <LinkWrapper href={br.path} className="text-primary">
             {br.title || ''}
           </LinkWrapper>
         </Breadcrumb.Item>

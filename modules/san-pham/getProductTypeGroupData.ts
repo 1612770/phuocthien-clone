@@ -1,6 +1,6 @@
 import PRODUCTS_LOAD_PER_TIME from '@configs/constants/products-load-per-time';
 import BrandModel from '@configs/models/brand.model';
-import ProductGroupModel from '@configs/models/product-group.model';
+import ProductTypeGroupModel from '@configs/models/product-type-group.model';
 import ProductType from '@configs/models/product-type.model';
 import Product from '@configs/models/product.model';
 import WithPagination from '@configs/types/utils/with-pagination';
@@ -8,10 +8,10 @@ import { GeneralClient } from '@libs/client/General';
 import { ProductClient } from '@libs/client/Product';
 import { GetServerSidePropsContext } from 'next';
 
-const getProductGroupData = async (context: GetServerSidePropsContext) => {
-  const productGroupData: {
+const getProductTypeGroupData = async (context: GetServerSidePropsContext) => {
+  const productTypeGroupData: {
     productType?: ProductType;
-    productGroup?: ProductGroupModel;
+    productTypeGroup?: ProductTypeGroupModel;
     productBrands?: BrandModel[];
     products?: WithPagination<Product[]>;
   } = {};
@@ -21,27 +21,28 @@ const getProductGroupData = async (context: GetServerSidePropsContext) => {
   const lv2ParamSeoUrl = context.params?.lv2Param as string;
   const lv1ParamSeoUrl = context.params?.lv1Param as string;
 
-  const [productType, productGroup, productBrands] = await Promise.all([
+  const [productType, productTypeGroup, productBrands] = await Promise.all([
     generalClient.getProductTypeDetail({
       seoUrl: lv1ParamSeoUrl,
     }),
-    generalClient.getProductGroupDetail({
+    generalClient.getProductTypeGroupDetail({
       seoUrl: lv2ParamSeoUrl,
     }),
     generalClient.getProductionBrands(),
   ]);
+  if (!productTypeGroup.data)
+    throw new Error('Không tìm thấy loại nhóm sản phẩm');
 
-  if (!productGroup.data) throw new Error('Không tìm thấy nhóm sản phẩm');
-  productGroupData.productType = productType.data;
-  productGroupData.productGroup = productGroup.data;
-  productGroupData.productBrands = productBrands.data;
+  productTypeGroupData.productType = productType.data;
+  productTypeGroupData.productTypeGroup = productTypeGroup.data;
+  productTypeGroupData.productBrands = productBrands.data;
 
   const products = await productClient.getProducts({
     page: context.query.trang ? Number(context.query.trang) : 1,
     pageSize: PRODUCTS_LOAD_PER_TIME,
     isPrescripted: false,
     productTypeKey: productType.data?.key,
-    productGroupKey: productGroup.data?.key,
+    productTypeGroupKey: productTypeGroup.data?.seoUrl,
     productionBrandKeys: context.query.brands
       ? (context.query.brands as string).split(',')
       : undefined,
@@ -50,10 +51,10 @@ const getProductGroupData = async (context: GetServerSidePropsContext) => {
   });
 
   if (products.data) {
-    productGroupData.products = products.data;
+    productTypeGroupData.products = products.data;
   }
 
-  return productGroupData;
+  return productTypeGroupData;
 };
 
-export default getProductGroupData;
+export default getProductTypeGroupData;

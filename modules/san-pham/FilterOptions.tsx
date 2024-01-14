@@ -19,7 +19,7 @@ function FilterOptions({
       <div className="flex gap-4">
         <Typography.Text className="font-medium">Hãng sản xuất</Typography.Text>
       </div>
-      <div className="mt-2 flex flex-col">
+      <div className="mt-2 ml-4 flex flex-col">
         {productBrands.map((brand) => {
           const isActive = !!brand?.key && selectedBrands.includes(brand?.key);
 

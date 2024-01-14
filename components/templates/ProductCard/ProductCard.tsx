@@ -9,6 +9,7 @@ import AddToCartButton from '@modules/products/AddToCartButton';
 import CurrencyUtils from '@libs/utils/currency.utils';
 import { PromotionPercent } from '@configs/models/promotion.model';
 import { GiftFilled } from '@ant-design/icons';
+import { useRouter } from 'next/router';
 
 type ProductCardProps = {
   product: Product;
@@ -17,6 +18,7 @@ type ProductCardProps = {
   variant?: 'card' | 'list';
   promotionPercent?: PromotionPercent;
   showMinQuantity?: boolean;
+  isProductTypeGroup?: boolean;
 };
 
 const getMaxDiscount = (promotionPercents: PromotionPercent[]): number => {
@@ -36,7 +38,9 @@ function ProductCard({
   variant = 'card',
   promotionPercent,
   showMinQuantity = false,
+  isProductTypeGroup,
 }: ProductCardProps) {
+  const router = useRouter();
   const productDiscountVal =
     promotionPercent?.val || getMaxDiscount(product?.promotions || []) || 0;
 
@@ -51,7 +55,7 @@ function ProductCard({
   const isDiscount = productDiscountVal > 0;
 
   const href = `/${product.productType?.seoUrl}/${product.detail?.seoUrl}`;
-
+  const hrefTypeGroup = `/${product.productType?.seoUrl}/${product.productTypeGroup?.seoUrl}`;
   const disCountText = showMinQuantity ? (
     <>
       <GiftFilled />
@@ -63,30 +67,46 @@ function ProductCard({
   );
 
   return (
-    <Link href={href}>
-      <a className={`group block w-full ${className}`}>
+    <Link href={href} passHref>
+      <a className={`group block w-full ${className} p-1`}>
         {variant === 'card' && (
           <Card
+            hoverable
+            bordered={false}
             cover={
               <div
-                className={`relative ${
+                className={`relative  ${
                   size !== 'small' ? 'h-[160px]' : 'h-[140px]'
-                } w-full bg-white transition-transform duration-300 group-hover:scale-110`}
+                } w-full bg-white `}
               >
                 <ImageWithFallback
                   placeholder="blur"
+                  className=""
                   alt={displayName || ''}
                   src={image || ''}
                   layout="fill"
                   objectFit="contain"
                   loading="lazy"
                 />
+                {!isProductTypeGroup && (
+                  <div>
+                    <div
+                      className="absolute -bottom-8 right-0 z-50 rounded-l-full  border border-r-0 border-solid border-y-blue-500 border-l-blue-500 bg-gray-50 px-3 py-1 text-xs text-blue-500"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        return router.push(hrefTypeGroup);
+                      }}
+                    >
+                      {product.productTypeGroup?.name}
+                    </div>
+                  </div>
+                )}
               </div>
             }
             bodyStyle={{
               padding: '12px',
             }}
-            className={`relative overflow-hidden transition duration-300 group-hover:border-primary-light`}
+            className={`relative overflow-hidden `}
           >
             {isDiscount && (
               <Tag
@@ -96,7 +116,6 @@ function ProductCard({
                 {disCountText}
               </Tag>
             )}
-
             {product?.unit && (
               <Tag
                 color="blue"
@@ -111,7 +130,7 @@ function ProductCard({
                 <div className="h-[90px] flex-1">
                   <Typography.Text
                     title={displayName}
-                    className={`two-line-text mt-1 ${
+                    className={`two-line-text mt-7 ${
                       size !== 'small' ? 'h-[48px]' : 'h-[68px]'
                     }`}
                   >
@@ -133,7 +152,6 @@ function ProductCard({
                     </Typography.Text>
                   )}
                 </div>
-
                 {size !== 'small' && (
                   <div className="mt-2">
                     <AddToCartButton

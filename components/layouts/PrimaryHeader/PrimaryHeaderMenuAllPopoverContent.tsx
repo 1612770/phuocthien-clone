@@ -10,9 +10,12 @@ import PrimaryHeaderMenuAllPopoverContentLeftItem from './PrimaryHeaderMenuAllPo
 import { useDebounce } from '@libs/utils/hooks';
 import Link from 'next/link';
 import Product from '@configs/models/product.model';
+import { GeneralClient } from '@libs/client/General';
+import { ListProductTypeGroup } from '@modules/san-pham/ListProductTypeGroup';
+import ProductType from '@configs/models/product-type.model';
 
 const generateKey = (groupKey?: string, typeKey?: string) => {
-  return `${groupKey}-${typeKey}`;
+  return `${groupKey}-${typeKey}}`;
 };
 
 const checkCanGetFocusGroupProducts = (
@@ -42,7 +45,7 @@ function PrimaryHeaderMenuAllPopoverContent({
 
   const { fullMenu, setIntoPopover, setOpen, productsMenu, addProductMenu } =
     useFullMenu();
-  const debouncedCurrentFocusGroup = useDebounce(currentFocusGroup, 200);
+  const debouncedCurrentFocusGroup = useDebounce(currentFocusGroup, 300);
 
   const onGetFocusGroupProducts = useCallback(async () => {
     const canGet = checkCanGetFocusGroupProducts(
@@ -76,7 +79,6 @@ function PrimaryHeaderMenuAllPopoverContent({
     currentMenu?.key,
     addProductMenu,
   ]);
-
   /**
    * Mode: all
    * Set default current focus menu
@@ -91,6 +93,7 @@ function PrimaryHeaderMenuAllPopoverContent({
    * Mode: menu
    * Set default current focus group
    */
+
   useEffect(() => {
     if (currentMenu) {
       setCurrentFocusGroup(currentMenu.productGroups?.[0]);
@@ -101,6 +104,7 @@ function PrimaryHeaderMenuAllPopoverContent({
    * Mode: menu
    * Get products when current focus group changed
    */
+
   useEffect(() => {
     if (debouncedCurrentFocusGroup?.key && mode === 'menu') {
       onGetFocusGroupProducts();
@@ -109,10 +113,9 @@ function PrimaryHeaderMenuAllPopoverContent({
 
   const products =
     productsMenu[generateKey(currentFocusGroup?.key, currentMenu?.key)] || [];
-
   return (
     <div
-      className="flex bg-primary-background"
+      className="flex bg-gray-50"
       onMouseEnter={() => {
         setIntoPopover(true);
       }}
@@ -185,6 +188,13 @@ function PrimaryHeaderMenuAllPopoverContent({
 
         {mode === 'menu' && (
           <div className="p-4">
+            {!!currentFocusGroup?.productTypeGroup?.length && (
+              <ListProductTypeGroup
+                productTypeGroupData={currentFocusGroup.productTypeGroup}
+                productType={currentMenu as ProductType}
+                type="menu"
+              />
+            )}
             {!!currentMenu?.productGroups?.length && (
               <Space className="w-full items-center justify-between" size={20}>
                 <Typography.Title level={4}>Sản phẩm nổi bật</Typography.Title>
