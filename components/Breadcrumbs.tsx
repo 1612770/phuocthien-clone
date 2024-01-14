@@ -1,6 +1,5 @@
 import { Breadcrumb, BreadcrumbProps } from 'antd';
 import LinkWrapper from './templates/LinkWrapper';
-import { LeftOutlined } from '@ant-design/icons';
 
 interface Breadcrumb {
   title?: string;

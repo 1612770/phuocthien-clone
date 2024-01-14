@@ -2,7 +2,7 @@ import { Popover, Space, Typography } from 'antd';
 import Link from 'next/link';
 import PrimaryHeaderMenuList from './PrimaryHeaderMenuList';
 import ProductGroupModel from '@configs/models/product-group.model';
-import { CaretDownOutlined, DownOutlined } from '@ant-design/icons';
+import { CaretDownOutlined } from '@ant-design/icons';
 
 function PrimaryHeaderMenuItem({
   label,

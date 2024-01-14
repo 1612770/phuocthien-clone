@@ -1,6 +1,6 @@
 import { Popover, Space, Typography } from 'antd';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { IMPORTANT_MENU_KEYS } from '@configs/env';
 import ProductGroupModel from '@configs/models/product-group.model';
 import { useFullMenu } from '@providers/FullMenuProvider';
@@ -11,7 +11,6 @@ import LinkWrapper from '@components/templates/LinkWrapper';
 import {
   BookOutlined,
   CaretDownOutlined,
-  DownOutlined,
   ShopOutlined,
 } from '@ant-design/icons';
 
