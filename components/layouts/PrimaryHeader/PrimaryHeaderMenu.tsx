@@ -17,10 +17,14 @@ import {
 function PrimaryHeaderMenu() {
   const { fullMenu, open, setOpen, intoPopover } = useFullMenu();
 
-  const [mode, setMode] = useState<'all' | 'menu'>('all');
+  const [mode, setMode] = useState<'all' | 'menu' | 'none'>('none');
   const [currentMenu, setCurrentMenu] = useState<MenuModel>();
   const handleOpenMenu = (open: boolean) => {
-    setOpen(open);
+    if (mode !== 'none') {
+      setOpen(open);
+    } else {
+      setOpen(false);
+    }
   };
   return (
     <Popover
@@ -79,13 +83,21 @@ function PrimaryHeaderMenu() {
           )}
 
           <Typography.Text
-            className="mx-4 hidden text-white xl:flex"
+            className=" mx-4 hidden text-white xl:flex"
             type="secondary"
+            onMouseEnter={() => {
+              setMode('none');
+            }}
           >
             |
           </Typography.Text>
-          <LinkWrapper href={'/tin-tuc'} className="hidden xl:flex">
-            <Space align="center">
+          <LinkWrapper href={'/tin-tuc'}>
+            <Space
+              align="center"
+              onMouseEnter={() => {
+                setMode('none');
+              }}
+            >
               <BookOutlined className="text-white" />
               <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
                 Góc tin tức
@@ -94,7 +106,12 @@ function PrimaryHeaderMenu() {
           </LinkWrapper>
           <Link href={'/nha-thuoc'} style={{ color: 'white' }}>
             <a className="hidden xl:flex">
-              <Space align="center">
+              <Space
+                align="center"
+                onMouseEnter={() => {
+                  setMode('none');
+                }}
+              >
                 <ShopOutlined className="text-white" />
                 <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
                   Chuỗi nhà thuốc

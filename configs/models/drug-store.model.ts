@@ -8,6 +8,7 @@ type DrugStore = Partial<{
   isPrimary: boolean;
   isActived: boolean;
   visible: boolean;
+  mapUrl?: string;
 }>;
 
 export default DrugStore;

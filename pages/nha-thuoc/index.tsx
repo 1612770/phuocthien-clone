@@ -1,25 +1,29 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { GetServerSidePropsContext } from 'next';
-import { Breadcrumb, Empty, Typography } from 'antd';
+import { Empty, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import { DrugstoreClient } from '@libs/client/DrugStore';
 import DrugStore from '@configs/models/drug-store.model';
-import Link from 'next/link';
 import DrugstoreItem from '@modules/drugstore/DrugstoreItem';
+import Breadcrumbs from '@components/Breadcrumbs';
 
 const DrugstorePage: NextPageWithLayout<{
   drugstores?: DrugStore[];
 }> = ({ drugstores }) => {
   return (
     <div className="mx-auto  px-4 pb-8 lg:container lg:px-0">
-      <Breadcrumb className="mt-4 mb-2">
-        <Breadcrumb.Item>
-          <Link href="/">
-            <a>Trang chủ</a>
-          </Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>Danh sách nhà thuốc</Breadcrumb.Item>
-      </Breadcrumb>
+      <Breadcrumbs
+        className="mb-4 pt-4"
+        breadcrumbs={[
+          {
+            title: 'Trang chủ',
+            path: '/',
+          },
+          {
+            title: 'Danh sách nhà thuốc',
+          },
+        ]}
+      ></Breadcrumbs>
 
       <Typography.Title
         level={1}

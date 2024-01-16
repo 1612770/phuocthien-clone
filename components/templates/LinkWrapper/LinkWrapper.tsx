@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { MouseEventHandler } from 'react';
 
 function LinkWrapper({
   children,

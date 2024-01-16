@@ -4,7 +4,7 @@ import React from 'react';
 import DrugStore from '@configs/models/drug-store.model';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import ImageUtils from '@libs/utils/image.utils';
-
+import { EnvironmentTwoTone } from '@ant-design/icons';
 function DrugstoreItem({
   drugstore,
   variant = 'list-item',
@@ -54,8 +54,8 @@ function DrugstoreItem({
         )}
 
         {variant === 'card' && (
-          <div className="h-full rounded-lg border border-solid border-gray-200 bg-white p-4 transition duration-200 ease-in-out hover:border-primary-light hover:bg-gray-100">
-            <div className="flex items-start">
+          <div className="h-full rounded-lg border border-solid border-gray-200 bg-white p-4 transition duration-200 ease-in-out hover:border-primary-light ">
+            <div className="flex items-center justify-between">
               <ImageWithFallback
                 src={drugstore.image || ''}
                 width={48}
@@ -66,14 +66,29 @@ function DrugstoreItem({
               />
               <div className="ml-2">
                 <Typography className="text-sm">{drugstore.name}</Typography>
-                <Typography className="text-sm font-medium ">
+                <Typography className="mt-2 text-xs">
                   {drugstore.address}
                 </Typography>
                 <a href={`tel:${drugstore.tel}`}>
-                  <Typography className=" text-gray-600">
+                  <Typography className=" mt-2 text-xs text-gray-600">
                     {drugstore.tel}
                   </Typography>
                 </a>
+              </div>
+              <div
+                className="ml-2 w-[64px] text-center "
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.nativeEvent.stopPropagation();
+                  if (drugstore.mapUrl) {
+                    window.open(drugstore.mapUrl, '_blank');
+                  }
+                }}
+              >
+                <EnvironmentTwoTone width={24} height={24} />
+                <Typography className="text-[12px] hover:text-primary">
+                  Bản đồ
+                </Typography>
               </div>
             </div>
           </div>

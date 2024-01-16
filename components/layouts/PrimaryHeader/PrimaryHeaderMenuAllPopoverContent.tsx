@@ -10,6 +10,7 @@ import PrimaryHeaderMenuAllPopoverContentLeftItem from './PrimaryHeaderMenuAllPo
 import { useDebounce } from '@libs/utils/hooks';
 import Link from 'next/link';
 import Product from '@configs/models/product.model';
+import { GeneralClient } from '@libs/client/General';
 import { ListProductTypeGroup } from '@modules/san-pham/ListProductTypeGroup';
 import ProductType from '@configs/models/product-type.model';
 
@@ -35,7 +36,7 @@ function PrimaryHeaderMenuAllPopoverContent({
   mode,
 }: {
   currentMenu?: MenuModel;
-  mode: 'all' | 'menu';
+  mode: 'all' | 'menu' | 'none';
 }) {
   const [currentFocusMenu, setCurrentFocusMenu] = useState<MenuModel>();
   const [loadingProduct, setLoadingProduct] = useState(false);
@@ -112,7 +113,7 @@ function PrimaryHeaderMenuAllPopoverContent({
 
   const products =
     productsMenu[generateKey(currentFocusGroup?.key, currentMenu?.key)] || [];
-  return (
+  return mode !== 'none' ? (
     <div
       className="flex bg-gray-50"
       onMouseEnter={() => {
@@ -327,6 +328,8 @@ function PrimaryHeaderMenuAllPopoverContent({
         )}
       </div>
     </div>
+  ) : (
+    <></>
   );
 }
 
