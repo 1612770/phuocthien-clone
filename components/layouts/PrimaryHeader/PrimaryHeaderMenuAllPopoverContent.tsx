@@ -10,7 +10,6 @@ import PrimaryHeaderMenuAllPopoverContentLeftItem from './PrimaryHeaderMenuAllPo
 import { useDebounce } from '@libs/utils/hooks';
 import Link from 'next/link';
 import Product from '@configs/models/product.model';
-import { GeneralClient } from '@libs/client/General';
 import { ListProductTypeGroup } from '@modules/san-pham/ListProductTypeGroup';
 import ProductType from '@configs/models/product-type.model';
 
