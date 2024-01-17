@@ -6,6 +6,7 @@ import ProductDetailModel from './product-detail.model';
 import { PromotionPercent } from './promotion.model';
 import DrugStore from './drug-store.model';
 import ProductTypeGroupModel from './product-type-group.model';
+import ManufactoringCountry from './manufactoring-country.model';
 
 export interface CartProduct {
   product: Product;
@@ -51,6 +52,7 @@ type Product = Partial<{
   productGroup: ProductGroupModel;
   productionBrand: ProductBrand;
   productTypeGroup: ProductTypeGroupModel;
+  manufactoringCountry: ManufactoringCountry;
   images: ProductImage[];
   detail: ProductDetailModel;
   promotions: PromotionPercent[];

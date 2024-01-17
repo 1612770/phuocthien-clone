@@ -37,9 +37,21 @@ function ProductMetaData({ product }: { product: Product }) {
       )}
       {!!product?.productionBrand?.name && (
         <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
-          <Typography.Text className=" font-bold">Thương hiệu</Typography.Text>
+          <Typography.Text className=" font-bold">
+            Hãng sản xuất
+          </Typography.Text>
           <Typography.Text className=" ml-0 md:ml-2">
             {product?.productionBrand?.name}
+          </Typography.Text>
+        </div>
+      )}
+      {!!product?.manufactoringCountry?.name && (
+        <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
+          <Typography.Text className=" font-bold">
+            Nước sản xuất
+          </Typography.Text>
+          <Typography.Text className=" ml-0 md:ml-2">
+            {product?.manufactoringCountry?.name}
           </Typography.Text>
         </div>
       )}
