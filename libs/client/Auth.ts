@@ -25,6 +25,13 @@ export class AuthClient extends BaseClient {
     return await super.call('POST', `auth/otp`, payload);
   }
 
+  async signInByOTP(payload: {
+    verifyToken: string;
+    otpCode: string;
+  }): Promise<APIResponse<{ token: string; user: ProfileModel }>> {
+    return await super.call('POST', `auth/otp-sign-in`, payload);
+  }
+
   async verifyOtp(payload: {
     verifyToken: string;
     otpCode: string;
