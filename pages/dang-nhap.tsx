@@ -13,8 +13,13 @@ import ErrorCodes from '@configs/enums/error-codes.enum';
 import OtpSendAims from '@configs/enums/otp-send-aims.enum';
 import { REGEX_PHONE } from '@configs/env';
 import OtpUtils from '@libs/utils/otp.utils';
-import { ForgotPasswordSteps } from './quen-mat-khau';
-
+export enum ForgotPasswordSteps {
+  EnterPhoneNumber = 'EnterPhoneNumber',
+  TypeOTP = 'TypeOTP',
+  EnterOTP = 'EnterOTP',
+  EnterNewPassword = 'EnterNewPassword',
+  Finish = 'Finish',
+}
 const LoginPage: NextPageWithLayout = () => {
   const [step, setStep] = useState(ForgotPasswordSteps.EnterPhoneNumber);
   const [sendingOtp, setSendingOtp] = useState(false);

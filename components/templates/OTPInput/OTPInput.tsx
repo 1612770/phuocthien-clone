@@ -179,7 +179,7 @@ function OTPInput({
             <span
               className="text-primary hover:cursor-pointer"
               onClick={
-                countDownRetry > 2
+                counterRetry > 2
                   ? () => {
                       toastError({
                         data: 'Bạn chỉ được gửi lại mã xác thực 3 lần',
