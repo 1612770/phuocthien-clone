@@ -45,7 +45,7 @@ export function useCountdown({
     };
   }, [countdown]);
 
-  return { countdown };
+  return { countdown, setCountdown };
 }
 
 interface Args extends IntersectionObserverInit {

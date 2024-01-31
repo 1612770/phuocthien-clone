@@ -58,27 +58,6 @@ const OtpUtils = {
 
   checkOtpNeedSending: (phone: string) => {
     return true;
-
-    const oldValuesString = LocalStorageUtils.getItem(
-      LocalStorageKeys.OTP_SEND_TIME
-    );
-    const oldValues: LocalOTP = JSON.parse(oldValuesString || '{}');
-
-    const phoneData = oldValues[phone];
-    const remainSeconds = phoneData?.remainSeconds;
-    if (remainSeconds) {
-      if (!remainSeconds) {
-        if (!phoneData?.verifyToken) {
-          return false;
-        }
-
-        return true;
-      }
-
-      return false;
-    }
-
-    return true;
   },
 
   getVerifyTokenFromLocalStorage: (phone: string) => {
@@ -95,8 +74,9 @@ const OtpUtils = {
       LocalStorageKeys.OTP_SEND_TIME
     );
     const oldValues: LocalOTP = JSON.parse(oldValuesString || '{}');
-
-    return +oldValues[phone].remainSeconds;
+    if (+oldValues[phone]?.remainSeconds) {
+      return +oldValues[phone].remainSeconds;
+    }
   },
 };
 

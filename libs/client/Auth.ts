@@ -25,6 +25,13 @@ export class AuthClient extends BaseClient {
     return await super.call('POST', `auth/otp`, payload);
   }
 
+  async sendZaloOtp(payload: {
+    phoneNumber: string;
+    aim: OtpSendAims;
+  }): Promise<APIResponse<{ verifyToken: string; remainSeconds: number }>> {
+    return await super.call('POST', `auth/otp-zalo`, payload);
+  }
+
   async signInByOTP(payload: {
     verifyToken: string;
     otpCode: string;

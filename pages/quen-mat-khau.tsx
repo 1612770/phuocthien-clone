@@ -14,6 +14,7 @@ import OtpSendAims from '@configs/enums/otp-send-aims.enum';
 
 export enum ForgotPasswordSteps {
   EnterPhoneNumber = 'EnterPhoneNumber',
+  TypeOTP = 'TypeOTP',
   EnterOTP = 'EnterOTP',
   EnterNewPassword = 'EnterNewPassword',
   Finish = 'Finish',
