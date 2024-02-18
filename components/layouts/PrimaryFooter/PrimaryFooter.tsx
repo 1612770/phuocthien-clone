@@ -39,10 +39,10 @@ function PrimaryFooter() {
 
       <FocusContentSection focusContent={focusContent || []} />
 
-      <footer className="bg-white px-4">
+      <footer className="bg-white">
         <div className="py-8 lg:container">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div>
+            <div className="mr-2">
               <Link href="/" style={{ color: 'white' }}>
                 <a className="flex items-center">
                   <img
@@ -113,28 +113,32 @@ function PrimaryFooter() {
             </div>
 
             {mainInfoFooter?.map((info) => {
-              return info.groupInfo?.map((groupInfo, index) => (
-                <div className="w-full" key={index}>
-                  <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-primary">
-                    {groupInfo.name}
-                  </Typography.Text>
-                  {groupInfo.eventInfos?.map((event) => (
-                    <LinkWrapper
-                      key={event.name}
-                      href={`/${groupInfo.seoUrl}/${event.seoUrl}`}
-                      className="hover:text-primary"
-                    >
-                      <Space className="my-1 w-full">
-                        <AppDangerouslySetInnerHTML
-                          dangerouslySetInnerHTML={{
-                            __html: event.name || '',
-                          }}
-                        ></AppDangerouslySetInnerHTML>
-                      </Space>
-                    </LinkWrapper>
-                  ))}
-                </div>
-              ));
+              return info.groupInfo?.map(
+                (groupInfo, index) =>
+                  groupInfo?.eventInfos &&
+                  groupInfo?.eventInfos?.length > 0 && (
+                    <div className="w-full" key={index}>
+                      <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-primary">
+                        {groupInfo.name}
+                      </Typography.Text>
+                      {groupInfo.eventInfos?.map((event) => (
+                        <LinkWrapper
+                          key={event.name}
+                          href={`/${groupInfo.seoUrl}/${event.seoUrl}`}
+                          className="hover:text-primary"
+                        >
+                          <Space className="my-1 w-full">
+                            <AppDangerouslySetInnerHTML
+                              dangerouslySetInnerHTML={{
+                                __html: event.name || '',
+                              }}
+                            ></AppDangerouslySetInnerHTML>
+                          </Space>
+                        </LinkWrapper>
+                      ))}
+                    </div>
+                  )
+              );
             })}
 
             <div className="w-full">

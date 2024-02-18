@@ -115,15 +115,21 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
 
   const generalClient = new GeneralClient(ctx, {});
 
-  const [fullMenu, focusContent, mainInfoFooter] = await Promise.allSettled([
-    generalClient.getMenu(),
-    generalClient.getFocusContent(),
-    generalClient.getMainInfos({
-      page: 1,
-      pageSize: 10,
-      mainInfoCode: 1,
-    }),
-  ]);
+  const [fullMenu, focusContent, mainInfoFooter, mainInfoFooterOther] =
+    await Promise.allSettled([
+      generalClient.getMenu(),
+      generalClient.getFocusContent(),
+      generalClient.getMainInfos({
+        page: 1,
+        pageSize: 10,
+        mainInfoCode: 1,
+      }),
+      generalClient.getMainInfos({
+        page: 1,
+        pageSize: 10,
+        mainInfoCode: 4,
+      }),
+    ]);
 
   if (fullMenu.status === 'fulfilled' && fullMenu.value.data) {
     appInitalProps.props.fullMenu = fullMenu.value.data;
@@ -134,6 +140,16 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
 
   if (mainInfoFooter.status === 'fulfilled' && mainInfoFooter.value.data) {
     appInitalProps.props.mainInfoFooter = mainInfoFooter.value.data || [];
+  }
+
+  if (
+    mainInfoFooterOther.status === 'fulfilled' &&
+    mainInfoFooterOther.value.data
+  ) {
+    appInitalProps.props.mainInfoFooter = [
+      ...appInitalProps.props.mainInfoFooter,
+      ...mainInfoFooterOther.value.data,
+    ];
   }
   initalProps.pageProps = {
     ...initalProps.pageProps,
