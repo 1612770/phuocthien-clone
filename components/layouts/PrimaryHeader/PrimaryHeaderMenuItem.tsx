@@ -42,7 +42,7 @@ function PrimaryHeaderMenuItem({
         >
           <Space align="center">
             {icon}
-            <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
+            <Typography.Text className="whitespace-nowrap font-medium text-white">
               {label}
             </Typography.Text>
             {!onlyClick && (

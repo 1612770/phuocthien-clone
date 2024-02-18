@@ -5,7 +5,7 @@ import OtpUtils from '@libs/utils/otp.utils';
 import TimeUtils from '@libs/utils/time.utils';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import { Button, Form, Input, Typography } from 'antd';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 function OTPInput({
   onSubmit,
@@ -119,6 +119,7 @@ function OTPInput({
         {otp.map((key, idx) => (
           <Input
             key={idx}
+            inputMode="numeric"
             autoFocus={idx === 0}
             size="large"
             id={`input-${idx}`}

@@ -155,9 +155,9 @@ function ProductSearchInput() {
           <div className="absolute left-0 right-0 top-10 max-h-[800px] overflow-auto rounded-br-md rounded-bl-md bg-white">
             <div className="mx-2 mt-4">
               <Space size={[8, 8]} wrap>
-                {productSearchKeywords.map((keyword) => (
+                {productSearchKeywords.map((keyword, index) => (
                   <Tag
-                    key={keyword.id}
+                    key={`${index}_${keyword.sortOrder}`}
                     className="mx-0 cursor-pointer rounded-full border-none bg-primary-background p-2 text-sm"
                     onClick={() => {
                       setSearchValue(keyword.keyword || '');

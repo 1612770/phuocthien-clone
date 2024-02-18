@@ -6,9 +6,16 @@ import GroupInfoModel from '@configs/models/GroupInfoModel';
 function EventList({ group }: { group: GroupInfoModel }) {
   return (
     <div className="">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-4">
+      <div className="grid-row-1 grid grid-flow-row gap-4 lg:grid-flow-col lg:grid-rows-3">
         {group.eventInfos?.map((event, index) => (
-          <EventItem event={event} groupInfo={group} key={index} />
+          <div
+            key={index}
+            className={`${
+              index == 0 ? 'row-span-1 lg:row-span-3' : 'lg:col-span-1'
+            }`}
+          >
+            <EventItem event={event} groupInfo={group} indexBlog={index} />
+          </div>
         ))}
       </div>
 

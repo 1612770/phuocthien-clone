@@ -1,5 +1,5 @@
 import ProductCard from 'components/templates/ProductCard';
-import { Button, Typography } from 'antd';
+import { Badge, Button, Typography } from 'antd';
 import { ProductClient } from '@libs/client/Product';
 import { useState } from 'react';
 import ViralProductsListModel from '@configs/models/viral-products-list.model';
@@ -71,31 +71,22 @@ function ViralProductsList({
   return listViralProducts?.length ? (
     <div
       className={
-        'my-2 py-4 ' + (invertBackground ? 'bg-primary-light' : 'bg-white')
+        ' py-4 ' + (invertBackground ? 'bg-primary-light' : 'bg-gray-50')
       }
     >
-      <div className={'px-0 lg:container'}>
-        <div className="mb-2 flex items-center justify-center lg:mb-2 lg:justify-between">
+      <div
+        className={`rounded-t-xl bg-gradient-to-t  from-primary-bestsell-color-dark  to-primary-bestsell-color-light px-0 lg:container`}
+      >
+        <div className=" flex items-center justify-center text-center  lg:justify-center">
           <Typography.Title
             level={3}
             className={
-              'm-0 my-4 text-center font-medium lg:text-left ' +
+              'm-0 my-4 text-center  font-medium text-white ' +
               (invertBackground ? 'text-white' : '')
             }
           >
             {viralProductsList?.name}
           </Typography.Title>
-          <Link href={`/san-pham-noi-bat/${viralProductsList?.seoUrl}`}>
-            <a className="hidden lg:inline-block">
-              <Typography
-                className={
-                  'pr-3 ' + (invertBackground ? 'text-white' : 'text-blue-500')
-                }
-              >
-                Xem tất cả
-              </Typography>
-            </a>
-          </Link>
         </div>
         {viralProductsList?.imageUrl && (
           <Link href={`/san-pham-noi-bat/${viralProductsList?.seoUrl}`}>
@@ -115,7 +106,7 @@ function ViralProductsList({
         )}
       </div>
 
-      <div className="lg:container">
+      <div className="rounded-b-xl bg-gradient-to-b  from-primary-bestsell-color-dark  to-primary-bestsell-color-light p-2 lg:container">
         <div className="hidden  grid-cols-5 lg:grid lg:gap-2">
           {listViralProducts.map((product, index) =>
             product.productInfo ? (
@@ -155,7 +146,6 @@ function ViralProductsList({
           <Link href={`/san-pham-noi-bat/${viralProductsList?.seoUrl}`}>
             <a>
               <Button
-                type="primary"
                 className={
                   'inline-block lg:hidden ' +
                   (invertBackground ? 'border-white text-white' : '')

@@ -69,6 +69,9 @@ function AddressInput({
         ]}
       >
         <Select
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          autoComplete="none"
           showSearch
           className="w-full"
           placeholder="Nhập tỉnh/thành phố"
@@ -121,6 +124,9 @@ function AddressInput({
         ]}
       >
         <Select
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          autoComplete="none"
           showSearch
           allowClear
           className="w-full"
@@ -173,6 +179,9 @@ function AddressInput({
         ]}
       >
         <Select
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          autoComplete="none"
           showSearch
           allowClear
           className="w-full"
@@ -217,7 +226,7 @@ function AddressInput({
           },
         ]}
       >
-        <Input placeholder="Nhập địa chỉ" />
+        <Input placeholder="Nhập địa chỉ" autoComplete="off" />
       </Form.Item>
     </div>
   );

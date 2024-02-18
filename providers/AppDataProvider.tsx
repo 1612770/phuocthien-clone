@@ -2,7 +2,7 @@ import FocusContentModel from '@configs/models/focus-content.model';
 import MainInfoModel from '@configs/models/main-info.model';
 import ProductSearchKeyword from '@configs/models/product-search-keyword.model';
 import { GeneralClient } from '@libs/client/General';
-import React, { useCallback, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 
 const AppDataContext = React.createContext<{
   focusContent: FocusContentModel[];

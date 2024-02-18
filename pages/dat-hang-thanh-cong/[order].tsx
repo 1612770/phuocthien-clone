@@ -25,7 +25,6 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
   const appConfirmDialog = useAppConfirmDialog();
   const { isUserLoggedIn } = useAuth();
   const appMessage = useAppMessage();
-
   useEffect(() => {
     if (!orderToShow) {
       const order = SessionStorageUtils.getItem(
@@ -38,7 +37,6 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   const cancelOrder = async () => {
     try {
       if (orderToShow?.key) {
@@ -205,6 +203,16 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
                       </Typography>
                     </li>
                   )}
+                  <li>
+                    <Typography className="text-left">
+                      <span className="text-gray-600">
+                        Giá trị đơn hàng &nbsp;
+                      </span>
+                      <span className="font-bold text-primary">
+                        {CurrencyUtils.format(orderToShow?.subTotalAmount)}
+                      </span>
+                    </Typography>
+                  </li>
                   {orderToShow.shippingType === ShippingTypes.DELIVERY && (
                     <li>
                       <Typography className="text-left">

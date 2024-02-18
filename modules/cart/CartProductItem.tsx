@@ -1,5 +1,5 @@
 import { Button, Grid, Input, Radio, Space, Tooltip, Typography } from 'antd';
-import { CartProduct } from '@configs/models/product.model';
+import Product, { CartProduct } from '@configs/models/product.model';
 import { useCart } from '@providers/CartProvider';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import { useEffect, useRef, useState } from 'react';
@@ -12,7 +12,19 @@ import CartProductItemCollapse from './CartProductItemCollapse';
 import { DeleteOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import LinkWrapper from '@components/templates/LinkWrapper';
 
-function CartProductItem({ cartProduct }: { cartProduct: CartProduct }) {
+function CartProductItem({
+  cartProduct,
+  checkInventory,
+}: {
+  cartProduct: CartProduct;
+  checkInventory?: {
+    product: Product;
+    statusData: {
+      isStillAvailable: boolean;
+      drugstoreQuantity?: number;
+    };
+  };
+}) {
   const [quantity, setQuantity] = useState<number>(0);
 
   const { removeFromCart, changeProductData } = useCart();
@@ -123,7 +135,6 @@ function CartProductItem({ cartProduct }: { cartProduct: CartProduct }) {
     0 > 0;
 
   const { xl } = Grid.useBreakpoint();
-
   const productMeta = (
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div className="flex shrink-0 basis-[112px] flex-col">
@@ -175,6 +186,7 @@ function CartProductItem({ cartProduct }: { cartProduct: CartProduct }) {
 
               processWhenChangeQuantity(newQuantity);
             }}
+            max={50}
             onChange={(e) => {
               setQuantity(+e.target.value);
             }}
@@ -210,11 +222,25 @@ function CartProductItem({ cartProduct }: { cartProduct: CartProduct }) {
           x {quantity} {cartProduct.product.unit}
         </Typography.Text>
       )}
+      {checkInventory && !checkInventory.statusData.isStillAvailable && (
+        <div className="text-red-700">
+          Hiện tại mặt hàng này không đủ số lượng bạn yêu cầu.
+          <br /> Tổng số lượng sản phẩm hiện tại là:{' '}
+          <b>{checkInventory.statusData.drugstoreQuantity}</b>
+          <br />
+          Vui lòng cập nhật lại giỏ hàng.
+        </div>
+      )}
     </div>
   );
-
   return (
-    <div className="group -mx-4 select-none py-4 px-4 transition-all duration-200 ease-in-out hover:bg-stone-50 ">
+    <div
+      className={`group -mx-4 select-none py-4 px-4 transition-all duration-200 ease-in-out hover:bg-stone-50 ${
+        checkInventory && !checkInventory?.statusData.isStillAvailable
+          ? 'bg-red-50 hover:bg-red-100'
+          : ''
+      }`}
+    >
       <div className="flex items-center justify-start gap-1 xl:justify-between ">
         {cartStep === 'cart' && (
           <Radio

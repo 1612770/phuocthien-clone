@@ -5,7 +5,7 @@ import ImageWithFallback from '@components/templates/ImageWithFallback';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import DrugStore from '@configs/models/drug-store.model';
 import { ProductClient } from '@libs/client/Product';
-import Product from '@configs/models/product.model';
+import Product, { InventoryAtDrugStore } from '@configs/models/product.model';
 import ImageUtils from '@libs/utils/image.utils';
 import { useCheckout } from '@providers/CheckoutProvider';
 
@@ -19,7 +19,6 @@ function DrugStorePickerInventoryChecking({
   const { choosenCartProducts, changeProductData, removeFromCart } = useCart();
   const { productStatuses, setProductStatuses } = useCheckout();
   const { toastError, toastSuccess } = useAppMessage();
-
   const checkProductStillAvailableAtDrugStore = (
     drugStoreKey: string,
     inventoryAtDrugStores:
@@ -56,17 +55,15 @@ function DrugStorePickerInventoryChecking({
 
     try {
       setChecking(true);
-      const inventoryAtDrugStoresResponses = await Promise.all(
-        choosenCartProducts.map((cartProduct) =>
-          product.checkInventoryAtDrugStores({
-            key: cartProduct.product.key || '',
-          })
-        )
-      );
 
-      const inventoryAtDrugStores = inventoryAtDrugStoresResponses.map(
-        (inventoryAtDrugStoresResponse) => inventoryAtDrugStoresResponse.data
-      );
+      const inventoryAtDrugStores: (InventoryAtDrugStore[] | undefined)[] = [];
+
+      for (let i = 0; i < choosenCartProducts.length; i++) {
+        const retInventory = await product.checkInventoryAtDrugStores({
+          key: choosenCartProducts[i].product.key || '',
+        });
+        inventoryAtDrugStores.push(retInventory.data);
+      }
 
       const productStatuses: {
         product: Product;
@@ -137,11 +134,11 @@ function DrugStorePickerInventoryChecking({
   );
 
   return (
-    <>
+    <div className="bg-red-100">
       {productStatuses.length > 0 && (
         <>
           <Spin spinning={checking}>
-            <div className="bg-white">
+            <div className="bg-red-50 p-4">
               {notAvailableProducts.length > 0 && (
                 <>
                   <Form.Item
@@ -152,7 +149,8 @@ function DrugStorePickerInventoryChecking({
                     <Checkbox checked={false}></Checkbox>
                   </Form.Item>
                   <Typography className="font-medium text-red-500">
-                    Hãy kiểm tra lại các hành động bên dưới
+                    Vui lòng kiểm tra lại các sản phẩm bên dưới hoặc đổi hình
+                    thức nhận hàng.
                   </Typography>
                 </>
               )}
@@ -183,7 +181,9 @@ function DrugStorePickerInventoryChecking({
                           <>
                             <Typography className={'text-red-500'}>
                               Hiện tại, nhà thuốc này chỉ còn{' '}
-                              {productStatus.statusData.drugstoreQuantity}{' '}
+                              <b>
+                                {productStatus.statusData.drugstoreQuantity}{' '}
+                              </b>
                               {(productStatus.product.unit || '').toLowerCase()}
                             </Typography>
                             <Button
@@ -257,7 +257,7 @@ function DrugStorePickerInventoryChecking({
           </Spin>
         </>
       )}
-    </>
+    </div>
   );
 }
 

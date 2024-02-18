@@ -120,7 +120,6 @@ export const getServerSideProps = async (
 
   const promotionClient = new PromotionClient(context, {});
   const campaignId = context.params?.campaignId as string;
-
   try {
     const [campaigns] = await Promise.allSettled([
       promotionClient.getPromo({
@@ -130,6 +129,7 @@ export const getServerSideProps = async (
         isHide: false,
       }),
     ]);
+
     if (campaigns.status === 'fulfilled' && campaigns.value.data) {
       if (!campaigns.value.data.length) {
         return {
@@ -142,7 +142,6 @@ export const getServerSideProps = async (
       const promotions = campaigns.value.data.reduce((acc, curCampaign) => {
         return [...acc, ...curCampaign.promotions];
       }, [] as CampaignPromotion[]);
-
       const listProducts = await Promise.all(
         promotions.map((promotion) =>
           promotionClient.getPromoProducts({

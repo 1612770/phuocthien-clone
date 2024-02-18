@@ -43,7 +43,7 @@ function HomepageCarousel({
   const pairedSlides = getPairedSlides(sliderImages, numberSlidePerPage);
 
   return (
-    <div className="relative">
+    <div className="relative mt-4 ">
       <Carousel
         autoplay
         dots={false}
@@ -52,7 +52,7 @@ function HomepageCarousel({
         ref={(ref) => (carouselRef.current = ref)}
       >
         {pairedSlides.map((slides, index) => (
-          <div className="flex gap-2 lg:gap-4" key={index}>
+          <div className="flex gap-2 lg:gap-4 " key={index}>
             {slides.map((slide, index) => (
               <LinkWrapper
                 key={index}
@@ -61,9 +61,11 @@ function HomepageCarousel({
               >
                 <div className={`flex-1 overflow-hidden`}>
                   <div
-                    className={`relative aspect-[16/9] h-[${
-                      type === 'primary' ? 120 : 80
-                    }] lg:h-[${type === 'primary' ? 400 : 200}px] w-full`}
+                    className={`relative aspect-[3/1] h-[${
+                      type === 'primary' ? 300 : 80
+                    }px] lg:h-[${
+                      type === 'primary' ? 300 : 200
+                    }px] w-full rounded-full`}
                   >
                     <ImageWithFallback
                       src={slide.url || ''}
@@ -75,7 +77,8 @@ function HomepageCarousel({
                           ? '(min-width: 1200px) 100vw, 100vw'
                           : '(min-width: 768px) 50vw, 100vw'
                       }
-                      objectFit={'cover'}
+                      objectFit={'fill'}
+                      className="rounded-xl"
                       objectPosition="center"
                       priority={type === 'primary'}
                     />

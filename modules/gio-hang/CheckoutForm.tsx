@@ -54,7 +54,10 @@ function CheckoutForm({
                       },
                     ]}
                   >
-                    <Input placeholder="Họ và tên (bắt buộc)" />
+                    <Input
+                      placeholder="Họ và tên (bắt buộc)"
+                      autoComplete="off"
+                    />
                   </Form.Item>
 
                   <Form.Item
@@ -71,7 +74,10 @@ function CheckoutForm({
                       },
                     ]}
                   >
-                    <Input placeholder="Số điện thoại (bắt buộc)" />
+                    <Input
+                      placeholder="Số điện thoại (bắt buộc)"
+                      autoComplete="off"
+                    />
                   </Form.Item>
                 </div>
 
@@ -90,6 +96,7 @@ function CheckoutForm({
                 <Form.Item name="orderNote">
                   <Input.TextArea
                     rows={4}
+                    autoComplete="off"
                     placeholder="Nhập ghi chú (nếu có)"
                     className="mt-2"
                   />

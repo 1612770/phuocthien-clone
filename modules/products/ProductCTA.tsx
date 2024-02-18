@@ -1,7 +1,7 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import Product from '@configs/models/product.model';
 import { useCart } from '@providers/CartProvider';
-import { Grid, Typography } from 'antd';
+import { Button, Grid, Typography } from 'antd';
 import React, { ReactNode } from 'react';
 import AddToCartButton from './AddToCartButton';
 import { PromotionPercent } from '@configs/models/promotion.model';
@@ -36,9 +36,11 @@ const getInstruction = (
 function ProductCTA({
   product,
   price,
+  isAvailable,
 }: {
   product: Product;
   price: ReactNode;
+  isAvailable?: boolean;
 }) {
   const { cartProducts } = useCart();
   const { lg } = Grid.useBreakpoint();
@@ -54,15 +56,30 @@ function ProductCTA({
   return (
     <>
       <div className="mt-2 hidden flex-col items-center gap-1 lg:flex">
-        {product && (
-          <div className=" w-full md:w-[200px]">
-            <AddToCartButton
-              type="in-detail"
-              product={product}
-              className="w-[200px] uppercase"
-            />
-          </div>
-        )}
+        {product &&
+          (isAvailable ? (
+            <div className=" w-full md:w-[200px]">
+              <AddToCartButton
+                type="in-detail"
+                product={product}
+                className="w-[200px] uppercase"
+              />
+            </div>
+          ) : (
+            <div className=" w-full md:w-[200px]">
+              <Button
+                className="w-[200px] uppercase"
+                type="primary"
+                shape="round"
+                size={'large'}
+                onClick={() =>
+                  window.open('https://zalo.me/phuocthienpharmacy', '_blank')
+                }
+              >
+                Liên hệ dược sĩ
+              </Button>
+            </div>
+          ))}
 
         {nextInstruction && (
           <div className="flex items-center gap-2 text-blue-500">

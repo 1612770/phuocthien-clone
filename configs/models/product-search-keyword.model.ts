@@ -1,8 +1,8 @@
 type ProductSearchKeyword = Partial<{
-  id: string;
+  id?: string;
   keyword: string;
   sortOrder: number;
-  active: boolean;
+  active?: boolean;
 }>;
 
 export default ProductSearchKeyword;

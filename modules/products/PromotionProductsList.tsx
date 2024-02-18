@@ -17,7 +17,9 @@ function PromotionProductsList({
   defaultProducts,
   isPrimaryBackground,
   scrollable,
+  campaginSlug,
 }: {
+  campaginSlug?: string;
   promotion?: CampaignPromotion;
   defaultProducts: Product[];
   id?: string;
@@ -75,7 +77,7 @@ function PromotionProductsList({
           <LinkWrapper
             className="relative mt-4 mb-2 block h-[100px] w-full lg:h-[200px]"
             href={`/khuyen-mai/${
-              promotion.slug || promotion.campaignKey
+              campaginSlug || promotion.campaignKey
             }?anchor=${promotion.key}`}
           >
             <ImageWithFallback

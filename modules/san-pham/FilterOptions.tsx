@@ -21,7 +21,8 @@ function FilterOptions({
       </div>
       <div className="mt-2 ml-4 flex flex-col">
         {productBrands.map((brand) => {
-          const isActive = !!brand?.key && selectedBrands.includes(brand?.key);
+          const isActive =
+            !!brand?.seoUrl && selectedBrands.includes(brand?.seoUrl || '');
 
           return (
             <div key={brand.key}>
@@ -32,7 +33,7 @@ function FilterOptions({
                   onFilterClick?.();
                   if (isActive) {
                     const newBrands = selectedBrands.filter(
-                      (selectedBrand) => selectedBrand !== brand.key
+                      (selectedBrand) => selectedBrand !== brand.seoUrl
                     );
                     router.push({
                       query: {
@@ -44,7 +45,7 @@ function FilterOptions({
                     router.push({
                       query: {
                         ...router.query,
-                        brands: [...selectedBrands, brand.key].join(','),
+                        brands: [...selectedBrands, brand.seoUrl].join(','),
                       },
                     });
                   }

@@ -24,7 +24,7 @@ const EventPage: NextPageWithLayout<{
               path: '/',
             },
             {
-              title: 'Góc tin tức',
+              title: 'Góc sức khoẻ',
             },
           ]}
         ></Breadcrumbs>

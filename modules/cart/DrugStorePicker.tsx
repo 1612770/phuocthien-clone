@@ -41,6 +41,19 @@ function DrugStorePicker() {
       <div className="my-4 rounded-lg">
         <div className=" rounded-lg bg-gray-50 ">
           <Form.Item
+            noStyle
+            shouldUpdate={(prevValues, currentValues) =>
+              prevValues.currentDrugStoreKey !==
+              currentValues.currentDrugStoreKey
+            }
+          >
+            {({ getFieldValue }) => (
+              <DrugStorePickerInventoryChecking
+                drugStoreKey={getFieldValue('currentDrugStoreKey')}
+              />
+            )}
+          </Form.Item>
+          <Form.Item
             name="currentDrugStoreKey"
             className="relative w-full"
             rules={[
@@ -53,7 +66,7 @@ function DrugStorePicker() {
             <div className="max-h-[280px] overflow-auto px-4 py-2">
               <Radio.Group className={isListLimited ? 'pb-12' : ''}>
                 {showedDrugStores.map((drugStore) => (
-                  <div key={drugStore.key} className="">
+                  <div key={drugStore.key} className="mb-3">
                     <Radio value={drugStore.key}>
                       <div className="ml-2 flex items-center">
                         <ImageWithFallback
@@ -68,8 +81,11 @@ function DrugStorePicker() {
                         />
                         <div className="ml-3">
                           <Typography className="">{drugStore.name}</Typography>
+                          <Typography className="mb-1 text-xs text-primary">
+                            Thời gian làm việc: 7h00 - 21h00
+                          </Typography>
                           <Typography className="text-xs text-gray-600">
-                            Địa chỉ: {drugStore.address}
+                            Địa chỉ: {drugStore.address} - {drugStore.tel}
                           </Typography>
                         </div>
                       </div>
@@ -94,19 +110,6 @@ function DrugStorePicker() {
             </div>
           </Form.Item>
         </div>
-
-        <Form.Item
-          noStyle
-          shouldUpdate={(prevValues, currentValues) =>
-            prevValues.currentDrugStoreKey !== currentValues.currentDrugStoreKey
-          }
-        >
-          {({ getFieldValue }) => (
-            <DrugStorePickerInventoryChecking
-              drugStoreKey={getFieldValue('currentDrugStoreKey')}
-            />
-          )}
-        </Form.Item>
       </div>
     </Spin>
   );

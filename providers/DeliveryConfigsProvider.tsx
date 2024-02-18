@@ -20,8 +20,12 @@ function DeliveryConfigsProvider({ children }: { children: React.ReactNode }) {
   const [deliveryConfigs, setDeliveryConfigs] = useState<
     DeliveryConfigs | undefined
   >();
-  const { totalPriceBeforeDiscountOnProduct, checkoutForm, cartStep } =
-    useCheckout();
+  const {
+    totalPriceBeforeDiscountOnProduct,
+    totalPriceAfterDiscountOnProduct,
+    checkoutForm,
+    cartStep,
+  } = useCheckout();
 
   const shippingType = checkoutForm?.getFieldValue('shippingType');
 
@@ -41,7 +45,7 @@ function DeliveryConfigsProvider({ children }: { children: React.ReactNode }) {
     if (
       shippingType === ShippingTypes.DELIVERY &&
       cartStep === 'checkout' &&
-      totalPriceBeforeDiscountOnProduct <
+      totalPriceAfterDiscountOnProduct <
         (deliveryConfigs?.totalAmountOrderApply || 0)
     ) {
       shippingFee = deliveryConfigs?.feeDelivery || 0;
@@ -53,7 +57,7 @@ function DeliveryConfigsProvider({ children }: { children: React.ReactNode }) {
     deliveryConfigs?.feeDelivery,
     deliveryConfigs?.totalAmountOrderApply,
     shippingType,
-    totalPriceBeforeDiscountOnProduct,
+    totalPriceAfterDiscountOnProduct,
   ]);
 
   return (

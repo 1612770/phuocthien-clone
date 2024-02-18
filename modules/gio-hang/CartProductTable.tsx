@@ -7,14 +7,13 @@ import React, { Fragment } from 'react';
 function CartProductTable() {
   const { cartProducts, choosenCartProducts, setChoosenAllCartProducts } =
     useCart();
-  const { cartStep } = useCheckout();
+  const { cartStep, checkProductBeforeCheckout } = useCheckout();
 
   const isAllCartProductsChoosen = cartProducts.every(
     (cartProduct) => cartProduct.choosen
   );
   const cartProductsToShow =
     cartStep === 'cart' ? cartProducts : choosenCartProducts;
-
   return (
     <>
       {cartStep === 'cart' && (
@@ -31,7 +30,12 @@ function CartProductTable() {
 
       {cartProductsToShow.map((cartProduct, index) => (
         <Fragment key={cartProduct.product.key}>
-          <CartProductItem cartProduct={cartProduct} />
+          <CartProductItem
+            cartProduct={cartProduct}
+            checkInventory={checkProductBeforeCheckout.find(
+              (el) => el.product.product.key === cartProduct.product.key
+            )}
+          />
           {index !== cartProducts.length - 1 && <Divider className="my-2" />}
         </Fragment>
       ))}

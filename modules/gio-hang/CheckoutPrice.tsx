@@ -19,6 +19,7 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
   const [isShowInfoMobile, setIsShowInfoMobile] = useState(false);
 
   const {
+    checkProductBeforeCheckout,
     checkoutError,
     checkingOut,
     totalPriceAfterDiscountOnProduct,
@@ -26,6 +27,8 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
     offerCodePrice,
     cartStep,
     setCartStep,
+    checkInventoryBeforeCheckOut,
+    checkingPrice,
   } = useCheckout();
 
   const { shippingFee } = useDeliveryConfigs();
@@ -39,7 +42,6 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
   const totalLabel = cartStep === 'cart' ? 'Tạm tính' : 'Thành tiền';
   const totalAmount =
     totalPriceAfterDiscountOnProduct - offerCodePrice + shippingFee;
-
   return (
     <div
       className={
@@ -142,9 +144,9 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
             <Button
               type="primary"
               onClick={() => {
-                setCartStep('checkout');
+                checkInventoryBeforeCheckOut();
               }}
-              loading={checkingOut}
+              loading={checkingPrice}
               size="large"
               block
               disabled={!totalProducts}
@@ -198,9 +200,9 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
                 <Button
                   type="primary"
                   onClick={() => {
-                    setCartStep('checkout');
+                    checkInventoryBeforeCheckOut();
                   }}
-                  loading={checkingOut}
+                  loading={checkingPrice}
                   block
                   className={`${
                     totalProducts ? 'bg-primary-light' : 'bg-gray-200'

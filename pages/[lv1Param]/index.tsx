@@ -79,7 +79,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
       }),
       generalClient.getProductionBrands(),
     ]);
-
     if (productType.data) {
       serverSideProps.props.productType.productType = productType.data;
       serverSideProps.props.productType.productBrands = productBrands.data;
@@ -103,12 +102,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
         serverSideProps.props.productType.products = products.data;
       }
     } else {
-      return {
-        redirect: {
-          destination: '/',
-          permanent: false,
-        },
-      };
+      throw Error('Not found product type');
     }
   } catch (error) {
     try {

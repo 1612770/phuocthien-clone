@@ -4,7 +4,7 @@ import { useCart } from './CartProvider';
 import { getErrorMessage } from '@libs/helpers';
 import { useRouter } from 'next/router';
 import { OrderClient } from '@libs/client/Order';
-import Product from '@configs/models/product.model';
+import Product, { CartProduct } from '@configs/models/product.model';
 import { useAuth } from './AuthProvider';
 import SessionStorageUtils, {
   SessionStorageKeys,
@@ -14,6 +14,7 @@ import { useAppConfirmDialog } from './AppConfirmDialogProvider';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import { useMasterData } from './MasterDataProvider';
 import { Form, FormInstance } from 'antd';
+import { ProductClient } from '@libs/client/Product';
 
 const CheckoutContext = React.createContext<{
   productStatuses: {
@@ -32,12 +33,32 @@ const CheckoutContext = React.createContext<{
       };
     }[]
   ) => void;
+  checkProductBeforeCheckout: {
+    product: CartProduct;
+    statusData: {
+      isStillAvailable: boolean;
+      drugstoreQuantity?: number;
+    };
+  }[];
+
+  setCheckProductBeforeCheckout: (
+    productStatuses: {
+      product: CartProduct;
+      statusData: {
+        isStillAvailable: boolean;
+        drugstoreQuantity?: number;
+      };
+    }[]
+  ) => void;
 
   checkoutError: string;
   setCheckoutError: (checkoutError: string) => void;
 
   checkingOut: boolean;
   setCheckingOut: (checkingOut: boolean) => void;
+
+  checkingPrice: boolean;
+  setCheckingPrice: (checkingPrice: boolean) => void;
 
   checkout: () => void;
 
@@ -51,9 +72,13 @@ const CheckoutContext = React.createContext<{
   totalPriceBeforeDiscountOnProduct: number;
   offerCodePrice: number;
 
+  checkInventoryBeforeCheckOut: () => void;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   checkoutForm?: FormInstance<any>;
 }>({
+  checkProductBeforeCheckout: [],
+  setCheckProductBeforeCheckout: () => undefined,
   productStatuses: [],
   setProductStatuses: () => undefined,
 
@@ -62,6 +87,9 @@ const CheckoutContext = React.createContext<{
 
   checkingOut: false,
   setCheckingOut: () => undefined,
+
+  checkingPrice: false,
+  setCheckingPrice: () => undefined,
 
   checkout: () => undefined,
 
@@ -76,6 +104,7 @@ const CheckoutContext = React.createContext<{
   offerCodePrice: 0,
 
   checkoutForm: undefined,
+  checkInventoryBeforeCheckOut: () => undefined,
 });
 
 function CheckoutProvider({ children }: { children: React.ReactNode }) {
@@ -99,7 +128,15 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
   }>();
 
   const shippingType = Form.useWatch('shippingType', checkoutForm);
-
+  const [checkProductInventory, setCheckProductInventory] = useState<
+    {
+      product: CartProduct;
+      statusData: {
+        isStillAvailable: boolean;
+        drugstoreQuantity?: number;
+      };
+    }[]
+  >([]);
   const [productStatuses, setProductStatuses] = useState<
     {
       product: Product;
@@ -111,6 +148,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
   >([]);
 
   const [checkingOut, setCheckingOut] = useState(false);
+  const [checkingPrice, setCheckingPrice] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
   const [offer, setOffer] = useState<OfferModel>();
   const [cartStep, setCartStep] = useState<'cart' | 'checkout'>('cart');
@@ -204,6 +242,79 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
     return res;
   };
 
+  const checkInventoryBeforeCheckOut = async () => {
+    setCheckingPrice(true);
+    const product = new ProductClient(null, {});
+    const _productStatuses: {
+      product: CartProduct;
+      statusData: {
+        isStillAvailable: boolean;
+        drugstoreQuantity?: number;
+      };
+    }[] = [];
+    for (let i = 0; i < choosenCartProducts.length; i++) {
+      const chooseProduct = choosenCartProducts[i];
+      try {
+        const getInventoryOfProduct = await product.checkInventoryAtDrugStores({
+          key: chooseProduct.product?.key || '',
+        });
+        if (getInventoryOfProduct.data?.length === 0) {
+          _productStatuses.push({
+            product: { ...chooseProduct },
+            statusData: {
+              isStillAvailable: false,
+              drugstoreQuantity: 0,
+            },
+          });
+          setCheckoutError(
+            'Sản phẩm tạm hết hàng. Vui lòng kiểm tra lại giỏ hàng.'
+          );
+        } else {
+          const totalInventory = getInventoryOfProduct.data?.reduce(
+            (curr, el) => curr + el.quantity,
+            0
+          );
+          if (totalInventory == 0 || !totalInventory) {
+            _productStatuses.push({
+              product: { ...chooseProduct },
+              statusData: {
+                isStillAvailable: false,
+                drugstoreQuantity: 0,
+              },
+            });
+            setCheckoutError(
+              'Sản phẩm tạm hết hàng. Vui lòng kiểm tra lại giỏ hàng.'
+            );
+          } else {
+            _productStatuses.push({
+              product: { ...chooseProduct },
+              statusData: {
+                isStillAvailable: totalInventory >= chooseProduct.quantity,
+                drugstoreQuantity: totalInventory,
+              },
+            });
+          }
+        }
+      } catch (error) {
+        setCheckoutError(
+          'Có lỗi khi kiểm tra tồn kho sản phẩm. Vui lòng thử lại hoặc liên hệ kênh hỗ trợ.'
+        );
+        setCheckingPrice(false);
+      }
+    }
+    if (!_productStatuses.every((el) => el.statusData?.isStillAvailable)) {
+      setCheckoutError(
+        'Sản phẩm không đủ số lượng yêu cầu. Vui lòng kiểm tra lại giỏ hàng.'
+      );
+      setCheckingPrice(false);
+    } else {
+      setCartStep('checkout');
+      setCheckoutError('');
+      setCheckingPrice(false);
+    }
+    setCheckProductInventory(_productStatuses);
+  };
+
   const checkout = async () => {
     try {
       if (!(totalPriceAfterDiscountOnProduct > 10000)) {
@@ -248,7 +359,9 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
       router.push(`/dat-hang-thanh-cong/${orderResponse.data?.key}`);
     } catch (error) {
-      setCheckoutError(getErrorMessage(error));
+      setCheckoutError(
+        'Đã có lỗi trong hệ thống. Vui lòng thử lại sau ít phút hoặc liên hệ hỗ trợ.'
+      );
     } finally {
       setCheckingOut(false);
     }
@@ -304,6 +417,9 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
   return (
     <CheckoutContext.Provider
       value={{
+        checkProductBeforeCheckout: checkProductInventory,
+        setCheckProductBeforeCheckout: setCheckProductInventory,
+
         productStatuses,
         setProductStatuses,
 
@@ -312,6 +428,9 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
         checkingOut,
         setCheckingOut,
+
+        checkingPrice,
+        setCheckingPrice,
 
         checkout,
 
@@ -326,6 +445,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         offerCodePrice,
 
         checkoutForm,
+        checkInventoryBeforeCheckOut,
       }}
     >
       {children}

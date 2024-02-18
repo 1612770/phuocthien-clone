@@ -3,6 +3,10 @@ const IMAGES = {
   logo_old: '/logo.png',
   dmcaProtected: '/dmca-protected.png',
   bocongthuongDathongbao: '/bocongthuong-dathongbao.png',
+  drug: '/drugs.svg',
+  doctor: '/doctor.svg',
+  bill: '/bill.svg',
+  awards: '/awards.png',
 };
 
 export default IMAGES;

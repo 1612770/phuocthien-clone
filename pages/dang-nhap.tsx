@@ -24,8 +24,6 @@ const LoginPage: NextPageWithLayout = () => {
   const [step, setStep] = useState(ForgotPasswordSteps.EnterPhoneNumber);
   const [sendingOtp, setSendingOtp] = useState(false);
   const [submittingOtp, setSubmittingOtp] = useState(false);
-
-  const [typeLogin, setTypeLogin] = useState('otp');
   const [phone, setPhone] = useState('');
   const [selectTypeOTP, setSelectTypeOTP] = useState('');
   const { toastError } = useAppMessage();
@@ -155,52 +153,52 @@ const LoginPage: NextPageWithLayout = () => {
           </Typography>
         )}
 
-        {typeLogin === 'otp' &&
-          step === ForgotPasswordSteps.EnterPhoneNumber && (
-            <Form
-              className="flex flex-col items-center"
-              initialValues={{ remember: true }}
-              scrollToFirstError
-              onFinish={verifyPhone}
+        {step === ForgotPasswordSteps.EnterPhoneNumber && (
+          <Form
+            className="flex flex-col items-center"
+            initialValues={{ remember: true }}
+            scrollToFirstError
+            onFinish={verifyPhone}
+          >
+            <Form.Item
+              hasFeedback
+              className="w-full"
+              name="phone"
+              rules={[
+                {
+                  pattern: new RegExp(REGEX_PHONE),
+                  message: 'Vui lòng kiểm tra lại số điện thoại',
+                },
+                { required: true, message: 'Vui lòng điền số điện thoại!' },
+              ]}
             >
-              <Form.Item
-                hasFeedback
-                className="w-full"
-                name="phone"
-                rules={[
-                  {
-                    pattern: new RegExp(REGEX_PHONE),
-                    message: 'Vui lòng kiểm tra lại số điện thoại',
-                  },
-                  { required: true, message: 'Vui lòng điền số điện thoại!' },
-                ]}
-              >
-                <Input
-                  size="large"
-                  value={phone}
-                  onChange={(e) => {
-                    setPhone(e.target.value);
-                  }}
-                  className="mt-4"
-                  prefix={<Phone size={16} />}
-                  placeholder="Số điện thoại"
-                />
-              </Form.Item>
+              <Input
+                size="large"
+                value={phone}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                }}
+                className="mt-4"
+                prefix={<Phone size={16} />}
+                placeholder="Số điện thoại"
+                inputMode="numeric"
+              />
+            </Form.Item>
 
-              <Form.Item className="w-full">
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className=" rounded-full uppercase shadow-none"
-                  block
-                  loading={sendingOtp}
-                >
-                  Tiếp tục
-                </Button>
-              </Form.Item>
-            </Form>
-          )}
-        {typeLogin === 'otp' && step === ForgotPasswordSteps.TypeOTP && (
+            <Form.Item className="w-full">
+              <Button
+                type="primary"
+                htmlType="submit"
+                className=" rounded-full uppercase shadow-none"
+                block
+                loading={sendingOtp}
+              >
+                Tiếp tục
+              </Button>
+            </Form.Item>
+          </Form>
+        )}
+        {step === ForgotPasswordSteps.TypeOTP && (
           <>
             <Typography className="mt-4 text-center">
               Mã xác thực được gửi đến số điện thoại
@@ -242,7 +240,7 @@ const LoginPage: NextPageWithLayout = () => {
             /> */}
           </>
         )}
-        {typeLogin === 'otp' && step === ForgotPasswordSteps.EnterOTP && (
+        {step === ForgotPasswordSteps.EnterOTP && (
           <>
             <OTPInput
               onSubmit={submitOtp}

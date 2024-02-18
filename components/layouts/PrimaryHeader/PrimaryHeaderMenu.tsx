@@ -1,6 +1,6 @@
 import { Popover, Space, Typography } from 'antd';
 import Link from 'next/link';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { IMPORTANT_MENU_KEYS } from '@configs/env';
 import ProductGroupModel from '@configs/models/product-group.model';
 import { useFullMenu } from '@providers/FullMenuProvider';
@@ -47,7 +47,7 @@ function PrimaryHeaderMenu() {
     >
       <div className="relative z-10 hidden bg-primary shadow-lg lg:block">
         <div className="m-auto flex items-center justify-between lg:container ">
-          <Space
+          {/* <Space
             align="center"
             className="inline-flex cursor-pointer py-2"
             onMouseEnter={() => {
@@ -58,7 +58,7 @@ function PrimaryHeaderMenu() {
               Tất cả danh mục
             </Typography.Text>
             <CaretDownOutlined size={8} className="text-white" />
-          </Space>
+          </Space> */}
 
           {fullMenu.map((menu) =>
             menu?.name &&
@@ -82,16 +82,7 @@ function PrimaryHeaderMenu() {
             ) : null
           )}
 
-          <Typography.Text
-            className=" mx-4 hidden text-white xl:flex"
-            type="secondary"
-            onMouseEnter={() => {
-              setMode('none');
-            }}
-          >
-            |
-          </Typography.Text>
-          <LinkWrapper href={'/tin-tuc'}>
+          <LinkWrapper href={'/goc-suc-khoe'}>
             <Space
               align="center"
               onMouseEnter={() => {
@@ -99,8 +90,8 @@ function PrimaryHeaderMenu() {
               }}
             >
               <BookOutlined className="text-white" />
-              <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
-                Góc tin tức
+              <Typography.Text className="whitespace-nowrap font-medium text-white">
+                Góc sức khoẻ
               </Typography.Text>
             </Space>
           </LinkWrapper>
@@ -113,7 +104,7 @@ function PrimaryHeaderMenu() {
                 }}
               >
                 <ShopOutlined className="text-white" />
-                <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
+                <Typography.Text className="whitespace-nowrap font-medium text-white">
                   Chuỗi nhà thuốc
                 </Typography.Text>
               </Space>

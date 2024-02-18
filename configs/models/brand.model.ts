@@ -5,6 +5,10 @@ type BrandModel = Partial<{
   key: string;
   name: string;
   visible: boolean;
+  seoUrl: string;
+  titleSeo: string;
+  metaSeo: string;
+  keywordSeo: string;
 }>;
 
 export default BrandModel;

@@ -1,6 +1,7 @@
 import ProductGroupModel from '@configs/models/product-group.model';
 import ProductChildGroup from '@modules/products/ProductChildGroup';
 import { Empty, Space, Typography } from 'antd';
+import { memo } from 'react';
 
 function PrimaryHeaderMenuList({
   productGroups,

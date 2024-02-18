@@ -61,6 +61,7 @@ function ProductMain({
           />
           <ProductCTA
             product={product}
+            isAvailable={drugStoresAvailable && drugStoresAvailable?.length > 0}
             price={
               <PriceUnit
                 price={product.retailPrice}

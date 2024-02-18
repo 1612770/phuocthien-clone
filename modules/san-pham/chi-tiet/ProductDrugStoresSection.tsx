@@ -1,4 +1,4 @@
-import { ShopOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, ShopOutlined } from '@ant-design/icons';
 import DrugStore from '@configs/models/drug-store.model';
 import { InventoryAtDrugStore } from '@configs/models/product.model';
 import DrugstoreItem from '@modules/drugstore/DrugstoreItem';
@@ -50,7 +50,13 @@ function ProductDrugStoresSection({
 }) {
   const [openDrugStoresModal, setOpenDrugStoresModal] = useState(false);
 
-  if (!drugStoresAvailable?.length && !drugStores.length) return null;
+  if (!drugStoresAvailable?.length && !drugStores.length)
+    return (
+      <div className="font-bold text-red-600">
+        <InfoCircleOutlined className="mr-2" /> Sản phẩm tạm hết hàng. Vui lòng
+        liên hệ dược sĩ.
+      </div>
+    );
 
   return (
     <>

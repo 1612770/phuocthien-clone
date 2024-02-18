@@ -1,6 +1,6 @@
 import { Card, Col, Empty, List, Row, Skeleton, Space, Typography } from 'antd';
 import { useFullMenu } from '@providers/FullMenuProvider';
-import { useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import MenuModel from '@configs/models/menu.model';
 import ProductChildGroup from '@modules/products/ProductChildGroup';
 import ProductGroupModel from '@configs/models/product-group.model';

@@ -154,9 +154,9 @@ function HomepageSearchSection() {
             Từ khóa phổ biến
           </Typography.Title>
           <Space size={[8, 8]} wrap>
-            {productSearchKeywords.map((keyword) => (
+            {productSearchKeywords.map((keyword, index) => (
               <Tag
-                key={keyword.id}
+                key={`${index}-${keyword.sortOrder}`}
                 className="cursor-pointer rounded-full border-none bg-primary-background p-2 text-base"
                 onClick={() => {
                   setSearchFocus(true);

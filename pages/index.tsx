@@ -11,21 +11,25 @@ import { useAppData } from '@providers/AppDataProvider';
 import { GeneralClient } from '@libs/client/General';
 import SlideBannerModel from '@configs/models/slide-banner.model';
 import ProductSearchKeyword from '@configs/models/product-search-keyword.model';
-import { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import MainInfoModel from '@configs/models/main-info.model';
 import { PromotionClient } from '@libs/client/Promotion';
-import { Campaign, CampaignPromotion } from '@configs/models/promotion.model';
+import { Campaign } from '@configs/models/promotion.model';
 import { getVisibleItems } from '@libs/helpers';
-import { Grid } from 'antd';
+import { Col, Grid, Row } from 'antd';
 import Product from '@configs/models/product.model';
 import { BANNER_ENABLED } from '@configs/env';
+// import ImageWithFallback from '@components/templates/ImageWithFallback';
+import IMAGES from '@configs/assests/images';
+import HomepageCarouselEvent from '@modules/homepage/HomeCarouselEvent';
+import BrandModel from '@configs/models/brand.model';
 
 const { useBreakpoint } = Grid;
 
-const PromotionProductsList = dynamic(
-  () => import('@modules/products/PromotionProductsList'),
-  {}
-);
+// const PromotionProductsList = dynamic(
+//   () => import('@modules/products/PromotionProductsList'),
+//   {}
+// );
 
 const ViralProductsList = dynamic(
   () => import('@modules/products/ViralProductsList'),
@@ -37,6 +41,11 @@ const MainInfoSection = dynamic(
   {}
 );
 
+const HomepageBrands = dynamic(
+  () => import('@modules/homepage/HomepageBrands'),
+  {}
+);
+
 const Home: NextPageWithLayout<{
   viralProductsLists?: ViralProductsListModel[];
   slideBanner?: SlideBannerModel[];
@@ -44,13 +53,14 @@ const Home: NextPageWithLayout<{
   mainInfos?: MainInfoModel[];
   campaigns?: Campaign[];
   listProducts?: Product[][];
+  brands: BrandModel[];
 }> = ({
   viralProductsLists,
   slideBanner,
   productSearchKeywords,
   mainInfos,
   campaigns,
-  listProducts,
+  brands,
 }) => {
   const { setProductSearchKeywords } = useAppData();
 
@@ -67,15 +77,15 @@ const Home: NextPageWithLayout<{
       };
     }) || [];
   const bannerVisibleSlides =
-    BANNER_ENABLED || !promotionSliderImages.length
+    BANNER_ENABLED || promotionSliderImages.length === 0
       ? getVisibleItems(slideBanner || []).map((slide) => ({
           url: (slide.imageUrl as string) || '',
         }))
       : [];
 
-  const promotions = (campaigns || []).reduce((acc, curCampaign) => {
-    return [...acc, ...curCampaign.promotions];
-  }, [] as CampaignPromotion[]);
+  // const promotions = (campaigns || []).reduce((acc, curCampaign) => {
+  //   return [...acc, ...curCampaign.promotions];
+  // }, [] as CampaignPromotion[]);
 
   useEffect(() => {
     setProductSearchKeywords(productSearchKeywords || []);
@@ -83,37 +93,105 @@ const Home: NextPageWithLayout<{
   }, []);
 
   const screens = useBreakpoint();
-
   return (
     <div className="mb-0 lg:mb-8">
-      <div className="w-screen overflow-hidden pb-6">
+      <div className="w-screen overflow-hidden pb-4">
         <div
           className={`px-0 ${
             promotionSliderImages.length && screens.md ? `container` : ''
           }`}
         >
-          {!!promotionSliderImages.length && (
-            <HomepageCarousel
-              sliderImages={promotionSliderImages}
-              numberSlidePerPage={1}
-              type="primary"
-            />
-          )}
-          {!!bannerVisibleSlides?.length && (
-            <div
-              className={`${
-                promotionSliderImages.length && screens.md ? `mt-4` : ''
-              }`}
-            >
-              <HomepageCarousel
-                sliderImages={bannerVisibleSlides}
-                numberSlidePerPage={
-                  promotionSliderImages.length && screens.md ? 2 : 1
-                }
-                type={promotionSliderImages.length ? 'secondary' : 'primary'}
-              />
-            </div>
-          )}
+          <div>
+            <Row>
+              <Col lg={{ span: 16 }} md={{ span: 24 }} className="relative">
+                {!!promotionSliderImages.length && (
+                  <HomepageCarousel
+                    sliderImages={promotionSliderImages}
+                    numberSlidePerPage={1}
+                    type="primary"
+                  />
+                )}
+                {!!bannerVisibleSlides?.length && (
+                  <div
+                    className={`${
+                      promotionSliderImages.length && screens.md ? `mt-4` : ''
+                    }`}
+                  >
+                    <HomepageCarousel
+                      sliderImages={bannerVisibleSlides}
+                      numberSlidePerPage={
+                        promotionSliderImages.length && screens.md ? 2 : 1
+                      }
+                      type={
+                        promotionSliderImages.length ? 'secondary' : 'primary'
+                      }
+                    />
+                  </div>
+                )}
+              </Col>
+              <Col lg={{ span: 8 }} md={{ span: 24 }} className="w-full">
+                {/* <Row className="mt-4">asd</Row> */}
+                <Row className="mt-4 mb-4 flex max-h-[150px]  items-center justify-between gap-2 px-4 lg:justify-center">
+                  <div
+                    onClick={() =>
+                      window.open(
+                        'https://zalo.me/phuocthienpharmacy',
+                        '_blank'
+                      )
+                    }
+                    className="flex-1 flex-col items-center rounded-xl border-solid border-gray-50 bg-white p-5 shadow-md hover:cursor-pointer hover:border-primary"
+                  >
+                    <img
+                      src={IMAGES.bill}
+                      alt="bill"
+                      className="fill-bg-primary h-12 w-full"
+                      style={{ minHeight: 32 }}
+                    />
+                    <div className="mt-4 text-center text-xs">Gửi toa</div>
+                  </div>
+                  <div
+                    onClick={() =>
+                      window.open(
+                        'https://zalo.me/phuocthienpharmacy',
+                        '_blank'
+                      )
+                    }
+                    className="flex-1 flex-col items-center rounded-xl border-solid border-gray-50 bg-white p-5 shadow-md hover:cursor-pointer hover:border-primary"
+                  >
+                    <img
+                      src={IMAGES.doctor}
+                      alt="bill"
+                      className="fill-bg-primary h-12 w-full"
+                      // style={{ minHeight: 32 }}
+                    />
+                    <div className="mt-4 text-center text-xs">Tư vấn</div>
+                  </div>
+                  <div
+                    onClick={() =>
+                      window.open(
+                        'https://zalo.me/phuocthienpharmacy',
+                        '_blank'
+                      )
+                    }
+                    className="flex-1 flex-col items-center rounded-xl border-solid border-gray-50 bg-white p-5 shadow-md hover:cursor-pointer hover:border-primary"
+                  >
+                    <img
+                      src={IMAGES.drug}
+                      alt="bill"
+                      className="fill-bg-primary h-12 w-full"
+                      style={{ minHeight: 32 }}
+                    />
+                    <div className="mt-4 text-center text-xs">Mua thuốc</div>
+                  </div>
+                </Row>
+                <Row className="hidden lg:relative lg:block lg:h-[150px] lg:max-h-[150px]">
+                  <HomepageCarouselEvent
+                    mainInfos={mainInfos ? mainInfos[0] : undefined}
+                  />
+                </Row>
+              </Col>
+            </Row>
+          </div>
         </div>
       </div>
 
@@ -129,7 +207,7 @@ const Home: NextPageWithLayout<{
         </div>
       )}
 
-      {listProducts?.map((listProduct, index) => {
+      {/* {listProducts?.map((listProduct, index) => {
         if (!listProducts.length) return null;
         const keyPromo = listProduct[0].keyPromo;
         const promotion = promotions.find(
@@ -139,6 +217,9 @@ const Home: NextPageWithLayout<{
 
         return (
           <PromotionProductsList
+            campaginSlug={
+              campaigns?.find((el) => el.key === promotion.campaignKey)?.slug
+            }
             key={promotion.key}
             promotion={promotion}
             isPrimaryBackground={index === 0}
@@ -146,18 +227,20 @@ const Home: NextPageWithLayout<{
             defaultProducts={listProduct}
           />
         );
-      })}
+      })} */}
 
-      {viralProductsLists?.map((viralProductsList, index) => (
-        <ViralProductsList
-          key={viralProductsList.key}
-          viralProductsList={viralProductsList}
-          invertBackground={
-            index % 2 === 1 && index !== viralProductsLists.length - 1
-          }
-        />
-      ))}
-
+      {viralProductsLists &&
+        viralProductsLists.length > 0 &&
+        viralProductsLists?.map((viralProductsList, index) => (
+          <ViralProductsList
+            key={viralProductsList.key}
+            viralProductsList={viralProductsList}
+            invertBackground={
+              index % 2 === 1 && index !== viralProductsLists.length - 1
+            }
+          />
+        ))}
+      {brands?.length > 0 && <HomepageBrands brands={brands} />}
       <MainInfoSection mainInfo={mainInfos?.[0]}></MainInfoSection>
     </div>
   );
@@ -181,6 +264,7 @@ export const getServerSideProps = async (
       mainInfos: MainInfoModel[];
       campaigns: Campaign[];
       listProducts?: Product[][];
+      brands: BrandModel[];
     };
   } = {
     props: {
@@ -190,6 +274,7 @@ export const getServerSideProps = async (
       mainInfos: [],
       campaigns: [],
       listProducts: [],
+      brands: [],
     },
   };
 
@@ -204,6 +289,7 @@ export const getServerSideProps = async (
       productSearchKeywords,
       mainInfos,
       campaigns,
+      brands,
     ] = await Promise.allSettled([
       productClient.getViralProducts({
         page: 1,
@@ -221,6 +307,7 @@ export const getServerSideProps = async (
         pageSize: 20,
         isHide: false,
       }),
+      generalClient.getProductionBrands(),
     ]);
 
     if (viralProducts.status === 'fulfilled' && viralProducts.value.data) {
@@ -229,6 +316,9 @@ export const getServerSideProps = async (
 
     if (slideBanner.status === 'fulfilled' && slideBanner.value.data) {
       serverSideProps.props.slideBanner = slideBanner.value.data || [];
+    }
+    if (brands.status === 'fulfilled' && brands.value.data) {
+      serverSideProps.props.brands = brands.value.data || [];
     }
 
     if (
@@ -252,25 +342,23 @@ export const getServerSideProps = async (
 
     if (campaigns.status === 'fulfilled' && campaigns.value.data) {
       serverSideProps.props.campaigns = campaigns.value.data;
+      // const promotions = campaigns.value.data.reduce((acc, curCampaign) => {
+      //   return [...acc, ...curCampaign.promotions];
+      // }, [] as CampaignPromotion[]);
+      // const listProducts = await Promise.all(
+      //   promotions.map((promotion) =>
+      //     promotionClient.getPromoProducts({
+      //       page: 1,
+      //       pageSize: 8,
+      //       keyPromo: promotion.key,
+      //       isHide: false,
+      //     })
+      //   )
+      // );
 
-      const promotions = campaigns.value.data.reduce((acc, curCampaign) => {
-        return [...acc, ...curCampaign.promotions];
-      }, [] as CampaignPromotion[]);
-
-      const listProducts = await Promise.all(
-        promotions.map((promotion) =>
-          promotionClient.getPromoProducts({
-            page: 1,
-            pageSize: 8,
-            keyPromo: promotion.key,
-            isHide: false,
-          })
-        )
-      );
-
-      serverSideProps.props.listProducts = listProducts.map(
-        (listProducts) => listProducts.data
-      ) as Product[][];
+      // serverSideProps.props.listProducts = listProducts.map(
+      // (listProducts) => listProducts.data
+      // ) as Product[][];
     }
   } catch (error) {
     console.error(error);

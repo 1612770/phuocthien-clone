@@ -117,6 +117,7 @@ function AddToCartButton({
                       lastestPositiveQuantityRef.current = value;
                     }
                   }}
+                  max={50}
                   onBlur={(e) => {
                     updateCartQuantity(+e.target.value);
                   }}
@@ -193,6 +194,7 @@ function AddToCartButton({
                   lastestPositiveQuantityRef.current = value;
                 }
               }}
+              max={50}
               onBlur={(e) => {
                 updateCartQuantity(+e.target.value);
               }}

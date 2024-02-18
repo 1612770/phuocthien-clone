@@ -26,13 +26,13 @@ function MainInfoSection({ mainInfo }: { mainInfo?: MainInfoModel }) {
         </div>
 
         <Tabs
-          type="card"
+          className="rounded-xl bg-white px-4 py-1"
           items={allowedGroupInfoKeys.map((groupInfo, index) => {
             return {
               key: String(index),
               label: groupInfo.name,
               children: (
-                <>
+                <div className="bg-white pb-2">
                   <EventList group={groupInfo} />
 
                   {!groupInfo.eventInfos?.length && (
@@ -44,7 +44,7 @@ function MainInfoSection({ mainInfo }: { mainInfo?: MainInfoModel }) {
                       ></Empty>
                     </div>
                   )}
-                </>
+                </div>
               ),
             };
           })}
