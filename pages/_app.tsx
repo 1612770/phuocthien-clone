@@ -4,7 +4,6 @@ import Head from 'next/head';
 
 import '../styles/style.scss';
 import 'antd/dist/reset.css';
-import 'nprogress/nprogress.css';
 
 import { NextPageWithLayout } from './page';
 import COLORS from 'configs/colors';
@@ -13,7 +12,7 @@ import MenuModel from '@configs/models/menu.model';
 import FullMenuProvider from '@providers/FullMenuProvider';
 import App from 'next/app';
 import React, { Suspense } from 'react';
-import NProgress from '@components/templates/NProgress';
+import AppLoading from '@components/templates/AppLoading';
 import CartProvider from '@providers/CartProvider';
 import AppMessageProvider from '@providers/AppMessageProvider';
 import AuthProvider from '@providers/AuthProvider';
@@ -60,7 +59,7 @@ function MyApp({
         {keywordSeo}
         <meta name="robots" content="noindex,nofollow" />
       </Head>
-      <NProgress>
+      <AppLoading>
         <ConfigProvider
           theme={{
             token: {
@@ -88,7 +87,7 @@ function MyApp({
             </AppMessageProvider>
           </AntdApp>
         </ConfigProvider>
-      </NProgress>
+      </AppLoading>
       <Suspense>
         <ZaloChat />
       </Suspense>
