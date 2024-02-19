@@ -23,7 +23,7 @@ const nextConfig = {
     NEXT_PUBLIC_GROUP_INFO_KEYS: process.env.NEXT_PUBLIC_GROUP_INFO_KEYS,
   },
   images: {
-    domains: [`${process.env.HOST_IMAGE}`, process.env.INTERNAL_HOST_IMAGE],
+    domains: [process.env.HOST_IMAGE, process.env.INTERNAL_HOST_IMAGE],
   },
 
   rewrites() {
