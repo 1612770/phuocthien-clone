@@ -119,9 +119,7 @@ const Home: NextPageWithLayout<{
                 {!!bannerVisibleSlides?.length && (
                   <div
                     className={`${
-                      promotionSliderImages.length && (screens.md || screens.xs)
-                        ? `mt-4`
-                        : ''
+                      promotionSliderImages.length && screens.md ? `mt-4` : ''
                     }`}
                   >
                     <HomepageCarousel
@@ -222,28 +220,6 @@ const Home: NextPageWithLayout<{
         </div>
       )}
 
-      {/* {listProducts?.map((listProduct, index) => {
-        if (!listProducts.length) return null;
-        const keyPromo = listProduct[0].keyPromo;
-        const promotion = promotions.find(
-          (promotion) => promotion.key === keyPromo
-        );
-        if (!promotion) return null;
-
-        return (
-          <PromotionProductsList
-            campaginSlug={
-              campaigns?.find((el) => el.key === promotion.campaignKey)?.slug
-            }
-            key={promotion.key}
-            promotion={promotion}
-            isPrimaryBackground={index === 0}
-            scrollable={!screens.md}
-            defaultProducts={listProduct}
-          />
-        );
-      })} */}
-
       {viralProductsLists &&
         viralProductsLists.length > 0 &&
         viralProductsLists?.map((viralProductsList, index) => (
@@ -255,7 +231,11 @@ const Home: NextPageWithLayout<{
             }
           />
         ))}
-      {brands?.length > 0 && <HomepageBrands brands={brands} />}
+      {brands?.length > 0 && (
+        <div className="relative">
+          <HomepageBrands brands={brands} />
+        </div>
+      )}
       <MainInfoSection mainInfo={mainInfos?.[0]}></MainInfoSection>
     </div>
   );

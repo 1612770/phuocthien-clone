@@ -2,8 +2,8 @@ import { ConfigProvider, App as AntdApp } from 'antd';
 import type { AppContext, AppProps } from 'next/app';
 import Head from 'next/head';
 
-import '../styles/style.scss';
 import 'antd/dist/reset.css';
+import '../styles/style.scss';
 
 import { NextPageWithLayout } from './page';
 import COLORS from 'configs/colors';
