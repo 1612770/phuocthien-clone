@@ -98,9 +98,7 @@ const Home: NextPageWithLayout<{
       <div className="w-screen overflow-hidden pb-4">
         <div
           className={`px-0 ${
-            promotionSliderImages.length && (screens.md || screens.xs)
-              ? `container`
-              : ''
+            promotionSliderImages.length && screens.md ? `container` : ''
           }`}
         >
           <div>
