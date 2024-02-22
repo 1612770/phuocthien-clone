@@ -11,7 +11,7 @@ function BackdropSpin({ spinning }: { spinning: boolean }) {
   return (
     <div
       className="fixed inset-0 z-[2147483645] flex items-center justify-center bg-black bg-opacity-50"
-      style={{ backdropFilter: 'blur(10px)' }}
+      style={{ backdropFilter: 'blur(1px)' }}
     >
       <Spin spinning={true} className={css.spin} />
     </div>

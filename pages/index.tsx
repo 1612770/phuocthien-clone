@@ -98,12 +98,19 @@ const Home: NextPageWithLayout<{
       <div className="w-screen overflow-hidden pb-4">
         <div
           className={`px-0 ${
-            promotionSliderImages.length && screens.md ? `container` : ''
+            promotionSliderImages.length && (screens.md || screens.xs)
+              ? `container`
+              : ''
           }`}
         >
           <div>
             <Row>
-              <Col lg={{ span: 16 }} md={{ span: 24 }} className="relative">
+              <Col
+                lg={{ span: 16 }}
+                md={{ span: 24 }}
+                xs={{ span: 24 }}
+                className="relative"
+              >
                 {!!promotionSliderImages.length && (
                   <HomepageCarousel
                     sliderImages={promotionSliderImages}
@@ -114,13 +121,18 @@ const Home: NextPageWithLayout<{
                 {!!bannerVisibleSlides?.length && (
                   <div
                     className={`${
-                      promotionSliderImages.length && screens.md ? `mt-4` : ''
+                      promotionSliderImages.length && (screens.md || screens.xs)
+                        ? `mt-4`
+                        : ''
                     }`}
                   >
                     <HomepageCarousel
                       sliderImages={bannerVisibleSlides}
                       numberSlidePerPage={
-                        promotionSliderImages.length && screens.md ? 2 : 1
+                        promotionSliderImages.length &&
+                        (screens.md || screens.xs)
+                          ? 2
+                          : 1
                       }
                       type={
                         promotionSliderImages.length ? 'secondary' : 'primary'
@@ -129,7 +141,12 @@ const Home: NextPageWithLayout<{
                   </div>
                 )}
               </Col>
-              <Col lg={{ span: 8 }} md={{ span: 24 }} className="w-full">
+              <Col
+                lg={{ span: 8 }}
+                md={{ span: 24 }}
+                xs={{ span: 24 }}
+                className="w-full"
+              >
                 {/* <Row className="mt-4">asd</Row> */}
                 <Row className="mt-4 mb-4 flex max-h-[150px]  items-center justify-between gap-2 px-4 lg:justify-center">
                   <div
