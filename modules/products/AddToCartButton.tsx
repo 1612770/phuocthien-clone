@@ -1,10 +1,15 @@
-import { Button, Input, Typography } from 'antd';
+import { Button, Input } from 'antd';
 import Product from '@configs/models/product.model';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useCart } from '@providers/CartProvider';
 import { PromotionPercent } from '@configs/models/promotion.model';
 import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  ComboPromotion,
+  DealPromotion,
+  GiftPromotion,
+} from '@libs/client/Promotion';
 
 const putPromotionIntoNonPromotionProduct = (
   product: Product,
@@ -23,40 +28,95 @@ function AddToCartButton({
   product,
   className,
   promotionPercent,
+  comboPromotion,
+  dealPromotion,
+  giftPromotion,
+  label = 'Chọn mua',
   type = 'default',
 }: {
-  product: Product;
+  product?: Product;
   className?: string;
   promotionPercent?: PromotionPercent;
+  comboPromotion?: ComboPromotion;
+  dealPromotion?: DealPromotion;
+  giftPromotion?: GiftPromotion;
+  label?: string;
   type?: 'default' | 'in-detail';
 }) {
-  const { addToCart, cartProducts, removeFromCart } = useCart();
+  const {
+    addToCart,
+    cartProducts,
+    cartCombos,
+    cartDeals,
+    cartGifts,
+    removeFromCart,
+  } = useCart();
 
   const [quantity, setQuantity] = useState(0);
+
   const lastestPositiveQuantityRef = useRef<number>();
   const { setConfirmData } = useAppConfirmDialog();
 
   const productIncart = useMemo(
     () =>
-      cartProducts.find(
-        (cartProduct) => cartProduct.product.key === product.key
-      ),
-    [cartProducts, product.key]
+      product
+        ? cartProducts.find(
+            (cartProduct) => cartProduct.product?.key === product?.key
+          )
+        : undefined,
+    [cartProducts, product]
   );
 
-  const updateCartQuantity = (quantity: number) => {
+  const comboIncart = useMemo(
+    () =>
+      comboPromotion
+        ? cartCombos.find(
+            (cartCombo) =>
+              cartCombo.comboPromotion?.promotionComboId ===
+              comboPromotion?.promotionComboId
+          )
+        : undefined,
+    [cartCombos, comboPromotion]
+  );
+
+  const dealIncart = useMemo(
+    () =>
+      dealPromotion
+        ? cartDeals.find(
+            (cartDeal) =>
+              cartDeal.dealPromotion?.promotionDealId ===
+              dealPromotion?.promotionDealId
+          )
+        : undefined,
+    [cartDeals, dealPromotion]
+  );
+
+  const giftIncart = useMemo(
+    () =>
+      giftPromotion
+        ? cartGifts.find(
+            (cartGift) =>
+              cartGift.giftPromotion?.promotionGiftId ===
+              giftPromotion?.promotionGiftId
+          )
+        : undefined,
+    [cartGifts, giftPromotion]
+  );
+
+  const updateCartQuantityForCombo = (quantity: number) => {
     setQuantity(quantity);
 
     if (!quantity) {
       setConfirmData({
         title: 'Xóa khỏi giỏ hàng',
-        content: `Sản phẩm ${
-          product.detail?.displayName || product.name
-        } sẽ được loại bỏ khỏi giỏ hàng của bạn?`,
+        content: `Combo ${comboPromotion?.name} sẽ được loại bỏ khỏi giỏ hàng của bạn?`,
         onOk: () => {
-          removeFromCart(product, {
-            isShowConfirm: false,
-          });
+          removeFromCart(
+            { comboPromotion },
+            {
+              isShowConfirm: false,
+            }
+          );
         },
         onCancel: () => {
           setQuantity(lastestPositiveQuantityRef.current || 0);
@@ -65,7 +125,110 @@ function AddToCartButton({
     } else {
       lastestPositiveQuantityRef.current = quantity;
       addToCart({
-        product: putPromotionIntoNonPromotionProduct(product, promotionPercent),
+        comboPromotion,
+        quantity,
+      });
+    }
+  };
+
+  const updateCartQuantityForDeal = (quantity: number) => {
+    setQuantity(quantity);
+
+    if (!quantity) {
+      setConfirmData({
+        title: 'Xóa khỏi giỏ hàng',
+        content: `Deal #${dealPromotion?.promotionDealId} sẽ được loại bỏ khỏi giỏ hàng của bạn?`,
+        onOk: () => {
+          removeFromCart(
+            { dealPromotion },
+            {
+              isShowConfirm: false,
+            }
+          );
+        },
+        onCancel: () => {
+          setQuantity(lastestPositiveQuantityRef.current || 0);
+        },
+      });
+    } else {
+      lastestPositiveQuantityRef.current = quantity;
+      addToCart({
+        dealPromotion,
+        quantity,
+      });
+    }
+  };
+
+  const updateCartQuantityForGift = (quantity: number) => {
+    setQuantity(quantity);
+
+    if (!quantity) {
+      setConfirmData({
+        title: 'Xóa khỏi giỏ hàng',
+        content: `Gift #${giftPromotion?.promotionGiftId} sẽ được loại bỏ khỏi giỏ hàng của bạn?`,
+        onOk: () => {
+          removeFromCart(
+            { giftPromotion },
+            {
+              isShowConfirm: false,
+            }
+          );
+        },
+        onCancel: () => {
+          setQuantity(lastestPositiveQuantityRef.current || 0);
+        },
+      });
+    } else {
+      lastestPositiveQuantityRef.current = quantity;
+      addToCart({
+        giftPromotion,
+        quantity,
+      });
+    }
+  };
+
+  const updateCartQuantity = (quantity: number) => {
+    setQuantity(quantity);
+
+    if (comboIncart) {
+      updateCartQuantityForCombo(quantity);
+      return;
+    }
+
+    if (dealIncart) {
+      updateCartQuantityForDeal(quantity);
+      return;
+    }
+
+    if (giftIncart) {
+      updateCartQuantityForGift(quantity);
+      return;
+    }
+
+    if (!quantity) {
+      setConfirmData({
+        title: 'Xóa khỏi giỏ hàng',
+        content: `Sản phẩm ${
+          product?.detail?.displayName || product?.name
+        } sẽ được loại bỏ khỏi giỏ hàng của bạn?`,
+        onOk: () => {
+          removeFromCart(
+            { product },
+            {
+              isShowConfirm: false,
+            }
+          );
+        },
+        onCancel: () => {
+          setQuantity(lastestPositiveQuantityRef.current || 0);
+        },
+      });
+    } else {
+      lastestPositiveQuantityRef.current = quantity;
+      addToCart({
+        product: product
+          ? putPromotionIntoNonPromotionProduct(product, promotionPercent)
+          : undefined,
         quantity,
       });
     }
@@ -78,14 +241,97 @@ function AddToCartButton({
     }
   }, [productIncart?.quantity]);
 
+  useEffect(() => {
+    if (comboIncart?.quantity) {
+      setQuantity(comboIncart.quantity);
+      lastestPositiveQuantityRef.current = comboIncart.quantity;
+    }
+  }, [comboIncart?.quantity]);
+
+  useEffect(() => {
+    if (dealIncart?.quantity) {
+      setQuantity(dealIncart.quantity);
+      lastestPositiveQuantityRef.current = dealIncart.quantity;
+    }
+  }, [dealIncart?.quantity]);
+
+  useEffect(() => {
+    if (giftIncart?.quantity) {
+      setQuantity(giftIncart.quantity);
+      lastestPositiveQuantityRef.current = giftIncart.quantity;
+    }
+  }, [giftIncart?.quantity]);
+
+  const isButtonDisabled =
+    product &&
+    !product?.retailPrice &&
+    !comboPromotion &&
+    !dealPromotion &&
+    !giftPromotion;
+  const shouldShowQuantity =
+    !!productIncart || !!comboIncart || !!dealIncart || !!giftIncart;
+
+  const onMinusClick = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    if ((comboIncart?.quantity || 0) > 0) {
+      updateCartQuantity((comboIncart?.quantity || 1) - 1);
+      return;
+    }
+
+    if ((dealIncart?.quantity || 0) > 0) {
+      updateCartQuantity((dealIncart?.quantity || 1) - 1);
+      return;
+    }
+
+    if ((giftIncart?.quantity || 0) > 0) {
+      updateCartQuantity((giftIncart?.quantity || 1) - 1);
+      return;
+    }
+
+    updateCartQuantity((productIncart?.quantity || 1) - 1);
+  };
+
+  const onPlusClick = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    if ((comboIncart?.quantity || 0) > 0) {
+      updateCartQuantity((comboIncart?.quantity || 0) + 1);
+      return;
+    }
+
+    if ((dealIncart?.quantity || 0) > 0) {
+      updateCartQuantity((dealIncart?.quantity || 0) + 1);
+      return;
+    }
+
+    if ((giftIncart?.quantity || 0) > 0) {
+      updateCartQuantity((giftIncart?.quantity || 0) + 1);
+      return;
+    }
+
+    updateCartQuantity((productIncart?.quantity || 0) + 1);
+  };
+
+  const isMinusDisabled = comboPromotion
+    ? (comboIncart?.quantity || 0) <= 0
+    : giftPromotion
+    ? (giftIncart?.quantity || 0) <= 0
+    : dealPromotion
+    ? (dealIncart?.quantity || 0) <= 0
+    : (productIncart?.quantity || 0) <= 0;
+
+  const isPlusDisabled = comboPromotion
+    ? (comboIncart?.quantity || 0) >= 1000
+    : giftPromotion
+    ? (giftIncart?.quantity || 0) >= 1000
+    : dealPromotion
+    ? (dealIncart?.quantity || 0) >= 1000
+    : (productIncart?.quantity || 0) >= 1000;
+
   if (type === 'in-detail')
     return (
       <div onClick={(e) => e.preventDefault()} className="w-full">
-        {!!productIncart && (
+        {shouldShowQuantity && (
           <div className="flex items-center">
-            {/* <Typography.Text className="mr-2 whitespace-nowrap">
-              Số lượng:&nbsp;
-            </Typography.Text> */}
             <div className="flex w-full items-center justify-between">
               <Input.Group
                 className={`flex w-full justify-between ${'rounded-full border border-solid border-primary'}`}
@@ -95,13 +341,8 @@ function AddToCartButton({
                   size={'large'}
                   className={`min-w-[32px] rounded-lg  ${'rounded-tl-full rounded-bl-full'} border-none bg-green-50 disabled:bg-gray-50`}
                   icon={<MinusOutlined size={20} className="text-primary" />}
-                  disabled={productIncart.quantity <= 0}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if ((productIncart?.quantity || 0) > 0) {
-                      updateCartQuantity((productIncart?.quantity || 1) - 1);
-                    }
-                  }}
+                  disabled={isMinusDisabled}
+                  onClick={onMinusClick}
                 />
                 <Input
                   size={'large'}
@@ -125,23 +366,20 @@ function AddToCartButton({
                 <Button
                   size={'large'}
                   className={`h-[42px] min-w-[32px] rounded-lg ${'rounded-tr-full rounded-br-full'} border-none bg-green-50 disabled:bg-gray-50`}
-                  disabled={productIncart.quantity >= 1000}
+                  disabled={isPlusDisabled}
                   icon={<PlusOutlined size={20} className="text-primary" />}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    updateCartQuantity((productIncart?.quantity || 0) + 1);
-                  }}
+                  onClick={onPlusClick}
                 />
               </Input.Group>
             </div>
           </div>
         )}
 
-        {!productIncart && (
+        {!shouldShowQuantity && (
           <Button
-            disabled={!product.retailPrice}
+            disabled={isButtonDisabled}
             className={`px-4 shadow-none ${className} ${
-              !product.retailPrice
+              isButtonDisabled
                 ? 'bg-gray-100 hover:bg-gray-100 group-hover:border-gray-100 group-hover:bg-gray-100 group-hover:text-gray-800 '
                 : ''
             }`}
@@ -150,16 +388,22 @@ function AddToCartButton({
             size={'large'}
             onClick={(e) => {
               e.preventDefault();
+
               addToCart({
-                product: putPromotionIntoNonPromotionProduct(
-                  product,
-                  promotionPercent
-                ),
+                product: product
+                  ? putPromotionIntoNonPromotionProduct(
+                      product,
+                      promotionPercent
+                    )
+                  : undefined,
+                comboPromotion,
+                dealPromotion,
+                giftPromotion,
                 quantity: 1,
               });
             }}
           >
-            Chọn mua
+            {label}
           </Button>
         )}
       </div>
@@ -167,19 +411,14 @@ function AddToCartButton({
 
   return (
     <div onClick={(e) => e.preventDefault()} className="w-full">
-      {!!productIncart && (
+      {shouldShowQuantity && (
         <div className="flex w-full items-center justify-between">
           <Input.Group className="flex w-full justify-between" compact>
             <Button
               className="min-w-[32px] rounded-lg border-none bg-green-50 disabled:bg-gray-50"
               icon={<MinusOutlined className="text-primary" />}
-              disabled={productIncart.quantity <= 0}
-              onClick={(e) => {
-                e.preventDefault();
-                if ((productIncart?.quantity || 0) > 0) {
-                  updateCartQuantity((productIncart?.quantity || 1) - 1);
-                }
-              }}
+              disabled={isMinusDisabled}
+              onClick={onMinusClick}
             />
             <Input
               className="border-none text-center font-semibold outline-none focus:shadow-none focus:outline-none"
@@ -201,22 +440,19 @@ function AddToCartButton({
             />
             <Button
               className="min-w-[32px] rounded-lg border-none bg-green-50 disabled:bg-gray-50"
-              disabled={productIncart.quantity >= 1000}
+              disabled={isPlusDisabled}
               icon={<PlusOutlined className="text-primary" />}
-              onClick={(e) => {
-                e.preventDefault();
-                updateCartQuantity((productIncart?.quantity || 0) + 1);
-              }}
+              onClick={onPlusClick}
             />
           </Input.Group>
         </div>
       )}
 
-      {!productIncart && (
+      {!shouldShowQuantity && (
         <Button
-          disabled={!product.retailPrice}
+          disabled={isButtonDisabled}
           className={`px-4 shadow-none ${className} ${
-            !product.retailPrice
+            isButtonDisabled
               ? 'bg-gray-100 hover:bg-gray-100 group-hover:border-gray-100 group-hover:bg-gray-100 group-hover:text-gray-800 '
               : ''
           }`}
@@ -224,15 +460,17 @@ function AddToCartButton({
           onClick={(e) => {
             e.preventDefault();
             addToCart({
-              product: putPromotionIntoNonPromotionProduct(
-                product,
-                promotionPercent
-              ),
+              product: product
+                ? putPromotionIntoNonPromotionProduct(product, promotionPercent)
+                : undefined,
+              comboPromotion,
+              dealPromotion,
+              giftPromotion,
               quantity: 1,
             });
           }}
         >
-          Chọn mua
+          {label}
         </Button>
       )}
     </div>

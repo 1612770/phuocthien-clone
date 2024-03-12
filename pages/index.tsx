@@ -11,7 +11,7 @@ import { useAppData } from '@providers/AppDataProvider';
 import { GeneralClient } from '@libs/client/General';
 import SlideBannerModel from '@configs/models/slide-banner.model';
 import ProductSearchKeyword from '@configs/models/product-search-keyword.model';
-import { memo, useEffect } from 'react';
+import { useEffect } from 'react';
 import MainInfoModel from '@configs/models/main-info.model';
 import { PromotionClient } from '@libs/client/Promotion';
 import { Campaign } from '@configs/models/promotion.model';

@@ -46,7 +46,7 @@ function ProductCTA({
   const { lg } = Grid.useBreakpoint();
 
   const curProductIncart = cartProducts.find(
-    (item) => item.product.key === product?.key
+    (item) => item.product?.key === product?.key
   );
   const nextInstruction = getInstruction(
     product?.promotions || [],

@@ -21,7 +21,7 @@ function OTPInput({
   typeOTP: string;
 }) {
   const [otp, setOtp] = useState(new Array(4).fill(''));
-  const [resendingOtp, setResendingOtp] = useState(false);
+  const [_, setResendingOtp] = useState(false);
 
   const { toastError, toastSuccess } = useAppMessage();
   const { countdown, setCountdown } = useCountdown({

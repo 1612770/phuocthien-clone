@@ -7,10 +7,36 @@ import { PromotionPercent } from './promotion.model';
 import DrugStore from './drug-store.model';
 import ProductTypeGroupModel from './product-type-group.model';
 import ManufactoringCountry from './manufactoring-country.model';
+import {
+  ComboPromotion,
+  DealPromotion,
+  GiftPromotion,
+} from '@libs/client/Promotion';
+
+export interface CartCombo {
+  comboPromotion: ComboPromotion;
+  quantity: number;
+  choosen: boolean;
+}
+
+export interface CartDeal {
+  dealPromotion: DealPromotion;
+  quantity: number;
+  choosen: boolean;
+}
+
+export interface CartGift {
+  giftPromotion: GiftPromotion;
+  quantity: number;
+  choosen: boolean;
+}
 
 export interface CartProduct {
-  product: Product;
+  product?: Product;
   quantity: number;
+  comboPromotion?: ComboPromotion;
+  dealPromotion?: DealPromotion;
+  giftPromotion?: GiftPromotion;
   finalPrice?: number;
   note?: string;
   choosen: boolean;

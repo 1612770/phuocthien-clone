@@ -87,6 +87,16 @@ class BaseClient {
         )
       : await this.makeRequest(method, '/backend/' + url, data);
   }
+
+  async callStg(method: string, url: string, data: any): Promise<APIResponse> {
+    return typeof window === 'undefined'
+      ? await this.makeRequest(
+          method,
+          `${process.env.API_STG_HOST}/${url}`,
+          data
+        )
+      : await this.makeRequest(method, '/backend/' + url, data);
+  }
 }
 
 export default BaseClient;

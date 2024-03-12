@@ -22,6 +22,7 @@ import PagePropsWithSeo from '@configs/types/page-props-with-seo';
 import ProductTypeGroupModel from '@configs/models/product-type-group.model';
 import getProductTypeGroupData from '@modules/san-pham/getProductTypeGroupData';
 import ProductTypeGroupPage from '@modules/san-pham/ProductTypeGroupPage';
+import { GiftPromotion, DealPromotion } from '@libs/client/Promotion';
 
 const lv2ParamPage: NextPageWithLayout<{
   productTypeGroup: {
@@ -46,6 +47,8 @@ const lv2ParamPage: NextPageWithLayout<{
     offers?: OfferModel[];
     reviews?: Review[];
     faqs?: FAQ[];
+    giftPromotions?: GiftPromotion[];
+    dealPromotions?: DealPromotion[];
   };
 
   event: {
@@ -74,6 +77,8 @@ const lv2ParamPage: NextPageWithLayout<{
         offers={product.offers || []}
         reviews={product.reviews || []}
         faqs={product.faqs || []}
+        giftPromotions={product.giftPromotions || []}
+        dealPromotions={product.dealPromotions || []}
       />
     );
   }
@@ -125,6 +130,8 @@ interface PageProps extends PagePropsWithSeo {
     offers?: OfferModel[];
     reviews?: Review[];
     faqs?: FAQ[];
+    giftPromotions?: GiftPromotion[];
+    dealPromotions?: DealPromotion[];
   };
 
   event: {

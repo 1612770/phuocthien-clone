@@ -5,7 +5,13 @@ import { useRouter } from 'next/router';
 import React from 'react';
 
 function CartPopupContent() {
-  const { cartProducts } = useCart();
+  const {
+    cartProducts,
+    cartCombos,
+    cartDeals,
+    cartGifts,
+    recentAddedToCartType,
+  } = useCart();
   const router = useRouter();
 
   return (
@@ -20,7 +26,26 @@ function CartPopupContent() {
       </div>
 
       <div className="flex items-center justify-between gap-2">
-        <Typography.Text>{cartProducts.length} sản phẩm</Typography.Text>
+        <Typography.Text>
+          {recentAddedToCartType === 'combo'
+            ? cartCombos.length
+            : recentAddedToCartType === 'gift'
+            ? cartGifts.length
+            : recentAddedToCartType === 'deal'
+            ? cartDeals.length
+            : recentAddedToCartType === 'product'
+            ? cartProducts.length
+            : ''}{' '}
+          {recentAddedToCartType === 'combo'
+            ? 'combo'
+            : recentAddedToCartType === 'gift'
+            ? 'quà tặng'
+            : recentAddedToCartType === 'deal'
+            ? 'deal'
+            : recentAddedToCartType === 'product'
+            ? 'sản phẩm'
+            : ''}
+        </Typography.Text>
 
         <Button
           type="primary"

@@ -16,9 +16,14 @@ function DrugStorePickerInventoryChecking({
 }) {
   const [checking, setChecking] = useState(false);
 
-  const { choosenCartProducts, changeProductData, removeFromCart } = useCart();
+  const { changeCartItemData, removeFromCart, cartProducts } = useCart();
   const { productStatuses, setProductStatuses } = useCheckout();
   const { toastError, toastSuccess } = useAppMessage();
+
+  const choosenCartProducts = cartProducts.filter(
+    (cartProduct) => cartProduct.choosen
+  );
+
   const checkProductStillAvailableAtDrugStore = (
     drugStoreKey: string,
     inventoryAtDrugStores:
@@ -27,7 +32,7 @@ function DrugStorePickerInventoryChecking({
           quantity: number;
         }[]
       | undefined,
-    productCart: { product: Product; quantity: number }
+    productCart: { product?: Product; quantity: number }
   ): {
     isStillAvailable: boolean;
     drugstoreQuantity?: number;
@@ -60,7 +65,7 @@ function DrugStorePickerInventoryChecking({
 
       for (let i = 0; i < choosenCartProducts.length; i++) {
         const retInventory = await product.checkInventoryAtDrugStores({
-          key: choosenCartProducts[i].product.key || '',
+          key: choosenCartProducts[i].product?.key || '',
         });
         inventoryAtDrugStores.push(retInventory.data);
       }
@@ -86,14 +91,18 @@ function DrugStorePickerInventoryChecking({
             },
           };
 
-          productStatus.product = choosenCartProducts[index].product;
-          productStatus.statusData = checkProductStillAvailableAtDrugStore(
-            drugStoreKey,
-            inventoryAtDrugStore,
-            choosenCartProducts[index]
-          );
+          const product = choosenCartProducts[index].product;
+          if (product) {
+            productStatus.product = product;
+            productStatus.statusData = checkProductStillAvailableAtDrugStore(
+              drugStoreKey,
+              inventoryAtDrugStore,
+              choosenCartProducts[index]
+            );
+            return currentProductStatuses.concat(productStatus);
+          }
 
-          return currentProductStatuses.concat(productStatus);
+          return currentProductStatuses;
         },
         [] as {
           product: Product;
@@ -191,12 +200,15 @@ function DrugStorePickerInventoryChecking({
                               ghost
                               className="mt-2"
                               onClick={() => {
-                                changeProductData(productStatus.product, {
-                                  field: 'quantity',
-                                  value:
-                                    productStatus.statusData
-                                      .drugstoreQuantity || 1,
-                                });
+                                changeCartItemData(
+                                  { product: productStatus.product },
+                                  {
+                                    field: 'quantity',
+                                    value:
+                                      productStatus.statusData
+                                        .drugstoreQuantity || 1,
+                                  }
+                                );
 
                                 setProductStatuses(
                                   productStatuses.filter(
@@ -227,9 +239,12 @@ function DrugStorePickerInventoryChecking({
                               danger
                               className="mt-2"
                               onClick={() => {
-                                removeFromCart(productStatus.product, {
-                                  isShowConfirm: false,
-                                });
+                                removeFromCart(
+                                  { product: productStatus.product },
+                                  {
+                                    isShowConfirm: false,
+                                  }
+                                );
 
                                 setProductStatuses(
                                   productStatuses.filter(

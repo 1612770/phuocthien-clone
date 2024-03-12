@@ -8,7 +8,7 @@ import React from 'react';
 import CheckoutPaymentMethodsFormItem from './CheckoutPaymentMethodsFormItem';
 import CheckoutShippingType from './CheckoutShippingType';
 import CheckoutPrice from './CheckoutPrice';
-import CartProductTable from './CartProductTable';
+import CartItemsTable from './CartItemsTable';
 
 function CheckoutForm({
   paymentMethods,
@@ -33,7 +33,7 @@ function CheckoutForm({
       <div className="grid grid-cols-1 gap-2 lg:grid-cols-[1fr,_400px] lg:gap-4">
         <div>
           <div className="border-none bg-white px-4 py-0 shadow-none md:rounded-lg md:border-solid md:border-gray-100 md:py-4">
-            <CartProductTable />
+            <CartItemsTable />
 
             {cartStep === 'checkout' && (
               <>

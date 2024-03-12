@@ -1,3 +1,4 @@
+import Product from '@configs/models/product.model';
 import { getCookie as _getCookie, setCookie as _setCookie } from 'cookies-next';
 import parse from 'html-react-parser';
 
@@ -84,3 +85,7 @@ export function getAvatarCharacters(name?: string) {
 export function convertFromStringToHTML(text: string) {
   return parse(text);
 }
+
+export const getProductName = (product?: Product) => {
+  return product?.detail?.displayName || product?.name;
+};
