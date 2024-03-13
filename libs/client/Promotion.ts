@@ -96,26 +96,38 @@ export class PromotionClient extends BaseClient {
   }): Promise<APIResponse<Product[]>> {
     return await super.call('POST', `promo/products`, payload);
   }
-  async getPromotionGiftOfProduct(): // productId: string
-  Promise<APIResponse<GiftPromotion[]>> {
+  async getPromotionGiftOfProduct({
+    productId,
+  }: {
+    productId: string;
+  }): Promise<APIResponse<GiftPromotion[]>> {
     return await super.callStg('GET', `crm/v1/web/promotion-gift`, {
       q: JSON.stringify({
-        // TODO: change this to productId
-        productId: '1BE668F4-9B58-4DF6-A00D-781F59C400E2',
+        productId,
       }),
     });
   }
 
-  async getPromotionCombo(): Promise<APIResponse<ComboPromotion[]>> {
-    return await super.callStg('GET', `crm/v1/web/promotion-combo`, {});
+  async getPromotionCombo({
+    slug,
+  }: {
+    slug: string;
+  }): Promise<APIResponse<ComboPromotion[]>> {
+    return await super.callStg('GET', `crm/v1/web/promotion-combo`, {
+      q: JSON.stringify({
+        slug,
+      }),
+    });
   }
 
-  async getDealActiveOfProduct(): // produtId: string
-  Promise<APIResponse<DealPromotion[]>> {
+  async getDealActiveOfProduct({
+    productId,
+  }: {
+    productId: string;
+  }): Promise<APIResponse<DealPromotion[]>> {
     return await super.callStg('GET', `crm/v1/web/promotion-deal`, {
       q: JSON.stringify({
-        // TODO: change this to productId
-        productId: '1BE668F4-9B58-4DF6-A00D-781F59C400E2',
+        productId,
       }),
     });
   }

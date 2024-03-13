@@ -50,8 +50,6 @@ const getProductData = async (context: GetServerSidePropsContext) => {
     getReviewsResponse,
     getFAQsResponse,
     drugStoresAvailable,
-    giftPromotions,
-    dealPromotions,
   ] = await Promise.all([
     productClient.getProducts({
       page: 1,
@@ -72,15 +70,29 @@ const getProductData = async (context: GetServerSidePropsContext) => {
     productClient.checkInventoryAtDrugStores({
       key: product.key,
     }),
-    promotionClient
-      .getPromotionGiftOfProduct
-      // product.key
-      (),
-    promotionClient
-      .getDealActiveOfProduct
-      // product.key
-      (),
   ]);
+
+  try {
+    const [giftPromotions, dealPromotions] = await Promise.all([
+      promotionClient.getPromotionGiftOfProduct({
+        productId: product.key,
+      }),
+      promotionClient.getDealActiveOfProduct({
+        productId: product.key,
+      }),
+    ]);
+
+    if (giftPromotions.data) {
+      productData.giftPromotions = giftPromotions.data;
+    }
+
+    if (dealPromotions.data) {
+      productData.dealPromotions = dealPromotions.data;
+    }
+  } catch (error) {
+    productData.giftPromotions = [];
+    productData.dealPromotions = [];
+  }
 
   if (drugStoresAvailable.data?.length) {
     productData.drugStoresAvailable = drugStoresAvailable.data.map(
@@ -110,14 +122,6 @@ const getProductData = async (context: GetServerSidePropsContext) => {
 
   if (getFAQsResponse.data) {
     productData.faqs = getFAQsResponse.data;
-  }
-
-  if (giftPromotions.data) {
-    productData.giftPromotions = giftPromotions.data;
-  }
-
-  if (dealPromotions.data) {
-    productData.dealPromotions = dealPromotions.data;
   }
 
   return productData;

@@ -11,10 +11,6 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import Head from 'next/head';
 import { convertFromStringToHTML } from '@libs/helpers';
-import ComboPromotionSection from '@modules/promotion/ComboPromotionSection';
-import ComboPromotionnHeader from '@modules/promotion/ComboPromotionnHeader';
-import ComboPromotionBody from '@modules/promotion/ComboPromotionBody';
-import ComboPromotionItem from '@modules/promotion/ComboPromotionItem';
 
 const getPromotionId = (id: string) => {
   return `promotion-section-${id}`;
@@ -24,7 +20,7 @@ const Home: NextPageWithLayout<{
   campaign: Campaign;
   listProducts: Product[][];
   comboPromotions: ComboPromotion[];
-}> = ({ campaign, listProducts, comboPromotions }) => {
+}> = ({ campaign, listProducts }) => {
   const router = useRouter();
 
   const scrollIntoView = (id: string) => {
@@ -99,22 +95,6 @@ const Home: NextPageWithLayout<{
           );
         })}
       </div>
-
-      <ComboPromotionSection>
-        <ComboPromotionnHeader>
-          <Typography.Title level={3}>
-            Combo khuyến mãi ({comboPromotions.length})
-          </Typography.Title>
-        </ComboPromotionnHeader>
-        <ComboPromotionBody>
-          {comboPromotions.map((comboPromotion) => (
-            <ComboPromotionItem
-              key={comboPromotion.promotionId}
-              comboPromotion={comboPromotion}
-            />
-          ))}
-        </ComboPromotionBody>
-      </ComboPromotionSection>
     </>
   );
 };
@@ -131,12 +111,10 @@ export const getServerSideProps = async (
     props: {
       campaign?: Campaign;
       listProducts?: Product[][];
-      comboPromotions: ComboPromotion[];
     };
   } = {
     props: {
       listProducts: [],
-      comboPromotions: [],
     },
   };
 
@@ -165,8 +143,7 @@ export const getServerSideProps = async (
         return [...acc, ...curCampaign.promotions];
       }, [] as CampaignPromotion[]);
 
-      const [comboPromotions, ...listProducts] = await Promise.all([
-        promotionClient.getPromotionCombo(),
+      const [...listProducts] = await Promise.all([
         ...promotions.map((promotion) =>
           promotionClient.getPromoProducts({
             page: 1,
@@ -180,8 +157,6 @@ export const getServerSideProps = async (
       serverSideProps.props.listProducts = listProducts.map(
         (listProducts) => listProducts.data
       ) as Product[][];
-
-      serverSideProps.props.comboPromotions = comboPromotions.data || [];
     }
   } catch (error) {
     console.error(error);
