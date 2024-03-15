@@ -72,3 +72,19 @@ export interface CampaignpromotionPercent {
   updatedAt: string;
   val: number;
 }
+
+export interface Promotion {
+  campaignId: string;
+  createdTime: string;
+  endDate: string;
+  imageUrl: string;
+  isHide: boolean;
+  metaSEO: string;
+  name: string;
+  promotionId: string;
+  slug: string;
+  startDate: string;
+  status: 'ACTIVE';
+  type: 'DEAL' | 'GIFT' | 'COMBO' | 'PERCENT';
+  updatedTime: string;
+}

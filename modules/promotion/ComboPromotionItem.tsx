@@ -56,7 +56,9 @@ function ComboPromotionItem({
                 <a className="hover:text-primary">
                   <Typography.Text>
                     {product.policy?.requiredQty} x{' '}
-                    <b>{product.detail?.displayName}</b>
+                    <span className="inline-block" style={{ fontWeight: 500 }}>
+                      {product.detail?.displayName}
+                    </span>
                   </Typography.Text>
                 </a>
               </Link>

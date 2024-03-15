@@ -1,6 +1,6 @@
 import APIResponse from '@configs/types/api-response.type';
 import BaseClient from './BaseClient';
-import { Campaign } from '@configs/models/promotion.model';
+import { Campaign, Promotion } from '@configs/models/promotion.model';
 import Product from '@configs/models/product.model';
 
 export interface ComboPromotion {
@@ -87,6 +87,18 @@ export class PromotionClient extends BaseClient {
     return await super.call('POST', `promo`, payload);
   }
 
+  async getPromotion(payload: {
+    isHide?: boolean;
+    promotionSlug?: string;
+  }): Promise<APIResponse<Promotion[]>> {
+    return await super.callStg('GET', `crm/v1/web/promotion`, {
+      q: JSON.stringify({
+        isHide: payload.isHide,
+        promotionSlug: payload.promotionSlug,
+      }),
+    });
+  }
+
   async getPromoProducts(payload: {
     page: number;
     pageSize: number;
@@ -109,13 +121,13 @@ export class PromotionClient extends BaseClient {
   }
 
   async getPromotionCombo({
-    slug,
+    promotionSlug,
   }: {
-    slug: string;
+    promotionSlug: string;
   }): Promise<APIResponse<ComboPromotion[]>> {
     return await super.callStg('GET', `crm/v1/web/promotion-combo`, {
       q: JSON.stringify({
-        slug,
+        promotionSlug,
       }),
     });
   }
