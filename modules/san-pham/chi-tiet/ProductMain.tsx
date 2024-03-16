@@ -4,7 +4,6 @@ import Product, { InventoryAtDrugStore } from '@configs/models/product.model';
 import { PromotionPercent } from '@configs/models/promotion.model';
 import PriceUnit from '@modules/products/PriceUnit';
 import ProductBonusSection from '@modules/products/ProductBonusSection';
-import ProductMetaData from '@modules/products/ProductMetaData';
 import PromotionList from '@modules/products/PromotionList';
 import { Typography, Tag } from 'antd';
 import React from 'react';
@@ -13,6 +12,7 @@ import DrugStore from '@configs/models/drug-store.model';
 import ProductCTA from '@modules/products/ProductCTA';
 import { useAppData } from '@providers/AppDataProvider';
 import FocusContentSection from '@modules/homepage/FocusContentSection';
+import { GiftPromotion, DealPromotion } from '@libs/client/Promotion';
 
 const getMaxDiscount = (promotionPercents: PromotionPercent[]): number => {
   let maxDiscount = 0;
@@ -29,11 +29,15 @@ function ProductMain({
   offers,
   drugStoresAvailable,
   drugStores,
+  giftPromotions,
+  dealPromotions,
 }: {
   product: Product;
   offers: OfferModel[];
   drugStoresAvailable?: InventoryAtDrugStore[];
   drugStores?: DrugStore[];
+  giftPromotions: GiftPromotion[];
+  dealPromotions: DealPromotion[];
 }) {
   const maxDisCount = getMaxDiscount(product?.promotions || []);
   const { focusContent } = useAppData();
@@ -72,18 +76,17 @@ function ProductMain({
             }
           />
         </div>
-        {!!product.promotions?.length && (
-          <PromotionList
-            promotionPercents={product.promotions || []}
-            retailPrice={product.retailPrice}
-          />
-        )}
+        <PromotionList
+          promotionPercents={product.promotions || []}
+          retailPrice={product.retailPrice}
+          giftPromotions={giftPromotions}
+          dealPromotions={dealPromotions}
+        />
       </div>
       <ProductDrugStoresSection
         drugStores={drugStores || []}
         drugStoresAvailable={drugStoresAvailable || []}
       />
-      {/* {product && <ProductMetaData product={product} />} */}
 
       <p className="py-2">
         Gọi nhận tư vấn với dược sĩ
@@ -92,10 +95,7 @@ function ProductMain({
         </a>
         (7:00 - 22:00 - <b className="text-primary">Miễn phí</b>)
       </p>
-      <FocusContentSection
-        focusContent={focusContent || []}
-        isProductPage={true}
-      />
+      <FocusContentSection focusContent={focusContent || []} isProductPage />
     </div>
   );
 }

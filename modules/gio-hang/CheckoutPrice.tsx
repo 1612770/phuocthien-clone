@@ -15,28 +15,50 @@ interface CheckoutPriceProps {
 }
 
 function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
-  const { choosenCartProducts } = useCart();
+  const { cartProducts, cartCombos, cartGifts, cartDeals } = useCart();
   const [isShowInfoMobile, setIsShowInfoMobile] = useState(false);
 
+  const choosenCartProducts = cartProducts.filter(
+    (cartProduct) => cartProduct.choosen
+  );
+  const choosenCartCombos = cartCombos.filter((cartCombo) => cartCombo.choosen);
+
+  const choosenCartGifts = cartGifts.filter((cartGift) => cartGift.choosen);
+
+  const choosenCartDeals = cartDeals.filter((cartDeal) => cartDeal.choosen);
+
   const {
-    checkProductBeforeCheckout,
     checkoutError,
     checkingOut,
     totalPriceAfterDiscountOnProduct,
     totalPriceBeforeDiscountOnProduct,
     offerCodePrice,
     cartStep,
-    setCartStep,
     checkInventoryBeforeCheckOut,
     checkingPrice,
   } = useCheckout();
 
   const { shippingFee } = useDeliveryConfigs();
 
-  const totalProducts = choosenCartProducts.reduce(
+  const choosenProduts = choosenCartProducts.reduce(
     (total, cartProduct) => total + (Number(cartProduct.quantity) || 0),
     0
   );
+  const choosenCombos = choosenCartCombos.reduce(
+    (total, cartCombo) => total + (Number(cartCombo.quantity) || 0),
+    0
+  );
+  const choosenGifts = choosenCartGifts.reduce(
+    (total, cartGift) => total + (Number(cartGift.quantity) || 0),
+    0
+  );
+  const choosenDeals = choosenCartDeals.reduce(
+    (total, cartDeal) => total + (Number(cartDeal.quantity) || 0),
+    0
+  );
+
+  const totalProducts =
+    choosenProduts + choosenCombos + choosenGifts + choosenDeals;
 
   const { lg } = Grid.useBreakpoint();
   const totalLabel = cartStep === 'cart' ? 'Tạm tính' : 'Thành tiền';

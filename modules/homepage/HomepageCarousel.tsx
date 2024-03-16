@@ -77,7 +77,7 @@ function HomepageCarousel({
                           ? '(min-width: 1200px) 100vw, 100vw'
                           : '(min-width: 768px) 50vw, 100vw'
                       }
-                      objectFit={'fill'}
+                      objectFit="cover"
                       className="rounded-xl"
                       objectPosition="center"
                       priority={type === 'primary'}

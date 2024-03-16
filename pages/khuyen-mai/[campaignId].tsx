@@ -3,7 +3,7 @@ import { NextPageWithLayout } from '../page';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import { Typography } from 'antd';
 import Product from '@configs/models/product.model';
-import { PromotionClient } from '@libs/client/Promotion';
+import { ComboPromotion, PromotionClient } from '@libs/client/Promotion';
 import { Campaign, CampaignPromotion } from '@configs/models/promotion.model';
 import { GetServerSidePropsContext } from 'next';
 import PromotionProductsList from '@modules/products/PromotionProductsList';
@@ -19,6 +19,7 @@ const getPromotionId = (id: string) => {
 const Home: NextPageWithLayout<{
   campaign: Campaign;
   listProducts: Product[][];
+  comboPromotions: ComboPromotion[];
 }> = ({ campaign, listProducts }) => {
   const router = useRouter();
 
@@ -41,7 +42,7 @@ const Home: NextPageWithLayout<{
 
   if (!campaign) return null;
 
-  const promotions = campaign.promotions;
+  const percentPromotions = campaign.promotions;
 
   return (
     <>
@@ -59,9 +60,9 @@ const Home: NextPageWithLayout<{
             objectPosition="center"
           />
         </div>
-        <div className="sticky top-0 z-10 bg-primary-light">
+        <div className="sticky top-0 z-[100] bg-primary-light">
           <div className="container flex gap-2 overflow-auto px-2 py-2 sm:justify-start md:px-0 lg:justify-center">
-            {(promotions || []).map((promotion) => (
+            {(percentPromotions || []).map((promotion) => (
               <div
                 className="cursor-pointer rounded-full border border-solid border-white px-4 py-1 text-white transition-all duration-200 ease-in-out hover:bg-white hover:text-primary"
                 key={promotion.key}
@@ -78,7 +79,7 @@ const Home: NextPageWithLayout<{
         {listProducts?.map((listProduct, index) => {
           if (!listProducts.length) return null;
           const keyPromo = listProduct[0].keyPromo;
-          const promotion = promotions.find(
+          const promotion = percentPromotions.find(
             (promotion) => promotion.key === keyPromo
           );
           if (!promotion) return null;
@@ -99,7 +100,6 @@ const Home: NextPageWithLayout<{
 };
 
 export default Home;
-
 Home.getLayout = (page) => {
   return <PrimaryLayout>{page}</PrimaryLayout>;
 };
@@ -142,16 +142,18 @@ export const getServerSideProps = async (
       const promotions = campaigns.value.data.reduce((acc, curCampaign) => {
         return [...acc, ...curCampaign.promotions];
       }, [] as CampaignPromotion[]);
-      const listProducts = await Promise.all(
-        promotions.map((promotion) =>
+
+      const [...listProducts] = await Promise.all([
+        ...promotions.map((promotion) =>
           promotionClient.getPromoProducts({
             page: 1,
             pageSize: 20,
             keyPromo: promotion.key,
             isHide: false,
           })
-        )
-      );
+        ),
+      ]);
+
       serverSideProps.props.listProducts = listProducts.map(
         (listProducts) => listProducts.data
       ) as Product[][];

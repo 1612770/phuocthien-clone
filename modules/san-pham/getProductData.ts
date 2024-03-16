@@ -7,6 +7,11 @@ import { Review } from '@configs/models/review.model';
 import { DrugstoreClient } from '@libs/client/DrugStore';
 import { OfferClient } from '@libs/client/Offer';
 import { ProductClient } from '@libs/client/Product';
+import {
+  DealPromotion,
+  GiftPromotion,
+  PromotionClient,
+} from '@libs/client/Promotion';
 import OfferUtils from '@libs/utils/offer.utils';
 import { GetServerSidePropsContext } from 'next';
 
@@ -19,9 +24,12 @@ const getProductData = async (context: GetServerSidePropsContext) => {
     offers?: OfferModel[];
     reviews?: Review[];
     faqs?: FAQ[];
+    giftPromotions?: GiftPromotion[];
+    dealPromotions?: DealPromotion[];
   } = {};
 
   const productClient = new ProductClient(null, {});
+  const promotionClient = new PromotionClient(null, {});
   const lv2ParamSeoUrl = context.params?.lv2Param as string;
   const offerClient = new OfferClient(context, {});
   const productResponse = await productClient.getProduct({
@@ -63,6 +71,28 @@ const getProductData = async (context: GetServerSidePropsContext) => {
       key: product.key,
     }),
   ]);
+
+  try {
+    const [giftPromotions, dealPromotions] = await Promise.all([
+      promotionClient.getPromotionGiftOfProduct({
+        productId: product.key,
+      }),
+      promotionClient.getDealActiveOfProduct({
+        productId: product.key,
+      }),
+    ]);
+
+    if (giftPromotions.data) {
+      productData.giftPromotions = giftPromotions.data;
+    }
+
+    if (dealPromotions.data) {
+      productData.dealPromotions = dealPromotions.data;
+    }
+  } catch (error) {
+    productData.giftPromotions = [];
+    productData.dealPromotions = [];
+  }
 
   if (drugStoresAvailable.data?.length) {
     productData.drugStoresAvailable = drugStoresAvailable.data.map(

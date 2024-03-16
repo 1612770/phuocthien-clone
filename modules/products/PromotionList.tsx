@@ -1,16 +1,22 @@
-import { PercentageOutlined, TagOutlined } from '@ant-design/icons';
+import { PercentageOutlined } from '@ant-design/icons';
 import { PromotionPercent } from '@configs/models/promotion.model';
-import CurrencyUtils from '@libs/utils/currency.utils';
-import TimeUtils from '@libs/utils/time.utils';
+import { GiftPromotion, DealPromotion } from '@libs/client/Promotion';
 import { Typography } from 'antd';
 import React from 'react';
+import PromotionListGiftListItem from './PromotionListGiftListItem';
+import PromotionListDealListItem from './PromotionListDealListItem';
+import PromotionListPercentListItem from './PromotionListPercentListItem';
 
 function PromotionList({
   promotionPercents,
   retailPrice,
+  giftPromotions,
+  dealPromotions,
 }: {
   promotionPercents: PromotionPercent[];
   retailPrice?: number;
+  giftPromotions?: GiftPromotion[];
+  dealPromotions?: DealPromotion[];
 }) {
   return (
     <div className=" flex flex-col overflow-hidden rounded-xl border border-solid border-waring-border">
@@ -21,38 +27,27 @@ function PromotionList({
         </Typography.Text>
       </div>
 
-      <div className="py-1">
+      <div className="grid grid-cols-1 divide-y divide-x-0 divide-solid divide-gray-200 py-1">
         {promotionPercents.map((promotion) => (
-          <div
+          <PromotionListPercentListItem
+            promotion={promotion}
             key={promotion.promotionKey}
-            className="my-2 flex items-center gap-2 px-4"
-          >
-            <div className="flex h-[32px] w-[32px] border-collapse items-center justify-center rounded-lg bg-primary-background">
-              <TagOutlined size={20} className="text-primary" />
-            </div>
-            <div>
-              <Typography.Paragraph className="m-0">
-                Mua ít nhất {promotion.productQuantityMinCondition} sản phẩm để
-                nhận khuyến mãi {promotion.val * 100}%
-                {retailPrice ? (
-                  <>
-                    , chỉ còn{' '}
-                    <b className="text-primary">
-                      {CurrencyUtils.format(retailPrice * (1 - promotion.val))}{' '}
-                    </b>
-                  </>
-                ) : (
-                  ''
-                )}
-              </Typography.Paragraph>
-              <Typography.Paragraph className="m-0 text-xs text-gray-500">
-                Khuyến mãi áp dụng đến{' '}
-                {TimeUtils.formatDate(promotion.endDatePromo, {
-                  noTime: true,
-                })}
-              </Typography.Paragraph>
-            </div>
-          </div>
+            retailPrice={retailPrice}
+          />
+        ))}
+
+        {giftPromotions?.map((giftPromotion) => (
+          <PromotionListGiftListItem
+            giftPromotion={giftPromotion}
+            key={giftPromotion.promotionGiftId}
+          />
+        ))}
+
+        {dealPromotions?.map((dealPromotion) => (
+          <PromotionListDealListItem
+            dealPromotion={dealPromotion}
+            key={dealPromotion.promotionDealId}
+          />
         ))}
       </div>
     </div>

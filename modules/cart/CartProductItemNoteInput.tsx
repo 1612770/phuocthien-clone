@@ -8,7 +8,7 @@ import { EditOutlined } from '@ant-design/icons';
 function CartProductItemNoteInput({
   cartProduct,
 }: {
-  cartProduct: { product: Product; quantity: number; note?: string };
+  cartProduct: { product?: Product; quantity: number; note?: string };
 }) {
   const [form] = Form.useForm();
   const inputRef = useRef<TextAreaRef | null>(null);
@@ -16,7 +16,7 @@ function CartProductItemNoteInput({
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
-  const { changeProductData } = useCart();
+  const { changeCartItemData } = useCart();
 
   useEffect(() => {
     setInputValue(cartProduct.note || '');
@@ -61,17 +61,23 @@ function CartProductItemNoteInput({
         focusTriggerAfterClose={false}
         title={
           <Typography className="text-base font-medium">
-            Nhập ghi chú cho sản phẩm ${cartProduct.product.detail?.displayName}
+            Nhập ghi chú cho sản phẩm $
+            {cartProduct.product?.detail?.displayName}
           </Typography>
         }
       >
         <Form
           form={form}
           onFinish={() => {
-            changeProductData(cartProduct.product, {
-              field: 'note',
-              value: inputValue,
-            });
+            if (cartProduct.product) {
+              changeCartItemData(
+                { product: cartProduct.product },
+                {
+                  field: 'note',
+                  value: inputValue,
+                }
+              );
+            }
             setOpen(false);
           }}
         >

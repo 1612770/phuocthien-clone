@@ -7,13 +7,13 @@ import { Review } from '@configs/models/review.model';
 import { useCacheProduct } from '@libs/utils/hooks/useCacheProduct';
 import ProductCardDetail from '@modules/products/ProductCardDetail';
 import ProductCarousel from '@modules/products/ProductCarousel';
-import QRApp from '@modules/products/QRApp';
 import { useMemo } from 'react';
 import ProductCommentSection from './chi-tiet/ProductCommentSection';
 import ProductFAQsSection from './chi-tiet/ProductFAQsSection';
 import ProductMain from './chi-tiet/ProductMain';
 import ProductOthersSection from './chi-tiet/ProductOthersSection';
 import ProductMetaData from '@modules/products/ProductMetaData';
+import { GiftPromotion, DealPromotion } from '@libs/client/Promotion';
 
 const ProductPage = ({
   product,
@@ -23,6 +23,8 @@ const ProductPage = ({
   drugStores,
   reviews,
   faqs,
+  giftPromotions,
+  dealPromotions,
 }: {
   product?: Product;
   otherProducts?: Product[];
@@ -31,6 +33,8 @@ const ProductPage = ({
   offers: OfferModel[];
   reviews: Review[];
   faqs: FAQ[];
+  giftPromotions: GiftPromotion[];
+  dealPromotions: DealPromotion[];
 }) => {
   useCacheProduct(product?.key);
 
@@ -86,7 +90,6 @@ const ProductPage = ({
       <div className="grid grid-cols-1 gap-4 pt-2 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[600px_minmax(200px,_1fr)]">
         <div>
           <ProductCarousel images={carouselImages} />
-          {/* <QRApp /> */}
         </div>
 
         <ProductMain
@@ -94,6 +97,8 @@ const ProductPage = ({
           product={product}
           drugStoresAvailable={drugStoresAvailable}
           drugStores={drugStores}
+          giftPromotions={giftPromotions}
+          dealPromotions={dealPromotions}
         />
       </div>
       <div className="grid grid-cols-1 gap-4 pt-2 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[600px_minmax(200px,_1fr)]">

@@ -14,6 +14,9 @@ const LocalStorageUtils = {
 
 export enum LocalStorageKeys {
   CART_PRODUCTS = 'products',
+  CART_COMBOS = 'combos',
+  CART_DEALS = 'deals',
+  CART_GIFTS = 'gifts',
   OTP_SEND_TIME = 'otp-send-time',
   CACHED_PRODUCT_KEYS = 'cached-product-keys',
 }

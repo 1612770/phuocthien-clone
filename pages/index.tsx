@@ -11,42 +11,36 @@ import { useAppData } from '@providers/AppDataProvider';
 import { GeneralClient } from '@libs/client/General';
 import SlideBannerModel from '@configs/models/slide-banner.model';
 import ProductSearchKeyword from '@configs/models/product-search-keyword.model';
-import { memo, useEffect } from 'react';
+import { useEffect } from 'react';
 import MainInfoModel from '@configs/models/main-info.model';
 import { PromotionClient } from '@libs/client/Promotion';
-import { Campaign } from '@configs/models/promotion.model';
+import { Campaign, Promotion } from '@configs/models/promotion.model';
 import { getVisibleItems } from '@libs/helpers';
 import { Col, Grid, Row } from 'antd';
 import Product from '@configs/models/product.model';
 import { BANNER_ENABLED } from '@configs/env';
-// import ImageWithFallback from '@components/templates/ImageWithFallback';
 import IMAGES from '@configs/assests/images';
 import HomepageCarouselEvent from '@modules/homepage/HomeCarouselEvent';
 import BrandModel from '@configs/models/brand.model';
 
 const { useBreakpoint } = Grid;
 
-// const PromotionProductsList = dynamic(
-//   () => import('@modules/products/PromotionProductsList'),
-//   {}
-// );
-
 const ViralProductsList = dynamic(
   () => import('@modules/products/ViralProductsList'),
-  {}
+  { ssr: false }
 );
 
 const MainInfoSection = dynamic(
   () => import('@modules/homepage/MainInfoSection'),
-  {}
+  { ssr: false }
 );
 
 const HomepageBrands = dynamic(
   () => import('@modules/homepage/HomepageBrands'),
-  {}
+  { ssr: false }
 );
 
-const Home: NextPageWithLayout<{
+interface HomeProps {
   viralProductsLists?: ViralProductsListModel[];
   slideBanner?: SlideBannerModel[];
   productSearchKeywords?: ProductSearchKeyword[];
@@ -54,17 +48,21 @@ const Home: NextPageWithLayout<{
   campaigns?: Campaign[];
   listProducts?: Product[][];
   brands: BrandModel[];
-}> = ({
+  promotions: Promotion[];
+}
+
+const Home: NextPageWithLayout<HomeProps> = ({
   viralProductsLists,
   slideBanner,
   productSearchKeywords,
   mainInfos,
   campaigns,
   brands,
+  promotions,
 }) => {
   const { setProductSearchKeywords } = useAppData();
 
-  const promotionSliderImages =
+  const percentPromotionSliderImages =
     campaigns?.map((campaign) => {
       let link;
       if (campaign.promotions.length > 0) {
@@ -76,6 +74,25 @@ const Home: NextPageWithLayout<{
         link,
       };
     }) || [];
+
+  const promotionsSliderImages = promotions.reduce((acc, promotion) => {
+    let link;
+    if (promotion.type === 'COMBO') {
+      link = '/khuyen-mai/combo/' + promotion.slug;
+      acc.push({
+        url: promotion.imageUrl,
+        link,
+      });
+    }
+
+    return acc;
+  }, [] as { url: string; link?: string }[]);
+
+  const promotionSliderImages = [
+    ...promotionsSliderImages,
+    ...percentPromotionSliderImages,
+  ];
+
   const bannerVisibleSlides =
     BANNER_ENABLED || promotionSliderImages.length === 0
       ? getVisibleItems(slideBanner || []).map((slide) => ({
@@ -83,16 +100,13 @@ const Home: NextPageWithLayout<{
         }))
       : [];
 
-  // const promotions = (campaigns || []).reduce((acc, curCampaign) => {
-  //   return [...acc, ...curCampaign.promotions];
-  // }, [] as CampaignPromotion[]);
-
   useEffect(() => {
     setProductSearchKeywords(productSearchKeywords || []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const screens = useBreakpoint();
+
   return (
     <div className="mb-0 lg:mb-8">
       <div className="w-screen overflow-hidden pb-4">
@@ -252,15 +266,7 @@ export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const serverSideProps: {
-    props: {
-      viralProductsLists: ViralProductsListModel[];
-      slideBanner: SlideBannerModel[];
-      productSearchKeywords: ProductSearchKeyword[];
-      mainInfos: MainInfoModel[];
-      campaigns: Campaign[];
-      listProducts?: Product[][];
-      brands: BrandModel[];
-    };
+    props: HomeProps;
   } = {
     props: {
       viralProductsLists: [],
@@ -270,6 +276,7 @@ export const getServerSideProps = async (
       campaigns: [],
       listProducts: [],
       brands: [],
+      promotions: [],
     },
   };
 
@@ -285,6 +292,7 @@ export const getServerSideProps = async (
       mainInfos,
       campaigns,
       brands,
+      promotions,
     ] = await Promise.allSettled([
       productClient.getViralProducts({
         page: 1,
@@ -303,6 +311,9 @@ export const getServerSideProps = async (
         isHide: false,
       }),
       generalClient.getProductionBrands(),
+      promotionClient.getPromotion({
+        isHide: false,
+      }),
     ]);
 
     if (viralProducts.status === 'fulfilled' && viralProducts.value.data) {
@@ -337,23 +348,10 @@ export const getServerSideProps = async (
 
     if (campaigns.status === 'fulfilled' && campaigns.value.data) {
       serverSideProps.props.campaigns = campaigns.value.data;
-      // const promotions = campaigns.value.data.reduce((acc, curCampaign) => {
-      //   return [...acc, ...curCampaign.promotions];
-      // }, [] as CampaignPromotion[]);
-      // const listProducts = await Promise.all(
-      //   promotions.map((promotion) =>
-      //     promotionClient.getPromoProducts({
-      //       page: 1,
-      //       pageSize: 8,
-      //       keyPromo: promotion.key,
-      //       isHide: false,
-      //     })
-      //   )
-      // );
+    }
 
-      // serverSideProps.props.listProducts = listProducts.map(
-      // (listProducts) => listProducts.data
-      // ) as Product[][];
+    if (promotions.status === 'fulfilled' && promotions.value.data) {
+      serverSideProps.props.promotions = promotions.value.data;
     }
   } catch (error) {
     console.error(error);

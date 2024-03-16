@@ -31,8 +31,11 @@ const CartPage: NextPageWithLayout<{
 }> = ({ paymentMethods, offers }) => {
   const {
     cartProducts,
-    loadingCartProducts,
-    loadCartProductsByDataFromLocalStorage,
+    cartCombos,
+    cartDeals,
+    cartGifts,
+    loadingProductsByDataFromLocalStorage,
+    loadProductsByDataFromLocalStorage,
   } = useCart();
   const { checkoutForm, checkout, setCheckoutError, cartStep, setCartStep } =
     useCheckout();
@@ -40,8 +43,7 @@ const CartPage: NextPageWithLayout<{
   const { lg } = Grid.useBreakpoint();
 
   useEffect(() => {
-    loadCartProductsByDataFromLocalStorage();
-
+    loadProductsByDataFromLocalStorage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -70,10 +72,16 @@ const CartPage: NextPageWithLayout<{
     }
   };
 
+  const isCartHasItems =
+    cartProducts.length > 0 ||
+    cartCombos.length > 0 ||
+    cartDeals.length > 0 ||
+    cartGifts.length > 0;
+
   return (
     <>
       <SEO title="Giỏ hàng - Nhà thuốc Phước Thiện" />
-      <Spin spinning={loadingCartProducts}>
+      <Spin spinning={loadingProductsByDataFromLocalStorage}>
         <div className="container pb-4">
           {cartStep === 'cart' && (
             <Breadcrumbs
@@ -101,7 +109,7 @@ const CartPage: NextPageWithLayout<{
             </Button>
           )}
 
-          {cartProducts.length > 0 && (
+          {isCartHasItems && (
             <CheckoutForm
               paymentMethods={paymentMethods}
               offers={offers}
@@ -109,7 +117,7 @@ const CartPage: NextPageWithLayout<{
             />
           )}
 
-          {!cartProducts.length && <CheckoutEmptyState />}
+          {!isCartHasItems && <CheckoutEmptyState />}
         </div>
       </Spin>
     </>

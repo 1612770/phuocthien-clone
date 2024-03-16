@@ -1,6 +1,6 @@
 import { Popover, Space, Typography } from 'antd';
 import Link from 'next/link';
-import { memo, useState } from 'react';
+import { useState } from 'react';
 import { IMPORTANT_MENU_KEYS } from '@configs/env';
 import ProductGroupModel from '@configs/models/product-group.model';
 import { useFullMenu } from '@providers/FullMenuProvider';
@@ -8,11 +8,7 @@ import PrimaryHeaderMenuAllPopoverContent from './PrimaryHeaderMenuAllPopoverCon
 import PrimaryHeaderMenuItem from './PrimaryHeaderMenuItem';
 import MenuModel from '@configs/models/menu.model';
 import LinkWrapper from '@components/templates/LinkWrapper';
-import {
-  BookOutlined,
-  CaretDownOutlined,
-  ShopOutlined,
-} from '@ant-design/icons';
+import { BookOutlined, ShopOutlined } from '@ant-design/icons';
 
 function PrimaryHeaderMenu() {
   const { fullMenu, open, setOpen, intoPopover } = useFullMenu();

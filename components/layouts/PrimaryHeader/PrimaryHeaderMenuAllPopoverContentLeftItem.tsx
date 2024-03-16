@@ -1,7 +1,6 @@
 import { List } from 'antd';
 import ImageUtils from '@libs/utils/image.utils';
 import Link from 'next/link';
-import { memo } from 'react';
 
 function PrimaryHeaderMenuAllPopoverContentLeftItem({
   href,

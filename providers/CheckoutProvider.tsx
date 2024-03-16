@@ -1,7 +1,6 @@
 import ShippingTypes from '@configs/enums/shipping-types.enum';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useCart } from './CartProvider';
-import { getErrorMessage } from '@libs/helpers';
 import { useRouter } from 'next/router';
 import { OrderClient } from '@libs/client/Order';
 import Product, { CartProduct } from '@configs/models/product.model';
@@ -108,7 +107,15 @@ const CheckoutContext = React.createContext<{
 });
 
 function CheckoutProvider({ children }: { children: React.ReactNode }) {
-  const { choosenCartProducts, removeAllChosenProducts } = useCart();
+  const {
+    cartProducts,
+    cartCombos,
+    cartDeals,
+    cartGifts,
+
+    removeAllChosenCartItems,
+  } = useCart();
+
   const { provinces, wards, districts } = useMasterData();
   const router = useRouter();
   const { setConfirmData } = useAppConfirmDialog();
@@ -153,31 +160,99 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
   const [offer, setOffer] = useState<OfferModel>();
   const [cartStep, setCartStep] = useState<'cart' | 'checkout'>('cart');
 
-  const totalPriceBeforeDiscountOnProduct = useMemo(
-    () =>
-      choosenCartProducts.reduce((total, cartProduct) => {
-        const retailPrice = cartProduct.product.retailPrice || 0;
-        return total + retailPrice * cartProduct.quantity;
-      }, 0),
-    [choosenCartProducts]
+  const choosenCartProducts = cartProducts.filter(
+    (cartProduct) => cartProduct.choosen
   );
+  const choosenCartCombos = cartCombos.filter((cartCombo) => cartCombo.choosen);
+  const choosenCartGifts = cartGifts.filter((cartGift) => cartGift.choosen);
+  const choosenCartDeals = cartDeals.filter((cartDeal) => cartDeal.choosen);
 
-  const totalPriceAfterDiscountOnProduct = useMemo(
-    () =>
-      choosenCartProducts.reduce((total, cartProduct) => {
-        const discountVal = cartProduct.product.promotions?.[0]?.val || 0;
+  const totalPriceBeforeDiscountOnProduct = useMemo(() => {
+    const productCostPrice = choosenCartProducts.reduce(
+      (total, cartProduct) => {
+        const retailPrice = cartProduct.product?.retailPrice || 0;
+        return total + retailPrice * cartProduct.quantity;
+      },
+      0
+    );
+    const comboCostPrice = choosenCartCombos.reduce(
+      (total, cartCombo) =>
+        total + cartCombo.comboPromotion.totalCost * cartCombo.quantity,
+      0
+    );
+    const giftCostPrice = choosenCartGifts.reduce(
+      (total, cartGift) =>
+        total +
+        (cartGift.giftPromotion.policy || [])?.reduce((total, policy) => {
+          return total + (policy.product?.retailPrice || 0);
+        }, 0) *
+          cartGift.quantity,
+      0
+    );
+    const dealCostPirce = choosenCartDeals.reduce(
+      (total, cartDeal) =>
+        total + cartDeal.dealPromotion.totalCost * cartDeal.quantity,
+      0
+    );
+    return productCostPrice + comboCostPrice + giftCostPrice + dealCostPirce;
+  }, [
+    choosenCartCombos,
+    choosenCartDeals,
+    choosenCartGifts,
+    choosenCartProducts,
+  ]);
+
+  const totalPriceAfterDiscountOnProduct = useMemo(() => {
+    const productCostPriceAfterDiscount = choosenCartProducts.reduce(
+      (total, cartProduct) => {
+        const discountVal = cartProduct.product?.promotions?.[0]?.val || 0;
+
         const productQuantityMinCondition =
-          cartProduct.product.promotions?.[0]?.productQuantityMinCondition || 0;
-        const retailPrice = cartProduct.product.retailPrice || 0;
+          cartProduct.product?.promotions?.[0]?.productQuantityMinCondition ||
+          0;
+        const retailPrice = cartProduct.product?.retailPrice || 0;
 
         if (cartProduct.quantity >= productQuantityMinCondition) {
           return total + retailPrice * (1 - discountVal) * cartProduct.quantity;
         }
 
         return total + retailPrice * cartProduct.quantity;
-      }, 0),
-    [choosenCartProducts]
-  );
+      },
+      0
+    );
+
+    const comboCostPrice = choosenCartCombos.reduce(
+      (total, cartCombo) =>
+        total + cartCombo.comboPromotion.totalCost * cartCombo.quantity,
+      0
+    );
+    const giftCostPrice = choosenCartGifts.reduce(
+      (total, cartGift) =>
+        total +
+        (cartGift.giftPromotion.policy || [])?.reduce((total, policy) => {
+          return total + (policy.product?.retailPrice || 0);
+        }, 0) *
+          cartGift.quantity,
+      0
+    );
+    const dealCostPirce = choosenCartDeals.reduce(
+      (total, cartDeal) =>
+        total + cartDeal.dealPromotion.totalCost * cartDeal.quantity,
+      0
+    );
+
+    return (
+      productCostPriceAfterDiscount +
+      comboCostPrice +
+      giftCostPrice +
+      dealCostPirce
+    );
+  }, [
+    choosenCartCombos,
+    choosenCartDeals,
+    choosenCartGifts,
+    choosenCartProducts,
+  ]);
 
   const offerCodePrice = useMemo(() => {
     return (offer?.minAmountOffer || 0) <= totalPriceBeforeDiscountOnProduct
@@ -213,11 +288,11 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
   };
 
   const getCartProductOrderItem = (cartProduct: {
-    product: Product;
+    product?: Product;
     quantity: number;
     note?: string;
   }) => {
-    const promotionPercent = cartProduct.product.promotions?.[0];
+    const promotionPercent = cartProduct.product?.promotions?.[0];
 
     const res: {
       productKey: string;
@@ -226,7 +301,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
       keyPromo?: string;
       keyPromoPercent?: string;
     } = {
-      productKey: cartProduct.product.key || '',
+      productKey: cartProduct.product?.key || '',
       quantity: cartProduct.quantity || 0,
       note: cartProduct.note || '',
     };
@@ -348,7 +423,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         orderNote: valuesToSubmit.orderNote || undefined,
       });
 
-      removeAllChosenProducts();
+      removeAllChosenCartItems();
 
       if (!isUserLoggedIn) {
         SessionStorageUtils.setItem(

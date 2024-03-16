@@ -19,6 +19,9 @@ function PrimaryHeader({ showSearch = true }) {
 
   const {
     cartProducts,
+    cartCombos,
+    cartDeals,
+    cartGifts,
     setModeShowPopup,
     modeShowPopup,
     isOpenNotification,
@@ -28,6 +31,12 @@ function PrimaryHeader({ showSearch = true }) {
   const cartButtonRef = useRef<HTMLAnchorElement | null>(null);
   const entry = useIntersectionObserver(cartButtonRef, {});
   const isVisible = !!entry?.isIntersecting;
+
+  const totalProducts =
+    cartProducts.length +
+    cartCombos.length +
+    cartDeals.length +
+    cartGifts.length;
 
   useEffect(() => {
     if (isVisible) {
@@ -67,7 +76,7 @@ function PrimaryHeader({ showSearch = true }) {
 
           <Link href="/gio-hang">
             <a className="mr-2 block md:hidden">
-              <Badge count={cartProducts.length}>
+              <Badge count={totalProducts}>
                 <ShoppingCart className="text-primary" size={32} />
               </Badge>
             </a>
@@ -80,7 +89,7 @@ function PrimaryHeader({ showSearch = true }) {
             >
               <Link href="/gio-hang">
                 <a className="hidden md:block" ref={cartButtonRef}>
-                  <Badge count={cartProducts.length}>
+                  <Badge count={totalProducts}>
                     <Button className="ml-8 h-12 min-w-[64px] shadow-none">
                       <div className="flex items-center justify-between">
                         <ShoppingCart size={28} className="text-primary" />
