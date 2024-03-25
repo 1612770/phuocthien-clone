@@ -40,9 +40,9 @@ function PrimaryFooter() {
       <FocusContentSection focusContent={focusContent || []} />
 
       <footer className="bg-white">
-        <div className="py-8 lg:container">
+        <div className="m-auto justify-center py-8 px-4 lg:container lg:px-0">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div className="mr-2">
+            <div className="">
               <Link href="/" style={{ color: 'white' }}>
                 <a className="flex items-center">
                   <img

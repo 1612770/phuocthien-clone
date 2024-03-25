@@ -1,18 +1,27 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Typography } from 'antd';
+import { Button, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import { GetServerSidePropsContext } from 'next';
-import React from 'react';
-import { GeneralClient } from '@libs/client/General';
-import EVENTS_LOAD_PER_TIME from '@configs/constants/events-load-per-time';
-import MainInfoModel from '@configs/models/main-info.model';
-import EventList from '@modules/event/EventList';
+import React, { Suspense } from 'react';
 import Breadcrumbs from '@components/Breadcrumbs';
-import { NEXT_PUBLIC_GROUP_INFO_KEYS } from '@configs/env';
+import { Article, Category } from '@configs/models/cms.model';
+import { CmsClient } from '@libs/client/Cms';
+import CategoryChipList from '../../modules/tin-tuc/danh-muc/chi-tiet/CategoryChipList';
+import CategoryChipListItem from '../../modules/tin-tuc/danh-muc/chi-tiet/CategoryChipListItem';
+import CategoryList from '../../modules/tin-tuc/danh-muc/chi-tiet/CategoryList';
+import CategoryListItem from '../../modules/tin-tuc/danh-muc/chi-tiet/CategoryListItem';
+import ArticleItem from '../../modules/tin-tuc/danh-muc/chi-tiet/ArticleItem';
+import ArticleList from '../../modules/tin-tuc/danh-muc/chi-tiet/ArticleList';
 
-const EventPage: NextPageWithLayout<{
-  mainInfos?: MainInfoModel[];
-}> = ({ mainInfos }) => {
+interface EventPageProps {
+  articles?: Article[];
+  categories?: Category[];
+}
+
+const EventPage: NextPageWithLayout<EventPageProps> = ({
+  articles,
+  categories,
+}) => {
   return (
     <>
       <div className="px-4 pb-4 lg:container lg:px-0">
@@ -31,42 +40,43 @@ const EventPage: NextPageWithLayout<{
       </div>
 
       <div className="px-4 pb-4 lg:container lg:px-0">
-        {mainInfos?.map((mainInfo, index) => {
-          if (!mainInfo.groupInfo?.length) return null;
-          if (
-            mainInfo.groupInfo.every(
-              (groupInfo) => !groupInfo.eventInfos?.length
-            )
-          )
-            return null;
+        <Typography.Title
+          level={2}
+          className="m-0 mb-2 text-2xl font-medium md:text-4xl"
+        >
+          Góc sức khoẻ
+        </Typography.Title>
 
-          return (
-            <div key={index}>
-              <div className="">
-                {mainInfo.groupInfo?.map((groupInfo, index) => {
-                  if (
-                    !!groupInfo.eventInfos?.length &&
-                    groupInfo.key &&
-                    NEXT_PUBLIC_GROUP_INFO_KEYS.includes(groupInfo.key)
-                  ) {
-                    return (
-                      <div key={index} className="mb-6">
-                        <Typography.Title
-                          level={1}
-                          className="m-0 mb-2 text-2xl font-medium md:text-4xl"
-                        >
-                          {groupInfo.name}
-                        </Typography.Title>
-                        <EventList group={groupInfo} />
-                      </div>
-                    );
-                  }
-                  return null;
-                })}
-              </div>
-            </div>
-          );
-        })}
+        <CategoryChipList>
+          {categories?.map((category) => (
+            <CategoryChipListItem
+              title={category.title}
+              path={`/goc-suc-khoe/${category.slug}`}
+              key={category.id}
+            />
+          ))}
+        </CategoryChipList>
+        <div className="mt-4">
+          <ArticleList>
+            {articles?.map((article, idx) => (
+              <ArticleItem
+                article={article}
+                key={article.id}
+                indexBlog={idx}
+              ></ArticleItem>
+            ))}
+          </ArticleList>
+        </div>
+        <CategoryList>
+          {categories?.map((category) => {
+            return (
+              <CategoryListItem
+                key={category.id}
+                category={category}
+              ></CategoryListItem>
+            );
+          })}
+        </CategoryList>
       </div>
     </>
   );
@@ -76,25 +86,32 @@ export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const serverSideProps: {
-    props: {
-      mainInfos?: MainInfoModel[];
-    };
+    props: EventPageProps;
   } = {
     props: {
-      mainInfos: [],
+      articles: [],
+      categories: [],
     },
   };
 
-  const generalClient = new GeneralClient(context, {});
+  const cmsClient = new CmsClient(context, {});
 
   try {
-    const mainInfos = await generalClient.getMainInfos({
-      page: 1,
-      pageSize: EVENTS_LOAD_PER_TIME,
-    });
+    const [articles, categories] = await Promise.all([
+      cmsClient.getArticles({ offset: 0, limit: 5, q: { type: 'BLOG' } }),
+      cmsClient.getCMSCategories({
+        offset: 0,
+        q: { type: 'BLOG', loadLevel: 1 },
+        limit: 100,
+      }),
+    ]);
 
-    if (mainInfos.data) {
-      serverSideProps.props.mainInfos = mainInfos.data;
+    if (categories.data) {
+      serverSideProps.props.categories = categories.data;
+    }
+
+    if (articles.data) {
+      serverSideProps.props.articles = articles.data;
     }
   } catch (error) {
     console.error(error);

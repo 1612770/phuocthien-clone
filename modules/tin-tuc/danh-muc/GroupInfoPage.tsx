@@ -57,7 +57,7 @@ const GroupInfoPage: NextPageWithLayout<{
             <LinkWrapper href="/">Trang chủ</LinkWrapper>
           </Breadcrumb.Item>
           <Breadcrumb.Item>
-            <LinkWrapper href="/tin-tuc">Góc tin tức</LinkWrapper>
+            <LinkWrapper href="/goc-suc-khoe">Góc sức khỏe</LinkWrapper>
           </Breadcrumb.Item>
           <Breadcrumb.Item>{groupInfo?.name}</Breadcrumb.Item>
         </Breadcrumb>

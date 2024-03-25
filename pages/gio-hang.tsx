@@ -85,7 +85,7 @@ const CartPage: NextPageWithLayout<{
         <div className="container pb-4">
           {cartStep === 'cart' && (
             <Breadcrumbs
-              className="pt-4 pb-2"
+              className="px-4 pt-4 pb-2 lg:px-0"
               breadcrumbs={[
                 {
                   title: 'Mua thêm sản phẩm khác',
@@ -102,7 +102,7 @@ const CartPage: NextPageWithLayout<{
               }}
               type="primary"
               ghost
-              className="mt-3 mb-0.5 border-none py-0 px-0"
+              className="ml-4 mt-3 mb-0.5 border-none py-0 px-0 md:ml-0"
               icon={<LeftOutlined size={20} className="" />}
             >
               Quay lại giỏ hàng

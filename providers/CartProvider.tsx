@@ -121,6 +121,9 @@ const CartContext = React.createContext<{
       comboPromotion?: ComboPromotion;
       dealPromotion?: DealPromotion;
       giftPromotion?: GiftPromotion;
+      comboPromotions?: ComboPromotion[];
+      dealPromotions?: DealPromotion[];
+      giftPromotions?: GiftPromotion[];
     },
     options?: {
       isShowConfirm?: boolean;
@@ -612,36 +615,113 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     [cartGifts]
   );
 
+  const _onRemoveCombosFromCart = useCallback(
+    (comboPromotions?: ComboPromotion[]) => {
+      const newCartCombos = cartCombos.filter(
+        (cartCombo) =>
+          !comboPromotions?.some(
+            (comboPromotion) =>
+              comboPromotion.promotionComboId ===
+              cartCombo.comboPromotion?.promotionComboId
+          )
+      );
+
+      setCartCombos(newCartCombos);
+      LocalStorageUtils.setItem(
+        LocalStorageKeys.CART_COMBOS,
+        JSON.stringify(newCartCombos)
+      );
+    },
+    [cartCombos]
+  );
+
+  const _onRemoveDealsFromCart = useCallback(
+    (dealPromotions?: DealPromotion[]) => {
+      const newCartDeals = cartDeals.filter(
+        (cartDeal) =>
+          !dealPromotions?.some(
+            (dealPromotion) =>
+              dealPromotion.promotionDealId ===
+              cartDeal.dealPromotion?.promotionDealId
+          )
+      );
+
+      setCartDeals(newCartDeals);
+      LocalStorageUtils.setItem(
+        LocalStorageKeys.CART_DEALS,
+        JSON.stringify(newCartDeals)
+      );
+    },
+    [cartDeals]
+  );
+
+  const _onRemoveGiftsFromCart = useCallback(
+    (giftPromotions?: GiftPromotion[]) => {
+      const newCartGifts = cartGifts.filter(
+        (cartGift) =>
+          !giftPromotions?.some(
+            (giftPromotion) =>
+              giftPromotion.promotionGiftId ===
+              cartGift.giftPromotion?.promotionGiftId
+          )
+      );
+
+      setCartGifts(newCartGifts);
+      LocalStorageUtils.setItem(
+        LocalStorageKeys.CART_GIFTS,
+        JSON.stringify(newCartGifts)
+      );
+    },
+    [cartGifts]
+  );
+
   const _onRemoveFromCart = useCallback(
     ({
       product,
       comboPromotion,
       dealPromotion,
       giftPromotion,
+      comboPromotions,
+      dealPromotions,
+      giftPromotions,
     }: {
       product?: Product;
       comboPromotion?: ComboPromotion;
       dealPromotion?: DealPromotion;
       giftPromotion?: GiftPromotion;
+      comboPromotions?: ComboPromotion[];
+      dealPromotions?: DealPromotion[];
+      giftPromotions?: GiftPromotion[];
     }) => {
       if (comboPromotion) {
-        return _onRemoveComboFromCart(comboPromotion);
+        _onRemoveComboFromCart(comboPromotion);
       }
       if (dealPromotion) {
-        return _onRemoveDealFromCart(dealPromotion);
+        _onRemoveDealFromCart(dealPromotion);
       }
       if (giftPromotion) {
-        return _onRemoveGiftFromCart(giftPromotion);
+        _onRemoveGiftFromCart(giftPromotion);
       }
-
+      if (comboPromotions) {
+        _onRemoveCombosFromCart(comboPromotions);
+      }
+      if (dealPromotions) {
+        _onRemoveDealsFromCart(dealPromotions);
+      }
+      if (giftPromotions) {
+        _onRemoveGiftsFromCart(giftPromotions);
+      }
       if (product) {
         _onRemoveProductFromCart(product);
       }
     },
     [
       _onRemoveComboFromCart,
+      _onRemoveCombosFromCart,
       _onRemoveDealFromCart,
+      _onRemoveDealsFromCart,
       _onRemoveGiftFromCart,
+      _onRemoveGiftsFromCart,
       _onRemoveProductFromCart,
     ]
   );
@@ -653,6 +733,9 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         comboPromotion?: ComboPromotion;
         dealPromotion?: DealPromotion;
         giftPromotion?: GiftPromotion;
+        comboPromotions?: ComboPromotion[];
+        dealPromotions?: DealPromotion[];
+        giftPromotions?: GiftPromotion[];
       },
       options: {
         isShowConfirm?: boolean;

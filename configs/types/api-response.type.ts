@@ -8,6 +8,8 @@ type APIResponse<T = any> = {
   success: boolean;
   statusCode?: number;
   message?: string;
+  status?: string;
+  total?: number;
 };
 
 export default APIResponse;

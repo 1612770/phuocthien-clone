@@ -14,6 +14,7 @@ import { useAppMessage } from '@providers/AppMessageProvider';
 import { useMasterData } from './MasterDataProvider';
 import { Form, FormInstance } from 'antd';
 import { ProductClient } from '@libs/client/Product';
+import { PromotionClient } from '@libs/client/Promotion';
 
 const CheckoutContext = React.createContext<{
   productStatuses: {
@@ -114,6 +115,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
     cartGifts,
 
     removeAllChosenCartItems,
+    removeFromCart,
   } = useCart();
 
   const { provinces, wards, districts } = useMasterData();
@@ -317,8 +319,142 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
     return res;
   };
 
+  const _checkPromotionsInventoryBeforeCheckOut = async () => {
+    const promotionClient = new PromotionClient(null, {});
+    const [
+      comboPromotionResponse,
+      giftPromotionResponse,
+      dealPromotionResponse,
+    ] = await Promise.all([
+      promotionClient.getPromotion({
+        promotionType: 'COMBO',
+      }),
+      promotionClient.getPromotion({
+        promotionType: 'GIFT',
+      }),
+      promotionClient.getPromotion({
+        promotionType: 'DEAL',
+      }),
+    ]);
+
+    const comboPromotions = comboPromotionResponse.data || [];
+    const giftPromotions = giftPromotionResponse.data || [];
+    const dealPromotions = dealPromotionResponse.data || [];
+
+    const notAvailableComboPromotionsInCart = choosenCartCombos.filter(
+      (choosenCombo) => {
+        const availablePromotion = comboPromotions.find((promotion) => {
+          return (
+            promotion.promotionId == choosenCombo.comboPromotion.promotionId
+          );
+        });
+        if (!availablePromotion) {
+          return true;
+        }
+        return false;
+      }
+    );
+
+    const notAvailableGiftPromotionsInCart = choosenCartGifts.filter(
+      (choosenGift) => {
+        const availablePromotion = giftPromotions.find((promotion) => {
+          return promotion.promotionId == choosenGift.giftPromotion.promotionId;
+        });
+
+        if (!availablePromotion) {
+          return true;
+        }
+        return false;
+      }
+    );
+
+    const notAvailableDealPromotionsInCart = choosenCartDeals.filter(
+      (choosenDeal) => {
+        const availablePromotion = dealPromotions.find((promotion) => {
+          return promotion.promotionId == choosenDeal.dealPromotion.promotionId;
+        });
+        if (!availablePromotion) {
+          return true;
+        }
+        return false;
+      }
+    );
+
+    if (
+      notAvailableComboPromotionsInCart.length ||
+      notAvailableGiftPromotionsInCart.length ||
+      notAvailableDealPromotionsInCart.length
+    ) {
+      setConfirmData({
+        title: 'Có sản phẩm không còn khuyến mãi',
+        content: (
+          <>
+            Các sản phẩm sau sẽ bị loại bỏ khỏi giỏ hàng vì không còn khuyến
+            mãi:
+            <ul>
+              {notAvailableComboPromotionsInCart.map((combo) => (
+                <li key={combo.comboPromotion.promotionId}>
+                  {combo.comboPromotion.name}
+                </li>
+              ))}
+              {notAvailableGiftPromotionsInCart.map((gift) => (
+                <li key={gift.giftPromotion.promotionId}>
+                  Gift #{gift.giftPromotion.promotionGiftId}
+                </li>
+              ))}
+              {notAvailableDealPromotionsInCart.map((deal) => (
+                <li key={deal.dealPromotion.promotionId}>
+                  Deal #{deal.dealPromotion.promotionDealId}
+                </li>
+              ))}
+            </ul>
+          </>
+        ),
+        cancelButtonProps: {
+          hidden: true,
+        },
+        onOk: () => {
+          removeFromCart(
+            {
+              comboPromotions: notAvailableComboPromotionsInCart.map(
+                (cartCombo) => cartCombo.comboPromotion
+              ),
+              giftPromotions: notAvailableGiftPromotionsInCart.map(
+                (cartGift) => cartGift.giftPromotion
+              ),
+              dealPromotions: notAvailableDealPromotionsInCart.map(
+                (cartDeal) => cartDeal.dealPromotion
+              ),
+            },
+            {
+              isShowConfirm: false,
+            }
+          );
+          toastSuccess({
+            data: 'Đã loại bỏ sản phẩm không còn khuyến mãi khỏi giỏ hàng.',
+          });
+        },
+      });
+      throw new Error('Có sản phẩm không còn khuyến mãi');
+    }
+  };
+
   const checkInventoryBeforeCheckOut = async () => {
     setCheckingPrice(true);
+
+    if (
+      !!choosenCartCombos.length ||
+      !!choosenCartGifts.length ||
+      !!choosenCartDeals.length
+    ) {
+      try {
+        await _checkPromotionsInventoryBeforeCheckOut();
+      } catch (error) {
+        setCheckingPrice(false);
+        return;
+      }
+    }
+
     const product = new ProductClient(null, {});
     const _productStatuses: {
       product: CartProduct;

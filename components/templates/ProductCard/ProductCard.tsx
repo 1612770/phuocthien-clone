@@ -92,12 +92,15 @@ function ProductCard({
                   <div>
                     <div
                       className="absolute -bottom-8 right-0 z-50 rounded-l-full  border border-r-0 border-solid border-y-blue-500 border-l-blue-500 bg-gray-50 px-3 py-1 text-xs text-blue-500"
+                      style={{ width: 'calc(100% - 16px)' }}
                       onClick={(e) => {
                         e.preventDefault();
                         return router.push(hrefTypeGroup);
                       }}
                     >
-                      {product.productTypeGroup?.name}
+                      <Typography.Text ellipsis className="whitespace-nowrap">
+                        {product.productTypeGroup?.name}
+                      </Typography.Text>
                     </div>
                   </div>
                 )}

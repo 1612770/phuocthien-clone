@@ -44,7 +44,7 @@ const EventPage: NextPageWithLayout<{
           className="mt-4 mb-2"
           breadcrumbs={[
             { title: 'Trang chủ', path: '/' },
-            { title: 'Góc tin tức', path: '/tin-tuc' },
+            { title: 'Góc sức khỏe', path: '/goc-suc-khoe' },
             { title: event?.name },
           ]}
         ></Breadcrumbs>

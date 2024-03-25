@@ -1,29 +1,14 @@
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import LinkWrapper from '@components/templates/LinkWrapper';
+import { Article } from '@configs/models/cms.model';
 import MainInfoModel from '@configs/models/main-info.model';
 import { Carousel } from 'antd';
 import { CarouselRef } from 'antd/es/carousel';
+import Image from 'next/image';
 
 import { useRef } from 'react';
-function HomepageCarouselEvent({ mainInfos }: { mainInfos?: MainInfoModel }) {
-  const events = mainInfos?.groupInfo?.map((el) => {
-    return { seoUrl: el.seoUrl, listEvents: el.eventInfos };
-  });
-  const dataImg: { seoUrl?: string; seoParentUrl?: string; imgUrl?: string }[] =
-    [];
-  events?.forEach((el) => {
-    el?.listEvents?.forEach((_el) => {
-      dataImg.push({
-        seoUrl: _el.seoUrl,
-        imgUrl: _el.imageUrl,
-        seoParentUrl: el.seoUrl,
-      });
-    });
-  });
+function HomepageCarouselEvent({ articles }: { articles: Article[] }) {
   const carouselRef = useRef<CarouselRef | null>(null);
-  if (dataImg.length === 0) {
-    return <></>;
-  }
 
   return (
     <div className="relative h-[150px] w-full">
@@ -33,18 +18,19 @@ function HomepageCarouselEvent({ mainInfos }: { mainInfos?: MainInfoModel }) {
         effect="scrollx"
         ref={(ref) => (carouselRef.current = ref)}
       >
-        {dataImg.map((imgInfo, idx) => (
+        {articles.map((article, idx) => (
           <LinkWrapper
             key={idx}
-            href={`/${imgInfo.seoParentUrl}/${imgInfo.seoUrl}`}
+            href={`/${article.category.slug}/${article.slug}`}
             className="w-full"
           >
             <div className={`flex-1 overflow-hidden`}>
               <div
-                className={`relative mt-4  h-[150px] w-full rounded-full lg:h-[120px]`}
+                className={`relative mt-4 aspect-16/9 h-[150px] w-full rounded-full lg:h-[120px]`}
               >
-                <ImageWithFallback
-                  src={`/${imgInfo.imgUrl || ''}`}
+                <Image
+                  blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgwVjB6IiBmaWxsPSIjZmZmIi8+PC9zdmc+"
+                  src={`${article.imageUrl || ''}`}
                   alt="carousel image"
                   layout="fill"
                   placeholder="blur"

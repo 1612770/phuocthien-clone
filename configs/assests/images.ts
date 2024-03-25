@@ -7,6 +7,7 @@ const IMAGES = {
   doctor: '/doctor.svg',
   bill: '/bill.svg',
   awards: '/awards.png',
+  news: '/news.svg',
 };
 
 export default IMAGES;

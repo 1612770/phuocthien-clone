@@ -40,29 +40,28 @@ function ComboPromotionItem({
 
   return (
     <div className="mb-4 flex flex-col gap-4 md:flex-row">
-      <div className="relative h-[200px] w-1/3 flex-none">
+      <div className="relative h-[200px] w-full flex-none md:w-1/3">
         <ProductImages imageUrls={imageUrls} />
       </div>
       <div className="flex-auto pt-2">
         <Typography.Title level={4}>{comboPromotion.name}</Typography.Title>
 
-        <ul>
+        <ul className="flex flex-col gap-2 pl-2">
           {productsWithPolicyAndDiscount.map((product) => (
-            <li key={product.key}>
+            <li key={product.key} className="flex flex-col gap-1">
               <Link
                 href={`/${product?.productType?.seoUrl}/${product?.detail?.seoUrl}`}
                 passHref
               >
                 <a className="hover:text-primary">
                   <Typography.Text>
-                    {product.policy?.requiredQty} x{' '}
+                    • {product.policy?.requiredQty} x{' '}
                     <span className="inline-block" style={{ fontWeight: 500 }}>
                       {product.detail?.displayName}
                     </span>
                   </Typography.Text>
                 </a>
               </Link>
-              &nbsp;
             </li>
           ))}
         </ul>

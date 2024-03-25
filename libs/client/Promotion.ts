@@ -90,11 +90,13 @@ export class PromotionClient extends BaseClient {
   async getPromotion(payload: {
     isHide?: boolean;
     promotionSlug?: string;
+    promotionType?: 'GIFT' | 'COMBO' | 'DEAL';
   }): Promise<APIResponse<Promotion[]>> {
     return await super.callStg('GET', `crm/v1/web/promotion`, {
       q: JSON.stringify({
         isHide: payload.isHide,
         promotionSlug: payload.promotionSlug,
+        promotionType: payload.promotionType,
       }),
     });
   }

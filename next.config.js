@@ -26,12 +26,16 @@ const nextConfig = {
     domains: [
       process.env.HOST_IMAGE,
       process.env.INTERNAL_HOST_IMAGE,
-      process.env.INTERNAL_HOST_IMAGE_STG,
+      // process.env.INTERNAL_HOST_IMAGE_STG,
     ],
   },
 
   rewrites() {
     return [
+      {
+        source: '/backend-stg/:path*',
+        destination: `${process.env.API_HOST}/:path*`,
+      },
       {
         source: '/backend/:path*',
         destination: `${process.env.API_HOST}/${process.env.MS_PATH}/:path*`,

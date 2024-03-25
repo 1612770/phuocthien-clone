@@ -7,6 +7,15 @@ export function serialize(obj: any) {
   const str = [];
   for (const p in obj)
     if (obj.hasOwnProperty(p)) {
+      if (typeof obj[p] === 'object') {
+        str.push(
+          encodeURIComponent(p) +
+            '=' +
+            encodeURIComponent(JSON.stringify(obj[p]))
+        );
+        continue;
+      }
+
       str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]));
     }
   return str.join('&');
@@ -90,12 +99,8 @@ class BaseClient {
 
   async callStg(method: string, url: string, data: any): Promise<APIResponse> {
     return typeof window === 'undefined'
-      ? await this.makeRequest(
-          method,
-          `${process.env.API_STG_HOST}/${url}`,
-          data
-        )
-      : await this.makeRequest(method, '/backend/' + url, data);
+      ? await this.makeRequest(method, `${process.env.API_HOST}/${url}`, data)
+      : await this.makeRequest(method, '/backend-stg/' + url, data);
   }
 }
 

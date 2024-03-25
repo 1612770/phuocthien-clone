@@ -14,20 +14,18 @@ import getProductGroupData from '@modules/san-pham/getProductGroupData';
 import getProductData from '@modules/san-pham/getProductData';
 import ProductPage from '@modules/san-pham/ProductPage';
 import ProductGroupPage from '@modules/san-pham/ProductGroupPage';
-import EventModel from '@configs/models/event.model';
-import GroupInfoModel from '@configs/models/GroupInfoModel';
-import getEventData from '@modules/san-pham/getEventData';
-import EventPage from '@modules/tin-tuc/danh-muc/chi-tiet/EventPage';
 import PagePropsWithSeo from '@configs/types/page-props-with-seo';
 import ProductTypeGroupModel from '@configs/models/product-type-group.model';
 import getProductTypeGroupData from '@modules/san-pham/getProductTypeGroupData';
 import ProductTypeGroupPage from '@modules/san-pham/ProductTypeGroupPage';
 import { GiftPromotion, DealPromotion } from '@libs/client/Promotion';
+import getArticleData from '@modules/san-pham/getArticleData';
+import { Article, Tag } from '@configs/models/cms.model';
+import ArticlePage from '@modules/tin-tuc/danh-muc/chi-tiet/ArticlePage';
 
-const lv2ParamPage: NextPageWithLayout<{
+interface LV2ParamPageProps extends PagePropsWithSeo {
   productTypeGroup: {
     productType?: ProductType;
-
     productTypeGroup?: ProductTypeGroupModel;
     products?: WithPagination<Product[]>;
     productBrands?: BrandModel[];
@@ -51,18 +49,27 @@ const lv2ParamPage: NextPageWithLayout<{
     dealPromotions?: DealPromotion[];
   };
 
-  event: {
-    event?: EventModel;
-    otherEvents?: EventModel[];
-    groupInfo?: GroupInfoModel;
+  articleData: {
+    article?: Article;
+    otherArticles?: Article[];
+    tags?: Tag[];
+    products?: Product[];
   };
-}> = ({ product, productGroup, event, productTypeGroup }) => {
-  if (event.event?.key) {
+}
+
+const LV2ParamPage: NextPageWithLayout<LV2ParamPageProps> = ({
+  product,
+  productGroup,
+  articleData,
+  productTypeGroup,
+}) => {
+  if (articleData.article?.id) {
     return (
-      <EventPage
-        event={event.event}
-        otherEvents={event.otherEvents}
-        groupInfo={event.groupInfo}
+      <ArticlePage
+        article={articleData.article}
+        otherArticles={articleData.otherArticles}
+        tags={articleData.tags}
+        products={articleData.products}
       />
     );
   }
@@ -102,56 +109,23 @@ const lv2ParamPage: NextPageWithLayout<{
   );
 };
 
-export default lv2ParamPage;
+export default LV2ParamPage;
 
-lv2ParamPage.getLayout = (page) => {
+LV2ParamPage.getLayout = (page) => {
   return <PrimaryLayout>{page}</PrimaryLayout>;
 };
 
-interface PageProps extends PagePropsWithSeo {
-  productTypeGroup: {
-    productType?: ProductType;
-    productTypeGroup?: ProductTypeGroupModel;
-    products?: WithPagination<Product[]>;
-    productBrands?: BrandModel[];
-  };
-  productGroup: {
-    productType?: ProductType;
-    productGroup?: ProductGroupModel;
-    productBrands?: BrandModel[];
-    products?: WithPagination<Product[]>;
-  };
-
-  product: {
-    product?: Product;
-    otherProducts?: Product[];
-    drugStoresAvailable?: InventoryAtDrugStore[];
-    drugStores?: DrugStore[];
-    offers?: OfferModel[];
-    reviews?: Review[];
-    faqs?: FAQ[];
-    giftPromotions?: GiftPromotion[];
-    dealPromotions?: DealPromotion[];
-  };
-
-  event: {
-    event?: EventModel;
-    otherEvents?: EventModel[];
-    groupInfo?: GroupInfoModel;
-  };
-}
-
-export const getServerSideProps: GetServerSideProps<PageProps> = async (
+export const getServerSideProps: GetServerSideProps<LV2ParamPageProps> = async (
   context: GetServerSidePropsContext
 ) => {
   const serverSideProps: {
-    props: PageProps;
+    props: LV2ParamPageProps;
   } = {
     props: {
       productTypeGroup: {},
       productGroup: {},
       product: {},
-      event: {},
+      articleData: {},
       SEOData: {},
     },
   };
@@ -189,13 +163,13 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
           serverSideProps.props.productTypeGroup?.productTypeGroup?.keywordSeo;
       } catch (error) {
         try {
-          serverSideProps.props.event = await getEventData(context);
+          serverSideProps.props.articleData = await getArticleData(context);
           serverSideProps.props.SEOData.titleSeo =
-            serverSideProps.props.event.event?.titleSeo;
+            serverSideProps.props.articleData.article?.seoData?.title;
           serverSideProps.props.SEOData.metaSeo =
-            serverSideProps.props.event.event?.metaSeo;
+            serverSideProps.props.articleData.article?.seoData?.description;
           serverSideProps.props.SEOData.keywordSeo =
-            serverSideProps.props.event.event?.keywordSeo;
+            serverSideProps.props.articleData.article?.seoData?.keywords;
         } catch (error) {
           // redirect to /
           console.error('Failed All', error);

@@ -3,6 +3,7 @@ import type { AppContext, AppProps } from 'next/app';
 import Head from 'next/head';
 
 import 'antd/dist/reset.css';
+import '../styles/_ckedit.scss';
 import '../styles/style.scss';
 
 import { NextPageWithLayout } from './page';

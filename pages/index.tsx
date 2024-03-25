@@ -22,6 +22,8 @@ import { BANNER_ENABLED } from '@configs/env';
 import IMAGES from '@configs/assests/images';
 import HomepageCarouselEvent from '@modules/homepage/HomeCarouselEvent';
 import BrandModel from '@configs/models/brand.model';
+import { Article, Category } from '@configs/models/cms.model';
+import { CmsClient } from '@libs/client/Cms';
 
 const { useBreakpoint } = Grid;
 
@@ -49,6 +51,8 @@ interface HomeProps {
   listProducts?: Product[][];
   brands: BrandModel[];
   promotions: Promotion[];
+  categories: Category[];
+  articles: Article[];
 }
 
 const Home: NextPageWithLayout<HomeProps> = ({
@@ -59,9 +63,10 @@ const Home: NextPageWithLayout<HomeProps> = ({
   campaigns,
   brands,
   promotions,
+  articles,
+  categories,
 }) => {
   const { setProductSearchKeywords } = useAppData();
-
   const percentPromotionSliderImages =
     campaigns?.map((campaign) => {
       let link;
@@ -92,7 +97,6 @@ const Home: NextPageWithLayout<HomeProps> = ({
     ...promotionsSliderImages,
     ...percentPromotionSliderImages,
   ];
-
   const bannerVisibleSlides =
     BANNER_ENABLED || promotionSliderImages.length === 0
       ? getVisibleItems(slideBanner || []).map((slide) => ({
@@ -212,9 +216,7 @@ const Home: NextPageWithLayout<HomeProps> = ({
                   </div>
                 </Row>
                 <Row className="hidden lg:relative lg:block lg:h-[150px] lg:max-h-[150px]">
-                  <HomepageCarouselEvent
-                    mainInfos={mainInfos ? mainInfos[0] : undefined}
-                  />
+                  <HomepageCarouselEvent articles={articles} />
                 </Row>
               </Col>
             </Row>
@@ -250,7 +252,10 @@ const Home: NextPageWithLayout<HomeProps> = ({
           <HomepageBrands brands={brands} />
         </div>
       )}
-      <MainInfoSection mainInfo={mainInfos?.[0]}></MainInfoSection>
+      <MainInfoSection
+        articles={articles}
+        categories={categories}
+      ></MainInfoSection>
     </div>
   );
 };
@@ -277,12 +282,15 @@ export const getServerSideProps = async (
       listProducts: [],
       brands: [],
       promotions: [],
+      categories: [],
+      articles: [],
     },
   };
 
   const productClient = new ProductClient(context, {});
   const generalClient = new GeneralClient(context, {});
   const promotionClient = new PromotionClient(context, {});
+  const cmsClient = new CmsClient(context, {});
 
   try {
     const [
@@ -293,6 +301,8 @@ export const getServerSideProps = async (
       campaigns,
       brands,
       promotions,
+      articles,
+      categories,
     ] = await Promise.allSettled([
       productClient.getViralProducts({
         page: 1,
@@ -314,6 +324,12 @@ export const getServerSideProps = async (
       promotionClient.getPromotion({
         isHide: false,
       }),
+      cmsClient.getArticles({ q: { type: 'BLOG' }, limit: 5, offset: 0 }),
+      cmsClient.getCMSCategories({
+        offset: 0,
+        q: { type: 'BLOG', loadLevel: 1 },
+        limit: 10,
+      }),
     ]);
 
     if (viralProducts.status === 'fulfilled' && viralProducts.value.data) {
@@ -325,6 +341,14 @@ export const getServerSideProps = async (
     }
     if (brands.status === 'fulfilled' && brands.value.data) {
       serverSideProps.props.brands = brands.value.data || [];
+    }
+
+    if (categories.status === 'fulfilled' && categories.value.data) {
+      serverSideProps.props.categories = categories.value.data || [];
+    }
+
+    if (articles.status === 'fulfilled' && articles.value.data) {
+      serverSideProps.props.articles = articles.value.data || [];
     }
 
     if (

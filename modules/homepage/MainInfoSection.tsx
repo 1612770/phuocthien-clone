@@ -1,54 +1,63 @@
-import MainInfoModel from '@configs/models/main-info.model';
-import { Empty, Tabs, Typography } from 'antd';
-import EventList from '../event/EventList';
-import { NEXT_PUBLIC_GROUP_INFO_KEYS } from '@configs/env';
+import { Button, Divider, Empty, Tabs, Typography } from 'antd';
+import { Article, Category } from '@configs/models/cms.model';
+import ArticleList from '@modules/tin-tuc/danh-muc/chi-tiet/ArticleList';
+import LinkWrapper from '@components/templates/LinkWrapper';
+import ArticleItem from '@modules/tin-tuc/danh-muc/chi-tiet/ArticleItem';
+import IMAGES from '@configs/assests/images';
+import { RightOutlined } from '@ant-design/icons';
 
-function MainInfoSection({ mainInfo }: { mainInfo?: MainInfoModel }) {
-  if (!mainInfo) return null;
-
-  const allowedGroupInfoKeys = (mainInfo.groupInfo || []).filter(
-    (groupInfo) =>
-      groupInfo.key && NEXT_PUBLIC_GROUP_INFO_KEYS.includes(groupInfo.key)
-  );
-
+function MainInfoSection({
+  articles,
+  categories,
+}: {
+  articles: Article[];
+  categories: Category[];
+}) {
   return (
-    <div className={'my-2 py-4'}>
+    <div className={'my-2 bg-white py-4'}>
       <div className={'px-4 lg:container'}>
-        <div className="mb-2 flex items-center justify-center lg:mb-2 lg:justify-between">
-          <Typography.Title
-            level={3}
-            className={
-              'm-0 my-4 text-center font-medium uppercase lg:text-left'
-            }
-          >
-            {mainInfo?.name}
-          </Typography.Title>
+        <div className="mb-2 flex  items-center lg:mb-2 ">
+          <div className="flex items-center ">
+            <div className="mr-2 ">
+              <img
+                src={IMAGES.news}
+                alt="Góc sức khoẻ"
+                className="primary"
+                style={{ minHeight: 48, height: 50 }}
+              />
+            </div>
+            <Typography.Title
+              level={3}
+              className={
+                'camelCase m-0 my-2 text-center font-bold text-primary lg:text-left'
+              }
+            >
+              Góc sức khỏe
+            </Typography.Title>
+          </div>
+          <Divider type="vertical" className="ml-4 mr-4 bg-primary" />
+          <div className=" text-primary">
+            <LinkWrapper href="/goc-suc-khoe">
+              Xem tất cả <RightOutlined />
+            </LinkWrapper>
+          </div>
         </div>
-
-        <Tabs
-          className="rounded-xl bg-white px-4 py-1"
-          items={allowedGroupInfoKeys.map((groupInfo, index) => {
-            return {
-              key: String(index),
-              label: groupInfo.name,
-              children: (
-                <div className="bg-white pb-2">
-                  <EventList group={groupInfo} />
-
-                  {!groupInfo.eventInfos?.length && (
-                    <div className="w-full py-8">
-                      <Empty
-                        description={
-                          <Typography>Chưa có sự kiện nào</Typography>
-                        }
-                      ></Empty>
-                    </div>
-                  )}
-                </div>
-              ),
-            };
-          })}
-        />
+        {categories.map((el) => (
+          <Button key={el.id} className="mr-2 mt-2 rounded-full">
+            {el.title}
+          </Button>
+        ))}
+        <div className="mt-8">
+          <ArticleList>
+            {articles?.map((article, idx) => (
+              <ArticleItem
+                article={article}
+                key={article.id}
+                indexBlog={idx}
+              ></ArticleItem>
+            ))}
+          </ArticleList>
+        </div>
       </div>
     </div>
   );
