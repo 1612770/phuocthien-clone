@@ -5,6 +5,7 @@ import LinkWrapper from '@components/templates/LinkWrapper';
 import ArticleItem from '@modules/tin-tuc/danh-muc/chi-tiet/ArticleItem';
 import IMAGES from '@configs/assests/images';
 import { RightOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/router';
 
 function MainInfoSection({
   articles,
@@ -13,6 +14,7 @@ function MainInfoSection({
   articles: Article[];
   categories: Category[];
 }) {
+  const router = useRouter();
   return (
     <div className={'my-2 bg-white py-4'}>
       <div className={'px-4 lg:container'}>
@@ -43,7 +45,11 @@ function MainInfoSection({
           </div>
         </div>
         {categories.map((el) => (
-          <Button key={el.id} className="mr-2 mt-2 rounded-full">
+          <Button
+            key={el.id}
+            className="mr-2 mt-2 rounded-full"
+            onClick={() => router.push(`/goc-suc-khoe/${el.slug}`)}
+          >
             {el.title}
           </Button>
         ))}
