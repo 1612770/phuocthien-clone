@@ -1,8 +1,8 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Button, Typography } from 'antd';
+import { Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import { GetServerSidePropsContext } from 'next';
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '@components/Breadcrumbs';
 import { Article, Category } from '@configs/models/cms.model';
 import { CmsClient } from '@libs/client/Cms';
@@ -10,17 +10,20 @@ import CategoryChipList from '../../modules/tin-tuc/danh-muc/chi-tiet/CategoryCh
 import CategoryChipListItem from '../../modules/tin-tuc/danh-muc/chi-tiet/CategoryChipListItem';
 import ArticleItem from '../../modules/tin-tuc/danh-muc/chi-tiet/ArticleItem';
 import { ChevronsDown } from 'react-feather';
+import ArticlePage from '@modules/tin-tuc/danh-muc/chi-tiet/ArticlePage';
 
 interface EventPageProps {
   articles?: Article[];
   categories?: Category[];
   totalArticle: number;
+  article?: Article;
 }
 
 const EventPage: NextPageWithLayout<EventPageProps> = ({
   articles,
   categories,
   totalArticle,
+  article,
 }) => {
   const [offset, setOffset] = useState(0);
   const [limit, setLimit] = useState(6);
@@ -55,6 +58,13 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
       setArticlesPage([...articlesPage, ...resGetMoreArticle.data]);
     }
   };
+  if (article) {
+    return (
+      <div>
+        <ArticlePage article={article} />
+      </div>
+    );
+  }
   return (
     <>
       <div className="px-4 pb-4 lg:container lg:px-0">
@@ -70,7 +80,7 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
               path: '/goc-suc-khoe',
             },
             {
-              title: categories?.[0].title || '',
+              title: categories?.[0]?.title || '',
             },
           ]}
         ></Breadcrumbs>
@@ -85,7 +95,7 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
         </Typography.Title>
         <i>{categories?.[0]?.desc}</i>
         <CategoryChipList>
-          {categories?.[0].subCategories?.map((category) => (
+          {categories?.[0]?.subCategories?.map((category) => (
             <CategoryChipListItem
               title={category.title}
               path={`/goc-suc-khoe/${category.slug}`}
@@ -97,7 +107,11 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
         <div className="mt-4">
           <div className="grid-row-1 grid grid-flow-row gap-4 lg:grid-flow-row lg:grid-cols-3 lg:grid-rows-2">
             {articlesPage?.map((article) => (
-              <ArticleItem article={article} key={article.id}></ArticleItem>
+              <ArticleItem
+                article={article}
+                key={article.id}
+                isFromPageList={true}
+              ></ArticleItem>
             ))}
           </div>
           {offset + limit < totalArticle && (
@@ -130,36 +144,58 @@ export const getServerSideProps = async (
 
   const cmsClient = new CmsClient(context, {});
   const categorySlug = String(context.query.id);
-  try {
-    const getCategory = await cmsClient.getCMSCategories({
-      offset: 0,
-      q: { type: 'BLOG', slug: categorySlug },
-      limit: 100,
-    });
-    if (getCategory.status === 'OK') {
-      const category = getCategory.data;
-      serverSideProps.props.categories = getCategory.data;
-      if (category && category?.length > 0) {
-        const getArticles = await cmsClient.getArticles({
-          offset: 0,
-          limit: 6,
-          getTotal: true,
-          q: {
-            type: 'BLOG',
-            listCategoryIds: [
-              ...(category?.[0]?.subCategories.map((el) => el.id) || []),
-              category?.[0].id,
-            ],
-          },
-        });
-        if (getArticles.status === 'OK' && getArticles.data) {
-          serverSideProps.props.articles = getArticles.data;
-          serverSideProps.props.totalArticle = getArticles.total || 0;
+  const checkLastId = categorySlug?.split('-');
+  const getIdArticle = +checkLastId[checkLastId.length - 1];
+  const isArticle = getIdArticle >= 100000;
+  if (isArticle) {
+    try {
+      const getArticle = await cmsClient.getArticles({
+        q: {
+          slug: categorySlug,
+        },
+      });
+      if (
+        getArticle.status === 'OK' &&
+        getArticle.data &&
+        getArticle.data.length > 0
+      ) {
+        serverSideProps.props.article = getArticle.data[0];
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  } else {
+    try {
+      const getCategory = await cmsClient.getCMSCategories({
+        offset: 0,
+        q: { type: 'BLOG', slug: categorySlug },
+        limit: 100,
+      });
+      if (getCategory.status === 'OK') {
+        const category = getCategory.data;
+        serverSideProps.props.categories = getCategory.data;
+        if (category && category?.length > 0) {
+          const getArticles = await cmsClient.getArticles({
+            offset: 0,
+            limit: 6,
+            getTotal: true,
+            q: {
+              type: 'BLOG',
+              listCategoryIds: [
+                ...(category?.[0]?.subCategories.map((el) => el.id) || []),
+                category?.[0].id,
+              ],
+            },
+          });
+          if (getArticles.status === 'OK' && getArticles.data) {
+            serverSideProps.props.articles = getArticles.data;
+            serverSideProps.props.totalArticle = getArticles.total || 0;
+          }
         }
       }
+    } catch (error) {
+      console.error(error);
     }
-  } catch (error) {
-    console.error(error);
   }
 
   return serverSideProps;

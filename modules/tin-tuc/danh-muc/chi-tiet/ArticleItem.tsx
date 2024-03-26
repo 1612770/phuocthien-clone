@@ -2,17 +2,18 @@ import { Typography } from 'antd';
 import React from 'react';
 import { Article } from '@configs/models/cms.model';
 import LinkWrapper from '@components/templates/LinkWrapper';
-import TimeUtils from '@libs/utils/time.utils';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 
 function ArticleItem({
   className,
   article,
   indexBlog,
+  isFromPageList,
 }: {
   className?: string;
   article?: Article;
   indexBlog?: number;
+  isFromPageList?: boolean;
 }): JSX.Element {
   if (!article) return <></>;
 
@@ -25,7 +26,7 @@ function ArticleItem({
       }`}
     >
       <LinkWrapper
-        href={`/${article?.category.slug}/${article?.slug}`}
+        href={`/goc-suc-khoe/${article?.slug}`}
         className={className}
       >
         {indexBlog == 0 ? (
@@ -60,7 +61,12 @@ function ArticleItem({
             </div>
           </div>
         ) : (
-          <div className={`group flex gap-2 lg:gap-4`} title={article?.title}>
+          <div
+            className={`group flex gap-2 lg:gap-4 ${
+              isFromPageList ? 'flex-col' : ''
+            } `}
+            title={article?.title}
+          >
             <div className="relative aspect-[3/2] w-full  min-w-[150px] max-w-[800px]  overflow-hidden rounded-lg border border-solid border-gray-100 transition-transform duration-300 group-hover:scale-105">
               <ImageWithFallback
                 src={article?.imageUrl || ''}
@@ -76,7 +82,7 @@ function ArticleItem({
                 </div>
               </div>
               <div className="flex-1">
-                <Typography.Text className="two-line-text font-medium group-hover:text-primary">
+                <Typography.Text className="one-line-text text-ellipsis font-medium group-hover:text-primary">
                   {article?.title}
                 </Typography.Text>
                 <Typography.Text className="two-line-text  font-normal text-gray-700">

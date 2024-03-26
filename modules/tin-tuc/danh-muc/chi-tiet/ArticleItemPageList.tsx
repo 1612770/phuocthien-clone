@@ -2,7 +2,6 @@ import { Typography } from 'antd';
 import React from 'react';
 import { Article } from '@configs/models/cms.model';
 import LinkWrapper from '@components/templates/LinkWrapper';
-import TimeUtils from '@libs/utils/time.utils';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 
 function ArticleItemPageList({
@@ -19,7 +18,7 @@ function ArticleItemPageList({
   return (
     <div className={`${'lg:col-span-1'}`}>
       <LinkWrapper
-        href={`/${article?.category.slug}/${article?.slug}`}
+        href={`/goc-suc-khoe/${article?.slug}`}
         className={className}
       >
         <div className={`group flex gap-2 lg:gap-4`} title={article?.title}>
@@ -38,19 +37,13 @@ function ArticleItemPageList({
               </div>
             </div>
             <div className="flex-1">
-              <Typography.Text className="two-line-text font-medium group-hover:text-primary">
+              <Typography.Text className="one-line-text  text-ellipsis font-medium group-hover:text-primary">
                 {article?.title}
               </Typography.Text>
               <Typography.Text className="two-line-text  font-normal text-gray-700">
                 {article?.shortDesc}
               </Typography.Text>
             </div>
-
-            {/* <Typography.Text className="text-xs text-gray-500">
-                  {TimeUtils.formatDate(article?.publishedTime, {
-                    noTime: true,
-                  })}
-                </Typography.Text> */}
           </div>
         </div>
       </LinkWrapper>

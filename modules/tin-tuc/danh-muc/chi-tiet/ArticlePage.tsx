@@ -14,6 +14,8 @@ import ProductList from '@components/templates/ProductList';
 import TagChipListItem from './TagChipListItem';
 import TagChipList from './TagChipList';
 import ArticleItem from '@modules/tin-tuc/danh-muc/chi-tiet/ArticleItem';
+import ArticleRelated from './ArticleRelated';
+import ArticleProductList from './ArticleProductList';
 
 const ArticlePage: NextPageWithLayout<{
   article?: Article;
@@ -21,38 +23,34 @@ const ArticlePage: NextPageWithLayout<{
   tags?: Tag[];
   products?: Product[];
 }> = ({ article, otherArticles, tags, products }) => {
-  const { mainInfoFooter } = useAppData();
-
   if (!article) return null;
 
   const isArticleArticle = true;
 
   return (
     <>
-      <div className="px-4 lg:container lg:px-0">
+      <div className="px-4 pb-4 lg:container lg:px-0">
         <Breadcrumbs
-          className="mt-4 mb-2"
+          className="pt-4 pb-2"
           breadcrumbs={[
-            { title: 'Trang chủ', path: '/' },
-            { title: 'Góc sức khỏe', path: '/goc-suc-khoe' },
-            { title: article?.title },
+            {
+              title: 'Trang chủ',
+              path: '/',
+            },
+            {
+              title: 'Góc sức khoẻ',
+              path: '/goc-suc-khoe',
+            },
+            {
+              title: article.category.title,
+              path: article.category.slug,
+            },
+            {
+              title: article.title,
+            },
           ]}
         ></Breadcrumbs>
       </div>
-
-      {/* {article?.imageUrl && (
-        <div className="mb-6">
-          <Divider className="m-0" />
-          <div className="relative h-[400px]">
-            <ImageWithFallback
-              src={article?.imageUrl || ''}
-              layout="fill"
-              objectFit="contain"
-            ></ImageWithFallback>
-          </div>
-          <Divider className="m-0" />
-        </div>
-      )} */}
 
       <div
         className={`px-4 ${
@@ -72,16 +70,8 @@ const ArticlePage: NextPageWithLayout<{
             </Typography.Title>
 
             <Typography.Text className="text-md m-0 my-2 block text-gray-600">
-              {article?.shortDesc}
+              <i>{article?.shortDesc}</i>
             </Typography.Text>
-
-            {!!tags?.length && (
-              <TagChipList>
-                {tags?.map((tag, index) => (
-                  <TagChipListItem key={index} tag={tag} />
-                ))}
-              </TagChipList>
-            )}
 
             <Typography.Text className="text-sm text-gray-500">
               <Clock size={16} className=" align-text-bottom" /> Ngày đăng:{' '}
@@ -101,21 +91,16 @@ const ArticlePage: NextPageWithLayout<{
             }}
           ></AppDangerouslySetInnerHTML>
 
-          {!!products?.length && (
-            <div className="mb-8 grid grid-cols-1">
-              <div className=" lg:container lg:pl-0">
-                <Typography.Title
-                  level={3}
-                  className="mb-4 mt-6 inline-block uppercase lg:mt-12"
-                >
-                  Sản phẩm liên quan
-                </Typography.Title>{' '}
-              </div>
-
-              <ProductList products={products} />
-            </div>
+          <ArticleProductList article={article} />
+          {!!tags?.length && (
+            <TagChipList>
+              {tags?.map((tag, index) => (
+                <TagChipListItem key={index} tag={tag} />
+              ))}
+            </TagChipList>
           )}
-
+          <Divider />
+          <ArticleRelated currentArticle={article} />
           {!!otherArticles?.length && (
             <div className="mb-8 grid grid-cols-1">
               {/* <div className=" lg:container lg:pl-0">

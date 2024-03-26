@@ -7,9 +7,11 @@ import React from 'react';
 function ProductList({
   products,
   forceSlide,
+  forArticlePage,
 }: {
   products: Product[];
   forceSlide?: boolean;
+  forArticlePage?: boolean;
 }) {
   return (
     <div className="w-full overflow-hidden">
@@ -27,7 +29,7 @@ function ProductList({
 
       <div className={`relative ${forceSlide ? '' : 'lg:hidden'}`}>
         <Carousel
-          infinite={products.length > 5}
+          infinite={forArticlePage ? true : products.length > 5}
           arrows={true}
           responsive={[
             {
@@ -41,14 +43,14 @@ function ProductList({
             {
               breakpoint: 1200,
               settings: {
-                slidesToShow: 3,
-                slidesToScroll: 3,
-                infinite: products.length > 3,
+                slidesToShow: forArticlePage ? 2 : 3,
+                slidesToScroll: forArticlePage ? 2 : 3,
+                infinite: forArticlePage ? true : products.length > 3,
               },
             },
           ]}
-          slidesToShow={5}
-          slidesToScroll={5}
+          slidesToShow={forArticlePage ? 3 : 5}
+          slidesToScroll={forArticlePage ? 3 : 5}
           dots={false}
           nextArrow={
             <div className="">

@@ -88,17 +88,20 @@ function ProductCard({
                   objectFit="contain"
                   loading="lazy"
                 />
-                {!isProductTypeGroup && (
+                {!isProductTypeGroup && product.productTypeGroup?.name && (
                   <div>
                     <div
-                      className="absolute -bottom-8 right-0 z-50 rounded-l-full  border border-r-0 border-solid border-y-blue-500 border-l-blue-500 bg-gray-50 px-3 py-1 text-xs text-blue-500"
+                      className="absolute -bottom-8 right-0 z-50 rounded-l-full  border border-r-0 border-solid border-y-primary border-l-primary bg-white px-3 py-1 text-xs text-primary"
                       style={{ width: 'calc(100% - 16px)' }}
                       onClick={(e) => {
                         e.preventDefault();
                         return router.push(hrefTypeGroup);
                       }}
                     >
-                      <Typography.Text ellipsis className="whitespace-nowrap">
+                      <Typography.Text
+                        ellipsis
+                        className="whitespace-nowrap  text-primary"
+                      >
                         {product.productTypeGroup?.name}
                       </Typography.Text>
                     </div>
