@@ -1,19 +1,13 @@
 import AppDangerouslySetInnerHTML from '@components/AppDangerouslySetInnerHTML';
 import Breadcrumbs from '@components/Breadcrumbs';
-import ImageWithFallback from '@components/templates/ImageWithFallback';
 import TimeUtils from '@libs/utils/time.utils';
-import { useAppData } from '@providers/AppDataProvider';
 import { Divider, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import { Clock } from 'react-feather';
-import MainInfoMenu from './MainInfoMenu';
-import MainInfoMenuButton from './MainInfoMenuButton';
 import { Article, Tag } from '@configs/models/cms.model';
 import Product from '@configs/models/product.model';
-import ProductList from '@components/templates/ProductList';
 import TagChipListItem from './TagChipListItem';
 import TagChipList from './TagChipList';
-import ArticleItem from '@modules/tin-tuc/danh-muc/chi-tiet/ArticleItem';
 import ArticleRelated from './ArticleRelated';
 import ArticleProductList from './ArticleProductList';
 
@@ -41,15 +35,13 @@ const ArticlePage: NextPageWithLayout<{
               title: 'Góc sức khoẻ',
               path: '/bai-viet',
             },
-            article.category.underCategory
-              ? {
-                  title: article.category.underCategory.title,
-                  path: article.category.underCategory.slug,
-                }
-              : {},
+            {
+              title: article?.category?.underCategory?.title,
+              path: `/bai-viet/${article.category?.underCategory?.slug}`,
+            },
             {
               title: article.category.title,
-              path: article.category.slug,
+              path: `/bai-viet/${article.category?.underCategory?.slug}/${article.category.slug}`,
             },
             {
               title: article.title,

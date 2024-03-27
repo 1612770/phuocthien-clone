@@ -13,7 +13,7 @@ function CategoryListItem({ category }: { category: Category }) {
   const router = useRouter();
   const onChangeSubCategory = async (categorySlug: string) => {
     router.push({
-      pathname: `/bai-viet/${categorySlug}`,
+      pathname: `/bai-viet/${category.slug}/${categorySlug}`,
     });
   };
   useEffect(() => {
