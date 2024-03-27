@@ -77,12 +77,18 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
             },
             {
               title: 'Góc sức khoẻ',
-              path: '/goc-suc-khoe',
+              path: '/bai-viet',
             },
+            categories?.[0]?.underCategory
+              ? {
+                  title: categories?.[0]?.underCategory?.title,
+                  path: categories?.[0]?.underCategory?.slug,
+                }
+              : {},
             {
               title: categories?.[0]?.title || '',
             },
-          ]}
+          ].filter((value) => JSON.stringify(value) !== '{}')}
         ></Breadcrumbs>
       </div>
 
@@ -98,7 +104,7 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
           {categories?.[0]?.subCategories?.map((category) => (
             <CategoryChipListItem
               title={category.title}
-              path={`/goc-suc-khoe/${category.slug}`}
+              path={`/bai-viet/${category.slug}`}
               key={category.id}
             />
           ))}
@@ -159,7 +165,23 @@ export const getServerSideProps = async (
         getArticle.data &&
         getArticle.data.length > 0
       ) {
-        serverSideProps.props.article = getArticle.data[0];
+        const article = getArticle.data[0];
+        serverSideProps.props.article = article;
+        const underCategoryId = article.category.underCategoryId;
+        if (underCategoryId) {
+          const getUnderCategory = await cmsClient.getCMSCategories({
+            q: { type: 'BLOG', id: underCategoryId },
+          });
+          if (
+            getUnderCategory.status === 'OK' &&
+            getUnderCategory.data &&
+            getUnderCategory.data.length > 0
+          ) {
+            const underCategory = getUnderCategory.data[0];
+            article.category.underCategory = underCategory;
+            serverSideProps.props.article = article;
+          }
+        }
       }
     } catch (error) {
       console.error(error);
@@ -173,8 +195,23 @@ export const getServerSideProps = async (
       });
       if (getCategory.status === 'OK') {
         const category = getCategory.data;
-        serverSideProps.props.categories = getCategory.data;
+        serverSideProps.props.categories = category;
         if (category && category?.length > 0) {
+          const underCategoryId = category[0].underCategoryId;
+          if (underCategoryId) {
+            const getUnderCategory = await cmsClient.getCMSCategories({
+              q: { type: 'BLOG', id: underCategoryId },
+            });
+            if (
+              getUnderCategory.status === 'OK' &&
+              getUnderCategory.data &&
+              getUnderCategory.data.length > 0
+            ) {
+              const underCategory = getUnderCategory.data[0];
+              category[0].underCategory = underCategory;
+              serverSideProps.props.categories = category;
+            }
+          }
           const getArticles = await cmsClient.getArticles({
             offset: 0,
             limit: 6,

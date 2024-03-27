@@ -51,7 +51,7 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
           {categories?.map((category) => (
             <CategoryChipListItem
               title={category.title}
-              path={`/goc-suc-khoe/${category.slug}`}
+              path={`/bai-viet/${category.slug}`}
               key={category.id}
             />
           ))}

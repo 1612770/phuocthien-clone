@@ -13,7 +13,7 @@ function CategoryListItem({ category }: { category: Category }) {
   const router = useRouter();
   const onChangeSubCategory = async (categorySlug: string) => {
     router.push({
-      pathname: `/goc-suc-khoe/${categorySlug}`,
+      pathname: `/bai-viet/${categorySlug}`,
     });
   };
   useEffect(() => {
@@ -60,7 +60,7 @@ function CategoryListItem({ category }: { category: Category }) {
             ))}
           </SubCategoryList>
         </div>
-        <LinkWrapper href={`/goc-suc-khoe/${category.slug}`}>
+        <LinkWrapper href={`/bai-viet/${category.slug}`}>
           <div className="cursor-pointer pr-4 text-xs hover:text-primary">
             <i>Xem tất cả</i>
           </div>

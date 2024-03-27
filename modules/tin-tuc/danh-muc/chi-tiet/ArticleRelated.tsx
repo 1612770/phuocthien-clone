@@ -42,7 +42,7 @@ const ArticleRelated = ({ currentArticle }: { currentArticle: Article }) => {
         {articlesRelated.slice(0, 10).map((el) => (
           <li key={el.id} className=" pb-2 font-semibold text-primary-dark">
             <LinkWrapper
-              href={`/goc-suc-khoe/${el.slug}`}
+              href={`/bai-viet/${el.slug}`}
               className="hover:text-primary"
             >
               {el.title}

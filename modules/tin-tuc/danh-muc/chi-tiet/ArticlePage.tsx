@@ -39,8 +39,14 @@ const ArticlePage: NextPageWithLayout<{
             },
             {
               title: 'Góc sức khoẻ',
-              path: '/goc-suc-khoe',
+              path: '/bai-viet',
             },
+            article.category.underCategory
+              ? {
+                  title: article.category.underCategory.title,
+                  path: article.category.underCategory.slug,
+                }
+              : {},
             {
               title: article.category.title,
               path: article.category.slug,
@@ -48,7 +54,7 @@ const ArticlePage: NextPageWithLayout<{
             {
               title: article.title,
             },
-          ]}
+          ].filter((value) => JSON.stringify(value) !== '{}')}
         ></Breadcrumbs>
       </div>
 

@@ -17,10 +17,7 @@ function ArticleItemPageList({
 
   return (
     <div className={`${'lg:col-span-1'}`}>
-      <LinkWrapper
-        href={`/goc-suc-khoe/${article?.slug}`}
-        className={className}
-      >
+      <LinkWrapper href={`/bai-viet/${article?.slug}`} className={className}>
         <div className={`group flex gap-2 lg:gap-4`} title={article?.title}>
           <div className="relative aspect-[3/2] w-full  min-w-[150px] max-w-[800px]  overflow-hidden rounded-lg border border-solid border-gray-100 transition-transform duration-300 group-hover:scale-105">
             <ImageWithFallback

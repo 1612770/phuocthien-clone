@@ -78,7 +78,7 @@ function PrimaryHeaderMenu() {
             ) : null
           )}
 
-          <LinkWrapper href={'/goc-suc-khoe'}>
+          <LinkWrapper href={'/bai-viet'}>
             <Space
               align="center"
               onMouseEnter={() => {

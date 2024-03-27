@@ -39,7 +39,7 @@ function MainInfoSection({
           </div>
           <Divider type="vertical" className="ml-4 mr-4 bg-primary" />
           <div className=" text-primary">
-            <LinkWrapper href="/goc-suc-khoe">
+            <LinkWrapper href="/bai-viet">
               Xem tất cả <RightOutlined />
             </LinkWrapper>
           </div>
@@ -48,7 +48,7 @@ function MainInfoSection({
           <Button
             key={el.id}
             className="mr-2 mt-2 rounded-full"
-            onClick={() => router.push(`/goc-suc-khoe/${el.slug}`)}
+            onClick={() => router.push(`/bai-viet/${el.slug}`)}
           >
             {el.title}
           </Button>

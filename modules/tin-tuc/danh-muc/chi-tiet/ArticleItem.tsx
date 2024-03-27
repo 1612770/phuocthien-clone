@@ -25,10 +25,7 @@ function ArticleItem({
           : 'lg:col-span-1'
       }`}
     >
-      <LinkWrapper
-        href={`/goc-suc-khoe/${article?.slug}`}
-        className={className}
-      >
+      <LinkWrapper href={`/bai-viet/${article?.slug}`} className={className}>
         {indexBlog == 0 ? (
           <div
             className={`group flex flex-col justify-start gap-2 pr-2 lg:flex-col lg:items-center lg:justify-center lg:gap-4`}
