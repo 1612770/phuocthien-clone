@@ -46,7 +46,6 @@ interface HomeProps {
   viralProductsLists?: ViralProductsListModel[];
   slideBanner?: SlideBannerModel[];
   productSearchKeywords?: ProductSearchKeyword[];
-  mainInfos?: MainInfoModel[];
   campaigns?: Campaign[];
   listProducts?: Product[][];
   brands: BrandModel[];
@@ -59,7 +58,6 @@ const Home: NextPageWithLayout<HomeProps> = ({
   viralProductsLists,
   slideBanner,
   productSearchKeywords,
-  mainInfos,
   campaigns,
   brands,
   promotions,
@@ -277,7 +275,6 @@ export const getServerSideProps = async (
       viralProductsLists: [],
       slideBanner: [],
       productSearchKeywords: [],
-      mainInfos: [],
       campaigns: [],
       listProducts: [],
       brands: [],
@@ -297,7 +294,6 @@ export const getServerSideProps = async (
       viralProducts,
       slideBanner,
       productSearchKeywords,
-      mainInfos,
       campaigns,
       brands,
       promotions,
@@ -310,11 +306,7 @@ export const getServerSideProps = async (
       }),
       generalClient.getSlideBanner(),
       generalClient.getProductSearchKeywords(),
-      generalClient.getMainInfos({
-        page: 1,
-        pageSize: 5,
-        mainInfoCode: +(process.env.MAIN_INFO_CODE_HOMEPAGE_LOAD || 0),
-      }),
+
       promotionClient.getPromo({
         page: 1,
         pageSize: 20,
@@ -357,17 +349,6 @@ export const getServerSideProps = async (
     ) {
       serverSideProps.props.productSearchKeywords =
         productSearchKeywords.value.data || [];
-    }
-
-    if (mainInfos.status === 'fulfilled' && mainInfos.value.data) {
-      serverSideProps.props.mainInfos =
-        mainInfos.value.data.map((main) => ({
-          ...main,
-          groupInfo: main.groupInfo?.map((group) => ({
-            ...group,
-            eventInfos: group.eventInfos?.slice(0, 4),
-          })),
-        })) || [];
     }
 
     if (campaigns.status === 'fulfilled' && campaigns.value.data) {

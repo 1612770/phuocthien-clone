@@ -6,7 +6,7 @@ import React, { memo, useCallback, useState } from 'react';
 
 const AppDataContext = React.createContext<{
   focusContent: FocusContentModel[];
-  mainInfoFooter: MainInfoModel[];
+  // mainInfoFooter: MainInfoModel[];
   productSearchKeywords: ProductSearchKeyword[];
   setProductSearchKeywords: React.Dispatch<
     React.SetStateAction<ProductSearchKeyword[]>
@@ -14,7 +14,7 @@ const AppDataContext = React.createContext<{
   getProductSearchKeywords: () => Promise<void>;
 }>({
   focusContent: [],
-  mainInfoFooter: [],
+  // mainInfoFooter: [],
   productSearchKeywords: [],
   setProductSearchKeywords: () => undefined,
   getProductSearchKeywords: () => Promise.resolve(),
@@ -22,11 +22,11 @@ const AppDataContext = React.createContext<{
 
 function AppDataProvider({
   focusContent,
-  mainInfoFooter,
+  // mainInfoFooter,
   children,
 }: {
   focusContent: FocusContentModel[];
-  mainInfoFooter: MainInfoModel[];
+  // mainInfoFooter: MainInfoModel[];
   children: React.ReactNode;
 }) {
   const [productSearchKeywords, setProductSearchKeywords] = useState<
@@ -54,7 +54,7 @@ function AppDataProvider({
     <AppDataContext.Provider
       value={{
         focusContent,
-        mainInfoFooter,
+        // mainInfoFooter,
         productSearchKeywords,
         setProductSearchKeywords,
         getProductSearchKeywords,
@@ -67,10 +67,6 @@ function AppDataProvider({
 
 export function useAppData() {
   const context = React.useContext(AppDataContext);
-
-  //   if (context === undefined) {
-  //     throw new Error('__void');
-  //   }
 
   return context;
 }

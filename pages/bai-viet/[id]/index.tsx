@@ -11,8 +11,9 @@ import CategoryChipListItem from '../../../modules/tin-tuc/danh-muc/chi-tiet/Cat
 import ArticleItem from '../../../modules/tin-tuc/danh-muc/chi-tiet/ArticleItem';
 import { ChevronsDown } from 'react-feather';
 import ArticlePage from '@modules/tin-tuc/danh-muc/chi-tiet/ArticlePage';
+import PagePropsWithSeo from '@configs/types/page-props-with-seo';
 
-interface EventPageProps {
+interface EventPageProps extends PagePropsWithSeo {
   articles?: Article[];
   categories?: Category[];
   totalArticle: number;
@@ -140,6 +141,7 @@ export const getServerSideProps = async (
       articles: [],
       categories: [],
       totalArticle: 0,
+      SEOData: {},
     },
   };
 
@@ -153,6 +155,7 @@ export const getServerSideProps = async (
       const getArticle = await cmsClient.getArticles({
         q: {
           slug: categorySlug,
+          type: 'BLOG',
         },
       });
       if (
@@ -162,6 +165,9 @@ export const getServerSideProps = async (
       ) {
         const article = getArticle.data[0];
         serverSideProps.props.article = article;
+        serverSideProps.props.SEOData.titleSeo = article.seoData.title;
+        serverSideProps.props.SEOData.keywordSeo = article.seoData.keywords;
+        serverSideProps.props.SEOData.metaSeo = article.seoData.description;
         const underCategoryId = article.category.underCategoryId;
         if (underCategoryId) {
           const getUnderCategory = await cmsClient.getCMSCategories({

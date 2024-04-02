@@ -43,7 +43,7 @@ function ArticleItem({
             <div className="flex flex-col">
               <div className="flex justify-start pb-2">
                 <div className="text-md mb-0 inline-block w-[fit-content] rounded-full border-primary bg-primary-background px-5 py-1 font-semibold text-primary hover:text-primary">
-                  {article.category.title}
+                  {article?.category?.title}
                 </div>
               </div>
               <div className="flex-1">

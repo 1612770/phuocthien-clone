@@ -60,20 +60,8 @@ interface LV2ParamPageProps extends PagePropsWithSeo {
 const LV2ParamPage: NextPageWithLayout<LV2ParamPageProps> = ({
   product,
   productGroup,
-  articleData,
   productTypeGroup,
 }) => {
-  if (articleData.article?.id) {
-    return (
-      <ArticlePage
-        article={articleData.article}
-        otherArticles={articleData.otherArticles}
-        tags={articleData.tags}
-        products={articleData.products}
-      />
-    );
-  }
-
   if (product.product?.key) {
     return (
       <ProductPage
@@ -162,24 +150,12 @@ export const getServerSideProps: GetServerSideProps<LV2ParamPageProps> = async (
         serverSideProps.props.SEOData.keywordSeo =
           serverSideProps.props.productTypeGroup?.productTypeGroup?.keywordSeo;
       } catch (error) {
-        try {
-          serverSideProps.props.articleData = await getArticleData(context);
-          serverSideProps.props.SEOData.titleSeo =
-            serverSideProps.props.articleData.article?.seoData?.title;
-          serverSideProps.props.SEOData.metaSeo =
-            serverSideProps.props.articleData.article?.seoData?.description;
-          serverSideProps.props.SEOData.keywordSeo =
-            serverSideProps.props.articleData.article?.seoData?.keywords;
-        } catch (error) {
-          // redirect to /
-          console.error('Failed All', error);
-          return {
-            redirect: {
-              destination: '/',
-              permanent: false,
-            },
-          };
-        }
+        return {
+          redirect: {
+            destination: '/',
+            permanent: false,
+          },
+        };
       }
     }
     return serverSideProps;

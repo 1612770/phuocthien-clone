@@ -15,9 +15,10 @@ import {
   TwitterOutlined,
   YoutubeFilled,
 } from '@ant-design/icons';
+import { configPage } from '@configs/constants/generalPage';
 
 function PrimaryFooter() {
-  const { focusContent, mainInfoFooter } = useAppData();
+  const { focusContent } = useAppData();
 
   const [products] = useWatchCacheProduct();
 
@@ -112,32 +113,26 @@ function PrimaryFooter() {
               </div>
             </div>
 
-            {mainInfoFooter?.map((info) => {
-              return info.groupInfo?.map(
-                (groupInfo, index) =>
-                  groupInfo?.eventInfos &&
-                  groupInfo?.eventInfos?.length > 0 && (
-                    <div className="w-full" key={index}>
-                      <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-primary">
-                        {groupInfo.name}
-                      </Typography.Text>
-                      {groupInfo.eventInfos?.map((event) => (
-                        <LinkWrapper
-                          key={event.name}
-                          href={`/${groupInfo.seoUrl}/${event.seoUrl}`}
-                          className="hover:text-primary"
-                        >
-                          <Space className="my-1 w-full">
-                            <AppDangerouslySetInnerHTML
-                              dangerouslySetInnerHTML={{
-                                __html: event.name || '',
-                              }}
-                            ></AppDangerouslySetInnerHTML>
-                          </Space>
-                        </LinkWrapper>
-                      ))}
-                    </div>
-                  )
+            {configPage.map((el, idx) => {
+              return (
+                <div key={`${el}-${idx}`} className="w-full">
+                  <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-primary">
+                    {el?.title || ''}
+                  </Typography.Text>
+                  {el.children.length > 0 ? (
+                    el.children.map((page, idx) => (
+                      <Space key={`${page}-${idx}`} className="my-0.5 w-full">
+                        <Link href={page.link}>
+                          <Typography.Text className="cursor-pointer text-primary">
+                            {page.title}
+                          </Typography.Text>
+                        </Link>
+                      </Space>
+                    ))
+                  ) : (
+                    <></>
+                  )}
+                </div>
               );
             })}
 
