@@ -9,7 +9,7 @@ export const IMPORTANT_MENU_KEYS = process.env.NEXT_PUBLIC_IMPORTANT_MENU_KEYS
   : [];
 
 export const QR_URL = process.env.NEXT_PUBLIC_QR_URL || '';
-
+export const QR_PAYMENT_KEY = process.env.QR_PAYMENT_KEY;
 export const NEXT_PUBLIC_GROUP_INFO_KEYS = process.env
   .NEXT_PUBLIC_GROUP_INFO_KEYS
   ? process.env.NEXT_PUBLIC_GROUP_INFO_KEYS.split(',').map((key) =>

@@ -23,6 +23,7 @@ import OrderStatuses from '@configs/enums/order-statuses.enum';
 import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import { DeleteOutlined } from '@ant-design/icons';
+import { QR_PAYMENT_KEY } from '@configs/env';
 
 const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
   const [orderToShow, setOrderToShow] = useState(order);
@@ -166,16 +167,27 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
               &nbsp;
               <Typography className="text-lg">Hình thức thanh toán</Typography>
             </div>
-            <ImageWithFallback
-              src={orderToShow?.paymentMethod?.image || ''}
-              width={60}
-              height={60}
-            ></ImageWithFallback>
+            {orderToShow?.paymentMethod?.image && (
+              <ImageWithFallback
+                src={orderToShow?.paymentMethod?.image || ''}
+                width={60}
+                height={60}
+              ></ImageWithFallback>
+            )}
             <Typography className="text-left">
               <Typography.Text className="">
                 {orderToShow?.paymentMethod?.name}
               </Typography.Text>
             </Typography>
+            {orderToShow?.paymentMethod?.key === QR_PAYMENT_KEY && (
+              <Typography className="text-left">
+                <Typography.Text className="">
+                  {orderToShow?.clientBanked
+                    ? 'Đã xác nhận thanh toán'
+                    : 'Chưa xác thanh toán'}
+                </Typography.Text>
+              </Typography>
+            )}
           </div>
         </div>
 

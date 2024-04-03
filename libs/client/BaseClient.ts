@@ -96,6 +96,19 @@ class BaseClient {
         )
       : await this.makeRequest(method, '/backend/' + url, data);
   }
+  async callExternal(
+    method: string,
+    url: string,
+    data: any
+  ): Promise<APIResponse> {
+    return typeof window === 'undefined'
+      ? await this.makeRequest(
+          method,
+          `${process.env.EXTERNAL_HOST}/${url}`,
+          data
+        )
+      : await this.makeRequest(method, '/backend-external/' + url, data);
+  }
 
   async callStg(method: string, url: string, data: any): Promise<APIResponse> {
     return typeof window === 'undefined'

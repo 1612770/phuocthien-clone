@@ -64,4 +64,9 @@ export class OrderClient extends BaseClient {
   }): Promise<APIResponse<DeliveryConfigs>> {
     return await super.call('PUT', `order/cancelled`, payload);
   }
+  async confirmBanked(payload: {
+    orderKey: string;
+  }): Promise<APIResponse<OrderModel>> {
+    return await super.call('PUT', `order/confirm-banked`, payload);
+  }
 }

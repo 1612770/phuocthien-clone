@@ -16,9 +16,9 @@ const nextConfig = {
     API_HOST: process.env.API_HOST,
     MS_PATH: process.env.MS_PATH,
     HOST_IMAGE: process.env.HOST_IMAGE,
-
+    EXTERNAL_HOST: process.env.EXTERNAL_HOST,
     BANNER_ENABLED: process.env.BANNER_ENABLED,
-
+    QR_PAYMENT_KEY: process.env.QR_PAYMENT_KEY,
     NEXT_PUBLIC_REGEX_PHONE: process.env.NEXT_PUBLIC_REGEX_PHONE,
     NEXT_PUBLIC_GROUP_INFO_KEYS: process.env.NEXT_PUBLIC_GROUP_INFO_KEYS,
   },
@@ -32,6 +32,10 @@ const nextConfig = {
 
   rewrites() {
     return [
+      {
+        source: '/backend-external/:path*',
+        destination: `${process.env.EXTERNAL_HOST}/:path*`,
+      },
       {
         source: '/backend-stg/:path*',
         destination: `${process.env.API_HOST}/:path*`,

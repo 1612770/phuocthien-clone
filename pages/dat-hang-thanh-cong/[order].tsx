@@ -1,5 +1,13 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Breadcrumb, Button, Empty, Result, Typography } from 'antd';
+import {
+  Breadcrumb,
+  Button,
+  Divider,
+  Empty,
+  QRCode,
+  Result,
+  Typography,
+} from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import Link from 'next/link';
 import { ChevronLeft } from 'react-feather';
@@ -17,8 +25,18 @@ import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
 import CurrencyUtils from '@libs/utils/currency.utils';
 import ShippingTypes from '@configs/enums/shipping-types.enum';
 import OrderStatuses from '@configs/enums/order-statuses.enum';
+import { QR_PAYMENT_KEY } from '@configs/env';
+import { ExternalClient } from '@libs/client/External';
+import QRApp from '@modules/products/QRApp';
+import IMAGES from '@configs/assests/images';
 
-const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
+const OrderPage: NextPageWithLayout = ({
+  order,
+  qrCode,
+}: {
+  order?: OrderModel;
+  qrCode?: string;
+}) => {
   const [orderToShow, setOrderToShow] = useState(order);
   const [loading, setLoading] = useState(false);
 
@@ -84,6 +102,39 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
     }
   };
 
+  const onConfirmBanked = async () => {
+    try {
+      if (orderToShow?.key) {
+        const orderClient = new OrderClient(null, {});
+        setLoading(true);
+        const res = await orderClient.confirmBanked({
+          orderKey: orderToShow.key,
+        });
+        if (res.status === 'OK' && res.data) {
+          appMessage.toastSuccess({
+            data: 'Cám ơn bạn đã xác nhận đã chuyền tiền cho đơn hàng.',
+          });
+          setOrderToShow({
+            ...orderToShow,
+            clientBanked: res.data.clientBanked,
+          });
+        }
+      }
+    } catch (error) {
+      appMessage.toastError({ data: error });
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleConfirmBanked = () => {
+    appConfirmDialog.setConfirmData({
+      title: 'Bạn chắc chắn đã chuyển tiền qua mã QR?',
+      content:
+        'Chúng tôi sẽ tiến hành xác nhận thông tin chuyển tiền và xác nhận với bạn sớm nhất',
+      onOk: onConfirmBanked,
+    });
+  };
+
   const getResultStatusByStatus = (status?: OrderStatuses) => {
     switch (status) {
       case OrderStatuses.WAIT_FOR_CONFIRM:
@@ -102,7 +153,7 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
   };
 
   return (
-    <div className="container max-w-[720px] px-2 pb-4">
+    <div className="container max-w-[800px] px-2 pb-4">
       <Breadcrumb className="mt-4 mb-2">
         <Breadcrumb.Item>
           <Link href="/">
@@ -158,6 +209,60 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
                   </div>
                 </div>
 
+                {orderToShow.status === OrderStatuses.WAIT_FOR_CONFIRM &&
+                  orderToShow.clientBanked != 1 &&
+                  orderToShow.paymentMethod?.key === QR_PAYMENT_KEY && (
+                    <div className="bg-white p-2">
+                      <Typography.Title level={4} className="font-[16px]">
+                        Vui lòng quét mã thanh toán bên dưới và bấm xác nhận đã
+                        chuyển.
+                        <br />
+                        <i>
+                          Chúng tôi sẽ cập nhật thông tin đơn hàng sau khi nhận
+                          được tiền.
+                        </i>
+                      </Typography.Title>
+                      <div className="mb-4 flex  items-center justify-center">
+                        <div>
+                          <img src={IMAGES.logo} alt="logo" width={180} />
+                        </div>
+                        <Divider type="vertical" className="mx-4" />
+                        <div>
+                          <img src="/vietqr.webp" alt="vietqr" width={120} />
+                        </div>
+                      </div>
+                      {qrCode && (
+                        <div className="flex justify-center">
+                          <QRCode errorLevel="H" value={qrCode} size={256} />
+                        </div>
+                      )}
+                      <div className="mt-2 flex justify-center">
+                        <div>
+                          <img
+                            src="/vietcombank-icon.png"
+                            alt="vcb"
+                            width={64}
+                          />
+                        </div>
+                        <div className=" font-bold text-black">
+                          <div>Vietcombank</div>
+                          <div>0041000135322</div>
+                          <div>DOAN PHUOC LAN</div>
+                        </div>
+                      </div>
+                      <div className="flex flex-col pt-4">
+                        <div>
+                          <Button type="primary" onClick={handleConfirmBanked}>
+                            Xác nhận đã chuyển
+                          </Button>
+                        </div>
+                        <i className="pt-2">
+                          Sau khi bấm xác nhận đã chuyển, chúng tôi sẽ tiến hành
+                          kiểm tra và cập nhật trạng thái đơn hàng
+                        </i>
+                      </div>
+                    </div>
+                  )}
                 <ul className="mt-4 rounded-xl bg-primary-background p-4 pl-8">
                   <li>
                     <Typography className="text-left">
@@ -235,6 +340,30 @@ const OrderPage: NextPageWithLayout = ({ order }: { order?: OrderModel }) => {
                       </span>
                     </Typography>
                   </li>
+                  <li>
+                    <Typography className="text-left">
+                      <span className="text-gray-600">
+                        Phương thức thanh toán&nbsp;
+                      </span>
+                      <span className="font-bold text-primary">
+                        {orderToShow.paymentMethod?.name}
+                      </span>
+                    </Typography>
+                  </li>
+                  {orderToShow?.paymentMethod?.key === QR_PAYMENT_KEY && (
+                    <li>
+                      <Typography className="text-left">
+                        <span className="text-gray-600">
+                          Khách hàng đã xác nhận chuyển khoản&nbsp;
+                        </span>
+                        <span className="font-bold text-primary">
+                          {orderToShow?.clientBanked
+                            ? 'Đã xác nhận thanh toán'
+                            : 'Chưa thanh toán'}
+                        </span>
+                      </Typography>
+                    </li>
+                  )}
                 </ul>
               </>
             }
@@ -296,6 +425,7 @@ export const getServerSideProps = async (
   const serverSideProps: {
     props: {
       order?: OrderModel;
+      qrCode?: string;
     };
   } = {
     props: {},
@@ -309,6 +439,20 @@ export const getServerSideProps = async (
 
     if (orderResponse.data) {
       serverSideProps.props.order = orderResponse.data;
+      if (
+        orderResponse.data.clientBanked != 1 &&
+        orderResponse.data.paymentMethod?.key === QR_PAYMENT_KEY
+      ) {
+        const externalClient = new ExternalClient(context, {});
+        const qrPayment = await externalClient.getQRPayment({
+          totalAmount: orderResponse.data.totalAmount?.toString() || '',
+          orderCode: orderResponse.data.code || '',
+          source: 'WEB',
+        });
+        if (qrPayment.status === 'OK' && qrPayment.data) {
+          serverSideProps.props.qrCode = qrPayment.data;
+        }
+      }
     }
   } catch (error) {
     console.error(error);

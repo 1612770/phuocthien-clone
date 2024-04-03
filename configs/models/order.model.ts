@@ -28,6 +28,7 @@ type OrderModel = Partial<{
   drugstore: DrugStore;
   offerCode: string;
   orderNote: string;
+  clientBanked: number;
 }>;
 
 export interface DeliveryConfigs {
