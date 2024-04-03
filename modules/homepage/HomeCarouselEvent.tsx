@@ -21,7 +21,7 @@ function HomepageCarouselEvent({ articles }: { articles: Article[] }) {
         {articles.map((article, idx) => (
           <LinkWrapper
             key={idx}
-            href={`/${article?.category?.slug}/${article?.slug}`}
+            href={`/bai-viet/${article?.slug}`}
             className="w-full"
           >
             <div className={`flex-1 overflow-hidden`}>

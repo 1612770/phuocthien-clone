@@ -18,7 +18,9 @@ function PromotionList({
   giftPromotions?: GiftPromotion[];
   dealPromotions?: DealPromotion[];
 }) {
-  return (
+  return promotionPercents.length > 0 ||
+    (giftPromotions?.length && giftPromotions?.length > 0) ||
+    (dealPromotions?.length && dealPromotions?.length > 0) ? (
     <div className=" flex flex-col overflow-hidden rounded-xl border border-solid border-waring-border">
       <div className="flex items-center gap-2 bg-waring-background px-4 py-2 text-waring">
         <PercentageOutlined />
@@ -51,6 +53,8 @@ function PromotionList({
         ))}
       </div>
     </div>
+  ) : (
+    <></>
   );
 }
 
