@@ -18,24 +18,24 @@ const EventPage: NextPageWithLayout<{
   otherEvents?: EventModel[];
   groupInfo?: GroupInfoModel;
 }> = ({ event, otherEvents, groupInfo }) => {
-  const { mainInfoFooter } = useAppData();
+  // const { mainInfoFooter } = useAppData();
 
   if (!event) return null;
   if (typeof event?.visible === 'boolean' && !event?.visible) return null;
 
-  const allMainInfoFooterEventKeys = mainInfoFooter.reduce((acc, curr) => {
-    const groupInfoEventKeys =
-      curr.groupInfo?.reduce((acc, cur) => {
-        const eventKeys =
-          cur.eventInfos?.map((event) => event?.key || '') || [];
+  // const allMainInfoFooterEventKeys = mainInfoFooter.reduce((acc, curr) => {
+  //   const groupInfoEventKeys =
+  //     curr.groupInfo?.reduce((acc, cur) => {
+  //       const eventKeys =
+  //         cur.eventInfos?.map((event) => event?.key || '') || [];
 
-        return [...acc, ...eventKeys];
-      }, [] as string[]) || [];
+  //       return [...acc, ...eventKeys];
+  //     }, [] as string[]) || [];
 
-    return [...acc, ...groupInfoEventKeys];
-  }, [] as string[]);
+  //   return [...acc, ...groupInfoEventKeys];
+  // }, [] as string[]);
 
-  const isEventArticle = !allMainInfoFooterEventKeys.includes(event?.key || '');
+  // const isEventArticle = !allMainInfoFooterEventKeys.includes(event?.key || '');
 
   return (
     <>
@@ -65,13 +65,9 @@ const EventPage: NextPageWithLayout<{
       )}
 
       <div
-        className={`grid grid-cols-1 gap-4 px-4 pb-4 ${
-          isEventArticle
-            ? 'md:grid-cols-1'
-            : 'md:grid-cols-[300px_minmax(200px,_1fr)]'
-        } lg:container lg:px-0`}
+        className={`grid grid-cols-1 gap-4 px-4 pb-4 ${'md:grid-cols-[300px_minmax(200px,_1fr)]'} lg:container lg:px-0`}
       >
-        {!isEventArticle && (
+        {/* {!isEventArticle && (
           <>
             <div className="md:hidden">
               <MainInfoMenuButton mainInfo={mainInfoFooter} />
@@ -80,7 +76,7 @@ const EventPage: NextPageWithLayout<{
               <MainInfoMenu mainInfo={mainInfoFooter} />
             </div>
           </>
-        )}
+        )} */}
         <div className="">
           <div className="mb-6">
             <Typography.Title
@@ -98,7 +94,7 @@ const EventPage: NextPageWithLayout<{
             </Typography.Text>
           </div>
 
-          <AppDangerouslySetInnerHTML
+          {/* <AppDangerouslySetInnerHTML
             className={`w-full ${
               isEventArticle
                 ? ''
@@ -107,7 +103,7 @@ const EventPage: NextPageWithLayout<{
             dangerouslySetInnerHTML={{
               __html: event.description || '',
             }}
-          ></AppDangerouslySetInnerHTML>
+          ></AppDangerouslySetInnerHTML> */}
 
           {groupInfo?.key &&
             NEXT_PUBLIC_GROUP_INFO_KEYS.includes(groupInfo?.key) &&
