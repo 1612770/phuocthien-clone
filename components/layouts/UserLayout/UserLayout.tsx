@@ -1,7 +1,6 @@
 import { Avatar, List, Typography } from 'antd';
 import { User, Book, LogOut } from 'react-feather';
 import { useAuth } from '@providers/AuthProvider';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 export interface IUserLayout {

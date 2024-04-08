@@ -17,7 +17,6 @@ import Product from '@configs/models/product.model';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import ProductCard from '@components/templates/ProductCard';
 import WithPagination from '@configs/types/utils/with-pagination';
-import Link from 'next/link';
 import { useAppData } from '@providers/AppDataProvider';
 import { useRouter } from 'next/router';
 
