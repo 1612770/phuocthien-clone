@@ -1,6 +1,5 @@
 import { List } from 'antd';
 import ImageUtils from '@libs/utils/image.utils';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 function PrimaryHeaderMenuAllPopoverContentLeftItem({

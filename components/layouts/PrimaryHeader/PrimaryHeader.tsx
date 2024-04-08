@@ -1,5 +1,4 @@
 import { Badge, Button, Input, Popover, Space, Typography } from 'antd';
-import Link from 'next/link';
 import { Menu, Search, ShoppingCart, User } from 'react-feather';
 import IMAGES from 'configs/assests/images';
 import { useEffect, useRef, useState } from 'react';

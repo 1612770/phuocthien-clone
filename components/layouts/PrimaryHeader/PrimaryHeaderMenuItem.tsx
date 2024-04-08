@@ -1,5 +1,4 @@
 import { Popover, Space, Typography } from 'antd';
-import Link from 'next/link';
 import PrimaryHeaderMenuList from './PrimaryHeaderMenuList';
 import ProductGroupModel from '@configs/models/product-group.model';
 import { CaretDownOutlined } from '@ant-design/icons';

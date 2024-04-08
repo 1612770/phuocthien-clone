@@ -3,6 +3,7 @@ import PrimaryHeader from '../PrimaryHeader';
 import PrimaryFooter from '../PrimaryFooter';
 import React, { useEffect } from 'react';
 import { useFullMenu } from '@providers/FullMenuProvider';
+import { useAppData } from '@providers/AppDataProvider';
 
 export interface IPrimaryLayout {
   children: React.ReactNode;
@@ -16,6 +17,7 @@ const PrimaryLayout: React.FC<IPrimaryLayout> = ({
   children,
 }) => {
   const { fullMenu, getFullMenu } = useFullMenu();
+  const { focusContent, getFocusData } = useAppData();
   const computedBg =
     background === 'white' ? 'bg-gray-50' : 'bg-primary-background';
   useEffect(() => {
@@ -23,7 +25,11 @@ const PrimaryLayout: React.FC<IPrimaryLayout> = ({
       getFullMenu();
     }
   }, [fullMenu.length, getFullMenu]);
-
+  useEffect(() => {
+    if (focusContent.length === 0) {
+      getFocusData();
+    }
+  }, [focusContent.length, getFocusData]);
   return (
     <>
       <PrimaryHeader showSearch={showSearch} />

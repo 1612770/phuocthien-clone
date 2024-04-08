@@ -1,7 +1,6 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { Breadcrumb, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
-import Link from 'next/link';
 import { ChevronLeft } from 'react-feather';
 import React from 'react';
 import UserLayout from '@components/layouts/UserLayout';

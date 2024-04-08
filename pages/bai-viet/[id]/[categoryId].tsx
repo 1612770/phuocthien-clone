@@ -10,7 +10,6 @@ import CategoryChipList from '../../../modules/tin-tuc/danh-muc/chi-tiet/Categor
 import CategoryChipListItem from '../../../modules/tin-tuc/danh-muc/chi-tiet/CategoryChipListItem';
 import ArticleItem from '../../../modules/tin-tuc/danh-muc/chi-tiet/ArticleItem';
 import { ChevronsDown } from 'react-feather';
-import ArticlePage from '@modules/tin-tuc/danh-muc/chi-tiet/ArticlePage';
 
 interface EventPageProps {
   articles?: Article[];

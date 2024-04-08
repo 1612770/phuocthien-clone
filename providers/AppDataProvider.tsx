@@ -10,20 +10,17 @@ const AppDataContext = React.createContext<{
     React.SetStateAction<ProductSearchKeyword[]>
   >;
   getProductSearchKeywords: () => Promise<void>;
+  getFocusData: () => void;
 }>({
   focusContent: [],
   productSearchKeywords: [],
   setProductSearchKeywords: () => undefined,
   getProductSearchKeywords: () => Promise.resolve(),
+  getFocusData: () => undefined,
 });
 
-function AppDataProvider({
-  focusContent,
-  children,
-}: {
-  focusContent: FocusContentModel[];
-  children: React.ReactNode;
-}) {
+function AppDataProvider({ children }: { children: React.ReactNode }) {
+  const [focusData, setFocusData] = useState<FocusContentModel[]>([]);
   const [productSearchKeywords, setProductSearchKeywords] = useState<
     ProductSearchKeyword[]
   >([]);
@@ -45,11 +42,27 @@ function AppDataProvider({
     }
   }, [productSearchKeywords]);
 
+  const getFocusData = async () => {
+    try {
+      const generalClient = new GeneralClient(null, {});
+      const resFocusData = await generalClient.getFocusContent();
+      if (
+        resFocusData.status == 'OK' &&
+        resFocusData.data &&
+        resFocusData.data.length > 0
+      ) {
+        setFocusData(resFocusData.data);
+      }
+    } catch (error) {
+      console.error(error);
+      setFocusData([]);
+    }
+  };
   return (
     <AppDataContext.Provider
       value={{
-        focusContent,
-        // mainInfoFooter,
+        focusContent: focusData,
+        getFocusData,
         productSearchKeywords,
         setProductSearchKeywords,
         getProductSearchKeywords,

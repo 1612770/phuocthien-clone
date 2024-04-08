@@ -1,8 +1,8 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { Button, Typography } from 'antd';
+import { Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import { GetServerSidePropsContext } from 'next';
-import React, { Suspense } from 'react';
+import React from 'react';
 import Breadcrumbs from '@components/Breadcrumbs';
 import { Article, Category } from '@configs/models/cms.model';
 import { CmsClient } from '@libs/client/Cms';

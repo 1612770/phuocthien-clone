@@ -5,15 +5,12 @@ import { useAppData } from '@providers/AppDataProvider';
 import FocusContentSection from '@modules/homepage/FocusContentSection';
 import { useWatchCacheProduct } from '@libs/utils/hooks/useWatchCacheProduct';
 import ProductList from '@components/templates/ProductList';
-import LinkWrapper from '@components/templates/LinkWrapper';
-import AppDangerouslySetInnerHTML from '@components/AppDangerouslySetInnerHTML';
+
 import {
   FacebookFilled,
   GlobalOutlined,
   MailOutlined,
   PhoneOutlined,
-  TwitterOutlined,
-  YoutubeFilled,
 } from '@ant-design/icons';
 import { configPage } from '@configs/constants/generalPage';
 import { useRouter } from 'next/router';

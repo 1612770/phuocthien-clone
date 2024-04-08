@@ -139,12 +139,7 @@ export const getServerSideProps: GetServerSideProps<LV2ParamPageProps> = async (
         serverSideProps.props.SEOData.keywordSeo =
           serverSideProps.props.productTypeGroup?.productTypeGroup?.keywordSeo;
       } catch (error) {
-        return {
-          redirect: {
-            destination: '/',
-            permanent: false,
-          },
-        };
+        console.error(error);
       }
     }
     return serverSideProps;

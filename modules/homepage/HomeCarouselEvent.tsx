@@ -1,7 +1,5 @@
-import ImageWithFallback from '@components/templates/ImageWithFallback';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import { Article } from '@configs/models/cms.model';
-import MainInfoModel from '@configs/models/main-info.model';
 import { Carousel } from 'antd';
 import { CarouselRef } from 'antd/es/carousel';
 import Image from 'next/image';

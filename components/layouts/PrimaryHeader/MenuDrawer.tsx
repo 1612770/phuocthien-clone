@@ -10,7 +10,6 @@ import {
 } from 'antd';
 import { Book, ChevronDown, LogOut, User, X } from 'react-feather';
 import IMAGES from '@configs/assests/images';
-import Link from 'next/link';
 import { useFullMenu } from '@providers/FullMenuProvider';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import { useAuth } from '@providers/AuthProvider';

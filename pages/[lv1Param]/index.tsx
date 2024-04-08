@@ -3,7 +3,6 @@ import { NextPageWithLayout } from 'pages/page';
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { GeneralClient } from '@libs/client/General';
 import MenuModel from '@configs/models/menu.model';
-import EVENTS_LOAD_PER_TIME from '@configs/constants/events-load-per-time';
 import GroupInfoModel from '@configs/models/GroupInfoModel';
 import GroupInfoPage from '@modules/tin-tuc/danh-muc/GroupInfoPage';
 import ProductTypePage from '@modules/san-pham/ProductTypePage';
@@ -102,7 +101,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
         serverSideProps.props.productType.products = products.data;
       }
     } else {
-      throw Error('Not found product type');
+      console.error('Failed to get product data');
     }
   } catch (error) {
     console.error('getGroupInfos', error);

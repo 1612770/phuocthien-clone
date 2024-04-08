@@ -70,9 +70,7 @@ function MyApp({
                 <AuthProvider>
                   <CartProvider>
                     <FullMenuProvider>
-                      <AppDataProvider
-                        focusContent={pageProps.focusContent || []}
-                      >
+                      <AppDataProvider>
                         {getLayout(<Component {...pageProps} />)}
                       </AppDataProvider>
                     </FullMenuProvider>

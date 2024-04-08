@@ -1,7 +1,6 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { Breadcrumb, Button, Divider, Tag, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
-import Link from 'next/link';
 import {
   ChevronLeft,
   Clock,
