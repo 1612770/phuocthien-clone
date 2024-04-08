@@ -5,6 +5,8 @@ const path = require('path');
 // });
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  swcMinify: true,
+  compress: true,
   output: 'standalone',
   reactStrictMode: false,
   staticPageGenerationTimeout: 1000,

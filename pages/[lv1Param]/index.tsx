@@ -105,33 +105,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
       throw Error('Not found product type');
     }
   } catch (error) {
-    try {
-      const groupInfos = await generalClient.getGroupInfos({
-        page: +(context.query.trang || 1),
-        pageSize: EVENTS_LOAD_PER_TIME,
-        groupSeoUrl: lv1ParamSeoUrl,
-      });
-
-      const groupData = groupInfos.data?.[0];
-
-      if (groupData) {
-        serverSideProps.props.groupInfo.groupInfo = groupData;
-        serverSideProps.props.SEOData.titleSeo = groupData.titleSeo;
-        serverSideProps.props.SEOData.metaSeo = groupData.metaSeo;
-        serverSideProps.props.SEOData.keywordSeo = groupData.keywordSeo;
-      } else {
-        throw new Error('Không tìm thấy groupInfo');
-      }
-    } catch (error) {
-      console.error('groupInfo', error);
-      return {
-        redirect: {
-          destination: '/',
-          permanent: false,
-        },
-      };
-    }
-
     console.error('getGroupInfos', error);
   }
 

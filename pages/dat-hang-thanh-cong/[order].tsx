@@ -27,8 +27,8 @@ import ShippingTypes from '@configs/enums/shipping-types.enum';
 import OrderStatuses from '@configs/enums/order-statuses.enum';
 import { QR_PAYMENT_KEY } from '@configs/env';
 import { ExternalClient } from '@libs/client/External';
-import QRApp from '@modules/products/QRApp';
 import IMAGES from '@configs/assests/images';
+import { useRouter } from 'next/router';
 
 const OrderPage: NextPageWithLayout = ({
   order,
@@ -37,6 +37,7 @@ const OrderPage: NextPageWithLayout = ({
   order?: OrderModel;
   qrCode?: string;
 }) => {
+  const router = useRouter();
   const [orderToShow, setOrderToShow] = useState(order);
   const [loading, setLoading] = useState(false);
 
@@ -156,14 +157,12 @@ const OrderPage: NextPageWithLayout = ({
     <div className="container max-w-[800px] px-2 pb-4">
       <Breadcrumb className="mt-4 mb-2">
         <Breadcrumb.Item>
-          <Link href="/">
-            <a>
-              <div className="flex items-center">
-                <ChevronLeft size={14} />
-                <span>Trang chủ</span>
-              </div>
-            </a>
-          </Link>
+          <span onClick={() => router.push('/')} className="cursor-pointer">
+            <div className="flex items-center">
+              <ChevronLeft size={14} />
+              <span>Trang chủ</span>
+            </div>
+          </span>
         </Breadcrumb.Item>
       </Breadcrumb>
 
@@ -188,11 +187,13 @@ const OrderPage: NextPageWithLayout = ({
                   </Typography>
                   <div className="flex flex-wrap gap-2">
                     {isUserLoggedIn && (
-                      <Link href="/lich-su-don-hang">
-                        <Button className="px-2" type="link">
-                          Quản lý đơn hàng
-                        </Button>
-                      </Link>
+                      <Button
+                        className="px-2"
+                        type="link"
+                        onClick={() => router.push('/lich-su-don-hang')}
+                      >
+                        Quản lý đơn hàng
+                      </Button>
                     )}
                     {isUserLoggedIn &&
                       orderToShow.status === OrderStatuses.WAIT_FOR_CONFIRM && (
@@ -385,16 +386,15 @@ const OrderPage: NextPageWithLayout = ({
                     </Button>
                   </Link>
                 )}
-                <Link href={'/'}>
-                  <Button
-                    type="primary"
-                    ghost
-                    className="shadow-none"
-                    icon={<HomeOutlined />}
-                  >
-                    Về trang chủ
-                  </Button>
-                </Link>
+                <Button
+                  type="primary"
+                  ghost
+                  className="shadow-none"
+                  icon={<HomeOutlined />}
+                  onClick={() => router.push('/')}
+                >
+                  Về trang chủ
+                </Button>
               </div>,
             ]}
           />

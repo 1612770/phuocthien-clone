@@ -9,7 +9,7 @@ import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import { useAuth } from '@providers/AuthProvider';
 import { Button, Input, List, Typography, Avatar } from 'antd';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 function ProductCommentSection({
@@ -24,7 +24,7 @@ function ProductCommentSection({
   const appMessage = useAppMessage();
   const confirmDialog = useAppConfirmDialog();
   const auth = useAuth();
-
+  const router = useRouter();
   const [reviews, setReviews] = useState<Review[]>(defaultReviews);
   const [loadingMore, setLoadingMore] = useState(false);
   const [allowLoadMore, setAllowLoadMore] = useState(true);
@@ -123,11 +123,13 @@ function ProductCommentSection({
             Bạn chưa thực hiện đăng nhập. Vui lòng đăng nhập để đặt câu hỏi hoặc
             đánh giá
           </Typography.Text>
-          <Link href="/dang-nhap">
-            <Button className="font-medium uppercase text-primary" type="link">
-              Đăng nhập
-            </Button>
-          </Link>{' '}
+          <Button
+            className="font-medium uppercase text-primary"
+            type="link"
+            onClick={() => router.push('/dang-nhap')}
+          >
+            Đăng nhập
+          </Button>
         </div>
       )}
 

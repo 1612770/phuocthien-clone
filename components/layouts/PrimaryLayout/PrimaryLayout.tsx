@@ -1,7 +1,8 @@
 import { Layout } from 'antd';
 import PrimaryHeader from '../PrimaryHeader';
 import PrimaryFooter from '../PrimaryFooter';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useFullMenu } from '@providers/FullMenuProvider';
 
 export interface IPrimaryLayout {
   children: React.ReactNode;
@@ -14,8 +15,14 @@ const PrimaryLayout: React.FC<IPrimaryLayout> = ({
   background = 'white',
   children,
 }) => {
+  const { fullMenu, getFullMenu } = useFullMenu();
   const computedBg =
     background === 'white' ? 'bg-gray-50' : 'bg-primary-background';
+  useEffect(() => {
+    if (fullMenu.length === 0) {
+      getFullMenu();
+    }
+  }, [fullMenu.length, getFullMenu]);
 
   return (
     <>

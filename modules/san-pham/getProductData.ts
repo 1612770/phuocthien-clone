@@ -35,7 +35,6 @@ const getProductData = async (context: GetServerSidePropsContext) => {
   const productResponse = await productClient.getProduct({
     seoUrl: lv2ParamSeoUrl,
   });
-
   const product = productResponse.data;
 
   if (product && product.key) {

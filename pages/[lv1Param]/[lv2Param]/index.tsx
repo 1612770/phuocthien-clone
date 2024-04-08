@@ -19,9 +19,6 @@ import ProductTypeGroupModel from '@configs/models/product-type-group.model';
 import getProductTypeGroupData from '@modules/san-pham/getProductTypeGroupData';
 import ProductTypeGroupPage from '@modules/san-pham/ProductTypeGroupPage';
 import { GiftPromotion, DealPromotion } from '@libs/client/Promotion';
-import getArticleData from '@modules/san-pham/getArticleData';
-import { Article, Tag } from '@configs/models/cms.model';
-import ArticlePage from '@modules/tin-tuc/danh-muc/chi-tiet/ArticlePage';
 
 interface LV2ParamPageProps extends PagePropsWithSeo {
   productTypeGroup: {
@@ -47,13 +44,6 @@ interface LV2ParamPageProps extends PagePropsWithSeo {
     faqs?: FAQ[];
     giftPromotions?: GiftPromotion[];
     dealPromotions?: DealPromotion[];
-  };
-
-  articleData: {
-    article?: Article;
-    otherArticles?: Article[];
-    tags?: Tag[];
-    products?: Product[];
   };
 }
 
@@ -113,7 +103,6 @@ export const getServerSideProps: GetServerSideProps<LV2ParamPageProps> = async (
       productTypeGroup: {},
       productGroup: {},
       product: {},
-      articleData: {},
       SEOData: {},
     },
   };

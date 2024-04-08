@@ -151,7 +151,9 @@ function ProductSearchInputMobile({ onBack = () => undefined }) {
 
           {(searchedProducts?.data.length || 0) <
             (searchedProducts?.total || 0) && (
-            <Link href={`/tim-kiem?tu-khoa=${searchValue}`}>
+            <div
+              onClick={() => router.push(`/tim-kiem?tu-khoa=${searchValue}`)}
+            >
               <Button
                 block
                 className="mt-4 mb-4"
@@ -162,7 +164,7 @@ function ProductSearchInputMobile({ onBack = () => undefined }) {
               >
                 Xem tất cả
               </Button>
-            </Link>
+            </div>
           )}
         </>
       )}

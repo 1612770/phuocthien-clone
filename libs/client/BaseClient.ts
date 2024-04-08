@@ -40,7 +40,7 @@ class BaseClient {
     data: any
   ): Promise<APIResponse> {
     // eslint-disable-next-line no-console
-    console.log('file: BaseClient.ts:33| method:', url);
+    // console.log('file: BaseClient.ts:33| method:', url);
 
     const req: any = {
       method: method,
@@ -83,7 +83,6 @@ class BaseClient {
     if (result.error) {
       throw result;
     }
-
     return result;
   }
 

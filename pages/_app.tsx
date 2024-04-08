@@ -21,7 +21,6 @@ import AppConfirmDialogProvider from '@providers/AppConfirmDialogProvider';
 import FocusContentModel from '@configs/models/focus-content.model';
 import AppDataProvider from '@providers/AppDataProvider';
 import { ZaloChat } from '@modules/zaloChat';
-import MainInfoModel from '@configs/models/main-info.model';
 
 const DEFAUT_PAGE_TITLE = 'Nhà thuốc Phước Thiện';
 
@@ -35,7 +34,6 @@ function MyApp({
 }: AppPropsWithLayout<{
   fullMenu?: MenuModel[];
   focusContent?: FocusContentModel[];
-  // mainInfoFooter?: MainInfoModel[];
   SEOData?: {
     titleSeo?: string;
     metaSeo?: string;
@@ -73,9 +71,8 @@ function MyApp({
               <AppConfirmDialogProvider>
                 <AuthProvider>
                   <CartProvider>
-                    <FullMenuProvider fullMenu={pageProps.fullMenu || []}>
+                    <FullMenuProvider>
                       <AppDataProvider
-                        // mainInfoFooter={pageProps.mainInfoFooter || []}
                         focusContent={pageProps.focusContent || []}
                       >
                         {getLayout(<Component {...pageProps} />)}
@@ -95,73 +92,73 @@ function MyApp({
   );
 }
 
-MyApp.getInitialProps = async (ctx: AppContext) => {
-  const initalProps = await App.getInitialProps(ctx);
+// MyApp.getInitialProps = async (ctx: AppContext) => {
+//   const initalProps = await App.getInitialProps(ctx);
 
-  const appInitalProps: {
-    props: {
-      fullMenu: MenuModel[];
-      focusContent: FocusContentModel[];
-      mainInfoFooter: MainInfoModel[];
-    };
-  } = {
-    props: {
-      fullMenu: [],
-      focusContent: [],
-      mainInfoFooter: [],
-    },
-  };
+//   const appInitalProps: {
+//     props: {
+//       fullMenu: MenuModel[];
+//       focusContent: FocusContentModel[];
+//       mainInfoFooter: MainInfoModel[];
+//     };
+//   } = {
+//     props: {
+//       fullMenu: [],
+//       focusContent: [],
+//       mainInfoFooter: [],
+//     },
+//   };
 
-  const generalClient = new GeneralClient(ctx, {});
+//   const generalClient = new GeneralClient(ctx, {});
 
-  const [fullMenu, focusContent] = await Promise.allSettled([
-    generalClient.getMenu(),
-    generalClient.getFocusContent(),
-    // generalClient.getMainInfos({
-    //   page: 1,
-    //   pageSize: 10,
-    //   mainInfoCode: 1,
-    // }),
-    // generalClient.getMainInfos({
-    //   page: 1,
-    //   pageSize: 10,
-    //   mainInfoCode: 4,
-    // }),
-  ]);
+//   const [fullMenu, focusContent] = await Promise.allSettled([
+//     generalClient.getMenu(),
+//     generalClient.getFocusContent(),
+//     // generalClient.getMainInfos({
+//     //   page: 1,
+//     //   pageSize: 10,
+//     //   mainInfoCode: 1,
+//     // }),
+//     // generalClient.getMainInfos({
+//     //   page: 1,
+//     //   pageSize: 10,
+//     //   mainInfoCode: 4,
+//     // }),
+//   ]);
 
-  if (fullMenu.status === 'fulfilled' && fullMenu.value.data) {
-    appInitalProps.props.fullMenu = fullMenu.value.data;
-  }
-  if (focusContent.status === 'fulfilled' && focusContent.value.data) {
-    appInitalProps.props.focusContent = focusContent.value.data || [];
-  }
+//   if (fullMenu.status === 'fulfilled' && fullMenu.value.data) {
+//     appInitalProps.props.fullMenu = fullMenu.value.data;
+//   }
+//   if (focusContent.status === 'fulfilled' && focusContent.value.data) {
+//     appInitalProps.props.focusContent = focusContent.value.data || [];
+//   }
 
-  // if (mainInfoFooter.status === 'fulfilled' && mainInfoFooter.value.data) {
-  //   appInitalProps.props.mainInfoFooter = mainInfoFooter.value.data || [];
-  // }
+//   // if (mainInfoFooter.status === 'fulfilled' && mainInfoFooter.value.data) {
+//   //   appInitalProps.props.mainInfoFooter = mainInfoFooter.value.data || [];
+//   // }
 
-  // if (
-  //   mainInfoFooterOther.status === 'fulfilled' &&
-  //   mainInfoFooterOther.value.data
-  // ) {
-  //   appInitalProps.props.mainInfoFooter = [
-  //     ...appInitalProps.props.mainInfoFooter,
-  //     ...mainInfoFooterOther.value.data,
-  //   ];
-  // }
-  initalProps.pageProps = {
-    ...initalProps.pageProps,
-    ...appInitalProps.props,
-  };
+//   // if (
+//   //   mainInfoFooterOther.status === 'fulfilled' &&
+//   //   mainInfoFooterOther.value.data
+//   // ) {
+//   //   appInitalProps.props.mainInfoFooter = [
+//   //     ...appInitalProps.props.mainInfoFooter,
+//   //     ...mainInfoFooterOther.value.data,
+//   //   ];
+//   // }
+//   initalProps.pageProps = {
+//     ...initalProps.pageProps,
+//     ...appInitalProps.props,
+//   };
 
-  if (ctx.ctx.req) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (ctx.ctx.req as any)._fromAppData = {
-      fullMenu: appInitalProps.props.fullMenu,
-    };
-  }
+//   if (ctx.ctx.req) {
+//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//     (ctx.ctx.req as any)._fromAppData = {
+//       fullMenu: appInitalProps.props.fullMenu,
+//     };
+//   }
 
-  return initalProps;
-};
+//   return initalProps;
+// };
 
 export default MyApp;

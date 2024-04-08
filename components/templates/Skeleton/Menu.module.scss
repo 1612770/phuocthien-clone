@@ -1,0 +1,26 @@
+@keyframes placeHolderShimmer {
+    0% {
+      background-position: -100% 0
+    }
+    100% {
+      background-position: 100% 0
+    }
+  }
+.animatedBackground {
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeHolderShimmer;
+  animation-timing-function: linear;
+  background-color: #009549;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 149, 73, 1) 0%,
+    rgba(118, 198, 157, 1) 50%,
+    rgba(0, 149, 73, 1) 100%
+  );
+  background-size: 1200px 30px;
+  height: 30px;
+  position: relative;
+}
+

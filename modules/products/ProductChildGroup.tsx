@@ -1,6 +1,6 @@
 import ImageUtils from '@libs/utils/image.utils';
 import { Typography } from 'antd';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 function ProductChildGroup({
   label,
@@ -11,8 +11,9 @@ function ProductChildGroup({
   href: string;
   image?: string;
 }) {
+  const router = useRouter();
   return (
-    <Link href={href}>
+    <div onClick={() => router.push(href)}>
       <a>
         <div className="group flex cursor-pointer items-center rounded-full border border-solid border-gray-200 bg-white p-2 py-1 hover:border-primary-light">
           <img
@@ -26,7 +27,7 @@ function ProductChildGroup({
           <Typography className="two-line-text mr-2">{label}</Typography>
         </div>
       </a>
-    </Link>
+    </div>
   );
 }
 

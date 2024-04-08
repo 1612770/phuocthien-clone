@@ -1,17 +1,17 @@
 import { Button, Divider, Tag, Tooltip, Typography, Grid } from 'antd';
-import Link from 'next/link';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import ImageUtils from '@libs/utils/image.utils';
 import OrderStatusUtils from '@libs/utils/order-status.utils';
 import TimeUtils from '@libs/utils/time.utils';
 import OrderModel from '@configs/models/order.model';
 import LinkWrapper from '@components/templates/LinkWrapper';
+import { useRouter } from 'next/router';
 
 const { useBreakpoint } = Grid;
 
 function OrderItem({ order }: { order: OrderModel }) {
   const screens = useBreakpoint();
-
+  const router = useRouter();
   return (
     <LinkWrapper
       href={screens.md ? undefined : `/lich-su-don-hang/${order.key}`}
@@ -101,16 +101,15 @@ function OrderItem({ order }: { order: OrderModel }) {
                 })}
               </Typography>
 
-              <Link href={`/lich-su-don-hang/${order.key}`}>
-                <Button
-                  ghost
-                  size="small"
-                  type="primary"
-                  className="mt-2 hidden sm:block"
-                >
-                  Xem chi tiết
-                </Button>
-              </Link>
+              <Button
+                ghost
+                size="small"
+                type="primary"
+                className="mt-2 hidden sm:block"
+                onClick={() => router.push(`/lich-su-don-hang/${order.key}`)}
+              >
+                Xem chi tiết
+              </Button>
             </div>
           </div>
         </div>

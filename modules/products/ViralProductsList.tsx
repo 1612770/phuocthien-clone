@@ -9,6 +9,7 @@ import VIRAL_PRODUCTS_LOAD_PER_TIME from '@configs/constants/viral-products-load
 import Link from 'next/link';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import ImageUtils from '@libs/utils/image.utils';
+import { useRouter } from 'next/router';
 
 function ViralProductsList({
   viralProductsList,
@@ -29,7 +30,7 @@ function ViralProductsList({
   const [allowLoadMore, setAllowLoadMore] = useState(
     viralProductsList?.listProductViral?.length === VIRAL_PRODUCTS_LOAD_PER_TIME
   );
-
+  const router = useRouter();
   const { toastError } = useAppMessage();
 
   const loadMore = async () => {
@@ -89,20 +90,21 @@ function ViralProductsList({
           </Typography.Title>
         </div>
         {viralProductsList?.imageUrl && (
-          <Link href={`/san-pham-noi-bat/${viralProductsList?.seoUrl}`}>
-            <a>
-              <div className="relative mb-4 aspect-[21/9] h-[200px] w-full">
-                <ImageWithFallback
-                  src={viralProductsList?.imageUrl || ''}
-                  layout="fill"
-                  objectFit="cover"
-                  getMockImage={() =>
-                    ImageUtils.getRandomMockCampaignImageUrl()
-                  }
-                ></ImageWithFallback>
-              </div>
-            </a>
-          </Link>
+          <div
+            onClick={() =>
+              router.push(`/san-pham-noi-bat/${viralProductsList?.seoUrl}`)
+            }
+            className="cursor-pointer"
+          >
+            <div className="relative mb-4 aspect-[21/9] h-[200px] w-full">
+              <ImageWithFallback
+                src={viralProductsList?.imageUrl || ''}
+                layout="fill"
+                objectFit="cover"
+                // getMockImage={() => ImageUtils.getRandomMockCampaignImageUrl()}
+              ></ImageWithFallback>
+            </div>
+          </div>
         )}
       </div>
 
@@ -143,19 +145,19 @@ function ViralProductsList({
               Xem thêm
             </Button>
           )}
-          <Link href={`/san-pham-noi-bat/${viralProductsList?.seoUrl}`}>
-            <a>
-              <Button
-                className={
-                  'inline-block lg:hidden ' +
-                  (invertBackground ? 'border-white text-white' : '')
-                }
-                ghost
-              >
-                Xem tất cả
-              </Button>
-            </a>
-          </Link>
+
+          <Button
+            className={
+              'inline-block lg:hidden ' +
+              (invertBackground ? 'border-white text-white' : '')
+            }
+            ghost
+            onClick={() =>
+              router.push(`/san-pham-noi-bat/${viralProductsList?.seoUrl}`)
+            }
+          >
+            Xem tất cả
+          </Button>
         </div>
       </div>
     </div>

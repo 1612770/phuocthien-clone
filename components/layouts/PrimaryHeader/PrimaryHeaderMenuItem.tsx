@@ -3,6 +3,7 @@ import Link from 'next/link';
 import PrimaryHeaderMenuList from './PrimaryHeaderMenuList';
 import ProductGroupModel from '@configs/models/product-group.model';
 import { CaretDownOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/router';
 
 function PrimaryHeaderMenuItem({
   label,
@@ -18,40 +19,37 @@ function PrimaryHeaderMenuItem({
   icon?: React.ReactNode;
   productGroups?: ProductGroupModel[];
 }) {
+  const router = useRouter();
   return (
-    <Link href={href} style={{ color: 'white' }}>
-      <a>
-        <Popover
-          destroyTooltipOnHide
-          autoAdjustOverflow
-          overlayInnerStyle={{
-            width: 1200,
-            overflow: 'auto',
-          }}
-          open={false}
-          content={
-            <PrimaryHeaderMenuList
-              productGroups={productGroups || []}
-              parentHref={href}
-            />
-          }
-          showArrow={false}
-          arrowContent={null}
-          trigger="hover"
-          placement="bottomLeft"
-        >
-          <Space align="center">
-            {icon}
-            <Typography.Text className="whitespace-nowrap font-medium text-white">
-              {label}
-            </Typography.Text>
-            {!onlyClick && (
-              <CaretDownOutlined className="text-white" size={8} />
-            )}
-          </Space>
-        </Popover>
-      </a>
-    </Link>
+    <div onClick={() => router.push(href)} style={{ color: 'white' }}>
+      <Popover
+        destroyTooltipOnHide
+        autoAdjustOverflow
+        overlayInnerStyle={{
+          width: 1200,
+          overflow: 'auto',
+        }}
+        open={false}
+        content={
+          <PrimaryHeaderMenuList
+            productGroups={productGroups || []}
+            parentHref={href}
+          />
+        }
+        showArrow={false}
+        arrowContent={null}
+        trigger="hover"
+        placement="bottomLeft"
+      >
+        <Space align="center">
+          {icon}
+          <Typography.Text className="whitespace-nowrap font-medium text-white">
+            {label}
+          </Typography.Text>
+          {!onlyClick && <CaretDownOutlined className="text-white" size={8} />}
+        </Space>
+      </Popover>
+    </div>
   );
 }
 

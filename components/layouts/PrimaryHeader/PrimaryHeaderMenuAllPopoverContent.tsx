@@ -8,13 +8,13 @@ import { ProductClient } from '@libs/client/Product';
 import ProductCard from '@components/templates/ProductCard';
 import PrimaryHeaderMenuAllPopoverContentLeftItem from './PrimaryHeaderMenuAllPopoverContentLeftItem';
 import { useDebounce } from '@libs/utils/hooks';
-import Link from 'next/link';
 import Product from '@configs/models/product.model';
 import { ListProductTypeGroup } from '@modules/san-pham/ListProductTypeGroup';
 import ProductType from '@configs/models/product-type.model';
+import { useRouter } from 'next/router';
 
 const generateKey = (groupKey?: string, typeKey?: string) => {
-  return `${groupKey}-${typeKey}}`;
+  return `${groupKey}-${typeKey}}}`;
 };
 
 const checkCanGetFocusGroupProducts = (
@@ -37,6 +37,7 @@ function PrimaryHeaderMenuAllPopoverContent({
   currentMenu?: MenuModel;
   mode: 'all' | 'menu' | 'none';
 }) {
+  const router = useRouter();
   const [currentFocusMenu, setCurrentFocusMenu] = useState<MenuModel>();
   const [loadingProduct, setLoadingProduct] = useState(false);
   const [currentFocusGroup, setCurrentFocusGroup] =
@@ -203,15 +204,17 @@ function PrimaryHeaderMenuAllPopoverContent({
                     setIntoPopover(false);
                   }}
                 >
-                  <Link
-                    href={`/${currentMenu.seoUrl}/${currentFocusGroup?.seoUrl}`}
+                  <div
+                    onClick={() =>
+                      router.push(
+                        `/${currentMenu.seoUrl}/${currentFocusGroup?.seoUrl}`
+                      )
+                    }
                   >
-                    <a>
-                      <Typography className="pr-3 text-blue-500">
-                        Xem tất cả
-                      </Typography>
-                    </a>
-                  </Link>
+                    <Typography className="pr-3 text-blue-500">
+                      Xem tất cả
+                    </Typography>
+                  </div>
                 </div>
               </Space>
             )}

@@ -12,11 +12,12 @@ import PrimaryHeaderMenuDrawer from './MenuDrawer';
 import { useIntersectionObserver } from '@libs/utils/hooks';
 import CartPopupContent from '@modules/gio-hang/CartPopupContent';
 import CurrencyUtils from '@libs/utils/currency.utils';
+import { useFullMenu } from '@providers/FullMenuProvider';
+import { MenuSkeleton } from '@components/templates/Skeleton/Menu';
 
 function PrimaryHeader({ showSearch = true }) {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const [openMobileSearch, setOpenMobileSearch] = useState(false);
-
   const {
     cartProducts,
     cartCombos,
@@ -28,7 +29,7 @@ function PrimaryHeader({ showSearch = true }) {
     totalPrice,
   } = useCart();
   const router = useRouter();
-  const cartButtonRef = useRef<HTMLAnchorElement | null>(null);
+  const cartButtonRef = useRef<HTMLDivElement | null>(null);
   const entry = useIntersectionObserver(cartButtonRef, {});
   const isVisible = !!entry?.isIntersecting;
 
@@ -45,7 +46,7 @@ function PrimaryHeader({ showSearch = true }) {
       setModeShowPopup('fixed');
     }
   }, [isVisible, setModeShowPopup]);
-
+  const { fullMenu } = useFullMenu();
   return (
     <header>
       <div className="bg-white py-4">
@@ -57,15 +58,16 @@ function PrimaryHeader({ showSearch = true }) {
               onClick={() => setOpenMobileMenu(!openMobileMenu)}
             />
 
-            <Link href="/">
-              <div className="w-[200px] cursor-pointer px-1 pb-2 lg:min-w-[128px]">
-                <img
-                  src={IMAGES.logo}
-                  alt="Nhà thuốc Phước Thiện"
-                  className="w-full "
-                />
-              </div>
-            </Link>
+            <div
+              className="w-[200px] cursor-pointer px-1 pb-2 lg:min-w-[128px]"
+              onClick={() => router.push('/')}
+            >
+              <img
+                src={IMAGES.logo}
+                alt="Nhà thuốc Phước Thiện"
+                className="w-full "
+              />
+            </div>
 
             {showSearch && (
               <div className="ml-4 hidden h-10 w-full flex-1 lg:block">
@@ -74,60 +76,64 @@ function PrimaryHeader({ showSearch = true }) {
             )}
           </div>
 
-          <Link href="/gio-hang">
-            <a className="mr-2 block md:hidden">
-              <Badge count={totalProducts}>
-                <ShoppingCart className="text-primary" size={32} />
-              </Badge>
-            </a>
-          </Link>
+          <div
+            className="mr-2 block cursor-pointer md:hidden"
+            onClick={() => router.push({ pathname: '/gio-hang' })}
+          >
+            <Badge count={totalProducts}>
+              <ShoppingCart className="text-primary" size={32} />
+            </Badge>
+          </div>
 
           <Space size={0} className="hidden md:flex">
             <Popover
               content={<CartPopupContent />}
               open={modeShowPopup === 'cart-button' && isOpenNotification}
             >
-              <Link href="/gio-hang">
-                <a className="hidden md:block" ref={cartButtonRef}>
-                  <Badge count={totalProducts}>
-                    <Button className="ml-8 h-12 min-w-[64px] shadow-none">
-                      <div className="flex items-center justify-between">
-                        <ShoppingCart size={28} className="text-primary" />
-                        <div className="column ml-2 flex flex-col">
-                          <div
-                            className={`${
-                              totalPrice > 0 ? 'text-xs' : 'text-sm'
-                            }`}
-                          >
-                            Giỏ hàng
-                          </div>
-                          {totalPrice > 0 && (
-                            <div className="text-primary">
-                              {CurrencyUtils.format(totalPrice)}
-                            </div>
-                          )}
+              <div
+                onClick={() => router.push('/gio-hang')}
+                className="hidden md:block"
+                ref={cartButtonRef}
+              >
+                <Badge count={totalProducts}>
+                  <Button className="ml-8 h-12 min-w-[64px] shadow-none">
+                    <div className="flex items-center justify-between">
+                      <ShoppingCart size={28} className="text-primary" />
+                      <div className="column ml-2 flex flex-col">
+                        <div
+                          className={`${
+                            totalPrice > 0 ? 'text-xs' : 'text-sm'
+                          }`}
+                        >
+                          Giỏ hàng
                         </div>
+                        {totalPrice > 0 && (
+                          <div className="text-primary">
+                            {CurrencyUtils.format(totalPrice)}
+                          </div>
+                        )}
                       </div>
-                    </Button>
-                  </Badge>
-                </a>
-              </Link>
+                    </div>
+                  </Button>
+                </Badge>
+              </div>
             </Popover>
 
-            <Link href={'/lich-su-don-hang'}>
-              <a className="ml-4 inline-block">
-                <Button className="hidden h-12  shadow-none md:block">
-                  <div className="flex items-center justify-between text-center">
-                    <User size={28} className="text-primary" />
-                    <Typography.Text className="ml-2 text-sm">
-                      Lịch sử
-                      <br />
-                      đơn hàng
-                    </Typography.Text>
-                  </div>
-                </Button>
-              </a>
-            </Link>
+            <div
+              onClick={() => router.push('/lich-su-don-hang')}
+              className="ml-4 inline-block"
+            >
+              <Button className="hidden h-12  shadow-none md:block">
+                <div className="flex items-center justify-between text-center">
+                  <User size={28} className="text-primary" />
+                  <Typography.Text className="ml-2 text-sm">
+                    Lịch sử
+                    <br />
+                    đơn hàng
+                  </Typography.Text>
+                </div>
+              </Button>
+            </div>
 
             <Space
               align="center"
@@ -173,14 +179,20 @@ function PrimaryHeader({ showSearch = true }) {
         </div>
       </div>
 
-      <PrimaryHeaderMenu></PrimaryHeaderMenu>
+      {fullMenu.length > 0 ? (
+        <PrimaryHeaderMenu></PrimaryHeaderMenu>
+      ) : (
+        <MenuSkeleton />
+      )}
 
-      <PrimaryHeaderMenuDrawer
-        open={openMobileMenu}
-        onClose={() => {
-          setOpenMobileMenu(false);
-        }}
-      />
+      {fullMenu.length > 0 && (
+        <PrimaryHeaderMenuDrawer
+          open={openMobileMenu}
+          onClose={() => {
+            setOpenMobileMenu(false);
+          }}
+        />
+      )}
 
       {modeShowPopup === 'fixed' && (
         <div

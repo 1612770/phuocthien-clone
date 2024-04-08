@@ -7,23 +7,27 @@ import ImageUtils from '@libs/utils/image.utils';
 import { DrugstoreClient } from '@libs/client/DrugStore';
 import DrugStore from '@configs/models/drug-store.model';
 import { MapPin, Phone } from 'react-feather';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const DrugstorePage: NextPageWithLayout<{
   drugstore?: DrugStore;
 }> = ({ drugstore }) => {
+  const router = useRouter();
   return (
     <div className="mx-auto  px-4 pb-8 lg:container lg:px-0">
       <Breadcrumb className="mt-4 mb-2">
         <Breadcrumb.Item>
-          <Link href="/">
-            <a>Trang chủ</a>
-          </Link>
+          <span onClick={() => router.push('/')} className="cursor-pointer">
+            Trang chủ
+          </span>
         </Breadcrumb.Item>
         <Breadcrumb.Item>
-          <Link href={`/nha-thuoc`}>
-            <a>Danh sách nhà thuốc</a>
-          </Link>
+          <span
+            onClick={() => router.push('/nha-thuoc')}
+            className="cursor-pointer"
+          >
+            Danh sách nhà thuốc
+          </span>
         </Breadcrumb.Item>
         <Breadcrumb.Item>{drugstore?.name}</Breadcrumb.Item>
       </Breadcrumb>

@@ -18,7 +18,10 @@ const UserLayout: React.FC<IUserLayout> = ({ children }) => {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[240px_1fr]">
       <List className="-mt-2 hidden lg:block">
-        <Link href="/lich-su-don-hang">
+        <div
+          onClick={() => router.push('/lich-su-don-hang')}
+          className="cursor-pointer"
+        >
           <List.Item className="border-none p-0">
             <div
               className={`${
@@ -35,8 +38,12 @@ const UserLayout: React.FC<IUserLayout> = ({ children }) => {
               </Typography>
             </div>
           </List.Item>
-        </Link>
-        <Link href="/thong-tin-ca-nhan">
+        </div>
+
+        <div
+          onClick={() => router.push('/thong-tin-ca-nhan')}
+          className="cursor-pointer"
+        >
           <List.Item className="border-none p-0">
             <div
               className={`${
@@ -51,7 +58,7 @@ const UserLayout: React.FC<IUserLayout> = ({ children }) => {
               </Typography>
             </div>
           </List.Item>
-        </Link>
+        </div>
         <List.Item
           className="border-none p-0"
           onClick={() => {

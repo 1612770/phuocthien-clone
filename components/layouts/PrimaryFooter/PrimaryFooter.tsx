@@ -16,10 +16,11 @@ import {
   YoutubeFilled,
 } from '@ant-design/icons';
 import { configPage } from '@configs/constants/generalPage';
+import { useRouter } from 'next/router';
 
 function PrimaryFooter() {
   const { focusContent } = useAppData();
-
+  const router = useRouter();
   const [products] = useWatchCacheProduct();
 
   return (
@@ -43,17 +44,15 @@ function PrimaryFooter() {
       <footer className="bg-white">
         <div className="m-auto justify-center py-8 px-4 lg:container lg:px-0">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div className="">
-              <Link href="/" style={{ color: 'white' }}>
-                <a className="flex items-center">
-                  <img
-                    src={IMAGES.logo}
-                    alt="Nhà thuốc Phước Thiện"
-                    className="mr-2 h-8"
-                    style={{ minHeight: 60 }}
-                  />
-                </a>
-              </Link>
+            <div className=" text-white" onClick={() => router.push('/')}>
+              <div>
+                <img
+                  src={IMAGES.logo}
+                  alt="Nhà thuốc Phước Thiện"
+                  className="mr-2 h-8"
+                  style={{ minHeight: 60 }}
+                />
+              </div>
               <Space className="mt-2">
                 <Link
                   href="https://www.facebook.com/PhuocThienPharmacy/"
@@ -62,20 +61,6 @@ function PrimaryFooter() {
                   <a target={'_blank'}>
                     <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
                       <FacebookFilled className="text-white" size={16} />
-                    </span>
-                  </a>
-                </Link>
-                <Link href="/">
-                  <a>
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
-                      <YoutubeFilled className="text-white" size={16} />
-                    </span>
-                  </a>
-                </Link>
-                <Link href="/">
-                  <a>
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
-                      <TwitterOutlined className="text-white" size={16} />
                     </span>
                   </a>
                 </Link>
@@ -122,11 +107,11 @@ function PrimaryFooter() {
                   {el.children.length > 0 ? (
                     el.children.map((page, idx) => (
                       <Space key={`${page}-${idx}`} className="my-0.5 w-full">
-                        <Link href={page.link}>
+                        <div onClick={() => router.push(page.link)}>
                           <Typography.Text className="cursor-pointer text-primary">
                             {page.title}
                           </Typography.Text>
-                        </Link>
+                        </div>
                       </Space>
                     ))
                   ) : (

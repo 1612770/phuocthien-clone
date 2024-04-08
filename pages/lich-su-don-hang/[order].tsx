@@ -24,10 +24,11 @@ import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import { DeleteOutlined } from '@ant-design/icons';
 import { QR_PAYMENT_KEY } from '@configs/env';
+import { useRouter } from 'next/router';
 
 const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
   const [orderToShow, setOrderToShow] = useState(order);
-
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const appConfirmDialog = useAppConfirmDialog();
@@ -67,21 +68,17 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
     <div className="container px-2 pb-4 lg:px-0">
       <Breadcrumb className="mt-4 mb-2">
         <Breadcrumb.Item>
-          <Link href="/">
-            <a>
-              <div className="flex items-center">
-                <ChevronLeft size={14} />
-                <span>Trang chủ</span>
-              </div>
-            </a>
-          </Link>
+          <span onClick={() => router.push('/')} className="cursor-pointer">
+            <div className="flex items-center">
+              <ChevronLeft size={14} />
+              <span>Trang chủ</span>
+            </div>
+          </span>
         </Breadcrumb.Item>
         <Breadcrumb.Item>
-          <Link href="/lich-su-don-hang">
-            <a>
-              <span>Lịch sử đơn hàng</span>
-            </a>
-          </Link>
+          <span onClick={() => router.push('/lich-su-don-hang')}>
+            Lịch sử đơn hàng
+          </span>
         </Breadcrumb.Item>
       </Breadcrumb>
 

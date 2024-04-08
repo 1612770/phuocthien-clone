@@ -9,6 +9,7 @@ import PrimaryHeaderMenuItem from './PrimaryHeaderMenuItem';
 import MenuModel from '@configs/models/menu.model';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import { BookOutlined, ShopOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/router';
 
 function PrimaryHeaderMenu() {
   const { fullMenu, open, setOpen, intoPopover } = useFullMenu();
@@ -22,6 +23,7 @@ function PrimaryHeaderMenu() {
       setOpen(false);
     }
   };
+  const router = useRouter();
   return (
     <Popover
       open={open || intoPopover}
@@ -43,19 +45,6 @@ function PrimaryHeaderMenu() {
     >
       <div className="relative z-10 hidden bg-primary shadow-lg lg:block">
         <div className="m-auto flex items-center justify-between lg:container ">
-          {/* <Space
-            align="center"
-            className="inline-flex cursor-pointer py-2"
-            onMouseEnter={() => {
-              setMode('all');
-            }}
-          >
-            <Typography.Text className="whitespace-nowrap font-medium uppercase text-white">
-              Tất cả danh mục
-            </Typography.Text>
-            <CaretDownOutlined size={8} className="text-white" />
-          </Space> */}
-
           {fullMenu.map((menu) =>
             menu?.name &&
             IMPORTANT_MENU_KEYS.includes((menu?.key || '').toUpperCase()) ? (
@@ -91,21 +80,23 @@ function PrimaryHeaderMenu() {
               </Typography.Text>
             </Space>
           </LinkWrapper>
-          <Link href={'/nha-thuoc'} style={{ color: 'white' }}>
-            <a className="hidden xl:flex">
-              <Space
-                align="center"
-                onMouseEnter={() => {
-                  setMode('none');
-                }}
-              >
-                <ShopOutlined className="text-white" />
-                <Typography.Text className="whitespace-nowrap font-medium text-white">
-                  Chuỗi nhà thuốc
-                </Typography.Text>
-              </Space>
-            </a>
-          </Link>
+          <div
+            onClick={() => router.push('/nha-thuoc')}
+            style={{ color: 'white' }}
+            className="hidden xl:flex"
+          >
+            <Space
+              align="center"
+              onMouseEnter={() => {
+                setMode('none');
+              }}
+            >
+              <ShopOutlined className="text-white" />
+              <Typography.Text className="whitespace-nowrap font-medium text-white">
+                Chuỗi nhà thuốc
+              </Typography.Text>
+            </Space>
+          </div>
         </div>
       </div>
     </Popover>

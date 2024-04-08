@@ -10,21 +10,21 @@ import MasterDataProvider from '@providers/MasterDataProvider';
 import Addresses from '@modules/address/Addresses';
 import UserProfileUpdatingForm from '@modules/profile/UserProfileUpdatingForm';
 import PasswordUpdateForm from '@modules/profile/PasswordUpdateForm';
+import { useRouter } from 'next/router';
 
 const ProfileInformationPage: NextPageWithLayout = () => {
+  const router = useRouter();
   return (
     <div className="min-h-screen min-w-full bg-primary-background">
       <div className="container grid py-2">
         <Breadcrumb className="mt-2 mb-2">
           <Breadcrumb.Item>
-            <Link href="/">
-              <a>
-                <div className="flex items-center">
-                  <ChevronLeft size={14} />
-                  <span>Trang chủ</span>
-                </div>
-              </a>
-            </Link>
+            <span onClick={() => router.push('/')} className="cursor-pointer">
+              <div className="flex items-center">
+                <ChevronLeft size={14} />
+                <span>Trang chủ</span>
+              </div>
+            </span>
           </Breadcrumb.Item>
         </Breadcrumb>
 

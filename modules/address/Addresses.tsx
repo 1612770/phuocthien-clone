@@ -7,6 +7,7 @@ import AddressModel from '@configs/models/address.model';
 import AddressEditMode from '@configs/types/address-edit-mode.type';
 import AddressesModal from './AddressesModal';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 function Addresses({
   pickOnly,
@@ -37,6 +38,7 @@ function Addresses({
     edittingAddress.current = undefined;
     setMode(undefined);
   };
+  const router = useRouter();
 
   return (
     <>
@@ -109,13 +111,15 @@ function Addresses({
               <Typography>Bạn chưa có đơn hàng nào ở đây</Typography>
             }
           >
-            <Link href="/thong-tin-ca-nhan">
-              <a>
-                <Button type="primary" ghost>
-                  Quản lý sổ địa chỉ
-                </Button>
-              </a>
-            </Link>
+            <div>
+              <Button
+                type="primary"
+                ghost
+                onClick={() => router.push('/thong-tin-ca-nhan')}
+              >
+                Quản lý sổ địa chỉ
+              </Button>
+            </div>
           </Empty>
         )}
       </Spin>

@@ -25,14 +25,12 @@ const OrdersPage: NextPageWithLayout<{
       <div className="container grid pt-2">
         <Breadcrumb className="mt-2 mb-2">
           <Breadcrumb.Item>
-            <Link href="/">
-              <a>
-                <div className="flex items-center">
-                  <ChevronLeft size={14} />
-                  <span>Trang chủ</span>
-                </div>
-              </a>
-            </Link>
+            <span onClick={() => router.push('/')} className="cursor-pointer">
+              <div className="flex items-center">
+                <ChevronLeft size={14} />
+                <span>Trang chủ</span>
+              </div>
+            </span>
           </Breadcrumb.Item>
         </Breadcrumb>
 

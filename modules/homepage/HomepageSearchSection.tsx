@@ -196,11 +196,14 @@ function HomepageSearchSection() {
 
             {(searchedProducts?.data.length || 0) <
               (searchedProducts?.total || 0) && (
-              <Link href={`/tim-kiem?tu-khoa=${searchValue}`}>
-                <Button block className="mt-4" type="link">
-                  Xem tất cả
-                </Button>
-              </Link>
+              <Button
+                block
+                className="mt-4"
+                type="link"
+                onClick={() => router.push(`/tim-kiem?tu-khoa=${searchValue}`)}
+              >
+                Xem tất cả
+              </Button>
             )}
           </div>
         )}
