@@ -3,15 +3,15 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 
 import 'antd/dist/reset.css';
-import '../styles/_ckedit.scss';
 import '../styles/style.scss';
+import 'nprogress/nprogress.css';
+import '../styles/_ckedit.scss';
 
 import { NextPageWithLayout } from './page';
 import COLORS from 'configs/colors';
 import MenuModel from '@configs/models/menu.model';
 import FullMenuProvider from '@providers/FullMenuProvider';
 import React, { Suspense } from 'react';
-import AppLoading from '@components/templates/AppLoading';
 import CartProvider from '@providers/CartProvider';
 import AppMessageProvider from '@providers/AppMessageProvider';
 import AuthProvider from '@providers/AuthProvider';
@@ -19,6 +19,7 @@ import AppConfirmDialogProvider from '@providers/AppConfirmDialogProvider';
 import FocusContentModel from '@configs/models/focus-content.model';
 import AppDataProvider from '@providers/AppDataProvider';
 import { ZaloChat } from '@modules/zaloChat';
+import NProgress from '@components/templates/NProgress';
 
 const DEFAUT_PAGE_TITLE = 'Nhà thuốc Phước Thiện';
 
@@ -55,7 +56,7 @@ function MyApp({
         {keywordSeo}
         <meta name="robots" content="noindex,nofollow" />
       </Head>
-      <AppLoading>
+      <NProgress>
         <ConfigProvider
           theme={{
             token: {
@@ -80,7 +81,7 @@ function MyApp({
             </AppMessageProvider>
           </AntdApp>
         </ConfigProvider>
-      </AppLoading>
+      </NProgress>
       <Suspense>
         <ZaloChat />
       </Suspense>
