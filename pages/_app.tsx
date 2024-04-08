@@ -1,5 +1,5 @@
 import { ConfigProvider, App as AntdApp } from 'antd';
-import type { AppContext, AppProps } from 'next/app';
+import type { AppProps } from 'next/app';
 import Head from 'next/head';
 
 import 'antd/dist/reset.css';
@@ -8,10 +8,8 @@ import '../styles/style.scss';
 
 import { NextPageWithLayout } from './page';
 import COLORS from 'configs/colors';
-import { GeneralClient } from 'libs/client/General';
 import MenuModel from '@configs/models/menu.model';
 import FullMenuProvider from '@providers/FullMenuProvider';
-import App from 'next/app';
 import React, { Suspense } from 'react';
 import AppLoading from '@components/templates/AppLoading';
 import CartProvider from '@providers/CartProvider';
@@ -91,74 +89,5 @@ function MyApp({
     </>
   );
 }
-
-// MyApp.getInitialProps = async (ctx: AppContext) => {
-//   const initalProps = await App.getInitialProps(ctx);
-
-//   const appInitalProps: {
-//     props: {
-//       fullMenu: MenuModel[];
-//       focusContent: FocusContentModel[];
-//       mainInfoFooter: MainInfoModel[];
-//     };
-//   } = {
-//     props: {
-//       fullMenu: [],
-//       focusContent: [],
-//       mainInfoFooter: [],
-//     },
-//   };
-
-//   const generalClient = new GeneralClient(ctx, {});
-
-//   const [fullMenu, focusContent] = await Promise.allSettled([
-//     generalClient.getMenu(),
-//     generalClient.getFocusContent(),
-//     // generalClient.getMainInfos({
-//     //   page: 1,
-//     //   pageSize: 10,
-//     //   mainInfoCode: 1,
-//     // }),
-//     // generalClient.getMainInfos({
-//     //   page: 1,
-//     //   pageSize: 10,
-//     //   mainInfoCode: 4,
-//     // }),
-//   ]);
-
-//   if (fullMenu.status === 'fulfilled' && fullMenu.value.data) {
-//     appInitalProps.props.fullMenu = fullMenu.value.data;
-//   }
-//   if (focusContent.status === 'fulfilled' && focusContent.value.data) {
-//     appInitalProps.props.focusContent = focusContent.value.data || [];
-//   }
-
-//   // if (mainInfoFooter.status === 'fulfilled' && mainInfoFooter.value.data) {
-//   //   appInitalProps.props.mainInfoFooter = mainInfoFooter.value.data || [];
-//   // }
-
-//   // if (
-//   //   mainInfoFooterOther.status === 'fulfilled' &&
-//   //   mainInfoFooterOther.value.data
-//   // ) {
-//   //   appInitalProps.props.mainInfoFooter = [
-//   //     ...appInitalProps.props.mainInfoFooter,
-//   //     ...mainInfoFooterOther.value.data,
-//   //   ];
-//   // }
-//   initalProps.pageProps = {
-//     ...initalProps.pageProps,
-//     ...appInitalProps.props,
-//   };
-
-//   if (ctx.ctx.req) {
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     (ctx.ctx.req as any)._fromAppData = {
-//       fullMenu: appInitalProps.props.fullMenu,
-//     };
-//   }
-
-//   return initalProps;
-// };
 
 export default MyApp;
