@@ -21,8 +21,6 @@ const ProductPage = ({
   drugStoresAvailable,
   offers,
   drugStores,
-  reviews,
-  faqs,
   giftPromotions,
   dealPromotions,
   errors,
@@ -32,8 +30,6 @@ const ProductPage = ({
   drugStoresAvailable?: InventoryAtDrugStore[];
   drugStores?: DrugStore[];
   offers: OfferModel[];
-  reviews: Review[];
-  faqs: FAQ[];
   giftPromotions: GiftPromotion[];
   dealPromotions: DealPromotion[];
   errors?: {
@@ -117,8 +113,8 @@ const ProductPage = ({
         {product && <ProductMetaData product={product} />}
       </div>
 
-      <ProductFAQsSection faqs={faqs} />
-      <ProductCommentSection product={product} defaultReviews={reviews} />
+      <ProductFAQsSection productKey={product.key || ''} />
+      <ProductCommentSection product={product} />
 
       <div className="mb-4 lg:container lg:pl-0">
         <ProductOthersSection

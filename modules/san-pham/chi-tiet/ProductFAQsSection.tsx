@@ -1,15 +1,31 @@
 import { InfoCircleFilled } from '@ant-design/icons';
 import AppDangerouslySetInnerHTML from '@components/AppDangerouslySetInnerHTML';
 import { FAQ } from '@configs/models/faq.model';
+import { ProductClient } from '@libs/client/Product';
 import { Collapse, Typography } from 'antd';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-function ProductFAQsSection({ faqs }: { faqs: FAQ[] }) {
-  if (!faqs?.length) return null;
+function ProductFAQsSection({ productKey }: { productKey: string }) {
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
 
-  const sortedFaqs = faqs.sort((a, b) => a.indexFaq - b.indexFaq);
-
-  return (
+  useEffect(() => {
+    const loadFags = async () => {
+      try {
+        const productClient = new ProductClient(null, {});
+        const res = await productClient.getFAQs({ key: productKey });
+        if (res.status === 'OK' && res.data) {
+          setFaqs(res.data);
+        }
+      } catch (error) {
+        console.error('Failed load faq');
+        setFaqs([]);
+      }
+    };
+    if (productKey != '') {
+      loadFags();
+    }
+  }, [productKey]);
+  return faqs?.length > 0 ? (
     <div className="my-4 lg:container">
       <Typography.Title
         level={3}
@@ -23,9 +39,9 @@ function ProductFAQsSection({ faqs }: { faqs: FAQ[] }) {
         bordered={false}
         expandIconPosition="right"
         className="bg-primary-background"
-        defaultActiveKey={[sortedFaqs[0].key]}
+        defaultActiveKey={[faqs[0].key]}
       >
-        {sortedFaqs.map((faq) => (
+        {faqs.map((faq) => (
           <Collapse.Panel
             className=""
             key={faq.key}
@@ -47,7 +63,7 @@ function ProductFAQsSection({ faqs }: { faqs: FAQ[] }) {
         ))}
       </Collapse>
     </div>
-  );
+  ) : null;
 }
 
 export default ProductFAQsSection;

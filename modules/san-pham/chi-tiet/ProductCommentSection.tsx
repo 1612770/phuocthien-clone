@@ -14,10 +14,10 @@ import React, { useEffect, useState } from 'react';
 
 function ProductCommentSection({
   product,
-  defaultReviews,
-}: {
+}: // defaultReviews,
+{
   product: Product;
-  defaultReviews: Review[];
+  // defaultReviews: Review[];
 }) {
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
@@ -25,7 +25,7 @@ function ProductCommentSection({
   const confirmDialog = useAppConfirmDialog();
   const auth = useAuth();
   const router = useRouter();
-  const [reviews, setReviews] = useState<Review[]>(defaultReviews);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loadingMore, setLoadingMore] = useState(false);
   const [allowLoadMore, setAllowLoadMore] = useState(true);
 
@@ -61,9 +61,26 @@ function ProductCommentSection({
   };
 
   useEffect(() => {
-    setReviews(defaultReviews);
-    setAllowLoadMore(defaultReviews.length === REVIEWS_LOAD_PER_TIME);
-  }, [defaultReviews]);
+    const loadReview = async () => {
+      try {
+        const productClient = new ProductClient(null, {});
+        const res = await productClient.getReviews({
+          page: 1,
+          pageSize: REVIEWS_LOAD_PER_TIME,
+          key: product.key || '',
+        });
+        if (res.status === 'OK' && res.data && res.data.data) {
+          setReviews(res.data.data);
+          setAllowLoadMore(res.data.data.length === REVIEWS_LOAD_PER_TIME);
+        } else {
+          setReviews([]);
+        }
+      } catch (error) {
+        setReviews([]);
+      }
+    };
+    loadReview();
+  }, [product.key]);
 
   const loadMore = async () => {
     if (loadingMore || !product.key) return;

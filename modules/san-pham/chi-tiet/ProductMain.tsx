@@ -88,16 +88,7 @@ function ProductMain({
           dealPromotions={dealPromotions}
         />
       </div>
-      {errorsInventory?.code ? (
-        <ProductDrugStoresSection
-          drugStores={drugStores || []}
-          drugStoresAvailable={drugStoresAvailable || []}
-        />
-      ) : (
-        <div className="text-center text-sm text-waring">
-          <i>Số lượng tồn kho chưa được cập nhật. Vui lòng kiểm tra lại sau</i>
-        </div>
-      )}
+      <ProductDrugStoresSection product={product} />
 
       <p className="py-2">
         Gọi nhận tư vấn với dược sĩ

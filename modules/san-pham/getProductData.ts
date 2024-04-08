@@ -22,8 +22,6 @@ const getProductData = async (context: GetServerSidePropsContext) => {
     drugStoresAvailable?: InventoryAtDrugStore[];
     drugStores?: DrugStore[];
     offers?: OfferModel[];
-    reviews?: Review[];
-    faqs?: FAQ[];
     giftPromotions?: GiftPromotion[];
     dealPromotions?: DealPromotion[];
     errors?: {
@@ -47,25 +45,16 @@ const getProductData = async (context: GetServerSidePropsContext) => {
     throw new Error('Không tìm thấy sản phẩm');
   }
 
-  const [products, offers, getReviewsResponse, getFAQsResponse] =
-    await Promise.all([
-      productClient.getProducts({
-        page: 1,
-        pageSize: 10,
-        productTypeKey: product.productType?.key,
-        productGroupKey: product.productGroup?.key,
-        isPrescripted: false,
-      }),
-      offerClient.getAllActiveOffers(),
-      productClient.getReviews({
-        page: 1,
-        pageSize: REVIEWS_LOAD_PER_TIME,
-        key: product.key,
-      }),
-      productClient.getFAQs({
-        key: product.key,
-      }),
-    ]);
+  const [products, offers] = await Promise.all([
+    productClient.getProducts({
+      page: 1,
+      pageSize: 10,
+      productTypeKey: product.productType?.key,
+      productGroupKey: product.productGroup?.key,
+      isPrescripted: false,
+    }),
+    offerClient.getAllActiveOffers(),
+  ]);
 
   try {
     const [giftPromotions, dealPromotions] = await Promise.all([
@@ -98,33 +87,25 @@ const getProductData = async (context: GetServerSidePropsContext) => {
       (product) => product.detail?.seoUrl !== lv2ParamSeoUrl
     );
   }
-
-  if (getReviewsResponse.data) {
-    productData.reviews = getReviewsResponse.data.data;
-  }
-
-  if (getFAQsResponse.data) {
-    productData.faqs = getFAQsResponse.data;
-  }
-  try {
-    const drugStoresAvailable = await productClient.checkInventoryAtDrugStores({
-      key: product.key,
-    });
-    if (
-      drugStoresAvailable.status == 'OK' &&
-      drugStoresAvailable.data?.length
-    ) {
-      productData.drugStoresAvailable = drugStoresAvailable.data.map(
-        (drugStore) => drugStore
-      );
-    }
-  } catch (error) {
-    productData.drugStoresAvailable = [];
-    productData.errors = {
-      code: 'FAILED_LOADING_INVENTORY',
-      message: 'Lỗi khi lấy tồn kho cho sản phẩm',
-    };
-  }
+  // try {
+  //   const drugStoresAvailable = await productClient.checkInventoryAtDrugStores({
+  //     key: product.key,
+  //   });
+  //   if (
+  //     drugStoresAvailable.status == 'OK' &&
+  //     drugStoresAvailable.data?.length
+  //   ) {
+  //     productData.drugStoresAvailable = drugStoresAvailable.data.map(
+  //       (drugStore) => drugStore
+  //     );
+  //   }
+  // } catch (error) {
+  //   productData.drugStoresAvailable = [];
+  //   productData.errors = {
+  //     code: 'FAILED_LOADING_INVENTORY',
+  //     message: 'Lỗi khi lấy tồn kho cho sản phẩm',
+  //   };
+  // }
   return productData;
 };
 
