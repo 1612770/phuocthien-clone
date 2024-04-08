@@ -31,6 +31,7 @@ function ProductMain({
   drugStores,
   giftPromotions,
   dealPromotions,
+  errorsInventory,
 }: {
   product: Product;
   offers: OfferModel[];
@@ -38,6 +39,10 @@ function ProductMain({
   drugStores?: DrugStore[];
   giftPromotions: GiftPromotion[];
   dealPromotions: DealPromotion[];
+  errorsInventory?: {
+    code?: string;
+    message?: string;
+  };
 }) {
   const maxDisCount = getMaxDiscount(product?.promotions || []);
   const { focusContent } = useAppData();
@@ -83,10 +88,16 @@ function ProductMain({
           dealPromotions={dealPromotions}
         />
       </div>
-      <ProductDrugStoresSection
-        drugStores={drugStores || []}
-        drugStoresAvailable={drugStoresAvailable || []}
-      />
+      {errorsInventory?.code ? (
+        <ProductDrugStoresSection
+          drugStores={drugStores || []}
+          drugStoresAvailable={drugStoresAvailable || []}
+        />
+      ) : (
+        <div className="text-center text-sm text-waring">
+          <i>Số lượng tồn kho chưa được cập nhật. Vui lòng kiểm tra lại sau</i>
+        </div>
+      )}
 
       <p className="py-2">
         Gọi nhận tư vấn với dược sĩ

@@ -44,6 +44,10 @@ interface LV2ParamPageProps extends PagePropsWithSeo {
     faqs?: FAQ[];
     giftPromotions?: GiftPromotion[];
     dealPromotions?: DealPromotion[];
+    errors?: {
+      code?: string;
+      message?: string;
+    };
   };
 }
 
@@ -64,6 +68,7 @@ const LV2ParamPage: NextPageWithLayout<LV2ParamPageProps> = ({
         faqs={product.faqs || []}
         giftPromotions={product.giftPromotions || []}
         dealPromotions={product.dealPromotions || []}
+        errors={product.errors}
       />
     );
   }
@@ -117,6 +122,7 @@ export const getServerSideProps: GetServerSideProps<LV2ParamPageProps> = async (
       serverSideProps.props.product.product?.detail?.keywordSeo;
   } catch (error) {
     console.error('getProductData', error);
+
     try {
       serverSideProps.props.productGroup = await getProductGroupData(context);
       serverSideProps.props.SEOData.titleSeo =

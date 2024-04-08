@@ -26,6 +26,10 @@ const getProductData = async (context: GetServerSidePropsContext) => {
     faqs?: FAQ[];
     giftPromotions?: GiftPromotion[];
     dealPromotions?: DealPromotion[];
+    errors?: {
+      code?: string;
+      message?: string;
+    };
   } = {};
 
   const productClient = new ProductClient(null, {});
@@ -43,33 +47,25 @@ const getProductData = async (context: GetServerSidePropsContext) => {
     throw new Error('Không tìm thấy sản phẩm');
   }
 
-  const [
-    products,
-    offers,
-    getReviewsResponse,
-    getFAQsResponse,
-    drugStoresAvailable,
-  ] = await Promise.all([
-    productClient.getProducts({
-      page: 1,
-      pageSize: 10,
-      productTypeKey: product.productType?.key,
-      productGroupKey: product.productGroup?.key,
-      isPrescripted: false,
-    }),
-    offerClient.getAllActiveOffers(),
-    productClient.getReviews({
-      page: 1,
-      pageSize: REVIEWS_LOAD_PER_TIME,
-      key: product.key,
-    }),
-    productClient.getFAQs({
-      key: product.key,
-    }),
-    productClient.checkInventoryAtDrugStores({
-      key: product.key,
-    }),
-  ]);
+  const [products, offers, getReviewsResponse, getFAQsResponse] =
+    await Promise.all([
+      productClient.getProducts({
+        page: 1,
+        pageSize: 10,
+        productTypeKey: product.productType?.key,
+        productGroupKey: product.productGroup?.key,
+        isPrescripted: false,
+      }),
+      offerClient.getAllActiveOffers(),
+      productClient.getReviews({
+        page: 1,
+        pageSize: REVIEWS_LOAD_PER_TIME,
+        key: product.key,
+      }),
+      productClient.getFAQs({
+        key: product.key,
+      }),
+    ]);
 
   try {
     const [giftPromotions, dealPromotions] = await Promise.all([
@@ -93,18 +89,6 @@ const getProductData = async (context: GetServerSidePropsContext) => {
     productData.dealPromotions = [];
   }
 
-  if (drugStoresAvailable.data?.length) {
-    productData.drugStoresAvailable = drugStoresAvailable.data.map(
-      (drugStore) => drugStore
-    );
-  } else {
-    const drugstoreClient = new DrugstoreClient(context, {});
-    const drugStores = await drugstoreClient.getAllDrugStores();
-    if (drugStores.data) {
-      productData.drugStores = drugStores.data;
-    }
-  }
-
   if (offers.data) {
     productData.offers = OfferUtils.filterNonValueOffer(offers.data);
   }
@@ -122,7 +106,25 @@ const getProductData = async (context: GetServerSidePropsContext) => {
   if (getFAQsResponse.data) {
     productData.faqs = getFAQsResponse.data;
   }
-
+  try {
+    const drugStoresAvailable = await productClient.checkInventoryAtDrugStores({
+      key: product.key,
+    });
+    if (
+      drugStoresAvailable.status == 'OK' &&
+      drugStoresAvailable.data?.length
+    ) {
+      productData.drugStoresAvailable = drugStoresAvailable.data.map(
+        (drugStore) => drugStore
+      );
+    }
+  } catch (error) {
+    productData.drugStoresAvailable = [];
+    productData.errors = {
+      code: 'FAILED_LOADING_INVENTORY',
+      message: 'Lỗi khi lấy tồn kho cho sản phẩm',
+    };
+  }
   return productData;
 };
 

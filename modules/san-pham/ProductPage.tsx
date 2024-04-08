@@ -25,6 +25,7 @@ const ProductPage = ({
   faqs,
   giftPromotions,
   dealPromotions,
+  errors,
 }: {
   product?: Product;
   otherProducts?: Product[];
@@ -35,6 +36,10 @@ const ProductPage = ({
   faqs: FAQ[];
   giftPromotions: GiftPromotion[];
   dealPromotions: DealPromotion[];
+  errors?: {
+    code?: string;
+    message?: string;
+  };
 }) => {
   useCacheProduct(product?.key);
 
@@ -64,7 +69,6 @@ const ProductPage = ({
     return null;
   }
   if (typeof product?.visible === 'boolean' && !product?.visible) return null;
-
   return (
     <div className="px-4 pt-4 lg:container lg:px-0">
       <Breadcrumbs
@@ -96,6 +100,7 @@ const ProductPage = ({
           offers={offers}
           product={product}
           drugStoresAvailable={drugStoresAvailable}
+          errorsInventory={errors}
           drugStores={drugStores}
           giftPromotions={giftPromotions}
           dealPromotions={dealPromotions}
