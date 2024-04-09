@@ -6,7 +6,6 @@ import ProductGroupModel from '@configs/models/product-group.model';
 import Product, { InventoryAtDrugStore } from '@configs/models/product.model';
 import BrandModel from '@configs/models/brand.model';
 import WithPagination from '@configs/types/utils/with-pagination';
-import DrugStore from '@configs/models/drug-store.model';
 import OfferModel from '@configs/models/offer.model';
 import getProductGroupData from '@modules/san-pham/getProductGroupData';
 import getProductData from '@modules/san-pham/getProductData';
@@ -35,15 +34,9 @@ interface LV2ParamPageProps extends PagePropsWithSeo {
   product: {
     product?: Product;
     otherProducts?: Product[];
-    drugStoresAvailable?: InventoryAtDrugStore[];
-    drugStores?: DrugStore[];
     offers?: OfferModel[];
     giftPromotions?: GiftPromotion[];
     dealPromotions?: DealPromotion[];
-    errors?: {
-      code?: string;
-      message?: string;
-    };
   };
 }
 
@@ -57,12 +50,9 @@ const LV2ParamPage: NextPageWithLayout<LV2ParamPageProps> = ({
       <ProductPage
         product={product.product}
         otherProducts={product.otherProducts}
-        drugStoresAvailable={product.drugStoresAvailable}
-        drugStores={product.drugStores}
         offers={product.offers || []}
         giftPromotions={product.giftPromotions || []}
         dealPromotions={product.dealPromotions || []}
-        errors={product.errors}
       />
     );
   }

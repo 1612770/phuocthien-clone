@@ -18,12 +18,9 @@ import { GiftPromotion, DealPromotion } from '@libs/client/Promotion';
 const ProductPage = ({
   product,
   otherProducts,
-  drugStoresAvailable,
   offers,
-  drugStores,
   giftPromotions,
   dealPromotions,
-  errors,
 }: {
   product?: Product;
   otherProducts?: Product[];
@@ -32,10 +29,6 @@ const ProductPage = ({
   offers: OfferModel[];
   giftPromotions: GiftPromotion[];
   dealPromotions: DealPromotion[];
-  errors?: {
-    code?: string;
-    message?: string;
-  };
 }) => {
   useCacheProduct(product?.key);
 
@@ -95,9 +88,6 @@ const ProductPage = ({
         <ProductMain
           offers={offers}
           product={product}
-          drugStoresAvailable={drugStoresAvailable}
-          errorsInventory={errors}
-          drugStores={drugStores}
           giftPromotions={giftPromotions}
           dealPromotions={dealPromotions}
         />

@@ -19,8 +19,6 @@ const getProductData = async (context: GetServerSidePropsContext) => {
   const productData: {
     product?: Product;
     otherProducts?: Product[];
-    drugStoresAvailable?: InventoryAtDrugStore[];
-    drugStores?: DrugStore[];
     offers?: OfferModel[];
     giftPromotions?: GiftPromotion[];
     dealPromotions?: DealPromotion[];

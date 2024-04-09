@@ -35,32 +35,12 @@ function ProductDrugStoresModal({
   );
 }
 
-function ProductDrugStoresSection({ product }: { product: Product }) {
+function ProductDrugStoresSection({
+  drugStoresAvailable,
+}: {
+  drugStoresAvailable: InventoryAtDrugStore[] | undefined;
+}) {
   const [openDrugStoresModal, setOpenDrugStoresModal] = useState(false);
-  const [drugStoresAvailable, setDrugStoresAvailable] = useState<
-    InventoryAtDrugStore[] | undefined
-  >(undefined);
-
-  useEffect(() => {
-    const loadInventory = async () => {
-      try {
-        const client = new ProductClient(null, {});
-        const res = await client.checkInventoryAtDrugStores({
-          key: product.key || '',
-        });
-        if (res.status === 'OK' && res.data && res.data.length > 0) {
-          setDrugStoresAvailable(res.data);
-        } else {
-          setDrugStoresAvailable([]);
-        }
-      } catch (error) {
-        setDrugStoresAvailable([]);
-      }
-    };
-    if (product.key) {
-      loadInventory();
-    }
-  }, [product.key]);
 
   if (drugStoresAvailable != undefined && drugStoresAvailable.length == 0)
     return (
