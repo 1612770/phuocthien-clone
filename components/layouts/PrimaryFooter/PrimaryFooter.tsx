@@ -104,11 +104,13 @@ function PrimaryFooter() {
                   {el.children.length > 0 ? (
                     el.children.map((page, idx) => (
                       <Space key={`${page}-${idx}`} className="my-0.5 w-full">
-                        <div onClick={() => router.push(page.link)}>
-                          <Typography.Text className="cursor-pointer text-primary">
-                            {page.title}
-                          </Typography.Text>
-                        </div>
+                        <Link href={page.link} passHref>
+                          <a>
+                            <Typography.Text className="cursor-pointer text-primary">
+                              {page.title}
+                            </Typography.Text>
+                          </a>
+                        </Link>
                       </Space>
                     ))
                   ) : (

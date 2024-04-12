@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 function LinkWrapper({
   children,
@@ -9,15 +9,13 @@ function LinkWrapper({
   className?: string;
   href?: string;
 }) {
-  const router = useRouter();
   if (href) {
     return (
-      <span
-        onClick={() => router.push(href)}
-        className={` cursor-pointer ${className}`}
-      >
-        {children}
-      </span>
+      <Link href={href} passHref>
+        <a>
+          <span className={` cursor-pointer ${className}`}>{children}</span>
+        </a>
+      </Link>
     );
   } else {
     return <>{children}</>;

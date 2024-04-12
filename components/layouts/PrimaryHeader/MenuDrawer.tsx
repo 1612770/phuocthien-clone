@@ -14,6 +14,7 @@ import { useFullMenu } from '@providers/FullMenuProvider';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import { useAuth } from '@providers/AuthProvider';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
   const { fullMenu } = useFullMenu();
@@ -43,44 +44,42 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
       closeIcon={<X size={40} className="mr-0 text-primary" />}
     >
       <Space size={16} direction="vertical" className="w-full">
-        <div
-          className="cursor-pointer"
-          onClick={() => router.push('/lich-su-don-hang')}
-        >
-          <Button
-            onClick={onClose}
-            type="primary"
-            className="h-10 w-full bg-white shadow-none"
-          >
-            <Space align="center" className="h-full w-full">
-              <User className="text-primary" width={20} height={20} />
-              <Typography.Text className="text-primary">
-                Lịch sử đơn hàng
-              </Typography.Text>
-            </Space>
-          </Button>
-        </div>
-
-        {isUserLoggedIn && (
-          <div
-            className="cursor-pointer"
-            onClick={() => router.push('/thong-tin-ca-nhan')}
-          >
+        <Link href={'/lich-su-don-hang'} passHref>
+          <a>
             <Button
               onClick={onClose}
               type="primary"
-              className="h-10 w-full bg-primary-dark shadow-none"
+              className="h-10 w-full bg-white shadow-none"
             >
-              <div className="flex items-center gap-2">
-                <Space align="center" className="h-full w-full">
-                  <Book className="text-white" width={20} height={20} />
-                  <Typography.Text className="text-white">
-                    Thông tin cá nhân
-                  </Typography.Text>
-                </Space>
-              </div>
+              <Space align="center" className="h-full w-full">
+                <User className="text-primary" width={20} height={20} />
+                <Typography.Text className="text-primary">
+                  Lịch sử đơn hàng
+                </Typography.Text>
+              </Space>
             </Button>
-          </div>
+          </a>
+        </Link>
+
+        {isUserLoggedIn && (
+          <Link href={'/thong-tin-ca-nhan'} passHref>
+            <a>
+              <Button
+                onClick={onClose}
+                type="primary"
+                className="h-10 w-full bg-primary-dark shadow-none"
+              >
+                <div className="flex items-center gap-2">
+                  <Space align="center" className="h-full w-full">
+                    <Book className="text-white" width={20} height={20} />
+                    <Typography.Text className="text-white">
+                      Thông tin cá nhân
+                    </Typography.Text>
+                  </Space>
+                </div>
+              </Button>
+            </a>
+          </Link>
         )}
 
         {isUserLoggedIn && (
@@ -128,36 +127,35 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
                 onClose?.(e);
               }}
             >
-              <div
-                onClick={() => router.push(`/${menu.seoUrl}`)}
-                className="my-2 -mx-4 flex cursor-pointer items-center"
-              >
-                <ImageWithFallback
-                  src={menu?.image || ''}
-                  width={32}
-                  height={32}
-                />
-                <Typography className="ml-2 font-medium">
-                  Tất cả {menu?.name}
-                </Typography>
-              </div>
-
-              {!!menu.productGroups?.length &&
-                menu.productGroups?.map((group, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() =>
-                      router.push(`/${menu.seoUrl}/${group?.seoUrl}`)
-                    }
-                    className="my-2 -mx-4 flex cursor-pointer items-center"
-                  >
+              <Link href={`/${menu.seoUrl}`} passHref>
+                <a>
+                  <div className="my-2 -mx-4 flex cursor-pointer items-center">
                     <ImageWithFallback
-                      src={group?.image || ''}
+                      src={menu?.image || ''}
                       width={32}
                       height={32}
                     />
-                    <Typography className="ml-2">{group?.name}</Typography>
+                    <Typography className="ml-2 font-medium">
+                      Tất cả {menu?.name}
+                    </Typography>
                   </div>
+                </a>
+              </Link>
+
+              {!!menu.productGroups?.length &&
+                menu.productGroups?.map((group, idx) => (
+                  <Link key={idx} href={`/${menu.seoUrl}/${group?.seoUrl}`}>
+                    <a>
+                      <div className="my-2 -mx-4 flex cursor-pointer items-center">
+                        <ImageWithFallback
+                          src={group?.image || ''}
+                          width={32}
+                          height={32}
+                        />
+                        <Typography className="ml-2">{group?.name}</Typography>
+                      </div>
+                    </a>
+                  </Link>
                 ))}
 
               {!menu.productGroups?.length && (

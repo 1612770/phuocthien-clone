@@ -13,6 +13,7 @@ import CartPopupContent from '@modules/gio-hang/CartPopupContent';
 import CurrencyUtils from '@libs/utils/currency.utils';
 import { useFullMenu } from '@providers/FullMenuProvider';
 import { MenuSkeleton } from '@components/templates/Skeleton/Menu';
+import Link from 'next/link';
 
 function PrimaryHeader({ showSearch = true }) {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
@@ -75,14 +76,15 @@ function PrimaryHeader({ showSearch = true }) {
             )}
           </div>
 
-          <div
-            className="mr-2 block cursor-pointer md:hidden"
-            onClick={() => router.push({ pathname: '/gio-hang' })}
-          >
-            <Badge count={totalProducts}>
-              <ShoppingCart className="text-primary" size={32} />
-            </Badge>
-          </div>
+          <Link href={'/gio-hang'} passHref>
+            <a>
+              <div className="mr-2 block cursor-pointer md:hidden">
+                <Badge count={totalProducts}>
+                  <ShoppingCart className="text-primary" size={32} />
+                </Badge>
+              </div>
+            </a>
+          </Link>
 
           <Space size={0} className="hidden md:flex">
             <Popover

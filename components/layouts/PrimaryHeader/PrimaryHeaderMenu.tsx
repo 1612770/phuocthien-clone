@@ -9,6 +9,7 @@ import MenuModel from '@configs/models/menu.model';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import { BookOutlined, ShopOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 function PrimaryHeaderMenu() {
   const { fullMenu, open, setOpen, intoPopover } = useFullMenu();
@@ -79,23 +80,23 @@ function PrimaryHeaderMenu() {
               </Typography.Text>
             </Space>
           </LinkWrapper>
-          <div
-            onClick={() => router.push('/nha-thuoc')}
-            style={{ color: 'white' }}
-            className="hidden xl:flex"
-          >
-            <Space
-              align="center"
-              onMouseEnter={() => {
-                setMode('none');
-              }}
-            >
-              <ShopOutlined className="text-white" />
-              <Typography.Text className="whitespace-nowrap font-medium text-white">
-                Chuỗi nhà thuốc
-              </Typography.Text>
-            </Space>
-          </div>
+          <Link href={'/nha-thuoc'} passHref>
+            <a>
+              <div style={{ color: 'white' }} className="hidden xl:flex">
+                <Space
+                  align="center"
+                  onMouseEnter={() => {
+                    setMode('none');
+                  }}
+                >
+                  <ShopOutlined className="text-white" />
+                  <Typography.Text className="whitespace-nowrap font-medium text-white">
+                    Chuỗi nhà thuốc
+                  </Typography.Text>
+                </Space>
+              </div>
+            </a>
+          </Link>
         </div>
       </div>
     </Popover>
