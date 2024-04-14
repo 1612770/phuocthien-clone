@@ -11,11 +11,11 @@ function LinkWrapper({
 }) {
   if (href) {
     return (
-      <Link href={href} passHref>
-        <a>
-          <span className={` cursor-pointer ${className}`}>{children}</span>
-        </a>
-      </Link>
+      <span className={` ${className}`}>
+        <Link href={href} passHref>
+          <a>{children}</a>
+        </Link>
+      </span>
     );
   } else {
     return <>{children}</>;
