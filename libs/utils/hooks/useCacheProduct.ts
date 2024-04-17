@@ -11,9 +11,9 @@ export function useCacheProduct(productKey?: string) {
       cacheKeys.unshift(productKey);
     }
 
-    // slice max 10 keys in cache
-    if (cacheKeys.length > 10) {
-      cacheKeys = cacheKeys.slice(0, 10);
+    // slice max 5 keys in cache
+    if (cacheKeys.length > 5) {
+      cacheKeys = cacheKeys.slice(0, 5);
     }
 
     // set cache keys
