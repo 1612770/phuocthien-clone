@@ -440,7 +440,8 @@ export const getServerSideProps = async (
     if (orderResponse.data) {
       serverSideProps.props.order = orderResponse.data;
       if (
-        orderResponse.data.clientBanked != 1 &&
+        (orderResponse.data.clientBanked == null ||
+          orderResponse.data.clientBanked != 1) &&
         orderResponse.data.paymentMethod?.key === QR_PAYMENT_KEY
       ) {
         const externalClient = new ExternalClient(context, {});
