@@ -24,6 +24,7 @@ import { useAppMessage } from '@providers/AppMessageProvider';
 import { DeleteOutlined } from '@ant-design/icons';
 import { QR_PAYMENT_KEY } from '@configs/env';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
   const [orderToShow, setOrderToShow] = useState(order);
@@ -67,12 +68,12 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
     <div className="container px-2 pb-4 lg:px-0">
       <Breadcrumb className="mt-4 mb-2">
         <Breadcrumb.Item>
-          <span onClick={() => router.push('/')} className="cursor-pointer">
-            <div className="flex items-center">
+          <Link href="/">
+            <a>
               <ChevronLeft size={14} />
               <span>Trang chủ</span>
-            </div>
-          </span>
+            </a>
+          </Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item>
           <span onClick={() => router.push('/lich-su-don-hang')}>
@@ -259,7 +260,7 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
                                 Tổng tiền
                               </Typography.Text>
                               <Typography.Text className="inline-block min-w-[80px] text-right text-inherit line-through">
-                                {CurrencyUtils.format(detail.sumOrder)}
+                                {CurrencyUtils.format(detail.totalAmount)}
                               </Typography.Text>
                             </Typography.Text>
                           </>
@@ -283,7 +284,7 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
                             Thành tiền
                           </Typography.Text>
                           <Typography.Text className="inline-block min-w-[80px] text-right">
-                            {CurrencyUtils.format(detail.totalAmount)}
+                            {CurrencyUtils.format(detail.sumOrder)}
                           </Typography.Text>
                         </Typography.Text>
                       </div>
@@ -295,17 +296,17 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
           </div>
         </div>
         <div className="mr-0 ml-auto w-full px-0 py-4 md:w-[400px] md:px-2">
-          {orderToShow?.subTotalAmount != orderToShow?.totalAmount && (
+          {orderToShow?.totalAmount && (
             <div className="my-2 flex items-end justify-between px-2">
               <Typography.Text className="text-right  text-base text-gray-500">
                 Tổng tiền
               </Typography.Text>
               <Typography.Text className="m-0 text-base font-medium ">
-                {CurrencyUtils.format(orderToShow?.subTotalAmount)}
+                {CurrencyUtils.format(orderToShow?.totalAmount)}
               </Typography.Text>
             </div>
           )}
-          {(orderToShow?.shippingFee || 0) > 0 && (
+          {
             <div className="my-2 flex items-end justify-between px-2">
               <Typography.Text className="text-right  text-base text-gray-500">
                 Phí vận chuyển
@@ -314,7 +315,7 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
                 {CurrencyUtils.format(orderToShow?.shippingFee)}
               </Typography.Text>
             </div>
-          )}
+          }
           {orderToShow?.offerCode && (
             <div className="my-2 flex items-end justify-between px-2 ">
               <Typography.Text className="text-right text-base text-gray-500">
@@ -325,8 +326,7 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
               </Typography.Text>
             </div>
           )}
-          {orderToShow?.subTotalAmount != orderToShow?.totalAmount &&
-            orderToShow?.offerCode && <Divider className="mt-4 mb-0" />}
+          {orderToShow?.totalAmount && <Divider className="mt-4 mb-0" />}
           <div className="my-2 flex items-end justify-between px-2 ">
             <Typography.Text className="text-right text-base text-gray-500">
               Thành tiền
