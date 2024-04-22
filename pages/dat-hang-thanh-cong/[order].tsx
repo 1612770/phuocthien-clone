@@ -315,7 +315,7 @@ const OrderPage: NextPageWithLayout = ({
                         Giá trị đơn hàng &nbsp;
                       </span>
                       <span className="font-bold text-primary">
-                        {CurrencyUtils.format(orderToShow?.totalAmount)}
+                        {CurrencyUtils.format(orderToShow?.subTotalAmount)}
                       </span>
                     </Typography>
                   </li>

@@ -302,7 +302,7 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
                 Tổng tiền
               </Typography.Text>
               <Typography.Text className="m-0 text-base font-medium ">
-                {CurrencyUtils.format(orderToShow?.totalAmount)}
+                {CurrencyUtils.format(orderToShow?.subTotalAmount)}
               </Typography.Text>
             </div>
           )}
