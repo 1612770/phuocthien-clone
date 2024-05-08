@@ -23,6 +23,7 @@ const nextConfig = {
     QR_PAYMENT_KEY: process.env.QR_PAYMENT_KEY,
     NEXT_PUBLIC_REGEX_PHONE: process.env.NEXT_PUBLIC_REGEX_PHONE,
     NEXT_PUBLIC_GROUP_INFO_KEYS: process.env.NEXT_PUBLIC_GROUP_INFO_KEYS,
+    HOST: process.env.HOST,
   },
   images: {
     domains: [

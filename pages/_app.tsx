@@ -20,6 +20,8 @@ import FocusContentModel from '@configs/models/focus-content.model';
 import AppDataProvider from '@providers/AppDataProvider';
 import { ZaloChat } from '@modules/zaloChat';
 import NProgress from '@components/templates/NProgress';
+import { useRouter } from 'next/router';
+import { HOST } from '@configs/env';
 
 const DEFAUT_PAGE_TITLE = 'Nhà thuốc Phước Thiện';
 
@@ -47,14 +49,19 @@ function MyApp({
   const keywordSeo = pageProps?.SEOData?.keywordSeo ? (
     <meta name="keywords" content={pageProps?.SEOData?.keywordSeo} />
   ) : null;
-
+  const router = useRouter();
   return (
     <>
       <Head>
         <title>{titleSeo}</title>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=1"
+        />
+        <meta name="robots" content="noindex,nofollow" />
+        <link rel="canonical" href={`${HOST}${router.asPath}`} />
         {metaSeo}
         {keywordSeo}
-        <meta name="robots" content="noindex,nofollow" />
       </Head>
       <NProgress>
         <ConfigProvider

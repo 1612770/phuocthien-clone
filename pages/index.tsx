@@ -23,6 +23,7 @@ import HomepageCarouselEvent from '@modules/homepage/HomeCarouselEvent';
 import BrandModel from '@configs/models/brand.model';
 import { Article, Category } from '@configs/models/cms.model';
 import { CmsClient } from '@libs/client/Cms';
+import PagePropsWithSeo from '@configs/types/page-props-with-seo';
 
 const { useBreakpoint } = Grid;
 
@@ -41,7 +42,7 @@ const HomepageBrands = dynamic(
   { ssr: false }
 );
 
-interface HomeProps {
+interface HomeProps extends PagePropsWithSeo {
   viralProductsLists?: ViralProductsListModel[];
   slideBanner?: SlideBannerModel[];
   productSearchKeywords?: ProductSearchKeyword[];
@@ -280,9 +281,15 @@ export const getServerSideProps = async (
       promotions: [],
       categories: [],
       articles: [],
+      SEOData: {},
     },
   };
-
+  serverSideProps.props.SEOData.titleSeo =
+    'Nhà thuốc Phước Thiện - Nhà thuốc của người Đà Nẵng';
+  serverSideProps.props.SEOData.keywordSeo =
+    'Nhà thuốc Phước Thiện, nhà thuốc, Phước Thiện, nhà thuốc Đà Nẵng';
+  serverSideProps.props.SEOData.metaSeo =
+    'Nhà thuốc Phước Thiện là chuỗi nhà thuốc lớn - uy tín số 1, chuyên thuốc theo đơn Bác sĩ , dược mỹ phẩm , thực phẩm bảo vệ sức khoẻ, thiết bị y tế, chăm sóc cá nhân.';
   const productClient = new ProductClient(context, {});
   const generalClient = new GeneralClient(context, {});
   const promotionClient = new PromotionClient(context, {});

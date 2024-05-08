@@ -237,18 +237,16 @@ const OrderPage: NextPageWithLayout = ({
                           <QRCode errorLevel="H" value={qrCode} size={256} />
                         </div>
                       )}
-                      <div className="mt-2 flex justify-center">
+                      <div className="mt-2 flex flex-col justify-center">
                         <div>
-                          <img
-                            src="/vietcombank-icon.png"
-                            alt="vcb"
-                            width={64}
-                          />
+                          <img src="/msb.jpeg" alt="msb" width={64} />
                         </div>
                         <div className=" font-bold text-black">
-                          <div>Vietcombank</div>
-                          <div>0041000135322</div>
-                          <div>DOAN PHUOC LAN</div>
+                          <div>Ngân hàng Hàng Hải MSB</div>
+                          <div>06086015494524</div>
+                          <div className="text-xs">
+                            CONG HUYEN TON NU HAI VAN
+                          </div>
                         </div>
                       </div>
                       <div className="flex flex-col pt-4">

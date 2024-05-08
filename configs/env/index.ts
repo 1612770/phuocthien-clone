@@ -18,3 +18,4 @@ export const NEXT_PUBLIC_GROUP_INFO_KEYS = process.env
   : [];
 
 export const BANNER_ENABLED = !!+(process.env.BANNER_ENABLED || 0);
+export const HOST = process?.env?.HOST || '';
