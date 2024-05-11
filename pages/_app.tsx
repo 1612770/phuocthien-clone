@@ -60,6 +60,12 @@ function MyApp({
         />
         <meta name="robots" content="noindex,nofollow" />
         <link rel="canonical" href={`${HOST}${router.asPath}`} />
+        <link
+          rel="amphtml"
+          href={`${HOST}${
+            router.asPath === '/' ? `${router.asPath}` : `${router.asPath}.amp`
+          }`}
+        />
         {metaSeo}
         {keywordSeo}
       </Head>

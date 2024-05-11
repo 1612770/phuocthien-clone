@@ -2,6 +2,7 @@ import { Avatar, List, Typography } from 'antd';
 import { User, Book, LogOut } from 'react-feather';
 import { useAuth } from '@providers/AuthProvider';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 export interface IUserLayout {
   children: React.ReactNode;
@@ -17,27 +18,26 @@ const UserLayout: React.FC<IUserLayout> = ({ children }) => {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[240px_1fr]">
       <List className="-mt-2 hidden lg:block">
-        <div
-          onClick={() => router.push('/lich-su-don-hang')}
-          className="cursor-pointer"
-        >
-          <List.Item className="border-none p-0">
-            <div
-              className={`${
-                isActiveOrderList ? 'border-primary' : 'border-transparent'
-              } my-1 flex w-full cursor-pointer items-center gap-2 rounded-full border border-solid px-4 py-2 transition-all duration-200 ease-in-out hover:border-gray-300`}
-            >
-              <Avatar className={`${isActiveOrderList ? 'bg-primary' : ''}`}>
-                <User className=" align-text-bottom" size={16} />
-              </Avatar>
-              <Typography
-                className={`${isActiveOrderList ? 'text-primary' : ''}`}
+        <Link href="/lich-su-don-hang">
+          <a>
+            <List.Item className="border-none p-0">
+              <div
+                className={`${
+                  isActiveOrderList ? 'border-primary' : 'border-transparent'
+                } my-1 flex w-full cursor-pointer items-center gap-2 rounded-full border border-solid px-4 py-2 transition-all duration-200 ease-in-out hover:border-gray-300`}
               >
-                Lịch sử đơn hàng
-              </Typography>
-            </div>
-          </List.Item>
-        </div>
+                <Avatar className={`${isActiveOrderList ? 'bg-primary' : ''}`}>
+                  <User className=" align-text-bottom" size={16} />
+                </Avatar>
+                <Typography
+                  className={`${isActiveOrderList ? 'text-primary' : ''}`}
+                >
+                  Lịch sử đơn hàng
+                </Typography>
+              </div>
+            </List.Item>
+          </a>
+        </Link>
 
         <div
           onClick={() => router.push('/thong-tin-ca-nhan')}
