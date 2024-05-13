@@ -1,2 +1,13 @@
 User-agent: *
-Disallow: /
+Disallow: /gio-hang
+Disallow: /gio-hang/*
+Disallow: /dat-hang-thanh-cong
+Disallow: /tim-kiem?tu-khoa=*
+Disallow: /tim-kiem
+Disallow: /lich-su-don-hang
+Disallow: /lich-su-don-hang/*
+Disallow: /nha-thuoc
+Disallow: /nha-thuoc/*
+User-agent: *
+Allow: /
+Sitemap: https://nhathuocphuocthien.com/sitemap.xml

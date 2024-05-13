@@ -61,10 +61,16 @@ function MyApp({
           name="viewport"
           content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=1"
         />
-        <meta name="robots" content="noindex,nofollow" />
-        <link rel="canonical" href={`${HOST}${router.asPath}`} />
+        <meta
+          name="robots"
+          content="max-image-preview:large,  noarchive, index, follow"
+        />
+        <link rel="canonical" href={`${HOST}${router.asPath.split('?')[0]}`} />
         {router.asPath !== '/' && (
-          <link rel="amphtml" href={`${HOST}${router.asPath}.amp`} />
+          <link
+            rel="amphtml"
+            href={`${HOST}${router.asPath.split('?')[0]}.amp`}
+          />
         )}
         {metaSeo}
         {keywordSeo}
