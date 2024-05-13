@@ -17,11 +17,13 @@ const ProductTypeGroupPage = ({
   productType,
   productTypeGroup,
   products,
+  productGroup,
   productBrands,
 }: {
   productType?: ProductType;
   productTypeGroup?: ProductTypeGroupModel;
   productBrands?: BrandModel[];
+  productGroup?: ProductGroupModel;
   products?: WithPagination<Product[]>;
 }) => {
   const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
@@ -39,6 +41,10 @@ const ProductTypeGroupPage = ({
           {
             title: productType?.name,
             path: `/${productType?.seoUrl}`,
+          },
+          {
+            title: productGroup?.name,
+            path: `/${productType?.seoUrl}/${productGroup?.seoUrl}`,
           },
           {
             title: productTypeGroup?.name,

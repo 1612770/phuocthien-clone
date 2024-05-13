@@ -75,6 +75,10 @@ const ProductPage = ({
             path: `/${product?.productType?.seoUrl}/${product?.productGroup?.seoUrl}`,
           },
           {
+            title: product?.productTypeGroup?.name,
+            path: `/${product?.productType?.seoUrl}/${product?.productTypeGroup?.seoUrl}`,
+          },
+          {
             title: product?.detail?.displayName,
           },
         ]}

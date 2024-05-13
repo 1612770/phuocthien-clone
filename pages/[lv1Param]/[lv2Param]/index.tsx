@@ -23,6 +23,7 @@ interface LV2ParamPageProps extends PagePropsWithSeo {
     productTypeGroup?: ProductTypeGroupModel;
     products?: WithPagination<Product[]>;
     productBrands?: BrandModel[];
+    productGroup?: ProductGroupModel;
   };
   productGroup: {
     productType?: ProductType;
@@ -71,6 +72,7 @@ const LV2ParamPage: NextPageWithLayout<LV2ParamPageProps> = ({
       productTypeGroup={productTypeGroup?.productTypeGroup}
       productType={productTypeGroup?.productType}
       productBrands={productTypeGroup?.productBrands}
+      productGroup={productTypeGroup?.productGroup}
       products={productTypeGroup?.products}
     />
   );

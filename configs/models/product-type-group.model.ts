@@ -10,6 +10,9 @@ type ProductTypeGroupModel = {
   metaSeo: string;
   keywordSeo: string;
   productGroupKey: string;
+  productTypeKey: string;
+  seoProductGroupUrl: string;
+  seoProductTypeUrl: string;
 };
 
 export default ProductTypeGroupModel;

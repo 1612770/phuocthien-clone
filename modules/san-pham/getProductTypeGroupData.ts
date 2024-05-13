@@ -1,5 +1,6 @@
 import PRODUCTS_LOAD_PER_TIME from '@configs/constants/products-load-per-time';
 import BrandModel from '@configs/models/brand.model';
+import ProductGroupModel from '@configs/models/product-group.model';
 import ProductTypeGroupModel from '@configs/models/product-type-group.model';
 import ProductType from '@configs/models/product-type.model';
 import Product from '@configs/models/product.model';
@@ -12,6 +13,7 @@ const getProductTypeGroupData = async (context: GetServerSidePropsContext) => {
   const productTypeGroupData: {
     productType?: ProductType;
     productTypeGroup?: ProductTypeGroupModel;
+    productGroup?: ProductGroupModel;
     productBrands?: BrandModel[];
     products?: WithPagination<Product[]>;
   } = {};
@@ -30,9 +32,20 @@ const getProductTypeGroupData = async (context: GetServerSidePropsContext) => {
     }),
     generalClient.getProductionBrands(),
   ]);
+  if (!productType.data) {
+    throw new Error('Không tìm thấy loại sản phẩm');
+  }
   if (!productTypeGroup.data)
     throw new Error('Không tìm thấy loại nhóm sản phẩm');
-
+  if (productTypeGroup.data.productTypeKey != productType.data.key) {
+    throw new Error('Không tìm thấy loại nhóm sản phẩm trong loại sản phẩm');
+  }
+  const productGroup = await generalClient.getProductGroupDetail({
+    seoUrl: productTypeGroup.data.seoProductGroupUrl,
+  });
+  if (productGroup.data) {
+    productTypeGroupData.productGroup = productGroup.data;
+  }
   productTypeGroupData.productType = productType.data;
   productTypeGroupData.productTypeGroup = productTypeGroup.data;
   productTypeGroupData.productBrands = productBrands.data;
@@ -41,8 +54,8 @@ const getProductTypeGroupData = async (context: GetServerSidePropsContext) => {
     page: context.query.trang ? Number(context.query.trang) : 1,
     pageSize: PRODUCTS_LOAD_PER_TIME,
     isPrescripted: false,
-    productTypeKey: productType.data?.key,
-    productTypeGroupKey: productTypeGroup.data?.seoUrl,
+    productTypeSeoUrl: productType.data?.seoUrl,
+    productTypeGroupSeoUrl: productTypeGroup.data?.seoUrl,
     productionBrandKeys: context.query.brands
       ? (context.query.brands as string).split(',')
       : undefined,

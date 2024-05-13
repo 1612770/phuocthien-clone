@@ -47,7 +47,10 @@ function MyApp({
     <meta name="description" content={pageProps?.SEOData?.metaSeo} />
   ) : null;
   const keywordSeo = pageProps?.SEOData?.keywordSeo ? (
-    <meta name="keywords" content={pageProps?.SEOData?.keywordSeo} />
+    <>
+      <meta name="keywords" content={pageProps?.SEOData?.keywordSeo} />
+      <meta name="news_keywords" content={pageProps?.SEOData?.keywordSeo} />
+    </>
   ) : null;
   const router = useRouter();
   return (
@@ -60,12 +63,9 @@ function MyApp({
         />
         <meta name="robots" content="noindex,nofollow" />
         <link rel="canonical" href={`${HOST}${router.asPath}`} />
-        <link
-          rel="amphtml"
-          href={`${HOST}${
-            router.asPath === '/' ? `${router.asPath}` : `${router.asPath}.amp`
-          }`}
-        />
+        {router.asPath !== '/' && (
+          <link rel="amphtml" href={`${HOST}${router.asPath}.amp`} />
+        )}
         {metaSeo}
         {keywordSeo}
       </Head>

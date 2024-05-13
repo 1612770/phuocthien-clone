@@ -30,13 +30,16 @@ const getProductData = async (context: GetServerSidePropsContext) => {
 
   const productClient = new ProductClient(null, {});
   const promotionClient = new PromotionClient(null, {});
+  const lv1ParamSeoUrl = context.params?.lv1Param as string;
   const lv2ParamSeoUrl = context.params?.lv2Param as string;
   const offerClient = new OfferClient(context, {});
   const productResponse = await productClient.getProduct({
     seoUrl: lv2ParamSeoUrl,
   });
   const product = productResponse.data;
-
+  if (lv1ParamSeoUrl != product?.productType?.seoUrl) {
+    throw new Error('Không tìm thấy sản phẩm');
+  }
   if (product && product.key) {
     productData.product = product;
   } else {

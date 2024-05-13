@@ -19,6 +19,8 @@ export class ProductClient extends BaseClient {
     productGroupKey?: string;
     productTypeGroupKey?: string;
     productionBrandKeys?: string[];
+    productTypeSeoUrl?: string;
+    productTypeGroupSeoUrl?: string;
     filterByName?: string;
     filterByIds?: string[];
     sortBy?: 'GIA_BAN_LE';

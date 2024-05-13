@@ -12,6 +12,7 @@ type ProductGroupModel = Partial<{
   metaSeo: string;
   keywordSeo: string;
   productTypeGroup: ProductTypeGroupModel[];
+  productTypeKey: string;
 }>;
 
 export default ProductGroupModel;

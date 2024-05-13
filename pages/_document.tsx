@@ -16,7 +16,7 @@ class MyDocument extends Document {
             sizes="16x16"
             href="/favicon/favicon-16x16.png"
           />
-          <link rel="shortcut icon" href="/favicon/favicon-16x16.png" />
+          <link rel="shortcut icon" href="/favicon/favicon.ico" />
           <meta name="copyright" content="nhathuocphuocthien.com" />
           <meta name="revisit-after" content="days" />
         </Head>

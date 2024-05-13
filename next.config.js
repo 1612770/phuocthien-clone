@@ -32,7 +32,15 @@ const nextConfig = {
       // process.env.INTERNAL_HOST_IMAGE_STG,
     ],
   },
-
+  async redirects() {
+    return [
+      {
+        source: `/:path*.amp`,
+        destination: `/:path*`,
+        permanent: true,
+      },
+    ];
+  },
   rewrites() {
     return [
       {

@@ -32,6 +32,9 @@ const getProductGroupData = async (context: GetServerSidePropsContext) => {
   ]);
 
   if (!productGroup.data) throw new Error('Không tìm thấy nhóm sản phẩm');
+  if (productType.data?.key !== productGroup.data?.productTypeKey) {
+    throw new Error('Không tìm thấy nhóm sản phẩm trong loại sản phẩm');
+  }
   productGroupData.productType = productType.data;
   productGroupData.productGroup = productGroup.data;
   productGroupData.productBrands = productBrands.data;

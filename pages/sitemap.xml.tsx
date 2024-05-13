@@ -8,7 +8,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     `${HOST}/sitemap-chuyenmucchinh.xml`,
     `${HOST}/sitemap-chuyenmucweb.xml`,
     `${HOST}/sitemap-mathang.xml`,
-    `${HOST}/sitemap-nhathuoc.xml`,
   ];
 
   const dataSitemap = generateSiteMapIdx(sitemapIdxUrls);
