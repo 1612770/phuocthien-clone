@@ -22,6 +22,7 @@ import { ZaloChat } from '@modules/zaloChat';
 import NProgress from '@components/templates/NProgress';
 import { useRouter } from 'next/router';
 import { HOST } from '@configs/env';
+import Script from 'next/script';
 
 const DEFAUT_PAGE_TITLE = 'Nhà thuốc Phước Thiện';
 
@@ -44,7 +45,10 @@ function MyApp({
   const getLayout = Component.getLayout || ((page) => page);
   const titleSeo = pageProps?.SEOData?.titleSeo || DEFAUT_PAGE_TITLE;
   const metaSeo = pageProps?.SEOData?.metaSeo ? (
-    <meta name="description" content={pageProps?.SEOData?.metaSeo} />
+    <>
+      <meta property="og:description" content={pageProps?.SEOData?.metaSeo} />
+      <meta name="description" content={pageProps?.SEOData?.metaSeo} />
+    </>
   ) : null;
   const keywordSeo = pageProps?.SEOData?.keywordSeo ? (
     <>
@@ -57,6 +61,7 @@ function MyApp({
     <>
       <Head>
         <title>{titleSeo}</title>
+        <meta property="og:title" content={titleSeo} />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=1"
@@ -65,6 +70,12 @@ function MyApp({
           name="robots"
           content="max-image-preview:large,  noarchive, index, follow"
         />
+        <meta
+          property="og:url"
+          itemProp="url"
+          content={`${HOST}${router.asPath.split('?')[0]}`}
+        />
+
         <link rel="canonical" href={`${HOST}${router.asPath.split('?')[0]}`} />
         {router.asPath !== '/' && (
           <link
@@ -104,6 +115,19 @@ function MyApp({
       <Suspense>
         <ZaloChat />
       </Suspense>
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-M15MVM4EXS"
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){window.dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-M15MVM4EXS');
+        `}
+      </Script>
     </>
   );
 }

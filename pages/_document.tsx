@@ -1,4 +1,5 @@
 import Document, { Head, Html, Main, NextScript } from 'next/document';
+import Script from 'next/script';
 
 class MyDocument extends Document {
   render() {
@@ -19,6 +20,12 @@ class MyDocument extends Document {
           <link rel="shortcut icon" href="/favicon/favicon.ico" />
           <meta name="copyright" content="nhathuocphuocthien.com" />
           <meta name="revisit-after" content="days" />
+          <meta property="og:site_name" content="nhathuocphuocthien.com" />
+          <meta property="og:rich_attachment" content="true" />
+          <meta property="og:type" content="website" />
+          <meta property="og:rich_attachment" content="true" />
+          <meta property="og:type" content="website" />
+          <meta property="og:image" content="/favicon/favicon-16x16.png" />
         </Head>
         <body>
           <Main />
