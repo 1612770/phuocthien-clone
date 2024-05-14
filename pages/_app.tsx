@@ -22,7 +22,6 @@ import { ZaloChat } from '@modules/zaloChat';
 import NProgress from '@components/templates/NProgress';
 import { useRouter } from 'next/router';
 import { HOST } from '@configs/env';
-import Script from 'next/script';
 
 const DEFAUT_PAGE_TITLE = 'Nhà thuốc Phước Thiện';
 
@@ -115,19 +114,6 @@ function MyApp({
       <Suspense>
         <ZaloChat />
       </Suspense>
-      <Script
-        src="https://www.googletagmanager.com/gtag/js?id=G-M15MVM4EXS"
-        strategy="afterInteractive"
-      />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){window.dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'G-M15MVM4EXS');
-        `}
-      </Script>
     </>
   );
 }

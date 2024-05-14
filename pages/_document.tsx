@@ -26,6 +26,19 @@ class MyDocument extends Document {
           <meta property="og:rich_attachment" content="true" />
           <meta property="og:type" content="website" />
           <meta property="og:image" content="/favicon/favicon-16x16.png" />
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=G-M15MVM4EXS"
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){window.dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-M15MVM4EXS');
+        `}
+          </Script>
         </Head>
         <body>
           <Main />
