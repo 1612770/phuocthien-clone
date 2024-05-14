@@ -39,6 +39,7 @@ function MyApp({
     titleSeo?: string;
     metaSeo?: string;
     keywordSeo?: string;
+    imgSeo?: string;
   };
 }>) {
   const getLayout = Component.getLayout || ((page) => page);
@@ -54,6 +55,9 @@ function MyApp({
       <meta name="keywords" content={pageProps?.SEOData?.keywordSeo} />
       <meta name="news_keywords" content={pageProps?.SEOData?.keywordSeo} />
     </>
+  ) : null;
+  const imgSeo = pageProps.SEOData?.imgSeo ? (
+    <meta property="og:image" content={pageProps.SEOData?.imgSeo} />
   ) : null;
   const router = useRouter();
   return (
@@ -74,7 +78,12 @@ function MyApp({
           itemProp="url"
           content={`${HOST}${router.asPath.split('?')[0]}`}
         />
-
+        {imgSeo}
+        <link
+          rel="alternate"
+          href={`${HOST}${router.asPath.split('?')[0]}`}
+          hrefLang="vi-vn"
+        />
         <link rel="canonical" href={`${HOST}${router.asPath.split('?')[0]}`} />
         {router.asPath !== '/' && (
           <link

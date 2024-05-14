@@ -16,6 +16,7 @@ import ProductTypeGroupModel from '@configs/models/product-type-group.model';
 import getProductTypeGroupData from '@modules/san-pham/getProductTypeGroupData';
 import ProductTypeGroupPage from '@modules/san-pham/ProductTypeGroupPage';
 import { GiftPromotion, DealPromotion } from '@libs/client/Promotion';
+import { HOST_IMAGE } from '@configs/env';
 
 interface LV2ParamPageProps extends PagePropsWithSeo {
   productTypeGroup: {
@@ -106,6 +107,7 @@ export const getServerSideProps: GetServerSideProps<LV2ParamPageProps> = async (
       serverSideProps.props.product.product?.detail?.metaSeo;
     serverSideProps.props.SEOData.keywordSeo =
       serverSideProps.props.product.product?.detail?.keywordSeo;
+    serverSideProps.props.SEOData.imgSeo = `https://${HOST_IMAGE}${serverSideProps.props.product.product?.detail?.image}`;
   } catch (error) {
     console.error('getProductData', error);
 

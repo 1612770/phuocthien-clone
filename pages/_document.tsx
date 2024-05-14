@@ -23,9 +23,12 @@ class MyDocument extends Document {
           <meta property="og:site_name" content="nhathuocphuocthien.com" />
           <meta property="og:rich_attachment" content="true" />
           <meta property="og:type" content="website" />
-          <meta property="og:rich_attachment" content="true" />
-          <meta property="og:type" content="website" />
-          <meta property="og:image" content="/favicon/favicon-16x16.png" />
+          <meta property="og:locale" content="vi_VN" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta
+            name="apple-mobile-web-app-title"
+            content="nhathuocphuocthien.com"
+          />
           <>
             <script
               async

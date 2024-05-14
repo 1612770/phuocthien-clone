@@ -168,6 +168,7 @@ export const getServerSideProps = async (
         serverSideProps.props.SEOData.titleSeo = article.seoData.title;
         serverSideProps.props.SEOData.keywordSeo = article.seoData.keywords;
         serverSideProps.props.SEOData.metaSeo = article.seoData.description;
+        serverSideProps.props.SEOData.imgSeo = article.imageUrl;
         const underCategoryId = article.category.underCategoryId;
         if (underCategoryId) {
           const getUnderCategory = await cmsClient.getCMSCategories({
