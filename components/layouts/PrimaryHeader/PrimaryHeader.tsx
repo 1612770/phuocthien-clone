@@ -66,6 +66,11 @@ function PrimaryHeader({ showSearch = true }) {
                 src={IMAGES.logo}
                 alt="Nhà thuốc Phước Thiện"
                 className="w-full "
+                width={192}
+                height={48}
+                style={{
+                  objectFit: 'contain',
+                }}
               />
             </div>
 
@@ -76,8 +81,8 @@ function PrimaryHeader({ showSearch = true }) {
             )}
           </div>
 
-          <Link href={'/gio-hang'} passHref>
-            <a>
+          <Link href={'/gio-hang'} passHref aria-label="Giỏ hàng">
+            <a aria-label="Giỏ hàng">
               <div className="mr-2 block cursor-pointer md:hidden">
                 <Badge count={totalProducts}>
                   <ShoppingCart className="text-primary" size={32} />

@@ -65,7 +65,6 @@ function PromotionProductsList({
   };
 
   if (!promotion) return null;
-
   return (
     <div key={promotion.key} id={id} className="">
       <div

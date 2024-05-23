@@ -48,7 +48,6 @@ function HomepageSearchSection() {
       const searchProducts = await product.getProducts({
         page: 1,
         pageSize: 10,
-        isPrescripted: false,
         filterByName: debouncedCurrentFocusGroup,
       });
 

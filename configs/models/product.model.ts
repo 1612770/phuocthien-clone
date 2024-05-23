@@ -64,7 +64,7 @@ type Product = Partial<{
   note: string;
   registrationNumber: string;
   packagingProcess: string;
-  isPrescripted: boolean;
+  isPrescripted?: boolean;
   isSpecial: boolean;
   isConsigned: boolean;
   isMental: boolean;
@@ -85,6 +85,7 @@ type Product = Partial<{
   keyPromo: string;
   keyPromoPercent: string;
   promoValue: number;
+  showPromoOnPrice?: boolean;
 }>;
 
 export interface InventoryAtDrugStore {

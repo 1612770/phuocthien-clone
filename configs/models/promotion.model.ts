@@ -13,6 +13,7 @@ export interface PromotionPercent {
   startDatePromo: string;
   updatedAt: string;
   val: number;
+  showPromoOnPrice?: boolean;
 }
 
 export interface PromotionProducts {
@@ -71,6 +72,7 @@ export interface CampaignpromotionPercent {
   promotionKey: string;
   updatedAt: string;
   val: number;
+  showPromoOnPrice?: boolean;
 }
 
 export interface Promotion {

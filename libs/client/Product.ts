@@ -14,7 +14,7 @@ export class ProductClient extends BaseClient {
   async getProducts(payload: {
     page: number;
     pageSize: number;
-    isPrescripted: boolean;
+    isPrescripted?: boolean;
     productTypeKey?: string;
     productGroupKey?: string;
     productTypeGroupKey?: string;

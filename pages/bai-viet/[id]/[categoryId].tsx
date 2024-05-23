@@ -23,7 +23,7 @@ const CategoryListChildrenPage: NextPageWithLayout<EventPageProps> = ({
   totalArticle,
 }) => {
   const [offset, setOffset] = useState(0);
-  const [limit, setLimit] = useState(6);
+  const [limit] = useState(6);
   const [articlesPage, setArticlesPage] = useState<Article[]>(articles || []);
   useEffect(() => {
     setArticlesPage(articles || []);

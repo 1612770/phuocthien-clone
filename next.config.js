@@ -10,7 +10,7 @@ const nextConfig = {
   output: 'standalone',
   reactStrictMode: false,
   staticPageGenerationTimeout: 1000,
-
+  productionBrowserSourceMaps: true,
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },

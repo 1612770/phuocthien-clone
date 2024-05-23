@@ -1,4 +1,4 @@
-import { Button, Divider, Empty, Tabs, Typography } from 'antd';
+import { Button, Divider, Typography } from 'antd';
 import { Article, Category } from '@configs/models/cms.model';
 import ArticleList from '@modules/tin-tuc/danh-muc/chi-tiet/ArticleList';
 import LinkWrapper from '@components/templates/LinkWrapper';

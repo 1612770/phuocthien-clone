@@ -2,7 +2,6 @@ import { Divider, Space, Typography } from 'antd';
 import Link from 'next/link';
 import IMAGES from 'configs/assests/images';
 import { useAppData } from '@providers/AppDataProvider';
-import FocusContentSection from '@modules/homepage/FocusContentSection';
 import { useWatchCacheProduct } from '@libs/utils/hooks/useWatchCacheProduct';
 import ProductList from '@components/templates/ProductList';
 
@@ -14,6 +13,12 @@ import {
 } from '@ant-design/icons';
 import { configPage } from '@configs/constants/generalPage';
 import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
+
+const FocusContentSection = dynamic(
+  () => import('@modules/homepage/FocusContentSection'),
+  { ssr: false }
+);
 
 function PrimaryFooter() {
   const { focusContent } = useAppData();
@@ -47,7 +52,9 @@ function PrimaryFooter() {
                   src={IMAGES.logo}
                   alt="Nhà thuốc Phước Thiện"
                   className="mr-2 h-8"
-                  style={{ minHeight: 60 }}
+                  style={{ minHeight: 60, objectFit: 'contain' }}
+                  width={242}
+                  height={60}
                 />
               </div>
               <Space className="mt-2">
@@ -71,6 +78,7 @@ function PrimaryFooter() {
                     href="https://play.google.com/store/apps/details?id=com.esuspharmacy.phuocthien&hl=en"
                     target="_blank"
                     rel="noreferrer"
+                    aria-label="Google Play Store"
                   >
                     <img
                       src="/chplay.png"
@@ -83,6 +91,7 @@ function PrimaryFooter() {
                     target="_blank"
                     href="https://apps.apple.com/us/app/nh%C3%A0-thu%E1%BB%91c-ph%C6%B0%E1%BB%9Bc-thi%E1%BB%87n/id1662328703"
                     rel="noreferrer"
+                    aria-label="App Store"
                   >
                     <img
                       src="/appstore.png"
@@ -103,15 +112,15 @@ function PrimaryFooter() {
                   </Typography.Text>
                   {el.children.length > 0 ? (
                     el.children.map((page, idx) => (
-                      <Space key={`${page}-${idx}`} className="my-0.5 w-full">
-                        <Link href={page.link} passHref>
-                          <a>
+                      <Link href={page.link} passHref key={`${page}-${idx}`}>
+                        <a className="flex min-h-[48px] md:min-h-[32px]">
+                          <Space className="my-0.5 w-full">
                             <Typography.Text className="cursor-pointer text-primary">
                               {page.title}
                             </Typography.Text>
-                          </a>
-                        </Link>
-                      </Space>
+                          </Space>
+                        </a>
+                      </Link>
                     ))
                   ) : (
                     <></>

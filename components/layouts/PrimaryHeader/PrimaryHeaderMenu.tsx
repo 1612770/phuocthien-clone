@@ -8,7 +8,6 @@ import PrimaryHeaderMenuItem from './PrimaryHeaderMenuItem';
 import MenuModel from '@configs/models/menu.model';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import { BookOutlined, ShopOutlined } from '@ant-design/icons';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 function PrimaryHeaderMenu() {
@@ -23,7 +22,6 @@ function PrimaryHeaderMenu() {
       setOpen(false);
     }
   };
-  const router = useRouter();
   return (
     <Popover
       open={open || intoPopover}

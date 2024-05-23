@@ -1,5 +1,5 @@
 import Product from '@configs/models/product.model';
-import { Card, Space, Tag, Typography } from 'antd';
+import { Button, Card, Space, Tag, Typography } from 'antd';
 import React from 'react';
 import ImageWithFallback from '../ImageWithFallback';
 import ImageUtils from '@libs/utils/image.utils';
@@ -50,7 +50,6 @@ function ProductCard({
     product?.retailPrice,
     productDiscountVal
   );
-
   const isDiscount = productDiscountVal > 0;
   const href = `/${product.productType?.seoUrl}/${product.detail?.seoUrl}`;
   // const hrefTypeGroup = `/${product.productType?.seoUrl}/${product.productTypeGroup?.seoUrl}`;
@@ -94,7 +93,7 @@ function ProductCard({
                       >
                         <Typography.Text
                           ellipsis
-                          className="whitespace-nowrap  text-primary"
+                          className="whitespace-nowrap  text-primary-dark"
                         >
                           {product.productTypeGroup?.name}
                         </Typography.Text>
@@ -138,7 +137,7 @@ function ProductCard({
                     </Typography.Text>
                     <Typography.Text className="mt-1 block">
                       <Typography.Text className="text-base font-semibold text-primary-dark">
-                        {priceWithDiscount !== price
+                        {promotionPercent?.showPromoOnPrice
                           ? priceWithDiscount
                           : price}
                       </Typography.Text>
@@ -148,7 +147,7 @@ function ProductCard({
                         </Typography.Text>
                       )}
                     </Typography.Text>
-                    {priceWithDiscount !== price && (
+                    {promotionPercent?.showPromoOnPrice && (
                       <Typography.Text className="text-gray line-through">
                         {price}
                       </Typography.Text>
@@ -156,11 +155,17 @@ function ProductCard({
                   </div>
                   {size !== 'small' && (
                     <div className="mt-2">
-                      <AddToCartButton
-                        className="w-full border border-solid border-gray-200 bg-white text-black shadow-none transition duration-300 group-hover:border-primary-light group-hover:bg-primary-light group-hover:text-white"
-                        product={product}
-                        promotionPercent={promotionPercent}
-                      />
+                      {product.isPrescripted ? (
+                        <div className="w-full text-center">
+                          <Button className="w-full">Liên hệ dược sĩ</Button>
+                        </div>
+                      ) : (
+                        <AddToCartButton
+                          className="w-full border border-solid border-gray-200 bg-white text-black shadow-none transition duration-300 group-hover:border-primary-light group-hover:bg-primary-light group-hover:text-white"
+                          product={product}
+                          promotionPercent={promotionPercent}
+                        />
+                      )}
                     </div>
                   )}
                 </Space>

@@ -262,7 +262,6 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         page: 1,
         pageSize: 100,
         filterByIds: productIds,
-        isPrescripted: false,
       });
 
       const newCartProducts = cartProducts.map((cartProduct) => {

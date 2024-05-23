@@ -5,7 +5,7 @@ import { PromotionPercent } from '@configs/models/promotion.model';
 import PriceUnit from '@modules/products/PriceUnit';
 import ProductBonusSection from '@modules/products/ProductBonusSection';
 import PromotionList from '@modules/products/PromotionList';
-import { Typography, Tag } from 'antd';
+import { Typography, Tag, Button } from 'antd';
 import React, { useEffect, useState } from 'react';
 import ProductDrugStoresSection from './ProductDrugStoresSection';
 import ProductCTA from '@modules/products/ProductCTA';
@@ -23,7 +23,19 @@ const getMaxDiscount = (promotionPercents: PromotionPercent[]): number => {
   });
   return maxDiscount;
 };
-
+const getMaxPercentObj = (
+  promotionPercents: PromotionPercent[]
+): PromotionPercent | null => {
+  let maxDiscount = 0;
+  let obj: PromotionPercent | null = null;
+  promotionPercents.forEach((promotion) => {
+    if (promotion.val > maxDiscount) {
+      maxDiscount = promotion.val;
+      obj = promotion;
+    }
+  });
+  return obj;
+};
 function ProductMain({
   product,
   offers,
@@ -40,6 +52,7 @@ function ProductMain({
   };
 }) {
   const maxDisCount = getMaxDiscount(product?.promotions || []);
+  const objPercent = getMaxPercentObj(product?.promotions || []);
   const { focusContent } = useAppData();
   const [drugStoresAvailable, setDrugStoresAvailable] = useState<
     InventoryAtDrugStore[] | undefined
@@ -78,30 +91,62 @@ function ProductMain({
           )}{' '}
           {product?.detail?.displayName || product?.name}
         </Typography.Title>
-
+        {product?.isPrescripted && (
+          <div className="text-primary">
+            <div className="text-amber-600">
+              Lưu ý: Sản phẩm chỉ bán khi có chỉ định của bác sĩ, mọi thông tin
+              ở website chỉ có tính chất tham khảo.
+            </div>
+            <b>
+              <i>Sản phẩm cần tư vấn từ dược sĩ.</i>
+            </b>
+          </div>
+        )}
         <ProductBonusSection offers={offers} />
         <div className="mb-4 flex items-center justify-around rounded-3xl border-2 border-solid border-gray-100 p-2 shadow-md">
-          <PriceUnit
-            price={product.retailPrice}
-            discountVal={maxDisCount}
-            unit={product.unit}
-          />
-          <ProductCTA
-            product={product}
-            isAvailable={
-              drugStoresAvailable &&
-              drugStoresAvailable?.length > 0 &&
-              drugStoresAvailable.filter((el) => el.quantity > 0).length > 0
-            }
-            price={
+          {product.isPrescripted ? (
+            <div className="grid w-full grid-flow-row grid-cols-2 gap-x-2">
+              <div className="w-full">
+                <Button
+                  size="large"
+                  type="primary"
+                  shape="round"
+                  className="w-full"
+                >
+                  Tư vấn ngay
+                </Button>
+              </div>
+              <div className="w-full">
+                <Button size="large" shape="round" className="w-full">
+                  Gửi toa cho nhà thuốc
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <>
               <PriceUnit
                 price={product.retailPrice}
-                discountVal={maxDisCount}
+                discountVal={objPercent?.showPromoOnPrice ? maxDisCount : 0}
                 unit={product.unit}
-                size="small"
               />
-            }
-          />
+              <ProductCTA
+                product={product}
+                isAvailable={
+                  drugStoresAvailable &&
+                  drugStoresAvailable?.length > 0 &&
+                  drugStoresAvailable.filter((el) => el.quantity > 0).length > 0
+                }
+                price={
+                  <PriceUnit
+                    price={product.retailPrice}
+                    discountVal={maxDisCount}
+                    unit={product.unit}
+                    size="small"
+                  />
+                }
+              />
+            </>
+          )}
         </div>
         <PromotionList
           promotionPercents={product.promotions || []}

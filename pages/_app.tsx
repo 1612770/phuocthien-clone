@@ -18,12 +18,16 @@ import AuthProvider from '@providers/AuthProvider';
 import AppConfirmDialogProvider from '@providers/AppConfirmDialogProvider';
 import FocusContentModel from '@configs/models/focus-content.model';
 import AppDataProvider from '@providers/AppDataProvider';
-import { ZaloChat } from '@modules/zaloChat';
 import NProgress from '@components/templates/NProgress';
 import { useRouter } from 'next/router';
 import { HOST } from '@configs/env';
+import dynamic from 'next/dynamic';
 
 const DEFAUT_PAGE_TITLE = 'Nhà thuốc Phước Thiện';
+
+const ZaloChat = dynamic(() => import('../modules/zaloChat'), {
+  ssr: false,
+});
 
 interface AppPropsWithLayout<T> extends AppProps<T> {
   Component: NextPageWithLayout<T>;

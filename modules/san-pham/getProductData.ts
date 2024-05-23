@@ -52,7 +52,6 @@ const getProductData = async (context: GetServerSidePropsContext) => {
       pageSize: 10,
       productTypeKey: product.productType?.key,
       productGroupKey: product.productGroup?.key,
-      isPrescripted: false,
     }),
     offerClient.getAllActiveOffers(),
   ]);

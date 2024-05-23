@@ -136,7 +136,6 @@ export const getServerSideProps: GetServerSideProps = async (
       productClient.getProducts({
         page: page ? parseInt(page) : 1,
         pageSize: pageSize ? parseInt(pageSize) : 20,
-        isPrescripted: false,
         filterByName: query,
       }),
       generalClient.getProductSearchKeywords(),

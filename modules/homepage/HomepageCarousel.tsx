@@ -74,8 +74,8 @@ function HomepageCarousel({
                       placeholder="blur"
                       sizes={
                         type === 'primary'
-                          ? '(min-width: 1200px) 100vw, 100vw'
-                          : '(min-width: 768px) 50vw, 100vw'
+                          ? '(min-width: 1024px) 960px, (min-width: 768px) 720px, 400px'
+                          : '(min-width: 1024px) 800px, (min-width: 768px) 600px, 400px'
                       }
                       objectFit="cover"
                       className="rounded-xl"
@@ -95,6 +95,7 @@ function HomepageCarousel({
           <Button
             shape="circle"
             size="large"
+            aria-label="previous slide"
             onClick={() => carouselRef.current?.prev()}
             icon={<ChevronLeft />}
             className="absolute top-1/2 left-[32px] -translate-y-1/2 -translate-x-1/2"
@@ -103,6 +104,7 @@ function HomepageCarousel({
           <Button
             shape="circle"
             size="large"
+            aria-label="next slide"
             onClick={() => carouselRef.current?.next()}
             icon={<ChevronRight />}
             className="absolute top-1/2 right-[32px] -translate-y-1/2 translate-x-1/2"

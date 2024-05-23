@@ -41,7 +41,6 @@ const getArticleData = async (context: GetServerSidePropsContext) => {
             productClient.getProducts({
               page: 1,
               pageSize: 50,
-              isPrescripted: false,
               filterByIds: article.data[0].linkedProductIds || [],
             }),
           ]

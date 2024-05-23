@@ -1,26 +1,24 @@
 import ImageUtils from '@libs/utils/image.utils';
 import Image, { ImageProps } from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 function ImageWithFallback({
   getMockImage,
+  src,
   ...props
 }: ImageProps & {
   getMockImage?: () => string;
 }) {
-  const [src, setSrc] = useState('');
   const [isImageLoadFailed, setisImageLoadFailed] = useState(false);
-
-  useEffect(() => {
-    setSrc(props.src as string);
-  }, [props.src]);
 
   const imageSource = useMemo(() => {
     if (isImageLoadFailed) {
       return getMockImage ? getMockImage() : '/image-placeholder.png';
     }
 
-    return ImageUtils.getFullImageUrl(src);
+    if (typeof src === 'string') return ImageUtils.getFullImageUrl(src);
+
+    return src;
   }, [isImageLoadFailed, src, getMockImage]);
 
   return (
@@ -31,7 +29,7 @@ function ImageWithFallback({
         setisImageLoadFailed(true);
       }}
       {...props}
-      src={imageSource || '/'}
+      src={imageSource}
     />
   );
 }

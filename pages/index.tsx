@@ -159,7 +159,6 @@ const Home: NextPageWithLayout<HomeProps> = ({
                 xs={{ span: 24 }}
                 className="w-full"
               >
-                {/* <Row className="mt-4">asd</Row> */}
                 <Row className="mt-4 mb-4 flex max-h-[150px]  items-center justify-between gap-2 px-4 lg:justify-center">
                   <div
                     onClick={() =>

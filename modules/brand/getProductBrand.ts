@@ -33,7 +33,6 @@ const getProductBrand = async (context: GetServerSidePropsContext) => {
     const products = await productClient.getProducts({
       page: context.query.trang ? Number(context.query.trang) : 1,
       pageSize: PRODUCTS_LOAD_PER_TIME,
-      isPrescripted: false,
       productionBrandKeys: [`${brandSeoUrl}`],
       sortBy: (context.query['sap-xep-theo'] as 'GIA_BAN_LE') || undefined,
       sortOrder: (context.query['sort'] as 'ASC' | 'DESC') || undefined,

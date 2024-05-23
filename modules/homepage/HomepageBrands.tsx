@@ -1,7 +1,6 @@
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import IMAGES from '@configs/assests/images';
 import BrandModel from '@configs/models/brand.model';
-import { Button, Carousel, Space, Typography } from 'antd';
+import { Button, Carousel, Typography } from 'antd';
 import BrandSlideItems from './BrandSlideItems';
 import { CarouselRef } from 'antd/es/carousel';
 import { useRef } from 'react';
@@ -9,6 +8,7 @@ import { ChevronLeft, ChevronRight } from 'react-feather';
 
 function HomepageBrands({ brands }: { brands: BrandModel[] }) {
   const carouselRef = useRef<CarouselRef | null>(null);
+
   return (
     <div className="mt-4 lg:container">
       <div className="flex items-center ">
@@ -69,7 +69,8 @@ function HomepageBrands({ brands }: { brands: BrandModel[] }) {
               size="large"
               onClick={() => carouselRef.current?.prev()}
               icon={<ChevronLeft />}
-              className="z-999 absolute top-1/2 left-[16px] -translate-y-1/2 -translate-x-1/2"
+              aria-label="previous slide"
+              className="z-999 absolute top-1/2 left-[16px] ml-[16px] flex min-h-[48px] min-w-[48px] -translate-y-1/2 -translate-x-1/2 items-center justify-center md:min-h-[40px] md:min-w-[40px] lg:ml-0"
             />
 
             <Button
@@ -77,7 +78,8 @@ function HomepageBrands({ brands }: { brands: BrandModel[] }) {
               size="large"
               onClick={() => carouselRef.current?.next()}
               icon={<ChevronRight />}
-              className="z-999 absolute top-1/2 right-[16px] -translate-y-1/2 translate-x-1/2"
+              aria-label="next slide"
+              className="z-999 absolute top-1/2 right-[16px] mr-[16px] flex min-h-[48px] min-w-[48px] -translate-y-1/2 translate-x-1/2 items-center justify-center md:min-h-[40px] md:min-w-[40px] lg:mr-0"
             />
           </>
         )}

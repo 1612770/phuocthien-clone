@@ -117,9 +117,6 @@
   bottom: 155px !important;
 }
 
-.app__dangerously-set-inner-html {
-}
-
 .app__zalo-chat-widget-container {
   .zalo-chat-widget {
     bottom: 128px !important;
@@ -166,4 +163,15 @@
       right: 12px;
     }
   }
+}
+
+div.slick-slide[aria-hidden='true'] a[href],
+div.slick-slide[aria-hidden='true'] area[href],
+div.slick-slide[aria-hidden='true'] input:not([disabled]),
+div.slick-slide[aria-hidden='true'] select:not([disabled]),
+div.slick-slide[aria-hidden='true'] textarea:not([disabled]),
+div.slick-slide[aria-hidden='true'] button:not([disabled]),
+div.slick-slide[aria-hidden='true'] [tabindex]:not([disabled]),
+div.slick-slide[aria-hidden='true'] [contenteditable='true']:not([disabled]) {
+  visibility: hidden;
 }

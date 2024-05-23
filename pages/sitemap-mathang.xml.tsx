@@ -8,7 +8,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const drugstores = await clientProduct.getProducts({
       page: 1,
       pageSize: 20,
-      isPrescripted: false,
     });
     if (
       drugstores.data?.totalPage &&

@@ -29,21 +29,20 @@ class MyDocument extends Document {
             name="apple-mobile-web-app-title"
             content="nhathuocphuocthien.com"
           />
-          <>
-            <script
-              async
-              src="https://www.googletagmanager.com/gtag/js?id=G-M15MVM4EXS"
-            />
-            <script id="google-analytics">
-              {`
+
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=G-M15MVM4EXS"
+            strategy="beforeInteractive"
+          />
+          <Script id="google-analytics" strategy="beforeInteractive">
+            {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){window.dataLayer.push(arguments);}
           gtag('js', new Date());
 
           gtag('config', 'G-M15MVM4EXS');
         `}
-            </script>
-          </>
+          </Script>
         </Head>
         <body>
           <Main />

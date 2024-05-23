@@ -43,7 +43,6 @@ const Home: NextPageWithLayout<{
   if (!campaign) return null;
 
   const percentPromotions = campaign.promotions;
-
   return (
     <>
       {campaign.metaSeo && (

@@ -3,7 +3,7 @@ import { NextPageWithLayout } from 'pages/page';
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import ProductType from '@configs/models/product-type.model';
 import ProductGroupModel from '@configs/models/product-group.model';
-import Product, { InventoryAtDrugStore } from '@configs/models/product.model';
+import Product from '@configs/models/product.model';
 import BrandModel from '@configs/models/brand.model';
 import WithPagination from '@configs/types/utils/with-pagination';
 import OfferModel from '@configs/models/offer.model';

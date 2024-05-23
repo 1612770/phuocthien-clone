@@ -39,7 +39,6 @@ export function useWatchCacheProduct() {
           page: 1,
           pageSize: 10,
           filterByIds: keys,
-          isPrescripted: false,
         });
 
         if (products.data) {

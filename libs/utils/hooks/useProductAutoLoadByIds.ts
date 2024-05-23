@@ -25,7 +25,6 @@ const useProductAutoLoadByIds = (productIds: string[]) => {
         const product = await productClient.getProducts({
           page: 1,
           pageSize: 100,
-          isPrescripted: false,
           filterByIds: productIds,
         });
 

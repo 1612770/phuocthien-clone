@@ -61,7 +61,6 @@ function PrimaryHeaderMenuAllPopoverContent({
     const products = await productClient.getProducts({
       page: 1,
       pageSize: 10,
-      isPrescripted: false,
       productGroupKey: debouncedCurrentFocusGroup?.key,
       productTypeKey: currentMenu?.key,
     });

@@ -91,14 +91,14 @@ function ProductMetaData({ product }: { product: Product }) {
         </div>
       )}
 
-      {/* <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
+      <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
         <Typography.Text className=" font-bold">
           Là thuốc kê đơn
         </Typography.Text>
         <Typography.Text className=" ml-0 md:ml-2">
           {product?.isPrescripted ? 'Có' : 'Không'}
         </Typography.Text>
-      </div> */}
+      </div>
 
       {product?.isSpecial && (
         <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">

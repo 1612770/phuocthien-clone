@@ -42,7 +42,6 @@ const getProductGroupData = async (context: GetServerSidePropsContext) => {
   const products = await productClient.getProducts({
     page: context.query.trang ? Number(context.query.trang) : 1,
     pageSize: PRODUCTS_LOAD_PER_TIME,
-    isPrescripted: false,
     productTypeKey: productType.data?.key,
     productGroupKey: productGroup.data?.key,
     productionBrandKeys: context.query.brands
