@@ -112,12 +112,15 @@ function ProductMain({
                   type="primary"
                   shape="round"
                   className="w-full"
+                  onClick={() =>
+                    window.open('https://zalo.me/phuocthienpharmacy', '_blank')
+                  }
                 >
                   Tư vấn ngay
                 </Button>
               </div>
               <div className="w-full">
-                <Button size="large" shape="round" className="w-full">
+                <Button size="large" shape="round" className="w-full" disabled>
                   Gửi toa cho nhà thuốc
                 </Button>
               </div>
