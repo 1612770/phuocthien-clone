@@ -10,7 +10,6 @@ import '../styles/_ckedit.scss';
 import { NextPageWithLayout } from './page';
 import COLORS from 'configs/colors';
 import MenuModel from '@configs/models/menu.model';
-import FullMenuProvider from '@providers/FullMenuProvider';
 import React, { Suspense } from 'react';
 import CartProvider from '@providers/CartProvider';
 import AppMessageProvider from '@providers/AppMessageProvider';
@@ -112,11 +111,11 @@ function MyApp({
               <AppConfirmDialogProvider>
                 <AuthProvider>
                   <CartProvider>
-                    <FullMenuProvider>
-                      <AppDataProvider>
-                        {getLayout(<Component {...pageProps} />)}
-                      </AppDataProvider>
-                    </FullMenuProvider>
+                    {/* <FullMenuProvider> */}
+                    <AppDataProvider>
+                      {getLayout(<Component {...pageProps} />)}
+                    </AppDataProvider>
+                    {/* </FullMenuProvider> */}
                   </CartProvider>
                 </AuthProvider>
               </AppConfirmDialogProvider>

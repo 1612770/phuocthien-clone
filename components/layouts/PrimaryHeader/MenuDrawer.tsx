@@ -10,14 +10,14 @@ import {
 } from 'antd';
 import { Book, ChevronDown, LogOut, User, X } from 'react-feather';
 import IMAGES from '@configs/assests/images';
-import { useFullMenu } from '@providers/FullMenuProvider';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import { useAuth } from '@providers/AuthProvider';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { listMenu } from '@configs/constants/listMenu';
 
 function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
-  const { fullMenu } = useFullMenu();
+  // const { fullMenu } = useFullMenu();
   const { logOut, isUserLoggedIn } = useAuth();
   const router = useRouter();
   return (
@@ -110,12 +110,12 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
           <ChevronDown size={16} className={isActive ? 'rotate-180' : ''} />
         )}
       >
-        {fullMenu.map((menu, idx) => (
+        {listMenu.map((menu, idx) => (
           <Collapse.Panel
             header={
               <span className=" flex items-center">
                 <Typography className=" text-base font-medium uppercase text-gray-700">
-                  {menu.name}
+                  {menu.productTypeName}
                 </Typography>
               </span>
             }
@@ -127,16 +127,16 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
                 onClose?.(e);
               }}
             >
-              <Link href={`/${menu.seoUrl}`} passHref>
+              <Link href={`/${menu.productTypeUrl}`} passHref>
                 <a>
                   <div className="my-2 -mx-4 flex cursor-pointer items-center">
-                    <ImageWithFallback
+                    {/* <ImageWithFallback
                       src={menu?.image || ''}
                       width={32}
                       height={32}
-                    />
+                    /> */}
                     <Typography className="ml-2 font-medium">
-                      Tất cả {menu?.name}
+                      Xem tất cả
                     </Typography>
                   </div>
                 </a>
@@ -144,15 +144,20 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
 
               {!!menu.productGroups?.length &&
                 menu.productGroups?.map((group, idx) => (
-                  <Link key={idx} href={`/${menu.seoUrl}/${group?.seoUrl}`}>
+                  <Link
+                    key={idx}
+                    href={`/${menu.productTypeUrl}/${group?.productGroupUrl}`}
+                  >
                     <a>
                       <div className="my-2 -mx-4 flex cursor-pointer items-center">
                         <ImageWithFallback
-                          src={group?.image || ''}
+                          src={group?.productGroupImage || ''}
                           width={32}
                           height={32}
                         />
-                        <Typography className="ml-2">{group?.name}</Typography>
+                        <Typography className="ml-2">
+                          {group?.productGroupName}
+                        </Typography>
                       </div>
                     </a>
                   </Link>

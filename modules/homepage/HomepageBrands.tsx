@@ -10,7 +10,7 @@ function HomepageBrands({ brands }: { brands: BrandModel[] }) {
   const carouselRef = useRef<CarouselRef | null>(null);
 
   return (
-    <div className="mt-4 lg:container">
+    <div className="lg:container">
       <div className="flex items-center ">
         <div>
           <div className="mr-4">

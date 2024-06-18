@@ -129,8 +129,8 @@ function ProductCard({
                   <div className="h-[90px] flex-1">
                     <Typography.Text
                       title={displayName}
-                      className={`two-line-text mt-7 ${
-                        size !== 'small' ? 'h-[48px]' : 'h-[68px]'
+                      className={`three-line-text mt-7 ${
+                        size !== 'small' ? 'h-[68px]' : 'h-[88px]'
                       }`}
                     >
                       {displayName}

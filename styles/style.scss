@@ -112,6 +112,16 @@
   max-height: 40px;
 }
 
+.three-line-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-height: 20px;
+  max-height: 60px;
+}
+
 .zalo-chat-widget {
   right: 75px !important;
   bottom: 155px !important;

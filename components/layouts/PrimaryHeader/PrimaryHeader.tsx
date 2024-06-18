@@ -11,8 +11,6 @@ import PrimaryHeaderMenuDrawer from './MenuDrawer';
 import { useIntersectionObserver } from '@libs/utils/hooks';
 import CartPopupContent from '@modules/gio-hang/CartPopupContent';
 import CurrencyUtils from '@libs/utils/currency.utils';
-import { useFullMenu } from '@providers/FullMenuProvider';
-import { MenuSkeleton } from '@components/templates/Skeleton/Menu';
 import Link from 'next/link';
 
 function PrimaryHeader({ showSearch = true }) {
@@ -46,7 +44,6 @@ function PrimaryHeader({ showSearch = true }) {
       setModeShowPopup('fixed');
     }
   }, [isVisible, setModeShowPopup]);
-  const { fullMenu } = useFullMenu();
   return (
     <header>
       <div className="bg-white py-4">
@@ -185,20 +182,14 @@ function PrimaryHeader({ showSearch = true }) {
         </div>
       </div>
 
-      {fullMenu.length > 0 ? (
-        <PrimaryHeaderMenu></PrimaryHeaderMenu>
-      ) : (
-        <MenuSkeleton />
-      )}
+      <PrimaryHeaderMenu />
 
-      {fullMenu.length > 0 && (
-        <PrimaryHeaderMenuDrawer
-          open={openMobileMenu}
-          onClose={() => {
-            setOpenMobileMenu(false);
-          }}
-        />
-      )}
+      <PrimaryHeaderMenuDrawer
+        open={openMobileMenu}
+        onClose={() => {
+          setOpenMobileMenu(false);
+        }}
+      />
 
       {modeShowPopup === 'fixed' && (
         <div

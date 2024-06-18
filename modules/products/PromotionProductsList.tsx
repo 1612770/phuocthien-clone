@@ -73,12 +73,7 @@ function PromotionProductsList({
         }`}
       >
         {promotion.imgUrl && (
-          <LinkWrapper
-            className="relative mt-4 mb-2 block h-[100px] w-full lg:h-[200px]"
-            href={`/khuyen-mai/${
-              campaginSlug || promotion.campaignKey
-            }?anchor=${promotion.key}`}
-          >
+          <div className="relative mt-4 mb-2 block h-[100px] w-full lg:h-[200px]">
             <ImageWithFallback
               src={promotion.imgUrl}
               priority
@@ -87,7 +82,7 @@ function PromotionProductsList({
               objectFit="cover"
               sizes="(min-width: 640px) 1200px, 640px"
             />
-          </LinkWrapper>
+          </div>
         )}
         <div className="flex p-2">
           {!scrollable && (

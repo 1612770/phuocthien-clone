@@ -2,7 +2,6 @@ import { Layout } from 'antd';
 import PrimaryHeader from '../PrimaryHeader';
 import PrimaryFooter from '../PrimaryFooter';
 import React, { useEffect } from 'react';
-import { useFullMenu } from '@providers/FullMenuProvider';
 import { useAppData } from '@providers/AppDataProvider';
 
 export interface IPrimaryLayout {
@@ -16,15 +15,10 @@ const PrimaryLayout: React.FC<IPrimaryLayout> = ({
   background = 'white',
   children,
 }) => {
-  const { fullMenu, getFullMenu } = useFullMenu();
   const { focusContent, getFocusData } = useAppData();
   const computedBg =
     background === 'white' ? 'bg-gray-50' : 'bg-primary-background';
-  useEffect(() => {
-    if (fullMenu.length === 0) {
-      getFullMenu();
-    }
-  }, [fullMenu.length, getFullMenu]);
+
   useEffect(() => {
     if (focusContent.length === 0) {
       getFocusData();

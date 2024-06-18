@@ -5,12 +5,12 @@ import BrandModel from '@configs/models/brand.model';
 import Product from '@configs/models/product.model';
 import WithPagination from '@configs/types/utils/with-pagination';
 import ProductGroup from '@modules/categories/ProductGroup';
-import { useFullMenu } from '@providers/FullMenuProvider';
 import { Drawer, Empty, Pagination, Space, Tag, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import { Filter, X } from 'react-feather';
 import FilterOptions from './FilterOptions';
 import { useState } from 'react';
+import { listMenu } from '@configs/constants/listMenu';
 
 function ProductTypePage({
   productTypeSeoUrlToGetFromFullMenu,
@@ -21,10 +21,9 @@ function ProductTypePage({
   productBrands?: BrandModel[];
   products?: WithPagination<Product[]>;
 }) {
-  const { fullMenu } = useFullMenu();
   const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
-  const productType = (fullMenu || []).find((menu) => {
-    return menu.seoUrl === productTypeSeoUrlToGetFromFullMenu;
+  const productType = (listMenu || []).find((menu) => {
+    return menu.productTypeUrl === productTypeSeoUrlToGetFromFullMenu;
   });
   const router = useRouter();
   return (
@@ -37,18 +36,18 @@ function ProductTypePage({
             path: '/',
           },
           {
-            title: productType?.name,
+            title: productType?.productTypeName,
           },
         ]}
       ></Breadcrumbs>
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6 md:gap-4 lg:grid-cols-6 xl:grid-cols-8">
+      <div className="grid cursor-pointer grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6 md:gap-4 lg:grid-cols-6 xl:grid-cols-8">
         {productType?.productGroups?.map((productGroup) => (
           <>
             <ProductGroup
-              key={productGroup?.key}
+              key={productGroup?.productGroupUrl}
               productGroup={productGroup}
-              href={`/${productType.seoUrl}/${productGroup?.seoUrl}`}
+              href={`/${productType.productTypeUrl}/${productGroup?.productGroupUrl}`}
             />
           </>
         ))}

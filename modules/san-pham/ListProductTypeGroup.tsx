@@ -1,4 +1,5 @@
 import ImageWithFallback from '@components/templates/ImageWithFallback';
+import { MenuProductType } from '@configs/constants/listMenu';
 import ProductTypeGroupModel from '@configs/models/product-type-group.model';
 import ProductType from '@configs/models/product-type.model';
 import Link from 'next/link';
@@ -6,10 +7,12 @@ import Link from 'next/link';
 export const ListProductTypeGroup = ({
   productTypeGroupData,
   productType,
+  productTypeUrl,
   type,
 }: {
   productTypeGroupData: ProductTypeGroupModel[];
   productType: ProductType;
+  productTypeUrl?: string;
   type?: string;
 }) => {
   if (productTypeGroupData.length === 0) {
@@ -24,7 +27,12 @@ export const ListProductTypeGroup = ({
       } lg:grid-cols-6"  mt-4 mb-4 grid grid-cols-2 gap-4 md:grid-cols-4`}
     >
       {productTypeGroupData.map((el) => (
-        <Link key={el.key} href={`/${productType?.seoUrl}/${el.seoUrl}`}>
+        <Link
+          key={el.key}
+          href={`/${type === 'menu' ? productTypeUrl : productType.seoUrl}/${
+            el.seoUrl
+          }`}
+        >
           <div
             onClick={(e) => {
               e.stopPropagation();

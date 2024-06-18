@@ -1,8 +1,8 @@
 import { Popover, Space, Typography } from 'antd';
 import PrimaryHeaderMenuList from './PrimaryHeaderMenuList';
-import ProductGroupModel from '@configs/models/product-group.model';
 import { CaretDownOutlined } from '@ant-design/icons';
 import Link from 'next/link';
+import { MenuProductGroup } from '@configs/constants/listMenu';
 
 function PrimaryHeaderMenuItem({
   label,
@@ -16,7 +16,7 @@ function PrimaryHeaderMenuItem({
   href: string;
   onlyClick?: boolean;
   icon?: React.ReactNode;
-  productGroups?: ProductGroupModel[];
+  productGroups?: MenuProductGroup[];
 }) {
   return (
     <Link href={href} passHref>

@@ -1,327 +1,253 @@
-import { Card, Col, Empty, List, Row, Skeleton, Space, Typography } from 'antd';
-import { useFullMenu } from '@providers/FullMenuProvider';
-import { useCallback, useEffect, useState } from 'react';
-import MenuModel from '@configs/models/menu.model';
-import ProductChildGroup from '@modules/products/ProductChildGroup';
-import ProductGroupModel from '@configs/models/product-group.model';
-import { ProductClient } from '@libs/client/Product';
+import { Card, Empty, List, Skeleton, Space, Typography } from 'antd';
+import { useEffect, useState } from 'react';
+import { ProductTypeGroupCategory } from '@configs/models/menu.model';
 import ProductCard from '@components/templates/ProductCard';
 import PrimaryHeaderMenuAllPopoverContentLeftItem from './PrimaryHeaderMenuAllPopoverContentLeftItem';
-import { useDebounce } from '@libs/utils/hooks';
-import Product from '@configs/models/product.model';
+import { MenuProductGroup, MenuProductType } from '@configs/constants/listMenu';
+import Link from 'next/link';
 import { ListProductTypeGroup } from '@modules/san-pham/ListProductTypeGroup';
+import { GeneralClient } from '@libs/client/General';
 import ProductType from '@configs/models/product-type.model';
-import { useRouter } from 'next/router';
-
-const generateKey = (groupKey?: string, typeKey?: string) => {
-  return `${groupKey}-${typeKey}}}`;
-};
-
-const checkCanGetFocusGroupProducts = (
-  productsMenu: {
-    [key: string]: Product[];
-  },
-  groupKey?: string,
-  typeKey?: string
-) => {
-  if (!groupKey || !typeKey) return false;
-  const key = generateKey(groupKey, typeKey);
-
-  return !productsMenu[key];
-};
 
 function PrimaryHeaderMenuAllPopoverContent({
   currentMenu,
+  dataMenu,
   mode,
 }: {
-  currentMenu?: MenuModel;
+  currentMenu: MenuProductType;
+  dataMenu: ProductTypeGroupCategory[];
   mode: 'all' | 'menu' | 'none';
 }) {
-  const router = useRouter();
-  const [currentFocusMenu, setCurrentFocusMenu] = useState<MenuModel>();
+  const [currentFocusMenu, setCurrentFocusMenu] =
+    useState<MenuProductType>(currentMenu);
   const [loadingProduct, setLoadingProduct] = useState(false);
-  const [currentFocusGroup, setCurrentFocusGroup] =
-    useState<ProductGroupModel>();
+  const [currentFocusGroup, setCurrentFocusGroup] = useState<MenuProductGroup>(
+    currentMenu.productGroups[0]
+  );
 
-  const { fullMenu, setIntoPopover, setOpen, productsMenu, addProductMenu } =
-    useFullMenu();
-  const debouncedCurrentFocusGroup = useDebounce(currentFocusGroup, 300);
+  const [loadDataMenu, setLoadDataMenu] = useState<ProductTypeGroupCategory[]>(
+    []
+  );
 
-  const onGetFocusGroupProducts = useCallback(async () => {
-    const canGet = checkCanGetFocusGroupProducts(
-      productsMenu,
-      debouncedCurrentFocusGroup?.key,
-      currentMenu?.key
-    );
-    if (!canGet) return;
+  const [productTypeGroupCategories, setProductTypeGroupCategories] = useState<
+    Record<string, ProductTypeGroupCategory>[]
+  >([]);
 
-    const productClient = new ProductClient(null, {});
+  useEffect(() => {
+    if (currentMenu && dataMenu) {
+      setLoadDataMenu(dataMenu);
+      setCurrentFocusMenu(currentMenu);
+      setCurrentFocusGroup(currentMenu.productGroups[0]);
+      loadDataMenu.forEach((el) => {
+        setProductTypeGroupCategories((p) => {
+          if (
+            p.find(
+              (_el) => _el[`${el.productTypeSeoUrl}/${el.productGroupSeoUrl}`]
+            )
+          ) {
+            return [...p];
+          } else {
+            return [
+              ...p,
+              {
+                [`${el.productTypeSeoUrl}/${el.productGroupSeoUrl}`]: el,
+              } as Record<string, ProductTypeGroupCategory>,
+            ];
+          }
+        });
+      });
+    }
+  }, [currentMenu, dataMenu, loadDataMenu]);
 
-    setLoadingProduct(true);
-    const products = await productClient.getProducts({
-      page: 1,
-      pageSize: 10,
-      productGroupKey: debouncedCurrentFocusGroup?.key,
-      productTypeKey: currentMenu?.key,
-    });
-    setLoadingProduct(false);
-
-    if (products.data) {
-      addProductMenu(
-        generateKey(debouncedCurrentFocusGroup?.key, currentMenu?.key),
-        products.data.data
+  useEffect(() => {
+    const onMouseHoverGroup = async () => {
+      const f = productTypeGroupCategories.find(
+        (el) =>
+          el[
+            `${currentFocusMenu.productTypeUrl}/${currentFocusGroup.productGroupUrl}`
+          ]
       );
-    }
+      if (!f) {
+        setLoadingProduct(true);
+        const client = new GeneralClient(null, {});
+        const res = await client.getCategoryProduct({
+          slugs: [
+            {
+              productTypeSlug: currentFocusMenu.productTypeUrl,
+              productGroupSlug: currentFocusGroup.productGroupUrl,
+            },
+          ],
+          maxProductResult: 5,
+        });
+        if (res.status === 'OK' && res.data && res.data?.[0]) {
+          if (!res.data[0]) {
+            setLoadingProduct(false);
+            return;
+          }
+          const record = {
+            [`${res.data[0].productTypeSeoUrl}/${res.data[0].productGroupSeoUrl}`]:
+              res.data[0],
+          } as Record<string, ProductTypeGroupCategory>;
+          setProductTypeGroupCategories((p) => [...p, record]);
+        }
+        setLoadingProduct(false);
+      }
+    };
+    onMouseHoverGroup();
   }, [
-    productsMenu,
-    debouncedCurrentFocusGroup?.key,
-    currentMenu?.key,
-    addProductMenu,
+    currentFocusGroup,
+    currentFocusMenu.productTypeUrl,
+    productTypeGroupCategories,
   ]);
-  /**
-   * Mode: all
-   * Set default current focus menu
-   */
-  useEffect(() => {
-    if (fullMenu.length) {
-      setCurrentFocusMenu(fullMenu[0]);
-    }
-  }, [fullMenu]);
-
-  /**
-   * Mode: menu
-   * Set default current focus group
-   */
-
-  useEffect(() => {
-    if (currentMenu) {
-      setCurrentFocusGroup(currentMenu.productGroups?.[0]);
-    }
-  }, [currentMenu]);
-
-  /**
-   * Mode: menu
-   * Get products when current focus group changed
-   */
-
-  useEffect(() => {
-    if (debouncedCurrentFocusGroup?.key && mode === 'menu') {
-      onGetFocusGroupProducts();
-    }
-  }, [debouncedCurrentFocusGroup, onGetFocusGroupProducts, mode]);
-
-  const products =
-    productsMenu[generateKey(currentFocusGroup?.key, currentMenu?.key)] || [];
-  return mode !== 'none' ? (
-    <div
-      className="flex bg-gray-50"
-      onMouseEnter={() => {
-        setIntoPopover(true);
-      }}
-      onMouseLeave={() => {
-        setIntoPopover(false);
-      }}
-    >
-      {(mode === 'all' ||
-        (mode === 'menu' && !!currentMenu?.productGroups?.length)) && (
-        <div
-          onClick={() => {
-            setOpen(false);
-            setIntoPopover(false);
-          }}
-        >
-          <List className="max-h-[500px] min-w-[320px] overflow-auto bg-white">
-            {mode === 'menu' &&
-              currentMenu &&
-              currentMenu.productGroups?.map((productGroup) => (
-                <PrimaryHeaderMenuAllPopoverContentLeftItem
-                  href={`/${currentMenu.seoUrl}/${productGroup?.seoUrl}`}
-                  key={productGroup?.key}
-                  active={productGroup?.key === currentFocusGroup?.key}
-                  onMouseEnter={() => {
-                    setCurrentFocusGroup(productGroup as ProductGroupModel);
-                  }}
-                  label={productGroup?.name || ''}
-                  image={productGroup?.image || ''}
-                />
-              ))}
-
-            {mode === 'all' &&
-              fullMenu.map((menu) => (
-                <PrimaryHeaderMenuAllPopoverContentLeftItem
-                  href={`/${menu.seoUrl}`}
-                  key={menu?.key}
-                  active={menu?.key === currentFocusMenu?.key}
-                  onMouseEnter={() => {
-                    setCurrentFocusMenu(menu);
-                  }}
-                  label={menu?.name || ''}
-                  image={menu?.image || ''}
-                />
-              ))}
-          </List>
-        </div>
-      )}
-
-      <div className="max-h-[500px] w-full overflow-auto">
-        {mode === 'all' && !!currentFocusMenu?.productGroups?.length && (
-          <Row gutter={[12, 8]} className="p-4">
-            {currentFocusMenu?.productGroups?.map((productGroup) => (
-              <Col
-                md={6}
-                onClick={() => {
-                  setOpen(false);
-                  setIntoPopover(false);
+  const curValue = productTypeGroupCategories.find(
+    (el) =>
+      el[
+        `${currentFocusMenu.productTypeUrl}/${currentFocusGroup.productGroupUrl}`
+      ]
+  );
+  const curData = curValue
+    ? curValue[
+        `${currentFocusMenu.productTypeUrl}/${currentFocusGroup.productGroupUrl}`
+      ]
+    : null;
+  return (
+    <div className="flex bg-gray-50">
+      <div>
+        <List className="max-h-[500px] min-w-[320px] overflow-auto bg-white">
+          {currentMenu &&
+            currentMenu.productGroups?.map((productGroup) => (
+              <PrimaryHeaderMenuAllPopoverContentLeftItem
+                href={`/${currentMenu.productTypeUrl}/${productGroup?.productGroupUrl}`}
+                key={productGroup?.productGroupUrl}
+                active={
+                  productGroup?.productGroupUrl ===
+                  currentFocusGroup?.productGroupUrl
+                }
+                onMouseEnter={() => {
+                  setCurrentFocusGroup(productGroup);
+                  // onMouseHoverGroup(productGroup);
                 }}
-                key={productGroup?.key}
-              >
-                <ProductChildGroup
-                  href={`/${currentFocusMenu.seoUrl}/${productGroup?.seoUrl}`}
-                  label={productGroup?.name || ''}
-                  image={productGroup?.image}
-                />
-              </Col>
-            ))}
-          </Row>
-        )}
-
-        {mode === 'menu' && (
-          <div className="p-4">
-            {!!currentFocusGroup?.productTypeGroup?.length && (
-              <ListProductTypeGroup
-                productTypeGroupData={currentFocusGroup.productTypeGroup}
-                productType={currentMenu as ProductType}
-                type="menu"
+                label={productGroup?.productGroupName || ''}
+                image={productGroup?.productGroupImage || ''}
               />
-            )}
-            {!!currentMenu?.productGroups?.length && (
-              <Space className="w-full items-center justify-between" size={20}>
-                <Typography.Title level={4}>Sản phẩm nổi bật</Typography.Title>
-                <div
-                  onClick={() => {
-                    setOpen(false);
-                    setIntoPopover(false);
-                  }}
+            ))}
+        </List>
+      </div>
+
+      <div className="max-h-[500px] w-full overflow-y-auto">
+        <div className="p-4">
+          {curData && curData.productTypeGroup && (
+            <ListProductTypeGroup
+              productTypeGroupData={curData.productTypeGroup}
+              productType={currentMenu as ProductType}
+              productTypeUrl={currentMenu.productTypeUrl}
+              type="menu"
+            />
+          )}
+          {!!currentMenu?.productGroups?.length && (
+            <Space className="w-full items-center justify-between" size={20}>
+              <Typography.Title level={4}>Sản phẩm nổi bật</Typography.Title>
+              <div>
+                <Link
+                  href={`/${currentMenu.productTypeUrl}/${currentFocusGroup?.productGroupUrl}`}
+                  passHref
                 >
-                  <div
-                    onClick={() =>
-                      router.push(
-                        `/${currentMenu.seoUrl}/${currentFocusGroup?.seoUrl}`
-                      )
-                    }
-                  >
+                  <a>
                     <Typography className="pr-3 text-blue-500">
                       Xem tất cả
                     </Typography>
-                  </div>
+                  </a>
+                </Link>
+              </div>
+            </Space>
+          )}
+
+          {curData && curData.products && curData.products.length > 0 && (
+            <div className="flex gap-2 overflow-x-auto">
+              {curData.products.map((product) => (
+                <div key={product.key}>
+                  <ProductCard
+                    product={product}
+                    className="min-w-[204px] max-w-[204px]"
+                    size="small"
+                  />
                 </div>
-              </Space>
-            )}
+              ))}
+            </div>
+          )}
 
-            {products.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {products.slice(0, 10).map((product) => (
-                  <div
-                    key={product.key}
-                    onClick={() => {
-                      setOpen(false);
-                      setIntoPopover(false);
-                    }}
-                  >
-                    <ProductCard
-                      product={product}
-                      className="min-w-[204px] max-w-[204px]"
-                      size="small"
-                    />
+          {!curData && loadingProduct && (
+            <div className="flex gap-2 overflow-x-auto">
+              <Card
+                cover={
+                  <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
+                    <Skeleton.Image className="h-full w-full" />
                   </div>
-                ))}
-              </div>
-            )}
+                }
+                bodyStyle={{
+                  padding: '12px',
+                }}
+                className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
+              >
+                <Skeleton.Button active shape="square" />
+                <Skeleton.Input active block className="mt-1" />
+                <Skeleton.Button active shape="square" className="mt-2" />
+              </Card>
+              <Card
+                cover={
+                  <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
+                    <Skeleton.Image className="h-full w-full" />
+                  </div>
+                }
+                bodyStyle={{
+                  padding: '12px',
+                }}
+                className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
+              >
+                <Skeleton.Button active shape="square" />
+                <Skeleton.Input active block className="mt-1" />
+                <Skeleton.Button active shape="square" className="mt-2" />
+              </Card>
+              <Card
+                cover={
+                  <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
+                    <Skeleton.Image className="h-full w-full" />
+                  </div>
+                }
+                bodyStyle={{
+                  padding: '12px',
+                }}
+                className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
+              >
+                <Skeleton.Button active shape="square" />
+                <Skeleton.Input active block className="mt-1" />
+                <Skeleton.Button active shape="square" className="mt-2" />
+              </Card>
+              <Card
+                cover={
+                  <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
+                    <Skeleton.Image className="h-full w-full" />
+                  </div>
+                }
+                bodyStyle={{
+                  padding: '12px',
+                }}
+                className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
+              >
+                <Skeleton.Button active shape="square" />
+                <Skeleton.Input active block className="mt-1" />
+                <Skeleton.Button active shape="square" className="mt-2" />
+              </Card>
+            </div>
+          )}
+        </div>
 
-            {!!currentMenu?.productGroups?.length && loadingProduct && (
-              <div className="flex flex-wrap gap-2">
-                <Card
-                  cover={
-                    <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
-                      <Skeleton.Image className="h-full w-full" />
-                    </div>
-                  }
-                  bodyStyle={{
-                    padding: '12px',
-                  }}
-                  className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
-                >
-                  <Skeleton.Button active shape="square" />
-                  <Skeleton.Input active block className="mt-1" />
-                  <Skeleton.Button active shape="square" className="mt-2" />
-                </Card>
-                <Card
-                  cover={
-                    <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
-                      <Skeleton.Image className="h-full w-full" />
-                    </div>
-                  }
-                  bodyStyle={{
-                    padding: '12px',
-                  }}
-                  className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
-                >
-                  <Skeleton.Button active shape="square" />
-                  <Skeleton.Input active block className="mt-1" />
-                  <Skeleton.Button active shape="square" className="mt-2" />
-                </Card>
-                <Card
-                  cover={
-                    <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
-                      <Skeleton.Image className="h-full w-full" />
-                    </div>
-                  }
-                  bodyStyle={{
-                    padding: '12px',
-                  }}
-                  className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
-                >
-                  <Skeleton.Button active shape="square" />
-                  <Skeleton.Input active block className="mt-1" />
-                  <Skeleton.Button active shape="square" className="mt-2" />
-                </Card>
-                <Card
-                  cover={
-                    <div className="relative h-[168px] w-full bg-gray-100 transition-transform duration-300 group-hover:scale-110">
-                      <Skeleton.Image className="h-full w-full" />
-                    </div>
-                  }
-                  bodyStyle={{
-                    padding: '12px',
-                  }}
-                  className={`relative min-w-[204px] max-w-[204px] overflow-hidden transition duration-300 group-hover:border-primary-light`}
-                >
-                  <Skeleton.Button active shape="square" />
-                  <Skeleton.Input active block className="mt-1" />
-                  <Skeleton.Button active shape="square" className="mt-2" />
-                </Card>
-              </div>
-            )}
-          </div>
-        )}
-
-        {((mode === 'all' && !currentFocusMenu?.productGroups?.length) ||
-          (mode === 'menu' &&
-            (!currentFocusGroup ||
-              (currentFocusGroup &&
-                !products.length &&
-                !(
-                  !!currentMenu?.productGroups?.length && loadingProduct
-                ))))) && (
+        {!curData && (
           <div className="flex w-full items-center justify-center py-8">
             <Empty
               description={
                 <Typography>
-                  Không có{' '}
-                  {mode === 'menu' && currentFocusGroup && !products.length
-                    ? 'sản phẩm'
-                    : 'danh mục'}{' '}
-                  nào
+                  Không có {currentFocusGroup ? 'sản phẩm' : 'danh mục'} nào
                 </Typography>
               }
             ></Empty>
@@ -329,8 +255,6 @@ function PrimaryHeaderMenuAllPopoverContent({
         )}
       </div>
     </div>
-  ) : (
-    <></>
   );
 }
 

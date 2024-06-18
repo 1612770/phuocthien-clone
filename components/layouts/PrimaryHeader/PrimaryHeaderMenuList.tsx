@@ -1,4 +1,4 @@
-import ProductGroupModel from '@configs/models/product-group.model';
+import { MenuProductGroup } from '@configs/constants/listMenu';
 import ProductChildGroup from '@modules/products/ProductChildGroup';
 import { Empty, Space, Typography } from 'antd';
 
@@ -6,7 +6,7 @@ function PrimaryHeaderMenuList({
   productGroups,
   parentHref,
 }: {
-  productGroups: ProductGroupModel[];
+  productGroups: MenuProductGroup[];
   parentHref: string;
 }) {
   return (
@@ -15,9 +15,9 @@ function PrimaryHeaderMenuList({
         {!!productGroups?.length &&
           productGroups?.map((productGroup) => (
             <ProductChildGroup
-              href={`/${parentHref}/${productGroup.seoUrl}`}
-              key={productGroup?.key}
-              label={productGroup?.name || ''}
+              href={`/${parentHref}/${productGroup.productGroupUrl}`}
+              key={productGroup?.productGroupUrl}
+              label={productGroup?.productGroupName || ''}
             />
           ))}
       </Space>

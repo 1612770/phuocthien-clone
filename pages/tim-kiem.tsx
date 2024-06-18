@@ -115,12 +115,12 @@ export const getServerSideProps: GetServerSideProps = async (
 ) => {
   const serverSideProps: {
     props: {
-      searchedProducts?: WithPagination<Product[]>;
+      searchedProducts: WithPagination<Product[]> | null;
       productSearchKeywords: ProductSearchKeyword[];
     };
   } = {
     props: {
-      searchedProducts: undefined,
+      searchedProducts: null,
       productSearchKeywords: [],
     },
   };
@@ -142,7 +142,7 @@ export const getServerSideProps: GetServerSideProps = async (
     ]);
 
     if (searchProducts.data) {
-      serverSideProps.props.searchedProducts = searchProducts.data;
+      serverSideProps.props.searchedProducts = searchProducts.data || [];
     }
 
     if (productSearchKeywords.data) {

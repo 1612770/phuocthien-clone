@@ -1,6 +1,6 @@
 import PrimaryLayout from '@components/layouts/PrimaryLayout';
 import { NextPageWithLayout } from './page';
-import { GetServerSidePropsContext } from 'next';
+import { GetStaticProps, GetStaticPropsContext } from 'next';
 import { CmsClient } from '@libs/client/Cms';
 import { Article } from '@configs/models/cms.model';
 import { GeneralPageDetail } from '@modules/general-page/GeneralPage';
@@ -8,33 +8,30 @@ import PagePropsWithSeo from '@configs/types/page-props-with-seo';
 interface GeneralPageProps extends PagePropsWithSeo {
   page: Article;
 }
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  const serverSideProps: {
-    props: GeneralPageProps;
-  } = {
+export const getStaticProps = async (context: GetStaticPropsContext) => {
+  const staticProps: ReturnType<GetStaticProps<GeneralPageProps>> = {
     props: {
       page: {} as Article,
       SEOData: {},
     },
+    revalidate: 3600, // 1 hour
   };
-  const currentSlug = context.resolvedUrl.split('/')[1];
+
   const cmsClient = new CmsClient(context, {});
   try {
     const res = await cmsClient.getArticles({
-      q: { type: 'PAGE', slug: currentSlug },
+      q: { type: 'PAGE', slug: 'quy-che-hoat-dong-website' },
     });
     if (res.status === 'OK' && res.data && res.data?.length > 0) {
-      serverSideProps.props.page = res.data[0];
-      serverSideProps.props.SEOData.titleSeo = res.data[0].seoData.title;
-      serverSideProps.props.SEOData.keywordSeo = res.data[0].seoData.keywords;
-      serverSideProps.props.SEOData.metaSeo = res.data[0].seoData.description;
+      staticProps.props.page = res.data[0];
+      staticProps.props.SEOData.titleSeo = res.data[0].seoData.title;
+      staticProps.props.SEOData.keywordSeo = res.data[0].seoData.keywords;
+      staticProps.props.SEOData.metaSeo = res.data[0].seoData.description;
     }
   } catch (error) {
     console.error(error);
   }
-  return serverSideProps;
+  return staticProps;
 };
 
 const GeneralPage: NextPageWithLayout<GeneralPageProps> = ({ page }) => {

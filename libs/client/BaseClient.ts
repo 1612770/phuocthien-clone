@@ -86,7 +86,17 @@ class BaseClient {
     return result;
   }
 
-  async call(method: string, url: string, data: any): Promise<APIResponse> {
+  async call(
+    method: string,
+    url: string,
+    data: any,
+    ver?: string
+  ): Promise<APIResponse> {
+    if (ver) {
+      url = `${ver}/${url}`;
+    } else {
+      url = `v1/${url}`;
+    }
     return typeof window === 'undefined'
       ? await this.makeRequest(
           method,

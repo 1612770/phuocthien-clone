@@ -1,6 +1,6 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { NextPageWithLayout } from './page';
-import { GetServerSidePropsContext } from 'next';
+import { GetStaticProps, GetStaticPropsContext } from 'next';
 import { ProductClient } from '@libs/client/Product';
 import HomepageCarousel from '@modules/homepage/HomepageCarousel';
 import HomepageSearchSection from '@modules/homepage/HomepageSearchSection';
@@ -18,12 +18,13 @@ import { getVisibleItems } from '@libs/helpers';
 import { Col, Grid, Row } from 'antd';
 import Product from '@configs/models/product.model';
 import { BANNER_ENABLED } from '@configs/env';
-import IMAGES from '@configs/assests/images';
-import HomepageCarouselEvent from '@modules/homepage/HomeCarouselEvent';
 import BrandModel from '@configs/models/brand.model';
 import { Article, Category } from '@configs/models/cms.model';
 import { CmsClient } from '@libs/client/Cms';
 import PagePropsWithSeo from '@configs/types/page-props-with-seo';
+import LinkWrapper from '@components/templates/LinkWrapper';
+import Image from 'next/image';
+import { HomeUtils } from '@modules/homepage/HomeUtils';
 
 const { useBreakpoint } = Grid;
 
@@ -111,14 +112,14 @@ const Home: NextPageWithLayout<HomeProps> = ({
 
   return (
     <div className="mb-0 lg:mb-8">
-      <div className="w-screen overflow-hidden pb-4">
+      <div className="w-screen overflow-hidden">
         <div
           className={`px-0 ${
             promotionSliderImages.length && screens.md ? `container` : ''
           }`}
         >
-          <div>
-            <Row>
+          <div className="mt-4 px-2 md:px-0">
+            <Row gutter={[8, 16]}>
               <Col
                 lg={{ span: 16 }}
                 md={{ span: 24 }}
@@ -157,65 +158,36 @@ const Home: NextPageWithLayout<HomeProps> = ({
                 lg={{ span: 8 }}
                 md={{ span: 24 }}
                 xs={{ span: 24 }}
-                className="w-full"
+                className="hidden w-full md:block"
               >
-                <Row className="mt-4 mb-4 flex max-h-[150px]  items-center justify-between gap-2 px-4 lg:justify-center">
-                  <div
-                    onClick={() =>
-                      window.open(
-                        'https://zalo.me/phuocthienpharmacy',
-                        '_blank'
-                      )
-                    }
-                    className="flex-1 flex-col items-center rounded-xl border-solid border-gray-50 bg-white p-5 shadow-md hover:cursor-pointer hover:border-primary"
-                  >
-                    <img
-                      src={IMAGES.bill}
-                      alt="bill"
-                      className="fill-bg-primary h-12 w-full"
-                      style={{ minHeight: 32 }}
-                    />
-                    <div className="mt-4 text-center text-xs">Gửi toa</div>
-                  </div>
-                  <div
-                    onClick={() =>
-                      window.open(
-                        'https://zalo.me/phuocthienpharmacy',
-                        '_blank'
-                      )
-                    }
-                    className="flex-1 flex-col items-center rounded-xl border-solid border-gray-50 bg-white p-5 shadow-md hover:cursor-pointer hover:border-primary"
-                  >
-                    <img
-                      src={IMAGES.doctor}
-                      alt="bill"
-                      className="fill-bg-primary h-12 w-full"
-                      // style={{ minHeight: 32 }}
-                    />
-                    <div className="mt-4 text-center text-xs">Tư vấn</div>
-                  </div>
-                  <div
-                    onClick={() =>
-                      window.open(
-                        'https://zalo.me/phuocthienpharmacy',
-                        '_blank'
-                      )
-                    }
-                    className="flex-1 flex-col items-center rounded-xl border-solid border-gray-50 bg-white p-5 shadow-md hover:cursor-pointer hover:border-primary"
-                  >
-                    <img
-                      src={IMAGES.drug}
-                      alt="bill"
-                      className="fill-bg-primary h-12 w-full"
-                      style={{ minHeight: 32 }}
-                    />
-                    <div className="mt-4 text-center text-xs">Mua thuốc</div>
-                  </div>
-                </Row>
-                <Row className="hidden lg:relative lg:block lg:h-[150px] lg:max-h-[150px]">
-                  <HomepageCarouselEvent articles={articles} />
+                <Row gutter={[16, 8]} className="h-full">
+                  {[articles[0], articles[1]].map((article, idx) => (
+                    <Col xs={24} sm={12} lg={24} key={idx}>
+                      <LinkWrapper
+                        key={idx}
+                        href={`/bai-viet/${article?.slug}`}
+                        className="relative flex w-full flex-col"
+                      >
+                        <div className="aspect-[300/98]">
+                          <Image
+                            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgwVjB6IiBmaWxsPSIjZmZmIi8+PC9zdmc+"
+                            src={`${article.imageUrl || ''}`}
+                            alt="carousel image"
+                            layout="fill"
+                            placeholder="blur"
+                            objectFit={'fill'}
+                            className="rounded-xl"
+                            objectPosition="center"
+                          />
+                        </div>
+                      </LinkWrapper>
+                    </Col>
+                  ))}
                 </Row>
               </Col>
+            </Row>
+            <Row className="mt-4">
+              <HomeUtils />
             </Row>
           </div>
         </div>
@@ -264,12 +236,8 @@ Home.getLayout = (page) => {
   return <PrimaryLayout showSearch={showSearch}>{page}</PrimaryLayout>;
 };
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  const serverSideProps: {
-    props: HomeProps;
-  } = {
+export const getStaticProps = async (context: GetStaticPropsContext) => {
+  const staticProps: ReturnType<GetStaticProps<HomeProps>> = {
     props: {
       viralProductsLists: [],
       slideBanner: [],
@@ -282,13 +250,16 @@ export const getServerSideProps = async (
       articles: [],
       SEOData: {},
     },
+    revalidate: 3600, // 1 hour
   };
-  serverSideProps.props.SEOData.titleSeo =
+
+  staticProps.props.SEOData.titleSeo =
     'Nhà thuốc Phước Thiện - Nhà thuốc của người Đà Nẵng';
-  serverSideProps.props.SEOData.keywordSeo =
+  staticProps.props.SEOData.keywordSeo =
     'Nhà thuốc Phước Thiện, nhà thuốc, Phước Thiện, nhà thuốc Đà Nẵng';
-  serverSideProps.props.SEOData.metaSeo =
+  staticProps.props.SEOData.metaSeo =
     'Nhà thuốc Phước Thiện là chuỗi nhà thuốc lớn - uy tín số 1, chuyên thuốc theo đơn Bác sĩ , dược mỹ phẩm , thực phẩm bảo vệ sức khoẻ, thiết bị y tế, chăm sóc cá nhân.';
+
   const productClient = new ProductClient(context, {});
   const generalClient = new GeneralClient(context, {});
   const promotionClient = new PromotionClient(context, {});
@@ -330,42 +301,43 @@ export const getServerSideProps = async (
     ]);
 
     if (viralProducts.status === 'fulfilled' && viralProducts.value.data) {
-      serverSideProps.props.viralProductsLists = viralProducts.value.data || [];
+      staticProps.props.viralProductsLists = viralProducts.value.data || [];
     }
 
     if (slideBanner.status === 'fulfilled' && slideBanner.value.data) {
-      serverSideProps.props.slideBanner = slideBanner.value.data || [];
+      staticProps.props.slideBanner = slideBanner.value.data || [];
     }
     if (brands.status === 'fulfilled' && brands.value.data) {
-      serverSideProps.props.brands = brands.value.data || [];
+      staticProps.props.brands = brands.value.data || [];
     }
 
     if (categories.status === 'fulfilled' && categories.value.data) {
-      serverSideProps.props.categories = categories.value.data || [];
+      staticProps.props.categories = categories.value.data || [];
     }
 
     if (articles.status === 'fulfilled' && articles.value.data) {
-      serverSideProps.props.articles = articles.value.data || [];
+      staticProps.props.articles = articles.value.data || [];
     }
 
     if (
       productSearchKeywords.status === 'fulfilled' &&
       productSearchKeywords.value.data
     ) {
-      serverSideProps.props.productSearchKeywords =
+      staticProps.props.productSearchKeywords =
         productSearchKeywords.value.data || [];
     }
 
     if (campaigns.status === 'fulfilled' && campaigns.value.data) {
-      serverSideProps.props.campaigns = campaigns.value.data;
+      staticProps.props.campaigns = campaigns.value.data;
     }
 
     if (promotions.status === 'fulfilled' && promotions.value.data) {
-      serverSideProps.props.promotions = promotions.value.data;
+      staticProps.props.promotions = promotions.value.data;
     }
   } catch (error) {
-    console.error(error);
+    // do nothing
+    console.error('file: index.tsx:370 | error:', error);
   }
 
-  return serverSideProps;
+  return staticProps;
 };

@@ -1,6 +1,8 @@
 import APIResponse from '@configs/types/api-response.type';
 import BaseClient from './BaseClient';
-import MenuModel from '@configs/models/menu.model';
+import MenuModel, {
+  ProductTypeGroupCategory,
+} from '@configs/models/menu.model';
 import ProductType from '@configs/models/product-type.model';
 import ProductGroupModel from '@configs/models/product-group.model';
 import BrandModel from '@configs/models/brand.model';
@@ -17,6 +19,24 @@ export class GeneralClient extends BaseClient {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(ctx: any, data: any) {
     super(ctx, data);
+  }
+  // v2
+  async getCategoryProduct({
+    slugs,
+    maxProductResult,
+  }: {
+    slugs: {
+      productTypeSlug: string;
+      productGroupSlug: string;
+    }[];
+    maxProductResult: number;
+  }): Promise<APIResponse<ProductTypeGroupCategory[]>> {
+    return await super.call(
+      'POST',
+      'categories',
+      { slugs, maxProductResult },
+      'v2'
+    );
   }
 
   async getMenu(): Promise<APIResponse<MenuModel[]>> {

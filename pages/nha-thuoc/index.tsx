@@ -1,5 +1,5 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { GetServerSidePropsContext } from 'next';
+import { GetStaticProps, GetStaticPropsContext } from 'next';
 import { Empty, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import { DrugstoreClient } from '@libs/client/DrugStore';
@@ -58,17 +58,16 @@ DrugstorePage.getLayout = (page) => {
   return <PrimaryLayout>{page}</PrimaryLayout>;
 };
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  const serverSideProps: {
-    props: {
+export const getStaticProps = async (context: GetStaticPropsContext) => {
+  const staticProps: ReturnType<
+    GetStaticProps<{
       drugstores?: DrugStore[];
-    };
-  } = {
+    }>
+  > = {
     props: {
       drugstores: [],
     },
+    revalidate: 3600, // 1 hour
   };
 
   const drugstoreClient = new DrugstoreClient(context, {});
@@ -79,11 +78,11 @@ export const getServerSideProps = async (
     ]);
 
     if (drugstores.data) {
-      serverSideProps.props.drugstores = drugstores.data || [];
+      staticProps.props.drugstores = drugstores.data || [];
     }
   } catch (error) {
     console.error(error);
   }
 
-  return serverSideProps;
+  return staticProps;
 };

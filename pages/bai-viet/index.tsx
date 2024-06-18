@@ -1,7 +1,7 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
-import { GetServerSidePropsContext } from 'next';
+import { GetStaticProps, GetStaticPropsContext } from 'next';
 import React from 'react';
 import Breadcrumbs from '@components/Breadcrumbs';
 import { Article, Category } from '@configs/models/cms.model';
@@ -82,16 +82,13 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
   );
 };
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  const serverSideProps: {
-    props: EventPageProps;
-  } = {
+export const getStaticProps = async (context: GetStaticPropsContext) => {
+  const serverSideProps: ReturnType<GetStaticProps<EventPageProps>> = {
     props: {
       articles: [],
       categories: [],
     },
+    revalidate: 3600, // 1 hour
   };
 
   const cmsClient = new CmsClient(context, {});

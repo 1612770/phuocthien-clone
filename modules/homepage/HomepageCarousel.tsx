@@ -37,13 +37,13 @@ function HomepageCarousel({
   const carouselRef = useRef<CarouselRef | null>(null);
 
   if (!sliderImages || sliderImages.length === 0) {
-    return <div className="relative aspect-[21/9] h-[120px]"></div>;
+    return <div className="relative aspect-[3/1]"></div>;
   }
 
   const pairedSlides = getPairedSlides(sliderImages, numberSlidePerPage);
 
   return (
-    <div className="relative mt-4 ">
+    <div className="relative ">
       <Carousel
         autoplay
         dots={false}
@@ -60,13 +60,7 @@ function HomepageCarousel({
                 className="w-full"
               >
                 <div className={`flex-1 overflow-hidden`}>
-                  <div
-                    className={`relative aspect-[3/1] h-[${
-                      type === 'primary' ? 300 : 80
-                    }px] lg:h-[${
-                      type === 'primary' ? 300 : 200
-                    }px] w-full rounded-full`}
-                  >
+                  <div className={`relative aspect-[3/1]`}>
                     <ImageWithFallback
                       src={slide.url || ''}
                       alt="carousel image"

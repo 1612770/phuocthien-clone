@@ -1,14 +1,12 @@
 import ProductCard from 'components/templates/ProductCard';
-import { Badge, Button, Typography } from 'antd';
+import { Button, Typography } from 'antd';
 import { ProductClient } from '@libs/client/Product';
 import { useState } from 'react';
 import ViralProductsListModel from '@configs/models/viral-products-list.model';
 import { useAppMessage } from '@providers/AppMessageProvider';
 import Product from '@configs/models/product.model';
 import VIRAL_PRODUCTS_LOAD_PER_TIME from '@configs/constants/viral-products-load-per-time';
-import Link from 'next/link';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
-import ImageUtils from '@libs/utils/image.utils';
 import { useRouter } from 'next/router';
 
 function ViralProductsList({
@@ -71,9 +69,7 @@ function ViralProductsList({
 
   return listViralProducts?.length ? (
     <div
-      className={
-        ' py-4 ' + (invertBackground ? 'bg-primary-light' : 'bg-gray-50')
-      }
+      className={'py-4 ' + (invertBackground ? 'bg-primary-light' : 'bg-white')}
     >
       <div
         className={`rounded-t-xl bg-gradient-to-t  from-primary-bestsell-color-dark  to-primary-bestsell-color-light px-0 lg:container`}
@@ -101,7 +97,6 @@ function ViralProductsList({
                 src={viralProductsList?.imageUrl || ''}
                 layout="fill"
                 objectFit="cover"
-                // getMockImage={() => ImageUtils.getRandomMockCampaignImageUrl()}
               ></ImageWithFallback>
             </div>
           </div>
