@@ -68,7 +68,10 @@ const ProductGroupPage = ({
           >
             Bộ lọc
           </Typography.Title>
-          <FilterOptions productBrands={productBrands || []} />
+          <FilterOptions
+            productBrands={productBrands || []}
+            showFilterIsPrescripted={productType?.seoUrl === 'thuoc'}
+          />
         </div>
         <div>
           <div className=" lg:container lg:pl-0">

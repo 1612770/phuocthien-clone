@@ -157,7 +157,9 @@ function ProductCard({
                     <div className="mt-2">
                       {product.isPrescripted ? (
                         <div className="w-full text-center">
-                          <Button className="w-full">Liên hệ dược sĩ</Button>
+                          <Button className="w-full" type="primary">
+                            Liên hệ dược sĩ
+                          </Button>
                         </div>
                       ) : (
                         <AddToCartButton

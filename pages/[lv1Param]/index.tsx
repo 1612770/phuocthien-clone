@@ -84,11 +84,16 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
       serverSideProps.props.SEOData.titleSeo = productType.data.titleSeo;
       serverSideProps.props.SEOData.metaSeo = productType.data.metaSeo;
       serverSideProps.props.SEOData.keywordSeo = productType.data.keywordSeo;
-
+      const filterIsPrescripted =
+        (context.query['thuoc-ke-don'] as string) || 'ALL';
       const products = await productClient.getProducts({
         page: context.query.trang ? Number(context.query.trang) : 1,
         pageSize: PRODUCTS_LOAD_PER_TIME,
         productTypeKey: productType.data?.key,
+        isPrescripted:
+          filterIsPrescripted === 'ALL'
+            ? undefined
+            : filterIsPrescripted === 'true',
         productionBrandKeys: context.query.brands
           ? (context.query.brands as string).split(',')
           : undefined,

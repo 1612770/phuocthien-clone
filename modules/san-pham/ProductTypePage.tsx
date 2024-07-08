@@ -60,7 +60,10 @@ function ProductTypePage({
           >
             Bộ lọc
           </Typography.Title>
-          <FilterOptions productBrands={productBrands || []} />
+          <FilterOptions
+            productBrands={productBrands || []}
+            showFilterIsPrescripted={productType?.productTypeUrl === 'thuoc'}
+          />
         </div>
         <div>
           <div className=" lg:container lg:pl-0">
@@ -97,7 +100,6 @@ function ProductTypePage({
                     onFilterClick={() => setOpenFilterDrawer(false)}
                   />
                 </Drawer>
-
                 {[
                   {
                     label: 'Giá thấp',

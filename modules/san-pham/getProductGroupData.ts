@@ -38,7 +38,8 @@ const getProductGroupData = async (context: GetServerSidePropsContext) => {
   productGroupData.productType = productType.data;
   productGroupData.productGroup = productGroup.data;
   productGroupData.productBrands = productBrands.data;
-
+  const filterIsPrescripted =
+    (context.query['thuoc-ke-don'] as string) || 'ALL';
   const products = await productClient.getProducts({
     page: context.query.trang ? Number(context.query.trang) : 1,
     pageSize: PRODUCTS_LOAD_PER_TIME,
@@ -49,6 +50,10 @@ const getProductGroupData = async (context: GetServerSidePropsContext) => {
       : undefined,
     sortBy: (context.query['sap-xep-theo'] as 'GIA_BAN_LE') || undefined,
     sortOrder: (context.query['sort'] as 'ASC' | 'DESC') || undefined,
+    isPrescripted:
+      filterIsPrescripted === 'ALL'
+        ? undefined
+        : filterIsPrescripted === 'true',
   });
 
   if (products.data) {

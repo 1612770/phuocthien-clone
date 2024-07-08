@@ -4,6 +4,83 @@ import { flatten } from 'lodash';
 
 export const listMenu = [
   {
+    productTypeUrl: 'thuoc',
+    productTypeName: 'Thuốc',
+    fetchAll: true,
+    productGroups: [
+      {
+        productGroupUrl: 'da-lieu-di-ung',
+        productGroupImage: '/photos/164934CH_da-lieu-di-ung.svg',
+        productGroupName: 'Da liễu, dị ứng',
+      },
+      {
+        productGroupUrl: 'dau-cao-xoa-mieng-dan',
+        productGroupImage: '/photos/163525CH_dau-cao-xoa-mieng-dan.svg',
+        productGroupName: 'Dầu, cao xoa, miếng dán',
+      },
+      {
+        productGroupUrl: 'thuoc-lam-dep-giam-can',
+        productGroupImage: '/photos/160926CH_thuoc-lam-dep-giam-can.svg',
+        productGroupName: 'Thuốc làm đẹp, giảm cân',
+      },
+      {
+        productGroupUrl: 'giam-dau-ha-sot-khang-viem',
+        productGroupImage: '/photos/163129CH_giam-dau-ha-sot-khang-viem.svg',
+        productGroupName: 'Giảm đau, hạ sốt, kháng viêm',
+      },
+      {
+        productGroupUrl: 'tiet-nieu-sinh-duc',
+        productGroupImage: '/photos/165245CH_tiet-nieu-sinh-duc.svg',
+        productGroupName: 'Tiết niệu, sinh dục',
+      },
+      {
+        productGroupUrl: 'ho-hap',
+        productGroupImage: '/photos/160816CH_ho-hap.svg',
+        productGroupName: 'Hô hấp',
+      },
+      {
+        productGroupUrl: 'thuoc-bo-va-vitamin',
+        productGroupImage: '/photos/164145CH_thuoc-bo-va-vitamin.svg',
+        productGroupName: 'Thuốc bổ và vitamin',
+      },
+      {
+        productGroupUrl: 'thuoc-dieu-tri-ung-thu',
+        productGroupImage: '/photos/160858CH_thuoc-dieu-tri-ung-thu.svg',
+        productGroupName: 'Thuốc điều trị ung thư',
+      },
+      {
+        productGroupUrl: 'tieu-hoa-gan-mat',
+        productGroupImage: '/photos/161729CH_tieu-hoa-gan-mat.svg',
+        productGroupName: 'Tiêu hoá, gan mật',
+      },
+      {
+        productGroupUrl: 'mat-tai-mui-hong',
+        productGroupImage: '/photos/163245CH_mat-tai-mui-hong.svg',
+        productGroupName: 'Mắt, tai mũi họng',
+      },
+      {
+        productGroupUrl: 'tim-mach-tieu-duong-mo-mau',
+        productGroupImage: '/photos/160446CH_tim-mach-tieu-duong-mo-mau.svg',
+        productGroupName: 'Tim mạch, tiểu đường, mỡ máu',
+      },
+      {
+        productGroupUrl: 'than-kinh-nao-bo',
+        productGroupImage: '/photos/162245CH_than-kinh-nao-bo.svg',
+        productGroupName: 'Thần kinh, não bộ',
+      },
+      {
+        productGroupUrl: 'co-xuong-khop-gut',
+        productGroupImage: '/photos/163856CH_co-xuong-khop-gut.svg',
+        productGroupName: 'Cơ xương khớp, gút',
+      },
+      {
+        productGroupUrl: 'khang-sinh-khang-nam',
+        productGroupImage: '/photos/161254CH_khang-sinh-khang-nam.svg',
+        productGroupName: 'Kháng sinh, kháng nấm',
+      },
+    ],
+  },
+  {
     productTypeUrl: 'thuc-pham-chuc-nang',
     productTypeName: 'Thực phẩm chức năng',
     fetchAll: true,
