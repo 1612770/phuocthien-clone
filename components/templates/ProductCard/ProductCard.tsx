@@ -143,18 +143,20 @@ function ProductCard({
                       </div>
                     </Typography.Text>
 
-                    <Typography.Text className="mt-1 block">
-                      <Typography.Text className="text-base font-semibold text-primary-dark">
-                        {promotionPercent?.showPromoOnPrice
-                          ? priceWithDiscount
-                          : price}
-                      </Typography.Text>
-                      {product?.unit && (
-                        <Typography.Text className="text-base">
-                          &nbsp;/&nbsp;{product?.unit}
+                    {!product.isPrescripted && (
+                      <Typography.Text className="mt-1 block">
+                        <Typography.Text className="text-base font-semibold text-primary-dark">
+                          {promotionPercent?.showPromoOnPrice
+                            ? priceWithDiscount
+                            : price}
                         </Typography.Text>
-                      )}
-                    </Typography.Text>
+                        {product?.unit && (
+                          <Typography.Text className="text-base">
+                            &nbsp;/&nbsp;{product?.unit}
+                          </Typography.Text>
+                        )}
+                      </Typography.Text>
+                    )}
                     {promotionPercent?.showPromoOnPrice && (
                       <Typography.Text className="text-gray line-through">
                         {price}
