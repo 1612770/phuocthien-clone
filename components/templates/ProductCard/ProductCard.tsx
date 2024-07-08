@@ -126,7 +126,7 @@ function ProductCard({
 
               <div className="relative flex flex-col">
                 <Space direction="vertical" size={0}>
-                  <div className="h-[90px] flex-1">
+                  <div className="h-[100px] flex-1">
                     <Typography.Text
                       title={displayName}
                       className={`three-line-text mt-7 ${
@@ -134,7 +134,15 @@ function ProductCard({
                       }`}
                     >
                       {displayName}
+                      <div className="text-xs font-bold text-primary">
+                        <i>
+                          {product.isPrescripted
+                            ? 'Sản phẩm cần tư vấn của dược sĩ'
+                            : ''}
+                        </i>
+                      </div>
                     </Typography.Text>
+
                     <Typography.Text className="mt-1 block">
                       <Typography.Text className="text-base font-semibold text-primary-dark">
                         {promotionPercent?.showPromoOnPrice
@@ -157,9 +165,7 @@ function ProductCard({
                     <div className="mt-2">
                       {product.isPrescripted ? (
                         <div className="w-full text-center">
-                          <Button className="w-full" type="primary">
-                            Liên hệ dược sĩ
-                          </Button>
+                          <Button className="w-full">Liên hệ dược sĩ</Button>
                         </div>
                       ) : (
                         <AddToCartButton
