@@ -66,13 +66,13 @@ function ArticleItem({
         ) : (
           <div
             className={`group flex items-center gap-2 lg:items-start ${
-              isFromPageList ? 'flex-col' : 'flex-col sm:flex-row'
+              isFromPageList || !sm ? 'flex-col' : 'flex-col sm:flex-row'
             } `}
             title={article?.title}
           >
             <div
               className={`${
-                isFromPageList
+                isFromPageList || !sm
                   ? 'w-full'
                   : ' h-[150px]  w-[fit-content] lg:h-[125px]'
               } relative aspect-[3/2] shrink-0 overflow-hidden rounded-lg border border-solid border-gray-100 transition-transform duration-300 group-hover:scale-105 `}
