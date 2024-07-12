@@ -6,6 +6,7 @@ type ViralProductsListModel = Partial<{
   name: string;
   imageUrl: string;
   visible: boolean;
+
   totalProductViral?: number;
   listProductViral: {
     key?: string;

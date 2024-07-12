@@ -21,7 +21,7 @@ function ProductCardDetail(
       <div className="lg:container lg:pl-0">
         <Typography.Title
           level={3}
-          className="mb-0 mt-6 font-medium uppercase lg:mb-4 lg:mt-12"
+          className="mb-0 mt-2 font-medium capitalize md:mt-4 lg:mb-4 "
         >
           Thông tin sản phẩm
         </Typography.Title>
@@ -29,7 +29,7 @@ function ProductCardDetail(
 
       <AppDangerouslySetInnerHTML
         {...props}
-        className=" max-h-[500px] overflow-hidden"
+        className=" max-h-[500px] overflow-hidden text-lg md:text-base"
         ref={(ref) => {
           divRef.current = ref;
         }}

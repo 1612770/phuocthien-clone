@@ -56,8 +56,8 @@ function ProductList({
             <div className="">
               <Button
                 shape="circle"
-                size="large"
-                className="z-10 translate-x-[-60px] translate-y-[-10px]"
+                size="small"
+                className="z-10 translate-x-[5px] translate-y-[-10px]"
               >
                 <RightOutlined />
               </Button>
@@ -67,8 +67,8 @@ function ProductList({
             <div className="">
               <Button
                 shape="circle"
-                size="large"
-                className="z-10 translate-x-[40px] translate-y-[-10px]"
+                size="small"
+                className="z-10 translate-x-[-5px] translate-y-[-10px]"
               >
                 <LeftOutlined />
               </Button>

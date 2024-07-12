@@ -8,6 +8,7 @@ const IMAGES = {
   bill: '/bill.svg',
   awards: '/awards.png',
   news: '/news.svg',
+  empty: '/empty.svg',
   location: '/location.svg',
 };
 

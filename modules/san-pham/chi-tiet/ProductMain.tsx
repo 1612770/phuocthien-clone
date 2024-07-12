@@ -103,7 +103,7 @@ function ProductMain({
           </div>
         )}
         <ProductBonusSection offers={offers} />
-        <div className="mb-4 flex items-center justify-around rounded-3xl border-2 border-solid border-gray-100 p-2 shadow-md">
+        <div className="flex items-center justify-around rounded-3xl border-2 border-solid border-gray-100 p-2 shadow-md md:mb-4">
           {product.isPrescripted ? (
             <div className="grid w-full grid-flow-row grid-cols-2 gap-x-2">
               <div className="w-full">
@@ -160,7 +160,7 @@ function ProductMain({
       </div>
       <ProductDrugStoresSection drugStoresAvailable={drugStoresAvailable} />
 
-      <p className="py-2">
+      <p className="md:py-2">
         Gọi nhận tư vấn với dược sĩ
         <a href="tel:1800599964" className="px-2 font-bold text-primary">
           1800 599 964

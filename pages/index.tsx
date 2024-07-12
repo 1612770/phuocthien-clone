@@ -6,7 +6,6 @@ import HomepageCarousel from '@modules/homepage/HomepageCarousel';
 import HomepageSearchSection from '@modules/homepage/HomepageSearchSection';
 import ViralProductsListModel from '@configs/models/viral-products-list.model';
 import VIRAL_PRODUCTS_LOAD_PER_TIME from '@configs/constants/viral-products-load-per-time';
-import dynamic from 'next/dynamic';
 import { useAppData } from '@providers/AppDataProvider';
 import { GeneralClient } from '@libs/client/General';
 import SlideBannerModel from '@configs/models/slide-banner.model';
@@ -25,23 +24,11 @@ import PagePropsWithSeo from '@configs/types/page-props-with-seo';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import Image from 'next/image';
 import { HomeUtils } from '@modules/homepage/HomeUtils';
+import ViralProductsList from '@modules/products/ViralProductsList';
+import HomepageBrands from '@modules/homepage/HomepageBrands';
+import MainInfoSection from '@modules/homepage/MainInfoSection';
 
 const { useBreakpoint } = Grid;
-
-const ViralProductsList = dynamic(
-  () => import('@modules/products/ViralProductsList'),
-  { ssr: false }
-);
-
-const MainInfoSection = dynamic(
-  () => import('@modules/homepage/MainInfoSection'),
-  { ssr: false }
-);
-
-const HomepageBrands = dynamic(
-  () => import('@modules/homepage/HomepageBrands'),
-  { ssr: false }
-);
 
 interface HomeProps extends PagePropsWithSeo {
   viralProductsLists?: ViralProductsListModel[];
@@ -112,13 +99,13 @@ const Home: NextPageWithLayout<HomeProps> = ({
 
   return (
     <div className="mb-0 lg:mb-8">
-      <div className="w-screen overflow-hidden">
+      <div className="container overflow-hidden">
         <div
           className={`px-0 ${
             promotionSliderImages.length && screens.md ? `container` : ''
           }`}
         >
-          <div className="mt-4 px-2 md:px-0">
+          <div className="px-2 md:px-0 lg:mt-4">
             <Row gutter={[8, 16]}>
               <Col
                 lg={{ span: 16 }}
@@ -133,6 +120,7 @@ const Home: NextPageWithLayout<HomeProps> = ({
                     type="primary"
                   />
                 )}
+
                 {!!bannerVisibleSlides?.length && (
                   <div
                     className={`${
@@ -161,32 +149,48 @@ const Home: NextPageWithLayout<HomeProps> = ({
                 className="hidden w-full md:block"
               >
                 <Row gutter={[16, 8]} className="h-full">
-                  {[articles[0], articles[1]].map((article, idx) => (
-                    <Col xs={24} sm={12} lg={24} key={idx}>
-                      <LinkWrapper
-                        key={idx}
-                        href={`/bai-viet/${article?.slug}`}
-                        className="relative flex w-full flex-col"
-                      >
-                        <div className="aspect-[300/98]">
-                          <Image
-                            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgwVjB6IiBmaWxsPSIjZmZmIi8+PC9zdmc+"
-                            src={`${article.imageUrl || ''}`}
-                            alt="carousel image"
-                            layout="fill"
-                            placeholder="blur"
-                            objectFit={'fill'}
-                            className="rounded-xl"
-                            objectPosition="center"
-                          />
-                        </div>
-                      </LinkWrapper>
-                    </Col>
-                  ))}
+                  <Col xs={24} sm={12} lg={24}>
+                    <LinkWrapper
+                      href="#"
+                      className="relative flex w-full flex-col"
+                    >
+                      <div className="aspect-[300/98]">
+                        <Image
+                          blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgwVjB6IiBmaWxsPSIjZmZmIi8+PC9zdmc+"
+                          src={`https://pt-storage-prd.hn.ss.bfcplatform.vn/tag2.jpg`}
+                          alt="carousel image"
+                          layout="fill"
+                          placeholder="blur"
+                          objectFit={'fill'}
+                          className="rounded-xl"
+                          objectPosition="center"
+                        />
+                      </div>
+                    </LinkWrapper>
+                  </Col>
+                  <Col xs={24} sm={12} lg={24}>
+                    <LinkWrapper
+                      href={`/chinh-sach-doi-tra`}
+                      className="relative flex w-full flex-col"
+                    >
+                      <div className="aspect-[300/98]">
+                        <Image
+                          blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgwVjB6IiBmaWxsPSIjZmZmIi8+PC9zdmc+"
+                          src={`https://pt-storage-prd.hn.ss.bfcplatform.vn/tag1.jpg`}
+                          alt="carousel image"
+                          layout="fill"
+                          placeholder="blur"
+                          objectFit={'fill'}
+                          className="rounded-xl"
+                          objectPosition="center"
+                        />
+                      </div>
+                    </LinkWrapper>
+                  </Col>
                 </Row>
               </Col>
             </Row>
-            <Row className="mt-4">
+            <Row>
               <HomeUtils />
             </Row>
           </div>
@@ -221,10 +225,8 @@ const Home: NextPageWithLayout<HomeProps> = ({
           <HomepageBrands brands={brands} />
         </div>
       )}
-      <MainInfoSection
-        articles={articles}
-        categories={categories}
-      ></MainInfoSection>
+
+      <MainInfoSection articles={articles} categories={categories} />
     </div>
   );
 };

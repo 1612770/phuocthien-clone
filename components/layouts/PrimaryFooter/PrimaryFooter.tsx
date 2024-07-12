@@ -5,20 +5,10 @@ import { useAppData } from '@providers/AppDataProvider';
 import { useWatchCacheProduct } from '@libs/utils/hooks/useWatchCacheProduct';
 import ProductList from '@components/templates/ProductList';
 
-import {
-  FacebookFilled,
-  GlobalOutlined,
-  MailOutlined,
-  PhoneOutlined,
-} from '@ant-design/icons';
+import { GlobalOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
 import { configPage } from '@configs/constants/generalPage';
 import { useRouter } from 'next/router';
-import dynamic from 'next/dynamic';
-
-const FocusContentSection = dynamic(
-  () => import('@modules/homepage/FocusContentSection'),
-  { ssr: false }
-);
+import FocusContentSection from '@modules/homepage/FocusContentSection';
 
 function PrimaryFooter() {
   const { focusContent } = useAppData();
@@ -28,11 +18,11 @@ function PrimaryFooter() {
   return (
     <>
       {!!products.length && (
-        <div className="py-8 px-4 lg:container lg:px-0">
+        <div className="py-2 px-4 md:py-8 lg:container lg:px-0">
           <Typography.Title
             level={3}
             className={
-              'm-0 my-4 text-center font-medium uppercase lg:text-left'
+              'm-0 text-center font-medium uppercase md:my-4 lg:text-left'
             }
           >
             Sản phẩm vừa xem
@@ -57,18 +47,7 @@ function PrimaryFooter() {
                   height={60}
                 />
               </div>
-              <Space className="mt-2">
-                <Link
-                  href="https://www.facebook.com/PhuocThienPharmacy/"
-                  passHref
-                >
-                  <a target={'_blank'}>
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
-                      <FacebookFilled className="text-white" size={16} />
-                    </span>
-                  </a>
-                </Link>
-              </Space>
+
               <div className="mt-4">
                 <Typography.Text className=" font-semibold uppercase text-primary">
                   Tải ứng dụng
@@ -107,13 +86,13 @@ function PrimaryFooter() {
             {configPage.map((el, idx) => {
               return (
                 <div key={`${el}-${idx}`} className="w-full">
-                  <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-primary">
+                  <Typography.Text className="my-0.5 mb-1 block font-semibold uppercase text-primary">
                     {el?.title || ''}
                   </Typography.Text>
                   {el.children.length > 0 ? (
                     el.children.map((page, idx) => (
                       <Link href={page.link} passHref key={`${page}-${idx}`}>
-                        <a className="flex min-h-[48px] md:min-h-[32px]">
+                        <a className="flex min-h-[25px] md:min-h-[32px]">
                           <Space className="my-0.5 w-full">
                             <Typography.Text className="cursor-pointer text-primary">
                               {page.title}
@@ -130,7 +109,7 @@ function PrimaryFooter() {
             })}
 
             <div className="w-full">
-              <Typography.Text className="my-0.5 mb-2 block font-semibold uppercase text-primary">
+              <Typography.Text className="my-0.5 mb-1 block font-semibold uppercase text-primary">
                 Thông tin liên hệ
               </Typography.Text>
               <Space className="my-0.5 w-full">
@@ -165,7 +144,7 @@ function PrimaryFooter() {
               Lân
             </Typography>
           </div>
-          <div className="mt-4 flex items-center justify-center ">
+          <div className="flex items-center justify-center md:mt-4 ">
             <a
               href="http://online.gov.vn/Home/WebDetails/106523"
               target="_blank"

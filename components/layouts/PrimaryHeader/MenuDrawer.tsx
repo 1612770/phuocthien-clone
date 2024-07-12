@@ -1,25 +1,15 @@
-import {
-  Button,
-  Collapse,
-  Divider,
-  Drawer,
-  DrawerProps,
-  Empty,
-  Space,
-  Typography,
-} from 'antd';
-import { Book, ChevronDown, LogOut, User, X } from 'react-feather';
+import { Button, Divider, Drawer, DrawerProps, Space, Typography } from 'antd';
+import { Book, LogOut, User, X } from 'react-feather';
 import IMAGES from '@configs/assests/images';
-import ImageWithFallback from '@components/templates/ImageWithFallback';
 import { useAuth } from '@providers/AuthProvider';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { listMenu } from '@configs/constants/listMenu';
+import { ProductTypesCollapse } from './ProductTypesCollapse';
 
 function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
-  // const { fullMenu } = useFullMenu();
   const { logOut, isUserLoggedIn } = useAuth();
   const router = useRouter();
+
   return (
     <Drawer
       rootClassName=""
@@ -100,78 +90,11 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
           </Button>
         )}
       </Space>
+
       <Divider className="mt-4 mb-0" />
-      <Collapse
-        accordion
-        bordered={false}
-        ghost
-        expandIconPosition="end"
-        expandIcon={({ isActive }) => (
-          <ChevronDown size={16} className={isActive ? 'rotate-180' : ''} />
-        )}
-      >
-        {listMenu.map((menu, idx) => (
-          <Collapse.Panel
-            header={
-              <span className=" flex items-center">
-                <Typography className=" text-base font-medium uppercase text-gray-700">
-                  {menu.productTypeName}
-                </Typography>
-              </span>
-            }
-            key={idx}
-          >
-            <div
-              className="-mt-6"
-              onClick={(e) => {
-                onClose?.(e);
-              }}
-            >
-              <Link href={`/${menu.productTypeUrl}`} passHref>
-                <a>
-                  <div className="my-2 -mx-4 flex cursor-pointer items-center">
-                    {/* <ImageWithFallback
-                      src={menu?.image || ''}
-                      width={32}
-                      height={32}
-                    /> */}
-                    <Typography className="ml-2 font-medium">
-                      Xem tất cả
-                    </Typography>
-                  </div>
-                </a>
-              </Link>
 
-              {!!menu.productGroups?.length &&
-                menu.productGroups?.map((group, idx) => (
-                  <Link
-                    key={idx}
-                    href={`/${menu.productTypeUrl}/${group?.productGroupUrl}`}
-                  >
-                    <a>
-                      <div className="my-2 -mx-4 flex cursor-pointer items-center">
-                        <ImageWithFallback
-                          src={group?.productGroupImage || ''}
-                          width={32}
-                          height={32}
-                        />
-                        <Typography className="ml-2">
-                          {group?.productGroupName}
-                        </Typography>
-                      </div>
-                    </a>
-                  </Link>
-                ))}
+      <ProductTypesCollapse />
 
-              {!menu.productGroups?.length && (
-                <Empty
-                  description={<Typography>Không có danh mục nào</Typography>}
-                ></Empty>
-              )}
-            </div>
-          </Collapse.Panel>
-        ))}
-      </Collapse>
       <Divider className="mt-4 mb-0" />
       <Space size={8} direction="vertical" className="mt-4 w-full">
         <div

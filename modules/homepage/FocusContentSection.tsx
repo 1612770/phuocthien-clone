@@ -12,31 +12,36 @@ function FocusContentSection({
   isProductPage?: boolean;
 }) {
   return (
-    <div className=" bg-primary-background py-4">
-      <div className=" p-2 lg:container lg:p-0">
+    <div
+      className={`bg-primary-background md:py-4 ${
+        isProductPage ? 'hidden md:block' : ''
+      }`}
+    >
+      <div className="p-1 md:p-2 lg:container lg:p-0">
         <div
-          className={`my-2 grid grid-cols-1 gap-2  md:grid-cols-2 md:gap-4 ${
+          className={`grid grid-cols-1 gap-2 md:my-2  md:grid-cols-2 md:gap-4 ${
             isProductPage ? 'ml-2 lg:grid-rows-2' : 'lg:grid-cols-4'
           } `}
         >
           {focusContent?.map((focus, index) => (
             <LinkWrapper href={focus.url} key={index}>
               <div className="flex items-center">
-                <div className="relative h-[40px] w-[40px] min-w-[40px]">
+                <div className="relative aspect-[1/1] h-[40px]">
                   <ImageWithFallback
                     layout="fill"
+                    unoptimized
                     alt={focus.name}
                     src={focus.imageUrl || ''}
                     getMockImage={() => ImageUtils.getFocusMockUrl()}
-                  ></ImageWithFallback>
+                  />
                 </div>
-                <div className="flex h-full flex-col items-center rounded-lg ">
-                  <div className=" flex flex-col">
-                    <Typography.Text className="mt-2 text-center text-sm font-medium text-primary ">
+
+                <div className="ml-2 flex h-full  flex-col items-center rounded-lg">
+                  <div className="flex flex-col">
+                    <Typography.Text className="mt-2 text-left text-sm font-medium text-primary md:text-center ">
                       {focus.name}
                     </Typography.Text>
-
-                    <Typography.Text className=" px-4 text-center text-xs">
+                    <Typography.Text className="text-left text-xs md:text-center">
                       {focus.description}
                     </Typography.Text>
                   </div>

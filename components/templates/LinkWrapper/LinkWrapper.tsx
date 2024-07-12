@@ -11,15 +11,15 @@ function LinkWrapper({
 }) {
   if (href) {
     return (
-      <span className={` ${className}`}>
+      <span className={className}>
         <Link href={href} passHref>
-          <a>{children}</a>
+          <a className="text-primary">{children}</a>
         </Link>
       </span>
     );
-  } else {
-    return <>{children}</>;
   }
+
+  return <>{children}</>;
 }
 
 export default LinkWrapper;

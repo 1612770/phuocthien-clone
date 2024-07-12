@@ -109,7 +109,17 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-height: 20px;
-  max-height: 40px;
+  max-height: 44px;
+}
+
+.three-line-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-height: 20px;
+  max-height: 68px;
 }
 
 .three-line-text {

@@ -26,7 +26,7 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
     <>
       <div className="px-4 pb-4 lg:container lg:px-0">
         <Breadcrumbs
-          className="pt-4 pb-2"
+          className="pb-2 md:pt-4"
           breadcrumbs={[
             {
               title: 'Trang chủ',
@@ -41,8 +41,8 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
 
       <div className="px-4 pb-4 lg:container lg:px-0">
         <Typography.Title
-          level={2}
-          className="m-0 mb-2 text-2xl font-medium md:text-4xl"
+          level={3}
+          className="m-0 mb-2 text-2xl font-bold text-primary md:text-4xl"
         >
           Góc sức khoẻ
         </Typography.Title>
@@ -56,26 +56,19 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
             />
           ))}
         </CategoryChipList>
+
         <div className="mt-4">
           <ArticleList>
             {articles?.map((article, idx) => (
-              <ArticleItem
-                article={article}
-                key={article.id}
-                indexBlog={idx}
-              ></ArticleItem>
+              <ArticleItem article={article} key={article.id} indexBlog={idx} />
             ))}
           </ArticleList>
         </div>
+
         <CategoryList>
-          {categories?.map((category) => {
-            return (
-              <CategoryListItem
-                key={category.id}
-                category={category}
-              ></CategoryListItem>
-            );
-          })}
+          {categories?.map((category) => (
+            <CategoryListItem key={category.id} category={category} />
+          ))}
         </CategoryList>
       </div>
     </>

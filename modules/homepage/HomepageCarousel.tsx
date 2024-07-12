@@ -39,17 +39,23 @@ function HomepageCarousel({
   if (!sliderImages || sliderImages.length === 0) {
     return <div className="relative aspect-[3/1]"></div>;
   }
-
+  sliderImages = [
+    ...sliderImages,
+    { url: 'https://pt-storage-prd.hn.ss.bfcplatform.vn/ban1.jpg' },
+    { url: 'https://pt-storage-prd.hn.ss.bfcplatform.vn/ban2.jpg' },
+    { url: 'https://pt-storage-prd.hn.ss.bfcplatform.vn/ban1.jpg' },
+  ];
   const pairedSlides = getPairedSlides(sliderImages, numberSlidePerPage);
 
   return (
-    <div className="relative ">
+    <div className="relative">
       <Carousel
         autoplay
         dots={false}
         fade={type === 'primary'}
         autoplaySpeed={type === 'primary' ? 2000 : 3500}
         ref={(ref) => (carouselRef.current = ref)}
+        className="h-[100%] max-w-[100%]"
       >
         {pairedSlides.map((slides, index) => (
           <div className="flex gap-2 lg:gap-4 " key={index}>
@@ -87,21 +93,21 @@ function HomepageCarousel({
       {sliderImages.length > 1 && (
         <>
           <Button
+            size="small"
             shape="circle"
-            size="large"
             aria-label="previous slide"
             onClick={() => carouselRef.current?.prev()}
-            icon={<ChevronLeft />}
-            className="absolute top-1/2 left-[32px] -translate-y-1/2 -translate-x-1/2"
+            icon={<ChevronLeft size={14} />}
+            className="absolute top-1/2 left-[16px] -translate-y-1/2 -translate-x-1/2"
           />
 
           <Button
+            size="small"
             shape="circle"
-            size="large"
             aria-label="next slide"
             onClick={() => carouselRef.current?.next()}
-            icon={<ChevronRight />}
-            className="absolute top-1/2 right-[32px] -translate-y-1/2 translate-x-1/2"
+            icon={<ChevronRight size={14} />}
+            className="absolute top-1/2 right-[16px] -translate-y-1/2 translate-x-1/2"
           />
         </>
       )}

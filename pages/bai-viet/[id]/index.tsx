@@ -1,7 +1,12 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
-import { GetServerSidePropsContext } from 'next';
+import {
+  GetStaticPaths,
+  GetStaticPathsContext,
+  GetStaticProps,
+  GetStaticPropsContext,
+} from 'next';
 import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '@components/Breadcrumbs';
 import { Article, Category } from '@configs/models/cms.model';
@@ -12,6 +17,7 @@ import ArticleItem from '../../../modules/tin-tuc/danh-muc/chi-tiet/ArticleItem'
 import { ChevronsDown } from 'react-feather';
 import ArticlePage from '@modules/tin-tuc/danh-muc/chi-tiet/ArticlePage';
 import PagePropsWithSeo from '@configs/types/page-props-with-seo';
+import { loadAll } from '@libs/helpers';
 
 interface EventPageProps extends PagePropsWithSeo {
   articles?: Article[];
@@ -29,6 +35,7 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
   const [offset, setOffset] = useState(0);
   const [limit] = useState(6);
   const [articlesPage, setArticlesPage] = useState<Article[]>(articles || []);
+
   useEffect(() => {
     setArticlesPage(articles || []);
 
@@ -37,6 +44,7 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
       setArticlesPage([]);
     };
   }, [articles]);
+
   const handleLoadMore = async () => {
     const cmsClient = new CmsClient(null, {});
     const resGetMoreArticle = await cmsClient.getArticles({
@@ -70,7 +78,7 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
     <>
       <div className="px-4 pb-4 lg:container lg:px-0">
         <Breadcrumbs
-          className="pt-4 pb-2"
+          className="md:pb-2 md:pt-4"
           breadcrumbs={[
             {
               title: 'Trang chủ',
@@ -91,7 +99,7 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
       <div className="px-4 pb-4 lg:container lg:px-0">
         <Typography.Title
           level={2}
-          className="m-0 mb-2 text-2xl font-medium md:text-4xl"
+          className="m-0 text-2xl font-medium md:mb-2 md:text-4xl"
         >
           {categories?.[0]?.title}
         </Typography.Title>
@@ -113,7 +121,7 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
                 article={article}
                 key={article.id}
                 isFromPageList={true}
-              ></ArticleItem>
+              />
             ))}
           </div>
           {offset + limit < totalArticle && (
@@ -131,57 +139,109 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
   );
 };
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
+export const getStaticPaths: GetStaticPaths = async (
+  context: GetStaticPathsContext
 ) => {
-  const serverSideProps: {
-    props: EventPageProps;
-  } = {
+  const cmsClient = new CmsClient(context, {});
+
+  const categories = await loadAll(
+    async ({ offset, limit }) =>
+      await cmsClient.getCMSCategories({
+        offset,
+        limit,
+        getTotal: true,
+        q: { type: 'BLOG', loadLevel: 1 },
+      })
+  );
+
+  let articles: Article[] = [];
+
+  articles = await loadAll(
+    async ({ offset, limit }) =>
+      await cmsClient.getArticles({
+        offset,
+        limit,
+        getTotal: true,
+        q: {
+          type: 'BLOG',
+          listCategoryIds: [
+            ...(categories?.map((el) => el.id) || []),
+            ...(categories
+              ?.map((el) => el.subCategories.map((sub) => sub.id))
+              .flat() || []),
+          ],
+        },
+      })
+  );
+
+  const articlePaths = articles.map((article) => ({
+    params: { id: article.slug },
+  }));
+
+  const categoryPaths = categories.map((category) => ({
+    params: { id: category.slug },
+  }));
+
+  const paths = [...categoryPaths, ...articlePaths];
+
+  return {
+    paths,
+    fallback: 'blocking',
+  };
+};
+
+export const getStaticProps = async (context: GetStaticPropsContext) => {
+  const staticProps: ReturnType<GetStaticProps<EventPageProps>> = {
     props: {
       articles: [],
       categories: [],
       totalArticle: 0,
       SEOData: {},
     },
+    revalidate: 86400, // 1 day
   };
 
   const cmsClient = new CmsClient(context, {});
-  const categorySlug = String(context.query.id);
+  const categorySlug = String(context.params?.id);
   const checkLastId = categorySlug?.split('-');
   const getIdArticle = +checkLastId[checkLastId.length - 1];
   const isArticle = getIdArticle >= 100000;
+
   if (isArticle) {
     try {
-      const getArticle = await cmsClient.getArticles({
+      const articlesData = await cmsClient.getArticles({
         q: {
           slug: categorySlug,
           type: 'BLOG',
         },
       });
+
       if (
-        getArticle.status === 'OK' &&
-        getArticle.data &&
-        getArticle.data.length > 0
+        articlesData.status === 'OK' &&
+        articlesData.data &&
+        articlesData.data.length > 0
       ) {
-        const article = getArticle.data[0];
-        serverSideProps.props.article = article;
-        serverSideProps.props.SEOData.titleSeo = article.seoData.title;
-        serverSideProps.props.SEOData.keywordSeo = article.seoData.keywords;
-        serverSideProps.props.SEOData.metaSeo = article.seoData.description;
-        serverSideProps.props.SEOData.imgSeo = article.imageUrl;
+        const article = articlesData.data[0];
+
+        staticProps.props.article = article;
+        staticProps.props.SEOData.titleSeo = article.seoData.title;
+        staticProps.props.SEOData.keywordSeo = article.seoData.keywords;
+        staticProps.props.SEOData.metaSeo = article.seoData.description;
+        staticProps.props.SEOData.imgSeo = article.imageUrl;
+
         const underCategoryId = article.category.underCategoryId;
         if (underCategoryId) {
-          const getUnderCategory = await cmsClient.getCMSCategories({
+          const category = await cmsClient.getCMSCategories({
             q: { type: 'BLOG', id: underCategoryId },
           });
           if (
-            getUnderCategory.status === 'OK' &&
-            getUnderCategory.data &&
-            getUnderCategory.data.length > 0
+            category.status === 'OK' &&
+            category.data &&
+            category.data.length > 0
           ) {
-            const underCategory = getUnderCategory.data[0];
+            const underCategory = category.data[0];
             article.category.underCategory = underCategory;
-            serverSideProps.props.article = article;
+            staticProps.props.article = article;
           }
         }
       }
@@ -190,45 +250,51 @@ export const getServerSideProps = async (
     }
   } else {
     try {
-      const getCategory = await cmsClient.getCMSCategories({
+      const categoriesData = await cmsClient.getCMSCategories({
         offset: 0,
         q: { type: 'BLOG', slug: categorySlug },
         limit: 100,
       });
-      if (getCategory.status === 'OK') {
-        const category = getCategory.data;
-        serverSideProps.props.categories = category;
-        if (category && category?.length > 0) {
-          const underCategoryId = category[0].underCategoryId;
+
+      if (categoriesData.status === 'OK') {
+        const categories = categoriesData.data;
+
+        staticProps.props.categories = categories;
+
+        if (categories && categories?.length > 0) {
+          const underCategoryId = categories[0].underCategoryId;
+
           if (underCategoryId) {
-            const getUnderCategory = await cmsClient.getCMSCategories({
+            const underCategoryData = await cmsClient.getCMSCategories({
               q: { type: 'BLOG', id: underCategoryId },
             });
             if (
-              getUnderCategory.status === 'OK' &&
-              getUnderCategory.data &&
-              getUnderCategory.data.length > 0
+              underCategoryData.status === 'OK' &&
+              underCategoryData.data &&
+              underCategoryData.data.length > 0
             ) {
-              const underCategory = getUnderCategory.data[0];
-              category[0].underCategory = underCategory;
-              serverSideProps.props.categories = category;
+              const underCategory = underCategoryData.data[0];
+              categories[0].underCategory = underCategory;
+              staticProps.props.categories = categories;
             }
           }
-          const getArticles = await cmsClient.getArticles({
+
+          const articlesData = await cmsClient.getArticles({
             offset: 0,
             limit: 6,
             getTotal: true,
             q: {
               type: 'BLOG',
               listCategoryIds: [
-                ...(category?.[0]?.subCategories.map((el) => el.id) || []),
-                category?.[0].id,
+                ...(categories?.[0]?.subCategories.map((el) => el.id) || []),
+                categories?.[0].id,
               ],
             },
           });
-          if (getArticles.status === 'OK' && getArticles.data) {
-            serverSideProps.props.articles = getArticles.data;
-            serverSideProps.props.totalArticle = getArticles.total || 0;
+
+          if (articlesData.status === 'OK' && articlesData.data) {
+            staticProps.props.articles = articlesData.data;
+            staticProps.props.totalArticle = articlesData.total || 0;
           }
         }
       }
@@ -237,7 +303,7 @@ export const getServerSideProps = async (
     }
   }
 
-  return serverSideProps;
+  return staticProps;
 };
 
 export default EventPage;

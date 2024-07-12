@@ -334,7 +334,7 @@ function CartItem({
                   giftPromotion: cartGift?.giftPromotion,
                 })
               }
-              type="ghost"
+              ghost
               shape="circle"
               className=" bg-stone-50 hover:bg-stone-100"
               icon={

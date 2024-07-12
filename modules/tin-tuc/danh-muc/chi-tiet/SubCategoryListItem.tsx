@@ -18,7 +18,7 @@ function SubCategoryListItem({
     <div
       key={categoryId}
       onClick={() => onClick?.(slug)}
-      className={` cursor-pointer rounded-md bg-none px-4 py-2 text-sm font-medium hover:text-primary md:bg-white ${css}`}
+      className={`cursor-pointer  rounded-full border-solid border-primary bg-none px-4 py-2 text-sm font-medium hover:text-primary md:bg-white ${css}`}
     >
       {title}
     </div>

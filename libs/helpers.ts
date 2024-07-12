@@ -1,4 +1,5 @@
 import Product from '@configs/models/product.model';
+import APIResponse from '@configs/types/api-response.type';
 import { getCookie as _getCookie, setCookie as _setCookie } from 'cookies-next';
 import parse from 'html-react-parser';
 
@@ -69,6 +70,37 @@ export function getVisibleItems<T extends { visible?: boolean }>(array: T[]) {
     (item) => !(typeof item?.visible === 'boolean' && !item?.visible)
   );
 }
+
+export const loadAll = async <T>(
+  loadFunc: (params: {
+    offset: number;
+    limit: number;
+  }) => Promise<APIResponse<T[]>>
+) => {
+  const limit = 50;
+  let result: T[] = [];
+
+  const _result = await loadFunc({ offset: 0, limit });
+
+  const total = _result.total || 0;
+
+  const promisesByOffset = Array.from(
+    { length: Math.ceil(total / limit) },
+    (_, index) => {
+      return loadFunc({ offset: index * limit, limit });
+    }
+  );
+
+  const results = await Promise.all(promisesByOffset);
+
+  results.forEach((res) => {
+    if (res.data) {
+      result = [...result, ...res.data];
+    }
+  });
+
+  return result;
+};
 
 export function getAvatarCharacters(name?: string) {
   if (!name) return '';

@@ -13,7 +13,7 @@ function HomepageBrands({ brands }: { brands: BrandModel[] }) {
     <div className="lg:container">
       <div className="flex items-center ">
         <div>
-          <div className="mr-4">
+          <div className="mr-1 md:mr-4">
             <img
               src={IMAGES.awards}
               alt="Thương hiệu yêu thích"
@@ -22,7 +22,7 @@ function HomepageBrands({ brands }: { brands: BrandModel[] }) {
           </div>
         </div>
         <div>
-          <Typography.Title level={3} className="m-0 font-bold">
+          <Typography.Title level={4} className="m-0 font-bold">
             Thương hiệu nổi bật
           </Typography.Title>
         </div>
@@ -66,20 +66,20 @@ function HomepageBrands({ brands }: { brands: BrandModel[] }) {
           <>
             <Button
               shape="circle"
-              size="large"
+              size="small"
               onClick={() => carouselRef.current?.prev()}
-              icon={<ChevronLeft />}
+              icon={<ChevronLeft size={14} />}
               aria-label="previous slide"
-              className="z-999 absolute top-1/2 left-[16px] ml-[16px] flex min-h-[48px] min-w-[48px] -translate-y-1/2 -translate-x-1/2 items-center justify-center md:min-h-[40px] md:min-w-[40px] lg:ml-0"
+              className="z-999 absolute top-1/2 left-[16px] ml-[16px] flex  -translate-y-1/2 -translate-x-1/2 items-center justify-center  lg:ml-0"
             />
 
             <Button
               shape="circle"
-              size="large"
+              size="small"
               onClick={() => carouselRef.current?.next()}
-              icon={<ChevronRight />}
+              icon={<ChevronRight size={14} />}
               aria-label="next slide"
-              className="z-999 absolute top-1/2 right-[16px] mr-[16px] flex min-h-[48px] min-w-[48px] -translate-y-1/2 translate-x-1/2 items-center justify-center md:min-h-[40px] md:min-w-[40px] lg:mr-0"
+              className="z-999 absolute top-1/2 right-[16px] mr-[16px] flex  -translate-y-1/2 translate-x-1/2 items-center justify-center  lg:mr-0"
             />
           </>
         )}

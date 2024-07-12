@@ -31,6 +31,10 @@ function PrimaryHeader({ showSearch = true }) {
   const entry = useIntersectionObserver(cartButtonRef, {});
   const isVisible = !!entry?.isIntersecting;
 
+  useEffect(() => {
+    setOpenMobileMenu(false);
+  }, [router.pathname]);
+
   const totalProducts =
     cartProducts.length +
     cartCombos.length +

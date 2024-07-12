@@ -25,7 +25,7 @@ const ArticlePage: NextPageWithLayout<{
     <>
       <div className="px-4 pb-4 lg:container lg:px-0">
         <Breadcrumbs
-          className="pt-4 pb-2"
+          className="md:pt-4"
           breadcrumbs={[
             {
               title: 'Trang chủ',
@@ -60,14 +60,11 @@ const ArticlePage: NextPageWithLayout<{
         <div className="h-full"></div>
         <div className="">
           <div className="mb-6">
-            <Typography.Title
-              level={1}
-              className="m-0 mt-4 text-2xl font-bold "
-            >
+            <Typography.Title level={1} className="m-0 text-2xl font-bold ">
               {article?.title}
             </Typography.Title>
 
-            <Typography.Text className="text-md m-0 my-2 block text-gray-600">
+            <Typography.Text className="md:text-md m-0 my-2 block text-lg text-gray-600">
               <i>{article?.shortDesc}</i>
             </Typography.Text>
 
@@ -79,7 +76,7 @@ const ArticlePage: NextPageWithLayout<{
           <Divider />
 
           <AppDangerouslySetInnerHTML
-            className={`ck-content w-full ${
+            className={`ck-content w-full text-lg md:text-base ${
               isArticleArticle
                 ? ''
                 : 'overflow-y-auto rounded-lg border border-gray-500 md:max-h-[80vh] md:border-solid md:p-4'
@@ -99,26 +96,6 @@ const ArticlePage: NextPageWithLayout<{
           )}
           <Divider />
           <ArticleRelated currentArticle={article} />
-          {!!otherArticles?.length && (
-            <div className="mb-8 grid grid-cols-1">
-              {/* <div className=" lg:container lg:pl-0">
-                <Typography.Title
-                  level={3}
-                  className="mb-4 mt-6 inline-block uppercase lg:mt-12"
-                >
-                  Các tin tức liên quan
-                </Typography.Title>{' '}
-              </div> */}
-
-              {/* <div className="lg:container">
-                <div className="grid grid-cols-4 gap-4 md:grid-cols-4 lg:gap-6 xl:grid-cols-2">
-                  {otherArticles?.map((article, index) => (
-                    <ArticleItem article={article} key={index} />
-                  ))}
-                </div>
-              </div> */}
-            </div>
-          )}
         </div>
 
         <div className="h-full"></div>

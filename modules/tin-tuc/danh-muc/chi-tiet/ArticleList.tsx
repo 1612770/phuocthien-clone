@@ -9,7 +9,7 @@ function ArticleList({
 }) {
   return (
     <div className="">
-      <div className="grid-row-1 grid grid-flow-row gap-4 lg:grid-flow-col lg:grid-rows-4">
+      <div className="grid-row-1 grid grid-flow-row gap-1 lg:grid-flow-col lg:grid-rows-4">
         {children}
       </div>
 

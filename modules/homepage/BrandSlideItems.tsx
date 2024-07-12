@@ -16,7 +16,9 @@ function BrandSlideItems({ brand }: { brand: BrandModel }) {
           />
         </div>
 
-        <div className=" text-md mt-1 px-1 pb-6 lg:text-lg">{brand.name}</div>
+        <div className=" text-md mt-1 px-1 pb-6 text-black lg:text-lg">
+          {brand.name}
+        </div>
       </div>
     </LinkWrapper>
   );

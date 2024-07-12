@@ -59,7 +59,7 @@ const ProductPage = ({
   }
   if (typeof product?.visible === 'boolean' && !product?.visible) return null;
   return (
-    <div className="px-4 pt-4 lg:container lg:px-0">
+    <div className="px-4 md:pt-4 lg:container lg:px-0">
       <Breadcrumbs
         breadcrumbs={[
           {
@@ -74,14 +74,16 @@ const ProductPage = ({
             title: product?.productGroup?.name,
             path: `/${product?.productType?.seoUrl}/${product?.productGroup?.seoUrl}`,
           },
-          {
-            title: product?.productTypeGroup?.name,
-            path: `/${product?.productType?.seoUrl}/${product?.productTypeGroup?.seoUrl}`,
-          },
+          product?.productTypeGroup?.seoUrl
+            ? {
+                title: product?.productTypeGroup?.name,
+                path: `/${product?.productType?.seoUrl}/${product?.productTypeGroup?.seoUrl}`,
+              }
+            : {},
           {
             title: product?.detail?.displayName,
           },
-        ]}
+        ].filter((value) => JSON.stringify(value) !== '{}')}
       ></Breadcrumbs>
 
       <div className="grid grid-cols-1 gap-4 pt-2 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[600px_minmax(200px,_1fr)]">
@@ -96,7 +98,8 @@ const ProductPage = ({
           dealPromotions={dealPromotions}
         />
       </div>
-      <div className="grid grid-cols-1 gap-4 pt-2 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[600px_minmax(200px,_1fr)]">
+      <div className="grid grid-cols-1 gap-4 md:pt-2 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[600px_minmax(200px,_1fr)]">
+        {product && <ProductMetaData product={product} />}
         {product.detail?.description && (
           <ProductCardDetail
             dangerouslySetInnerHTML={{
@@ -104,7 +107,6 @@ const ProductPage = ({
             }}
           />
         )}
-        {product && <ProductMetaData product={product} />}
       </div>
 
       <ProductFAQsSection productKey={product.key || ''} />

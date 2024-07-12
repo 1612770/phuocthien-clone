@@ -10,7 +10,7 @@ const AppDangerouslySetInnerHTML = forwardRef<
   return (
     <div
       {...props}
-      className={`${props.className} app__dangerously-set-inner-html`}
+      className={`${props.className} app__dangerously-set-inner-html text-lg md:text-base`}
       ref={ref}
     ></div>
   );

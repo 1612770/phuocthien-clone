@@ -16,11 +16,11 @@ function MainInfoSection({
 }) {
   const router = useRouter();
   return (
-    <div className={'my-2 bg-white py-4'}>
+    <div className={' bg-white py-2 md:py-4'}>
       <div className={'px-4 lg:container'}>
-        <div className="mb-2 flex  items-center lg:mb-2 ">
+        <div className="flex items-center lg:mb-2 ">
           <div className="flex items-center ">
-            <div className="mr-2 ">
+            <div className="mr-1 md:mr-4 ">
               <img
                 src={IMAGES.news}
                 alt="Góc sức khoẻ"
@@ -29,9 +29,9 @@ function MainInfoSection({
               />
             </div>
             <Typography.Title
-              level={3}
+              level={4}
               className={
-                'camelCase m-0 my-2 text-center font-bold text-primary lg:text-left'
+                'camelCase m-0  text-primary md:text-center md:font-bold lg:text-left'
               }
             >
               Góc sức khỏe
@@ -39,7 +39,7 @@ function MainInfoSection({
           </div>
           <Divider type="vertical" className="ml-4 mr-4 bg-primary" />
           <div className=" text-primary">
-            <LinkWrapper href="/bai-viet">
+            <LinkWrapper href="/bai-viet" className="text-primary">
               Xem tất cả <RightOutlined />
             </LinkWrapper>
           </div>
@@ -53,14 +53,16 @@ function MainInfoSection({
             {el.title}
           </Button>
         ))}
-        <div className="mt-8">
+
+        <div className="mt-4">
           <ArticleList>
             {articles?.map((article, idx) => (
               <ArticleItem
                 article={article}
                 key={article.id}
                 indexBlog={idx}
-              ></ArticleItem>
+                className="inline-block md:my-0"
+              />
             ))}
           </ArticleList>
         </div>

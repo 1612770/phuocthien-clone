@@ -14,7 +14,7 @@ function ProductOthersSection({
     <>
       <Typography.Title
         level={3}
-        className="mb-0 mt-6 inline-block font-medium uppercase lg:mb-4 lg:mt-12"
+        className="mb-0 mt-4 inline-block font-medium uppercase lg:mb-4 lg:mt-6"
       >
         Các sản phẩm nhóm {name} khác
       </Typography.Title>

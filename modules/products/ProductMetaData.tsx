@@ -5,9 +5,9 @@ import QRApp from './QRApp';
 
 function ProductMetaData({ product }: { product: Product }) {
   return (
-    <div className="r mb-0 mt-6 lg:mb-4 lg:mt-12">
+    <div className="mb-0 md:mt-4 lg:mb-4 ">
       {!!product?.detail?.useOfDrugs && (
-        <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
+        <div className="my-2 mb-2 grid grid-cols-1 md:mb-4 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className="font-bold">Công dụng</Typography.Text>
           <Typography.Text className=" ml-0 md:ml-2">
             {product?.detail?.useOfDrugs}
@@ -15,7 +15,7 @@ function ProductMetaData({ product }: { product: Product }) {
         </div>
       )}
       {!!product?.detail?.drugUsers && (
-        <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
+        <div className="my-2 mb-2 grid grid-cols-1 md:mb-4 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-bold">
             Đối tượng sử dụng
           </Typography.Text>
@@ -26,7 +26,7 @@ function ProductMetaData({ product }: { product: Product }) {
       )}
 
       {!!product?.ingredient && (
-        <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
+        <div className="my-2 mb-2 grid grid-cols-1 md:mb-4 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" whitespace-nowrap  font-bold  ">
             Hoạt chất
           </Typography.Text>
@@ -36,7 +36,7 @@ function ProductMetaData({ product }: { product: Product }) {
         </div>
       )}
       {!!product?.productionBrand?.name && (
-        <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
+        <div className="my-2 mb-2 grid grid-cols-1 md:mb-4 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-bold">
             Hãng sản xuất
           </Typography.Text>
@@ -46,7 +46,7 @@ function ProductMetaData({ product }: { product: Product }) {
         </div>
       )}
       {!!product?.manufactoringCountry?.name && (
-        <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
+        <div className="my-2 mb-2 grid grid-cols-1 md:mb-4 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-bold">
             Nước sản xuất
           </Typography.Text>
@@ -56,7 +56,7 @@ function ProductMetaData({ product }: { product: Product }) {
         </div>
       )}
       {!!product?.registrationNumber && (
-        <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
+        <div className="my-2 mb-2 grid grid-cols-1 md:mb-4 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-bold">Số đăng ký</Typography.Text>
           <Typography.Text className=" ml-0 md:ml-2">
             {product?.registrationNumber}
@@ -64,7 +64,7 @@ function ProductMetaData({ product }: { product: Product }) {
         </div>
       )}
       {!!product?.packagingProcess && (
-        <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
+        <div className="my-2 mb-2 grid grid-cols-1 md:mb-4 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-bold">
             Cách đóng gói
           </Typography.Text>
@@ -74,7 +74,7 @@ function ProductMetaData({ product }: { product: Product }) {
         </div>
       )}
       {!!product?.detail?.packedType && (
-        <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
+        <div className="my-2 mb-2 grid grid-cols-1 md:mb-4 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-bold">Dạng bào chế</Typography.Text>
           <Typography.Text className=" ml-0 md:ml-2">
             {product?.detail?.packedType}
@@ -83,7 +83,7 @@ function ProductMetaData({ product }: { product: Product }) {
       )}
 
       {!!product?.drugContent && (
-        <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
+        <div className="my-2 mb-2 grid grid-cols-1 md:mb-4 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-bold">Hàm lượng</Typography.Text>
           <Typography.Text className=" ml-0 md:ml-2">
             {product?.drugContent}
@@ -91,7 +91,7 @@ function ProductMetaData({ product }: { product: Product }) {
         </div>
       )}
 
-      <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
+      <div className="my-2 mb-2 grid grid-cols-1 md:mb-4 md:grid-cols-[minmax(120px,140px),_1fr]">
         <Typography.Text className=" font-bold">
           Là thuốc kê đơn
         </Typography.Text>
@@ -101,7 +101,7 @@ function ProductMetaData({ product }: { product: Product }) {
       </div>
 
       {product?.isSpecial && (
-        <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
+        <div className="my-2 mb-2 grid grid-cols-1 md:mb-4 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-bold">
             Là thuốc đặc biệt
           </Typography.Text>
@@ -112,7 +112,7 @@ function ProductMetaData({ product }: { product: Product }) {
       )}
 
       {product?.isMental && (
-        <div className="my-2 mb-4 grid grid-cols-1 md:grid-cols-[minmax(120px,140px),_1fr]">
+        <div className="my-2 mb-2 grid grid-cols-1 md:mb-4 md:grid-cols-[minmax(120px,140px),_1fr]">
           <Typography.Text className=" font-bold">
             Là thuốc tâm thần
           </Typography.Text>

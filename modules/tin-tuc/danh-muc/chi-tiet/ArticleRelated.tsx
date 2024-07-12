@@ -38,9 +38,12 @@ const ArticleRelated = ({ currentArticle }: { currentArticle: Article }) => {
         <PlusCircleOutlined className=" pr-2 text-primary" />
         Các bài viết liên quan
       </div>
-      <div className="grid grid-flow-row grid-cols-1 gap-2 text-sm lg:grid-cols-2">
+      <div className="grid grid-flow-row grid-cols-1 gap-1 text-sm md:gap-2 lg:grid-cols-2">
         {articlesRelated.slice(0, 10).map((el) => (
-          <li key={el.id} className=" pb-2 font-semibold text-primary-dark">
+          <li
+            key={el.id}
+            className="pb-1 font-semibold text-primary-dark md:pb-2"
+          >
             <LinkWrapper
               href={`/bai-viet/${el.slug}`}
               className="hover:text-primary"

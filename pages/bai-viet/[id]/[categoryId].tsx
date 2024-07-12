@@ -1,7 +1,12 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
-import { GetServerSidePropsContext } from 'next';
+import {
+  GetStaticPaths,
+  GetStaticPathsContext,
+  GetStaticProps,
+  GetStaticPropsContext,
+} from 'next';
 import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '@components/Breadcrumbs';
 import { Article, Category } from '@configs/models/cms.model';
@@ -10,6 +15,7 @@ import CategoryChipList from '../../../modules/tin-tuc/danh-muc/chi-tiet/Categor
 import CategoryChipListItem from '../../../modules/tin-tuc/danh-muc/chi-tiet/CategoryChipListItem';
 import ArticleItem from '../../../modules/tin-tuc/danh-muc/chi-tiet/ArticleItem';
 import { ChevronsDown } from 'react-feather';
+import { loadAll } from '@libs/helpers';
 
 interface EventPageProps {
   articles?: Article[];
@@ -58,9 +64,9 @@ const CategoryListChildrenPage: NextPageWithLayout<EventPageProps> = ({
 
   return (
     <>
-      <div className="px-4 pb-4 lg:container lg:px-0">
+      <div className="px-4 lg:container lg:px-0">
         <Breadcrumbs
-          className="pt-4 pb-2"
+          className="md:pb-2 md:pt-4"
           breadcrumbs={[
             {
               title: 'Trang chủ',
@@ -85,7 +91,7 @@ const CategoryListChildrenPage: NextPageWithLayout<EventPageProps> = ({
       <div className="px-4 pb-4 lg:container lg:px-0">
         <Typography.Title
           level={2}
-          className="m-0 mb-2 text-2xl font-medium md:text-4xl"
+          className="m-0 text-2xl font-medium md:mb-2 md:text-4xl"
         >
           {categories?.[0]?.title}
         </Typography.Title>
@@ -103,11 +109,7 @@ const CategoryListChildrenPage: NextPageWithLayout<EventPageProps> = ({
         <div className="mt-4">
           <div className="grid-row-1 grid grid-flow-row gap-4 lg:grid-flow-row lg:grid-cols-3 lg:grid-rows-2">
             {articlesPage?.map((article) => (
-              <ArticleItem
-                article={article}
-                key={article.id}
-                isFromPageList={true}
-              ></ArticleItem>
+              <ArticleItem article={article} key={article.id} isFromPageList />
             ))}
           </div>
           {offset + limit < totalArticle && (
@@ -125,59 +127,100 @@ const CategoryListChildrenPage: NextPageWithLayout<EventPageProps> = ({
   );
 };
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
+export const getStaticPaths: GetStaticPaths = async (
+  context: GetStaticPathsContext
 ) => {
-  const serverSideProps: {
-    props: EventPageProps;
-  } = {
+  const cmsClient = new CmsClient(context, {});
+
+  const categories = await loadAll(
+    async ({ offset, limit }) =>
+      await cmsClient.getCMSCategories({
+        offset,
+        limit,
+        getTotal: true,
+        q: { type: 'BLOG', loadLevel: 1 },
+      })
+  );
+
+  const paths = categories.reduce((acc, category) => {
+    if (category.subCategories && category.subCategories.length > 0) {
+      return [
+        ...acc,
+        ...category.subCategories.map((subCategory) => ({
+          params: {
+            id: category.slug,
+            categoryId: subCategory.slug,
+          },
+        })),
+      ];
+    }
+    return acc;
+  }, [] as { params: { id: string; categoryId: string } }[]);
+
+  return {
+    paths,
+    fallback: 'blocking',
+  };
+};
+
+export const getStaticProps = async (context: GetStaticPropsContext) => {
+  const staticProps: ReturnType<GetStaticProps<EventPageProps>> = {
     props: {
       articles: [],
       categories: [],
       totalArticle: 0,
     },
+    revalidate: 86400, // 1 day
   };
 
   const cmsClient = new CmsClient(context, {});
-  const categorySlug = String(context.query.id);
-  const subCategorySlug = String(context.query.categoryId);
+
+  const categorySlug = String(context.params?.id);
+  const subCategorySlug = String(context.params?.categoryId);
+
   try {
-    const getCategory = await cmsClient.getCMSCategories({
+    const categoriesData = await cmsClient.getCMSCategories({
       offset: 0,
       q: { type: 'BLOG', slug: subCategorySlug },
       limit: 100,
     });
-    if (getCategory.status === 'OK') {
-      const category = getCategory.data;
-      serverSideProps.props.categories = category;
-      if (category && category?.length > 0) {
-        const getUnderCategory = await cmsClient.getCMSCategories({
+
+    if (categoriesData.status === 'OK') {
+      const categories = categoriesData.data;
+
+      staticProps.props.categories = categories;
+
+      if (categories && categories?.length > 0) {
+        const category = await cmsClient.getCMSCategories({
           q: { type: 'BLOG', slug: categorySlug },
         });
+
         if (
-          getUnderCategory.status === 'OK' &&
-          getUnderCategory.data &&
-          getUnderCategory.data.length > 0
+          category.status === 'OK' &&
+          category.data &&
+          category.data.length > 0
         ) {
-          const underCategory = getUnderCategory.data[0];
-          category[0].underCategory = underCategory;
-          serverSideProps.props.categories = category;
+          const underCategory = category.data[0];
+          categories[0].underCategory = underCategory;
+          staticProps.props.categories = categories;
         }
-        const getArticles = await cmsClient.getArticles({
+
+        const articlesData = await cmsClient.getArticles({
           offset: 0,
           limit: 6,
           getTotal: true,
           q: {
             type: 'BLOG',
             listCategoryIds: [
-              ...(category?.[0]?.subCategories.map((el) => el.id) || []),
-              category?.[0].id,
+              ...(categories?.[0]?.subCategories.map((el) => el.id) || []),
+              categories?.[0].id,
             ],
           },
         });
-        if (getArticles.status === 'OK' && getArticles.data) {
-          serverSideProps.props.articles = getArticles.data;
-          serverSideProps.props.totalArticle = getArticles.total || 0;
+
+        if (articlesData.status === 'OK' && articlesData.data) {
+          staticProps.props.articles = articlesData.data;
+          staticProps.props.totalArticle = articlesData.total || 0;
         }
       }
     }
@@ -185,7 +228,7 @@ export const getServerSideProps = async (
     console.error(error);
   }
 
-  return serverSideProps;
+  return staticProps;
 };
 
 export default CategoryListChildrenPage;

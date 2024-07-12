@@ -5,8 +5,8 @@ import { QR_URL } from '@configs/env';
 
 function QRApp() {
   return (
-    <div className="flex justify-center rounded-lg bg-gray-50 p-4 pt-0 pb-2">
-      <div className="mt-2 flex items-center gap-1 lg:gap-2">
+    <div className="hidden justify-center rounded-lg bg-gray-50 pt-0 md:flex md:p-4 md:pb-2">
+      <div className="flex items-center gap-1 md:mt-2 lg:gap-2">
         <div className="flex flex-col items-center">
           <QRCode
             errorLevel="H"

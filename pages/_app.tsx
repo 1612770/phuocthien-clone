@@ -104,6 +104,11 @@ function MyApp({
               fontFamily: 'Inter',
               colorPrimary: COLORS.primary,
             },
+            components: {
+              Collapse: {
+                contentPadding: 0,
+              },
+            },
           }}
         >
           <AntdApp>
@@ -111,11 +116,9 @@ function MyApp({
               <AppConfirmDialogProvider>
                 <AuthProvider>
                   <CartProvider>
-                    {/* <FullMenuProvider> */}
                     <AppDataProvider>
                       {getLayout(<Component {...pageProps} />)}
                     </AppDataProvider>
-                    {/* </FullMenuProvider> */}
                   </CartProvider>
                 </AuthProvider>
               </AppConfirmDialogProvider>

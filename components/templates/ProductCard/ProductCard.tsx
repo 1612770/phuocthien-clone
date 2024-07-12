@@ -8,7 +8,7 @@ import AddToCartButton from '@modules/products/AddToCartButton';
 import CurrencyUtils from '@libs/utils/currency.utils';
 import { PromotionPercent } from '@configs/models/promotion.model';
 import { GiftFilled } from '@ant-design/icons';
-import Link from 'next/link';
+import LinkWrapper from '../LinkWrapper';
 
 type ProductCardProps = {
   product: Product;
@@ -18,6 +18,9 @@ type ProductCardProps = {
   promotionPercent?: PromotionPercent;
   showMinQuantity?: boolean;
   isProductTypeGroup?: boolean;
+  actionComponent?: React.ReactNode;
+  hrefDisabled?: boolean;
+  hidePrice?: boolean;
 };
 
 const getMaxDiscount = (promotionPercents: PromotionPercent[]): number => {
@@ -38,8 +41,10 @@ function ProductCard({
   promotionPercent,
   showMinQuantity = false,
   isProductTypeGroup,
+  actionComponent,
+  hrefDisabled,
+  hidePrice,
 }: ProductCardProps) {
-  // const router = useRouter();
   const productDiscountVal =
     promotionPercent?.val || getMaxDiscount(product?.promotions || []) || 0;
 
@@ -51,8 +56,9 @@ function ProductCard({
     productDiscountVal
   );
   const isDiscount = productDiscountVal > 0;
-  const href = `/${product.productType?.seoUrl}/${product.detail?.seoUrl}`;
-  // const hrefTypeGroup = `/${product.productType?.seoUrl}/${product.productTypeGroup?.seoUrl}`;
+  const href = hrefDisabled
+    ? undefined
+    : `/${product.productType?.seoUrl}/${product.detail?.seoUrl}`;
   const disCountText = showMinQuantity ? (
     <>
       <GiftFilled />
@@ -62,91 +68,172 @@ function ProductCard({
   ) : (
     `Giảm ${productDiscountVal * 100}%`
   );
+
   return (
-    <Link href={href} passHref>
-      <a>
-        <div className={`group block w-full ${className} p-1`}>
-          {variant === 'card' && (
-            <Card
-              hoverable
-              bordered={false}
-              cover={
-                <div
-                  className={`relative  ${
-                    size !== 'small' ? 'h-[160px]' : 'h-[140px]'
-                  } w-full bg-white `}
-                >
-                  <ImageWithFallback
-                    placeholder="blur"
-                    className=""
-                    alt={displayName || ''}
-                    src={image || ''}
-                    layout="fill"
-                    objectFit="contain"
-                    loading="lazy"
-                  />
-                  {!isProductTypeGroup && product.productTypeGroup?.name && (
-                    <div>
-                      <div
-                        className="absolute -bottom-8 right-0 z-50 rounded-l-full  border border-r-0 border-solid border-y-primary border-l-primary bg-white px-3 py-1 text-xs text-primary"
-                        style={{ width: 'calc(100% - 16px)' }}
+    <LinkWrapper href={href}>
+      <div className={`group block w-full ${className} p-1`}>
+        {variant === 'card' && (
+          <Card
+            hoverable={!hrefDisabled}
+            bordered={false}
+            cover={
+              <div
+                className={`relative  ${
+                  size !== 'small' ? 'h-[160px]' : 'h-[140px]'
+                } w-full bg-white `}
+              >
+                <ImageWithFallback
+                  placeholder="blur"
+                  className=""
+                  alt={displayName || ''}
+                  src={image || ''}
+                  layout="fill"
+                  objectFit="contain"
+                  loading="lazy"
+                />
+                {!isProductTypeGroup && product.productTypeGroup?.name && (
+                  <div>
+                    <div
+                      className="absolute -bottom-8 right-0 z-50 rounded-l-full  border border-r-0 border-solid border-y-primary border-l-primary bg-white px-3 py-1 text-xs text-primary"
+                      style={{ width: 'calc(100% - 16px)' }}
+                    >
+                      <Typography.Text
+                        ellipsis
+                        className="whitespace-nowrap  text-primary"
                       >
-                        <Typography.Text
-                          ellipsis
-                          className="whitespace-nowrap  text-primary-dark"
-                        >
-                          {product.productTypeGroup?.name}
+                        {product.productTypeGroup?.name}
+                      </Typography.Text>
+                    </div>
+                  </div>
+                )}
+              </div>
+            }
+            bodyStyle={{
+              padding: '12px',
+            }}
+            className={`relative overflow-hidden `}
+          >
+            {isDiscount && (
+              <Tag
+                color={COLORS.red}
+                className="absolute top-[8px] left-[8px] rounded-full"
+              >
+                {disCountText}
+              </Tag>
+            )}
+            {product?.unit && (
+              <Tag
+                color="blue"
+                className="absolute top-[8px] right-[8px] mr-0 rounded-full capitalize"
+              >
+                {product?.unit}
+              </Tag>
+            )}
+
+            <div className="relative flex flex-col">
+              <Space direction="vertical" size={0}>
+                <div className={`h-[${hidePrice ? 100 : 110}px] flex-1`}>
+                  <Typography.Text
+                    title={displayName}
+                    className={`two-line-text md:three-line-text mt-7 ${
+                      size !== 'small' ? 'h-[68px]' : 'h-[88px]'
+                    }`}
+                  >
+                    {displayName}
+                  </Typography.Text>
+                  {product.isPrescripted && (
+                    <div className="text-xs font-bold text-primary md:mt-3">
+                      <i>Sản phẩm cần tư vấn của dược sĩ</i>
+                    </div>
+                  )}
+                  {!hidePrice && !product.isPrescripted && (
+                    <div>
+                      <Typography.Text className="mt-1 block">
+                        <Typography.Text className="text-sm font-semibold text-primary-dark md:text-base">
+                          {promotionPercent?.showPromoOnPrice
+                            ? priceWithDiscount
+                            : price}
                         </Typography.Text>
-                      </div>
+                        {product?.unit && (
+                          <Typography.Text className="text-sm md:text-base">
+                            &nbsp;/&nbsp;{product?.unit}
+                          </Typography.Text>
+                        )}
+                      </Typography.Text>
+                      {promotionPercent?.showPromoOnPrice && (
+                        <Typography.Text className="text-gray text-sm line-through md:text-base">
+                          {price}
+                        </Typography.Text>
+                      )}
                     </div>
                   )}
                 </div>
-              }
-              bodyStyle={{
-                padding: '12px',
-              }}
-              className={`relative overflow-hidden `}
+                {size !== 'small' && (
+                  <div className="mt-2">
+                    {product.isPrescripted ? (
+                      <div className="w-full text-center">
+                        <Button className="w-full">Liên hệ dược sĩ</Button>
+                      </div>
+                    ) : (
+                      <AddToCartButton
+                        className="w-full border border-solid border-gray-200 bg-white text-black shadow-none transition duration-300 group-hover:border-primary-light group-hover:bg-primary-light group-hover:text-white"
+                        product={product}
+                        promotionPercent={promotionPercent}
+                      />
+                    )}
+                  </div>
+                )}
+                {actionComponent}
+              </Space>
+            </div>
+          </Card>
+        )}
+
+        {variant === 'list' && (
+          <div className="flex">
+            <div
+              className={`relative ${
+                size !== 'small'
+                  ? 'h-[80px] min-w-[100px]'
+                  : 'h-[40px] min-w-[60px]'
+              } overflow-hidden rounded-lg border border-solid border-gray-200 bg-gray-100`}
             >
+              <ImageWithFallback
+                placeholder="blur"
+                alt={displayName || ''}
+                src={image || ''}
+                layout="fill"
+                objectFit="cover"
+                loading="lazy"
+                getMockImage={() => ImageUtils.getRandomMockProductImageUrl()}
+              />
               {isDiscount && (
                 <Tag
                   color={COLORS.red}
-                  className="absolute top-[8px] left-[8px] rounded-full"
-                >
-                  {disCountText}
-                </Tag>
+                  className="absolute top-0 left-0 rounded-tr-none rounded-bl-none rounded-br-none"
+                ></Tag>
               )}
-              {product?.unit && (
-                <Tag
-                  color="blue"
-                  className="absolute top-[8px] right-[8px] mr-0 rounded-full capitalize"
-                >
-                  {product?.unit}
-                </Tag>
-              )}
-
-              <div className="relative flex flex-col">
+            </div>
+            <div className="ml-4 flex flex-1 flex-col gap-2 md:flex-row">
+              <div className="relative flex flex-1 flex-col">
                 <Space direction="vertical" size={0}>
-                  <div className="h-[100px] flex-1">
-                    <Typography.Text
-                      title={displayName}
-                      className={`three-line-text mt-7 ${
-                        size !== 'small' ? 'h-[68px]' : 'h-[88px]'
-                      }`}
-                    >
-                      {displayName}
-                      <div className="text-xs font-bold text-primary">
-                        <i>
-                          {product.isPrescripted
-                            ? 'Sản phẩm cần tư vấn của dược sĩ'
-                            : ''}
-                        </i>
-                      </div>
-                    </Typography.Text>
+                  <Typography.Text className={`mt-1 block`} title={displayName}>
+                    {displayName}
+                  </Typography.Text>
+                  {product?.isPrescripted && (
+                    <div className="text-xs font-bold text-primary md:mt-3">
+                      <i>Sản phẩm cần tư vấn của dược sĩ</i>
+                    </div>
+                  )}
+                  <Tag className="mt-1 border-none bg-primary-background">
+                    {product?.productGroup?.name}
+                  </Tag>
 
-                    {!product.isPrescripted && (
+                  {!hidePrice && !product?.isPrescripted && (
+                    <div>
                       <Typography.Text className="mt-1 block">
                         <Typography.Text className="text-base font-semibold text-primary-dark">
-                          {promotionPercent?.showPromoOnPrice
+                          {priceWithDiscount !== price
                             ? priceWithDiscount
                             : price}
                         </Typography.Text>
@@ -156,95 +243,21 @@ function ProductCard({
                           </Typography.Text>
                         )}
                       </Typography.Text>
-                    )}
-                    {promotionPercent?.showPromoOnPrice && (
-                      <Typography.Text className="text-gray line-through">
-                        {price}
-                      </Typography.Text>
-                    )}
-                  </div>
-                  {size !== 'small' && (
-                    <div className="mt-2">
-                      {product.isPrescripted ? (
-                        <div className="w-full text-center">
-                          <Button className="w-full">Liên hệ dược sĩ</Button>
-                        </div>
-                      ) : (
-                        <AddToCartButton
-                          className="w-full border border-solid border-gray-200 bg-white text-black shadow-none transition duration-300 group-hover:border-primary-light group-hover:bg-primary-light group-hover:text-white"
-                          product={product}
-                          promotionPercent={promotionPercent}
-                        />
+                      {priceWithDiscount !== price && (
+                        <Typography.Text className="text-gray line-through">
+                          {price}
+                        </Typography.Text>
                       )}
                     </div>
                   )}
                 </Space>
               </div>
-            </Card>
-          )}
-
-          {variant === 'list' && (
-            <div className="flex">
-              <div
-                className={`relative ${
-                  size !== 'small'
-                    ? 'h-[80px] min-w-[100px]'
-                    : 'h-[40px] min-w-[60px]'
-                } overflow-hidden rounded-lg border border-solid border-gray-200 bg-gray-100`}
-              >
-                <ImageWithFallback
-                  placeholder="blur"
-                  alt={displayName || ''}
-                  src={image || ''}
-                  layout="fill"
-                  objectFit="cover"
-                  loading="lazy"
-                  getMockImage={() => ImageUtils.getRandomMockProductImageUrl()}
-                />
-                {isDiscount && (
-                  <Tag
-                    color={COLORS.red}
-                    className="absolute top-0 left-0 rounded-tr-none rounded-bl-none rounded-br-none"
-                  ></Tag>
-                )}
-              </div>
-              <div className="ml-4">
-                <div className="relative flex flex-col">
-                  <Space direction="vertical" size={0}>
-                    <Typography.Text
-                      className={`mt-1 block`}
-                      title={displayName}
-                    >
-                      {displayName}
-                    </Typography.Text>
-                    <Tag className="mt-1 border-none bg-primary-background">
-                      {product?.productGroup?.name}
-                    </Tag>
-                    <Typography.Text className="mt-1 block">
-                      <Typography.Text className="text-base font-semibold text-primary-dark">
-                        {priceWithDiscount !== price
-                          ? priceWithDiscount
-                          : price}
-                      </Typography.Text>
-                      {product?.unit && (
-                        <Typography.Text className="text-base">
-                          &nbsp;/&nbsp;{product?.unit}
-                        </Typography.Text>
-                      )}
-                    </Typography.Text>
-                    {priceWithDiscount !== price && (
-                      <Typography.Text className="text-gray line-through">
-                        {price}
-                      </Typography.Text>
-                    )}
-                  </Space>
-                </div>
-              </div>
+              {actionComponent && <div>{actionComponent}</div>}
             </div>
-          )}
-        </div>
-      </a>
-    </Link>
+          </div>
+        )}
+      </div>
+    </LinkWrapper>
   );
 }
 

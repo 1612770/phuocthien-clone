@@ -49,25 +49,26 @@ const Home: NextPageWithLayout<{
         <Head>{convertFromStringToHTML(campaign.metaSeo)}</Head>
       )}
       <div className="pb-0 lg:container lg:pb-8">
-        <div className="relative h-[200px] w-full lg:h-[400px]">
+        <div className="relative aspect-[3/1] ">
           <ImageWithFallback
             src={campaign.imgUrl}
             priority
             alt="chuong trinh khuyen mai"
             layout="fill"
             objectFit="cover"
+            sizes="(min-width: 1024px) 800px, (min-width: 768px) 600px, 400px"
             objectPosition="center"
           />
         </div>
-        <div className="sticky top-0 z-[100] bg-primary-light">
-          <div className="container flex gap-2 overflow-auto px-2 py-2 sm:justify-start md:px-0 lg:justify-center">
+        <div className=" z-[100] bg-primary-light">
+          <div className="container flex justify-center gap-2 overflow-auto px-2 py-2 md:px-0 lg:justify-center">
             {(percentPromotions || []).map((promotion) => (
               <div
                 className="cursor-pointer rounded-full border border-solid border-white px-4 py-1 text-white transition-all duration-200 ease-in-out hover:bg-white hover:text-primary"
                 key={promotion.key}
                 onClick={() => scrollIntoView(promotion.key)}
               >
-                <Typography.Text className="whitespace-nowrap text-inherit transition-all duration-200 ease-in-out">
+                <Typography.Text className="whitespace-nowrap  capitalize text-inherit transition-all duration-200 ease-in-out">
                   {promotion.name}
                 </Typography.Text>
               </div>

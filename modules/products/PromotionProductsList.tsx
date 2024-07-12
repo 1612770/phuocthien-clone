@@ -10,6 +10,7 @@ import Product from '@configs/models/product.model';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import { PromotionClient } from '@libs/client/Promotion';
 import { Button } from 'antd';
+import { DoubleRightOutlined } from '@ant-design/icons';
 
 function PromotionProductsList({
   promotion,
@@ -28,7 +29,9 @@ function PromotionProductsList({
 }) {
   const [promotionProducts, setPromotionProducts] = useState<Product[]>([]);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [allowLoadMore, setAllowLoadMore] = useState(true);
+  const [allowLoadMore, setAllowLoadMore] = useState(
+    promotionProducts.length === 20
+  );
 
   const { toastError } = useAppMessage();
 
@@ -45,8 +48,8 @@ function PromotionProductsList({
       setLoadingMore(true);
 
       const { data } = await promotionClient.getPromoProducts({
-        page: Math.ceil(promotionProducts.length / 8) + 1,
-        pageSize: 8,
+        page: Math.floor(promotionProducts.length / 20) + 1,
+        pageSize: 20,
         keyPromo: promotion?.key,
         isHide: false,
       });
@@ -68,19 +71,19 @@ function PromotionProductsList({
   return (
     <div key={promotion.key} id={id} className="">
       <div
-        className={`container mt-4  rounded-lg ${
+        className={`container   rounded-lg ${
           isPrimaryBackground ? 'bg-primary-light' : ''
         }`}
       >
         {promotion.imgUrl && (
-          <div className="relative mt-4 mb-2 block h-[100px] w-full lg:h-[200px]">
+          <div className="relative  mb-2 block aspect-[6/1] ">
             <ImageWithFallback
               src={promotion.imgUrl}
               priority
               alt="chuong trinh khuyen mai"
               layout="fill"
               objectFit="cover"
-              sizes="(min-width: 640px) 1200px, 640px"
+              sizes=" (min-width: 640px) 1200px, 640px"
             />
           </div>
         )}
@@ -97,7 +100,6 @@ function PromotionProductsList({
                     product={product}
                     key={product.key}
                     promotionPercent={promotionPercent as PromotionPercent}
-                    showMinQuantity
                   />
                 );
               })}
@@ -116,7 +118,6 @@ function PromotionProductsList({
                     product={product}
                     key={product.key}
                     promotionPercent={promotionPercent as PromotionPercent}
-                    showMinQuantity
                     className="min-w-[240px] max-w-[240px]"
                   />
                 );
@@ -128,13 +129,14 @@ function PromotionProductsList({
         <div className="flex justify-center pt-2 pb-4">
           {!scrollable && allowLoadMore && (
             <Button
-              type="primary"
+              type="text"
               className={isPrimaryBackground ? 'border-white text-white' : ''}
               ghost
               onClick={loadMore}
               loading={loadingMore}
+              icon={<DoubleRightOutlined className="rotate-90" />}
             >
-              Xem thêm các sản phẩm khác
+              Xem thêm
             </Button>
           )}
           {scrollable && (
@@ -145,7 +147,7 @@ function PromotionProductsList({
             >
               <Button
                 type="primary"
-                className={isPrimaryBackground ? 'border-white text-white' : ''}
+                className={isPrimaryBackground ? ' text-white' : ''}
                 ghost
               >
                 Xem chi tiết chương trình

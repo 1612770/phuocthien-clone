@@ -8,6 +8,7 @@ import Product from '@configs/models/product.model';
 import VIRAL_PRODUCTS_LOAD_PER_TIME from '@configs/constants/viral-products-load-per-time';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import { useRouter } from 'next/router';
+import { DoubleRightOutlined } from '@ant-design/icons';
 
 function ViralProductsList({
   viralProductsList,
@@ -43,7 +44,7 @@ function ViralProductsList({
           Math.floor(listViralProducts.length / VIRAL_PRODUCTS_LOAD_PER_TIME) +
           1,
         pageSize: VIRAL_PRODUCTS_LOAD_PER_TIME,
-        key: viralProductsList?.key,
+        key: viralProductsList?.seoUrl,
       });
 
       const newMoreListViralProducts =
@@ -69,7 +70,9 @@ function ViralProductsList({
 
   return listViralProducts?.length ? (
     <div
-      className={'py-4 ' + (invertBackground ? 'bg-primary-light' : 'bg-white')}
+      className={
+        'py-2 md:py-4 ' + (invertBackground ? 'bg-primary-light' : 'bg-white')
+      }
     >
       <div
         className={`rounded-t-xl bg-gradient-to-t  from-primary-bestsell-color-dark  to-primary-bestsell-color-light px-0 lg:container`}
@@ -103,8 +106,8 @@ function ViralProductsList({
         )}
       </div>
 
-      <div className="rounded-b-xl bg-gradient-to-b  from-primary-bestsell-color-dark  to-primary-bestsell-color-light p-2 lg:container">
-        <div className="hidden  grid-cols-5 lg:grid lg:gap-2">
+      <div className=" rounded-b-xl bg-gradient-to-b  from-primary-bestsell-color-dark  to-primary-bestsell-color-light p-2 lg:container">
+        <div className="hidden grid-cols-5 lg:grid lg:gap-2">
           {listViralProducts.map((product, index) =>
             product.productInfo ? (
               <div className="w-full" key={index}>
@@ -113,13 +116,13 @@ function ViralProductsList({
             ) : null
           )}
         </div>
-        <div className="-mx-2 flex w-full overflow-auto pl-2 lg:hidden">
+        <div className="grid w-full grid-cols-2 overflow-auto lg:hidden">
           {listViralProducts.map((product, index) =>
             product.productInfo ? (
               <ProductCard
                 key={index}
                 product={product.productInfo}
-                className="m-2 min-w-[240px] max-w-[240px]"
+                className=""
               />
             ) : null
           )}
@@ -128,11 +131,11 @@ function ViralProductsList({
         <div className="mt-2 flex justify-center">
           {allowLoadMore && (
             <Button
-              type="primary"
-              className={
-                'hidden lg:inline-block ' +
-                (invertBackground ? 'border-white text-white' : '')
+              type="text"
+              icon={
+                <DoubleRightOutlined className="mr-1 rotate-90" size={12} />
               }
+              className={' text-primary-dark lg:inline-block '}
               ghost
               onClick={loadMore}
               loading={loadingMore}
@@ -141,7 +144,7 @@ function ViralProductsList({
             </Button>
           )}
 
-          <Button
+          {/* <Button
             className={
               'inline-block lg:hidden ' +
               (invertBackground ? 'border-white text-white' : '')
@@ -152,7 +155,7 @@ function ViralProductsList({
             }
           >
             Xem tất cả
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>

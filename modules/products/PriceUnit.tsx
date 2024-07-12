@@ -19,11 +19,11 @@ function PriceUnit({
   const discountPrice = price * (1 - discountVal);
 
   return (
-    <div className="mr-8">
+    <div className="mr-0 md:mr-8">
       <div className="flex items-end">
         <Typography.Title
           level={size === 'small' ? 5 : 3}
-          className="m-0 -mb-[2px] font-bold text-primary"
+          className="m-0 -mb-[2px] font-bold text-primary "
         >
           {CurrencyUtils.format(discountPrice)}
         </Typography.Title>
