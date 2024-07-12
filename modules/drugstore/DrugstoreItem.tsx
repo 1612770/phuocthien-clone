@@ -17,7 +17,7 @@ function DrugstoreItem({
   const router = useRouter();
   return (
     <div
-      onClick={() => router.push(`/nha-thuoc/${drugstore.key}`)}
+      onClick={() => router.push(`/nha-thuoc/${drugstore?.seoUrl}`)}
       className="cursor-pointer"
     >
       {variant === 'list-item' && (

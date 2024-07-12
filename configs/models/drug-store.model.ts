@@ -9,6 +9,10 @@ type DrugStore = Partial<{
   isActived: boolean;
   visible: boolean;
   mapUrl?: string;
+  seoUrl?: string;
+  titleSeo?: string;
+  metaSeo?: string;
+  keywordSeo?: string;
 }>;
 
 export default DrugStore;
