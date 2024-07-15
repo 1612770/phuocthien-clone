@@ -40,24 +40,28 @@ const getProductTypeGroupData = async ({
   }
   if (!productTypeGroup.data)
     throw new Error('Không tìm thấy loại nhóm sản phẩm');
-  if (productTypeGroup.data.productTypeKey != productType.data.key) {
+
+  const filterTypeGroupData = productTypeGroup.data.find(
+    (el) => el.seoProductTypeUrl === productType.data?.seoUrl
+  );
+  if (!filterTypeGroupData) {
     throw new Error('Không tìm thấy loại nhóm sản phẩm trong loại sản phẩm');
   }
   const productGroup = await generalClient.getProductGroupDetail({
-    seoUrl: productTypeGroup.data.seoProductGroupUrl,
+    seoUrl: filterTypeGroupData.seoProductGroupUrl,
   });
   if (productGroup.data) {
     productTypeGroupData.productGroup = productGroup.data;
   }
   productTypeGroupData.productType = productType.data;
-  productTypeGroupData.productTypeGroup = productTypeGroup.data;
+  productTypeGroupData.productTypeGroup = filterTypeGroupData;
   productTypeGroupData.productBrands = productBrands.data;
 
   const products = await productClient.getProducts({
     page: 1,
     pageSize: PRODUCTS_LOAD_PER_TIME,
     productTypeSeoUrl: productType.data?.seoUrl,
-    productTypeGroupSeoUrl: productTypeGroup.data?.seoUrl,
+    productTypeGroupSeoUrl: filterTypeGroupData?.seoUrl,
     productionBrandKeys: undefined,
     sortBy: undefined,
     sortOrder: undefined,

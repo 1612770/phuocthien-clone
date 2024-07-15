@@ -67,7 +67,7 @@ export class GeneralClient extends BaseClient {
     seoUrl,
   }: {
     seoUrl: string;
-  }): Promise<APIResponse<ProductTypeGroupModel>> {
+  }): Promise<APIResponse<ProductTypeGroupModel[]>> {
     return await super.call('GET', `product-type-group/${seoUrl}`, {});
   }
 

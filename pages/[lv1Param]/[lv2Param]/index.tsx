@@ -208,7 +208,6 @@ export const getStaticProps: GetStaticProps<LV2ParamPageProps> = async (
     const { data } = await othersClient.detectSlugsRelatedProduct({
       slugs: [lv1ParamSeoUrl, lv2ParamSeoUrl],
     });
-
     if (data?.productTypeSlugs.length) {
       if (data?.productSlugs?.length) {
         try {
