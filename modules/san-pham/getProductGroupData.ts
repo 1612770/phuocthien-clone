@@ -6,9 +6,14 @@ import Product from '@configs/models/product.model';
 import WithPagination from '@configs/types/utils/with-pagination';
 import { GeneralClient } from '@libs/client/General';
 import { ProductClient } from '@libs/client/Product';
-import { GetServerSidePropsContext } from 'next';
 
-const getProductGroupData = async (context: GetServerSidePropsContext) => {
+const getProductGroupData = async ({
+  productTypeSeoUrl,
+  productGroupSeoUrl,
+}: {
+  productTypeSeoUrl: string;
+  productGroupSeoUrl: string;
+}) => {
   const productGroupData: {
     productType?: ProductType;
     productGroup?: ProductGroupModel;
@@ -18,15 +23,13 @@ const getProductGroupData = async (context: GetServerSidePropsContext) => {
 
   const generalClient = new GeneralClient(null, {});
   const productClient = new ProductClient(null, {});
-  const lv2ParamSeoUrl = context.params?.lv2Param as string;
-  const lv1ParamSeoUrl = context.params?.lv1Param as string;
 
   const [productType, productGroup, productBrands] = await Promise.all([
     generalClient.getProductTypeDetail({
-      seoUrl: lv1ParamSeoUrl,
+      seoUrl: productTypeSeoUrl,
     }),
     generalClient.getProductGroupDetail({
-      seoUrl: lv2ParamSeoUrl,
+      seoUrl: productGroupSeoUrl,
     }),
     generalClient.getProductionBrands(),
   ]);
@@ -38,22 +41,15 @@ const getProductGroupData = async (context: GetServerSidePropsContext) => {
   productGroupData.productType = productType.data;
   productGroupData.productGroup = productGroup.data;
   productGroupData.productBrands = productBrands.data;
-  const filterIsPrescripted =
-    (context.query['thuoc-ke-don'] as string) || 'ALL';
   const products = await productClient.getProducts({
-    page: context.query.trang ? Number(context.query.trang) : 1,
+    page: 1,
     pageSize: PRODUCTS_LOAD_PER_TIME,
     productTypeKey: productType.data?.key,
     productGroupKey: productGroup.data?.key,
-    productionBrandKeys: context.query.brands
-      ? (context.query.brands as string).split(',')
-      : undefined,
-    sortBy: (context.query['sap-xep-theo'] as 'GIA_BAN_LE') || undefined,
-    sortOrder: (context.query['sort'] as 'ASC' | 'DESC') || undefined,
-    isPrescripted:
-      filterIsPrescripted === 'ALL'
-        ? undefined
-        : filterIsPrescripted === 'true',
+    productionBrandKeys: undefined,
+    sortBy: undefined,
+    sortOrder: undefined,
+    isPrescripted: undefined,
   });
 
   if (products.data) {

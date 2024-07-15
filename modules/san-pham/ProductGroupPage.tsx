@@ -7,12 +7,13 @@ import Product from '@configs/models/product.model';
 import WithPagination from '@configs/types/utils/with-pagination';
 import { Typography, Space, Tag, Drawer, Pagination, Empty } from 'antd';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Filter, X } from 'react-feather';
 import ProductType from '@configs/models/product-type.model';
 import FilterOptions from './FilterOptions';
 import { ListProductTypeGroup } from './ListProductTypeGroup';
 import ProductTypeGroupModel from '@configs/models/product-type-group.model';
+import { ProductClient } from '@libs/client/Product';
 
 const ProductGroupPage = ({
   productType,
@@ -25,8 +26,40 @@ const ProductGroupPage = ({
   productBrands?: BrandModel[];
   products?: WithPagination<Product[]>;
 }) => {
+  const [filteredByQueryProducts, setFilteredByQueryProducts] = useState<
+    WithPagination<Product[]> | undefined
+  >(products);
   const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
   const router = useRouter();
+  const query = router.query;
+
+  /**
+   * Refetch data when query change
+   */
+  useEffect(() => {
+    (async () => {
+      const productClient = new ProductClient(null, {});
+      const filterIsPrescripted = (query['thuoc-ke-don'] as string) || 'ALL';
+
+      const productsData = await productClient.getProducts({
+        page: query.trang ? Number(query.trang) : 1,
+        pageSize: PRODUCTS_LOAD_PER_TIME,
+        productTypeKey: productType?.key,
+        productGroupKey: productGroup?.key,
+        productionBrandKeys: query.brands
+          ? (query.brands as string).split(',')
+          : undefined,
+        sortBy: (query['sap-xep-theo'] as 'GIA_BAN_LE') || undefined,
+        sortOrder: (query['sort'] as 'ASC' | 'DESC') || undefined,
+        isPrescripted:
+          filterIsPrescripted === 'ALL'
+            ? undefined
+            : filterIsPrescripted === 'true',
+      });
+
+      setFilteredByQueryProducts(productsData.data);
+    })();
+  }, [productGroup?.key, productType?.key, query]);
 
   return (
     <div className="px-4 pb-4 lg:container lg:px-0">
@@ -166,14 +199,14 @@ const ProductGroupPage = ({
           </div>
           <div className="lg:container">
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:gap-4">
-              {products?.data.map((product, index) => (
+              {filteredByQueryProducts?.data.map((product, index) => (
                 <div className="w-full" key={index}>
                   <ProductCard product={product} />
                 </div>
               ))}
             </div>
 
-            {!!products?.data.length && (
+            {!!filteredByQueryProducts?.data.length && (
               <div className="flex justify-center">
                 <Pagination
                   pageSize={PRODUCTS_LOAD_PER_TIME}
@@ -185,7 +218,7 @@ const ProductGroupPage = ({
                       },
                     });
                   }}
-                  total={products?.total || 0}
+                  total={filteredByQueryProducts?.total || 0}
                   className="mt-4"
                   current={+(router.query?.trang || 1)}
                   showSizeChanger={false}
@@ -193,7 +226,7 @@ const ProductGroupPage = ({
               </div>
             )}
 
-            {!products?.data.length && (
+            {!filteredByQueryProducts?.data.length && (
               <Empty
                 className="mt-4 mb-8"
                 description={<Typography>Không có sản phẩm nào</Typography>}

@@ -12,11 +12,9 @@ import ProductType from '@configs/models/product-type.model';
 function PrimaryHeaderMenuAllPopoverContent({
   currentMenu,
   dataMenu,
-  mode,
 }: {
   currentMenu: MenuProductType;
   dataMenu: ProductTypeGroupCategory[];
-  mode: 'all' | 'menu' | 'none';
 }) {
   const [currentFocusMenu, setCurrentFocusMenu] =
     useState<MenuProductType>(currentMenu);

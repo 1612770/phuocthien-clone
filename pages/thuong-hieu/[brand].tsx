@@ -1,6 +1,11 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { NextPageWithLayout } from 'pages/page';
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import {
+  GetStaticPaths,
+  GetStaticPathsContext,
+  GetStaticProps,
+  GetStaticPropsContext,
+} from 'next';
 
 import PagePropsWithSeo from '@configs/types/page-props-with-seo';
 import BrandModel from '@configs/models/brand.model';
@@ -9,6 +14,7 @@ import WithPagination from '@configs/types/utils/with-pagination';
 
 import getProductBrand from '@modules/brand/getProductBrand';
 import ProductBrandList from '@modules/brand/ProductBrandList';
+import { GeneralClient } from '@libs/client/General';
 
 const ProductTypesPage: NextPageWithLayout<{
   productBrand: {
@@ -37,12 +43,27 @@ interface PageProps extends PagePropsWithSeo {
   };
 }
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async (
-  context: GetServerSidePropsContext
+export const getStaticPaths: GetStaticPaths = async (
+  context: GetStaticPathsContext
 ) => {
-  const serverSideProps: {
-    props: PageProps;
-  } = {
+  const generalClient = new GeneralClient(context, {});
+
+  const brands = await generalClient.getProductionBrands();
+
+  const paths = (brands.data || []).map((brand) => ({
+    params: { brand: brand.seoUrl },
+  }));
+
+  return {
+    paths,
+    fallback: 'blocking',
+  };
+};
+
+export const getStaticProps: GetStaticProps<PageProps> = async (
+  context: GetStaticPropsContext
+) => {
+  const staticProps: ReturnType<GetStaticProps<PageProps>> = {
     props: {
       productBrand: {
         productBrand: {},
@@ -50,25 +71,22 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
       },
       SEOData: {},
     },
+    revalidate: 86400, // 1 day
   };
 
+  const brandSeoUrl = context.params?.brand as string;
+
   try {
-    serverSideProps.props.productBrand = await getProductBrand(context);
-    serverSideProps.props.SEOData.keywordSeo =
-      serverSideProps.props.productBrand.productBrand.keywordSeo;
-    serverSideProps.props.SEOData.titleSeo =
-      serverSideProps.props.productBrand.productBrand.titleSeo;
-    serverSideProps.props.SEOData.metaSeo =
-      serverSideProps.props.productBrand.productBrand.metaSeo;
+    staticProps.props.productBrand = await getProductBrand({ brandSeoUrl });
+
+    const { productBrand } = staticProps.props;
+    const { keywordSeo, titleSeo, metaSeo } = productBrand.productBrand;
+    staticProps.props.SEOData = { keywordSeo, titleSeo, metaSeo };
   } catch (error) {
-    console.error('groupInfo', error);
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
+      notFound: true,
     };
   }
 
-  return serverSideProps;
+  return staticProps;
 };

@@ -1,10 +1,5 @@
-import { REVIEWS_LOAD_PER_TIME } from '@configs/constants/review';
-import DrugStore from '@configs/models/drug-store.model';
-import { FAQ } from '@configs/models/faq.model';
 import OfferModel from '@configs/models/offer.model';
-import Product, { InventoryAtDrugStore } from '@configs/models/product.model';
-import { Review } from '@configs/models/review.model';
-import { DrugstoreClient } from '@libs/client/DrugStore';
+import Product from '@configs/models/product.model';
 import { OfferClient } from '@libs/client/Offer';
 import { ProductClient } from '@libs/client/Product';
 import {
@@ -13,9 +8,14 @@ import {
   PromotionClient,
 } from '@libs/client/Promotion';
 import OfferUtils from '@libs/utils/offer.utils';
-import { GetServerSidePropsContext } from 'next';
 
-const getProductData = async (context: GetServerSidePropsContext) => {
+const getProductData = async ({
+  productSeoUrl,
+  productTypeSeoUrl,
+}: {
+  productSeoUrl: string;
+  productTypeSeoUrl: string;
+}) => {
   const productData: {
     product?: Product;
     otherProducts?: Product[];
@@ -30,14 +30,13 @@ const getProductData = async (context: GetServerSidePropsContext) => {
 
   const productClient = new ProductClient(null, {});
   const promotionClient = new PromotionClient(null, {});
-  const lv1ParamSeoUrl = context.params?.lv1Param as string;
-  const lv2ParamSeoUrl = context.params?.lv2Param as string;
-  const offerClient = new OfferClient(context, {});
+
+  const offerClient = new OfferClient(null, {});
   const productResponse = await productClient.getProduct({
-    seoUrl: lv2ParamSeoUrl,
+    seoUrl: productSeoUrl,
   });
   const product = productResponse.data;
-  if (lv1ParamSeoUrl != product?.productType?.seoUrl) {
+  if (productTypeSeoUrl != product?.productType?.seoUrl) {
     throw new Error('Không tìm thấy sản phẩm');
   }
   if (product && product.key) {
@@ -84,28 +83,10 @@ const getProductData = async (context: GetServerSidePropsContext) => {
 
   if (products.data) {
     productData.otherProducts = products.data.data.filter(
-      (product) => product.detail?.seoUrl !== lv2ParamSeoUrl
+      (product) => product.detail?.seoUrl !== productSeoUrl
     );
   }
-  // try {
-  //   const drugStoresAvailable = await productClient.checkInventoryAtDrugStores({
-  //     key: product.key,
-  //   });
-  //   if (
-  //     drugStoresAvailable.status == 'OK' &&
-  //     drugStoresAvailable.data?.length
-  //   ) {
-  //     productData.drugStoresAvailable = drugStoresAvailable.data.map(
-  //       (drugStore) => drugStore
-  //     );
-  //   }
-  // } catch (error) {
-  //   productData.drugStoresAvailable = [];
-  //   productData.errors = {
-  //     code: 'FAILED_LOADING_INVENTORY',
-  //     message: 'Lỗi khi lấy tồn kho cho sản phẩm',
-  //   };
-  // }
+
   return productData;
 };
 

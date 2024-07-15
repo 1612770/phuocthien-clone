@@ -1,6 +1,6 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { NextPageWithLayout } from 'pages/page';
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next';
 import { GeneralClient } from '@libs/client/General';
 import MenuModel from '@configs/models/menu.model';
 import GroupInfoModel from '@configs/models/GroupInfoModel';
@@ -12,6 +12,7 @@ import Product from '@configs/models/product.model';
 import WithPagination from '@configs/types/utils/with-pagination';
 import { ProductClient } from '@libs/client/Product';
 import PRODUCTS_LOAD_PER_TIME from '@configs/constants/products-load-per-time';
+import { listMenu } from '@configs/constants/listMenu';
 
 const ProductTypesPage: NextPageWithLayout<{
   productType: {
@@ -53,17 +54,40 @@ interface PageProps extends PagePropsWithSeo {
   };
 }
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async (
-  context: GetServerSidePropsContext
+export const getStaticPaths: GetStaticPaths = async () => {
+  const productTypePaths = listMenu.reduce((acc, menu) => {
+    if (menu.productTypeUrl) {
+      return [
+        ...acc,
+        {
+          params: {
+            lv1Param: menu.productTypeUrl,
+          },
+        },
+      ];
+    }
+
+    return acc;
+  }, [] as { params: { lv1Param: string } }[]);
+
+  const paths = productTypePaths;
+
+  return {
+    paths,
+    fallback: 'blocking',
+  };
+};
+
+export const getStaticProps: GetStaticProps<PageProps> = async (
+  context: GetStaticPropsContext
 ) => {
-  const serverSideProps: {
-    props: PageProps;
-  } = {
+  const serverSideProps: ReturnType<GetStaticProps<PageProps>> = {
     props: {
       groupInfo: {},
       productType: {},
       SEOData: {},
     },
+    revalidate: 86400, // 1 day
   };
 
   const lv1ParamSeoUrl = context.params?.lv1Param as string;
@@ -78,37 +102,39 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
       }),
       generalClient.getProductionBrands(),
     ]);
+
     if (productType.data) {
       serverSideProps.props.productType.productType = productType.data;
       serverSideProps.props.productType.productBrands = productBrands.data;
-      serverSideProps.props.SEOData.titleSeo = productType.data.titleSeo;
-      serverSideProps.props.SEOData.metaSeo = productType.data.metaSeo;
-      serverSideProps.props.SEOData.keywordSeo = productType.data.keywordSeo;
-      const filterIsPrescripted =
-        (context.query['thuoc-ke-don'] as string) || 'ALL';
+
+      serverSideProps.props.SEOData = {
+        titleSeo: productType.data.titleSeo,
+        metaSeo: productType.data.metaSeo,
+        keywordSeo: productType.data.keywordSeo,
+      };
+
       const products = await productClient.getProducts({
-        page: context.query.trang ? Number(context.query.trang) : 1,
+        page: 1,
         pageSize: PRODUCTS_LOAD_PER_TIME,
         productTypeKey: productType.data?.key,
-        isPrescripted:
-          filterIsPrescripted === 'ALL'
-            ? undefined
-            : filterIsPrescripted === 'true',
-        productionBrandKeys: context.query.brands
-          ? (context.query.brands as string).split(',')
-          : undefined,
-        sortBy: (context.query['sap-xep-theo'] as 'GIA_BAN_LE') || undefined,
-        sortOrder: (context.query['sort'] as 'ASC' | 'DESC') || undefined,
+        isPrescripted: undefined,
+        productionBrandKeys: undefined,
+        sortBy: undefined,
+        sortOrder: undefined,
       });
 
       if (products.data) {
         serverSideProps.props.productType.products = products.data;
       }
     } else {
-      console.error('Failed to get product data');
+      return {
+        notFound: true,
+      };
     }
   } catch (error) {
-    console.error('getGroupInfos', error);
+    return {
+      notFound: true,
+    };
   }
 
   return serverSideProps;

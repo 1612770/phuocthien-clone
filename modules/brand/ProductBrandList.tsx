@@ -3,12 +3,12 @@ import ImageWithFallback from '@components/templates/ImageWithFallback';
 import ProductCard from '@components/templates/ProductCard';
 import PRODUCTS_LOAD_PER_TIME from '@configs/constants/products-load-per-time';
 import BrandModel from '@configs/models/brand.model';
-import ProductGroupModel from '@configs/models/product-group.model';
 import Product from '@configs/models/product.model';
 import WithPagination from '@configs/types/utils/with-pagination';
+import { ProductClient } from '@libs/client/Product';
 import { Typography, Space, Tag, Drawer, Pagination, Empty } from 'antd';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Filter, X } from 'react-feather';
 
 const ProductBrandList = ({
@@ -18,8 +18,33 @@ const ProductBrandList = ({
   productBrand?: BrandModel;
   products?: WithPagination<Product[]>;
 }) => {
+  const [filteredByQueryProducts, setFilteredByQueryProducts] = useState<
+    WithPagination<Product[]> | undefined
+  >(products);
+
   const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
   const router = useRouter();
+
+  const query = router.query;
+
+  /**
+   * Refetch data when query change
+   */
+  useEffect(() => {
+    (async () => {
+      const productClient = new ProductClient(null, {});
+
+      const productsData = await productClient.getProducts({
+        page: query.trang ? Number(query.trang) : 1,
+        pageSize: PRODUCTS_LOAD_PER_TIME,
+        productionBrandKeys: [`${router.query.brand}`],
+        sortBy: (query['sap-xep-theo'] as 'GIA_BAN_LE') || undefined,
+        sortOrder: (query['sort'] as 'ASC' | 'DESC') || undefined,
+      });
+
+      setFilteredByQueryProducts(productsData.data);
+    })();
+  }, [query, router.query.brand]);
 
   return (
     <div className="px-4 pb-4 lg:container lg:px-0">
@@ -53,12 +78,6 @@ const ProductBrandList = ({
         >
           Thương hiệu {productBrand?.name}
         </Typography.Title>
-        {/* <ListProductTypeGroup
-          productType={productType as ProductType}
-          productTypeGroupData={
-            (productGroup?.productTypeGroup || []) as ProductTypeGroupModel[]
-          }
-        /> */}
       </div>
       <div className="grid grid-cols-1 gap-4 ">
         <div>
@@ -90,12 +109,7 @@ const ProductBrandList = ({
                   onClose={() => setOpenFilterDrawer(false)}
                   closable
                   closeIcon={<X size={20} />}
-                >
-                  {/* <FilterOptions
-                    productBrands={productBrands || []}
-                    onFilterClick={() => setOpenFilterDrawer(false)}
-                  /> */}
-                </Drawer>
+                ></Drawer>
 
                 {[
                   {
@@ -153,14 +167,14 @@ const ProductBrandList = ({
           </div>
           <div className="lg:container">
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4 lg:gap-4">
-              {products?.data.map((product, index) => (
+              {filteredByQueryProducts?.data.map((product, index) => (
                 <div className="w-full" key={index}>
                   <ProductCard product={product} />
                 </div>
               ))}
             </div>
 
-            {!!products?.data.length && (
+            {!!filteredByQueryProducts?.data.length && (
               <div className="flex justify-center">
                 <Pagination
                   pageSize={PRODUCTS_LOAD_PER_TIME}
@@ -172,7 +186,7 @@ const ProductBrandList = ({
                       },
                     });
                   }}
-                  total={products?.total || 0}
+                  total={filteredByQueryProducts?.total || 0}
                   className="mt-4"
                   current={+(router.query?.trang || 1)}
                   showSizeChanger={false}
@@ -180,7 +194,7 @@ const ProductBrandList = ({
               </div>
             )}
 
-            {!products?.data.length && (
+            {!filteredByQueryProducts?.data.length && (
               <Empty
                 className="mt-4 mb-8"
                 description={<Typography>Không có sản phẩm nào</Typography>}

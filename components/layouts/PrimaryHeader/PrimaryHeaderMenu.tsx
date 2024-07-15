@@ -59,7 +59,6 @@ function PrimaryHeaderMenu() {
           dataMenu={dataFullMenu.filter(
             (el) => el.productTypeSeoUrl === currentMenu.productTypeUrl
           )}
-          mode={mode}
         />
       }
       placement="bottom"
