@@ -59,7 +59,7 @@ const ProductPage = ({
   }
   if (typeof product?.visible === 'boolean' && !product?.visible) return null;
   return (
-    <div className="px-4 md:pt-4 lg:container lg:px-0">
+    <section className="px-4 md:pt-4 lg:container lg:px-0">
       <Breadcrumbs
         breadcrumbs={[
           {
@@ -98,8 +98,10 @@ const ProductPage = ({
           dealPromotions={dealPromotions}
         />
       </div>
+
       <div className="grid grid-cols-1 gap-4 md:pt-2 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[600px_minmax(200px,_1fr)]">
         {product && <ProductMetaData product={product} />}
+
         {product.detail?.description && (
           <ProductCardDetail
             dangerouslySetInnerHTML={{
@@ -118,7 +120,7 @@ const ProductPage = ({
           products={otherProducts || []}
         />
       </div>
-    </div>
+    </section>
   );
 };
 

@@ -122,6 +122,7 @@ function ProductMetaData({ product }: { product: Product }) {
         </div>
       )}
       <QRApp />
+      <hr className="block md:hidden" />
     </div>
   );
 }

@@ -48,7 +48,7 @@ const Home: NextPageWithLayout<{
       {campaign.metaSeo && (
         <Head>{convertFromStringToHTML(campaign.metaSeo)}</Head>
       )}
-      <div className="pb-0 lg:container lg:pb-8">
+      <section className="pb-0 lg:container lg:pb-8">
         <div className="relative aspect-[3/1] ">
           <ImageWithFallback
             src={campaign.imgUrl}
@@ -94,7 +94,7 @@ const Home: NextPageWithLayout<{
             />
           );
         })}
-      </div>
+      </section>
     </>
   );
 };

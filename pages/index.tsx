@@ -98,105 +98,106 @@ const Home: NextPageWithLayout<HomeProps> = ({
   const screens = useBreakpoint();
 
   return (
-    <div className="mb-0 lg:mb-8">
-      <div className="container overflow-hidden">
-        <div
-          className={`px-0 ${
-            promotionSliderImages.length && screens.md ? `container` : ''
-          }`}
-        >
-          <div className="px-2 md:px-0 lg:mt-4">
-            <Row gutter={[8, 16]}>
-              <Col
-                lg={{ span: 16 }}
-                md={{ span: 24 }}
-                xs={{ span: 24 }}
-                className="relative"
-              >
-                {!!promotionSliderImages.length && (
-                  <HomepageCarousel
-                    sliderImages={promotionSliderImages}
-                    numberSlidePerPage={1}
-                    type="primary"
-                  />
-                )}
-
-                {!!bannerVisibleSlides?.length && (
-                  <div
-                    className={`${
-                      promotionSliderImages.length && screens.md ? `mt-4` : ''
-                    }`}
-                  >
+    <section className="mb-0 lg:mb-4">
+      <section id="banner">
+        <div className="container overflow-hidden">
+          <div
+            className={`px-0 ${
+              promotionSliderImages.length && screens.md ? `container` : ''
+            }`}
+          >
+            <div className="px-2 md:px-0 lg:mt-4">
+              <Row gutter={[8, 16]}>
+                <Col
+                  lg={{ span: 16 }}
+                  md={{ span: 24 }}
+                  xs={{ span: 24 }}
+                  className="relative"
+                >
+                  {!!promotionSliderImages.length && (
                     <HomepageCarousel
-                      sliderImages={bannerVisibleSlides}
-                      numberSlidePerPage={
-                        promotionSliderImages.length &&
-                        (screens.md || screens.xs)
-                          ? 2
-                          : 1
-                      }
-                      type={
-                        promotionSliderImages.length ? 'secondary' : 'primary'
-                      }
+                      sliderImages={promotionSliderImages}
+                      numberSlidePerPage={1}
+                      type="primary"
                     />
-                  </div>
-                )}
-              </Col>
-              <Col
-                lg={{ span: 8 }}
-                md={{ span: 24 }}
-                xs={{ span: 24 }}
-                className="hidden w-full md:block"
-              >
-                <Row gutter={[16, 8]} className="h-full">
-                  <Col xs={24} sm={12} lg={24}>
-                    <LinkWrapper
-                      href="#"
-                      className="relative flex w-full flex-col"
+                  )}
+
+                  {!!bannerVisibleSlides?.length && (
+                    <div
+                      className={`${
+                        promotionSliderImages.length && screens.md ? `mt-4` : ''
+                      }`}
                     >
-                      <div className="aspect-[300/98]">
-                        <Image
-                          blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgwVjB6IiBmaWxsPSIjZmZmIi8+PC9zdmc+"
-                          src={`https://pt-storage-prd.hn.ss.bfcplatform.vn/tag2.jpg`}
-                          alt="carousel image"
-                          layout="fill"
-                          placeholder="blur"
-                          objectFit={'fill'}
-                          className="rounded-xl"
-                          objectPosition="center"
-                        />
-                      </div>
-                    </LinkWrapper>
-                  </Col>
-                  <Col xs={24} sm={12} lg={24}>
-                    <LinkWrapper
-                      href={`/chinh-sach-doi-tra`}
-                      className="relative flex w-full flex-col"
-                    >
-                      <div className="aspect-[300/98]">
-                        <Image
-                          blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgwVjB6IiBmaWxsPSIjZmZmIi8+PC9zdmc+"
-                          src={`https://pt-storage-prd.hn.ss.bfcplatform.vn/tag1.jpg`}
-                          alt="carousel image"
-                          layout="fill"
-                          placeholder="blur"
-                          objectFit={'fill'}
-                          className="rounded-xl"
-                          objectPosition="center"
-                        />
-                      </div>
-                    </LinkWrapper>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-            <Row>
-              <HomeUtils />
-            </Row>
+                      <HomepageCarousel
+                        sliderImages={bannerVisibleSlides}
+                        numberSlidePerPage={
+                          promotionSliderImages.length &&
+                          (screens.md || screens.xs)
+                            ? 2
+                            : 1
+                        }
+                        type={
+                          promotionSliderImages.length ? 'secondary' : 'primary'
+                        }
+                      />
+                    </div>
+                  )}
+                </Col>
+                <Col
+                  lg={{ span: 8 }}
+                  md={{ span: 24 }}
+                  xs={{ span: 24 }}
+                  className="hidden w-full md:block"
+                >
+                  <Row gutter={[16, 8]} className="h-full">
+                    <Col xs={24} sm={12} lg={24}>
+                      <LinkWrapper
+                        href="#"
+                        className="relative flex w-full flex-col"
+                      >
+                        <div className="aspect-[300/98]">
+                          <Image
+                            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgwVjB6IiBmaWxsPSIjZmZmIi8+PC9zdmc+"
+                            src={`https://pt-storage-prd.hn.ss.bfcplatform.vn/tag2.jpg`}
+                            alt="carousel image"
+                            layout="fill"
+                            placeholder="blur"
+                            objectFit={'fill'}
+                            className="rounded-xl"
+                            objectPosition="center"
+                          />
+                        </div>
+                      </LinkWrapper>
+                    </Col>
+                    <Col xs={24} sm={12} lg={24}>
+                      <LinkWrapper
+                        href={`/chinh-sach-doi-tra`}
+                        className="relative flex w-full flex-col"
+                      >
+                        <div className="aspect-[300/98]">
+                          <Image
+                            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgwVjB6IiBmaWxsPSIjZmZmIi8+PC9zdmc+"
+                            src={`https://pt-storage-prd.hn.ss.bfcplatform.vn/tag1.jpg`}
+                            alt="carousel image"
+                            layout="fill"
+                            placeholder="blur"
+                            objectFit={'fill'}
+                            className="rounded-xl"
+                            objectPosition="center"
+                          />
+                        </div>
+                      </LinkWrapper>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+              <Row>
+                <HomeUtils />
+              </Row>
+            </div>
           </div>
         </div>
-      </div>
-
+      </section>
       {!promotionSliderImages?.length && (
         <div
           className={`mb-[32px] hidden lg:block ${
@@ -212,22 +213,30 @@ const Home: NextPageWithLayout<HomeProps> = ({
       {viralProductsLists &&
         viralProductsLists.length > 0 &&
         viralProductsLists?.map((viralProductsList, index) => (
-          <ViralProductsList
+          <section
+            id={'virals_' + viralProductsList.seoUrl}
             key={viralProductsList.key}
-            viralProductsList={viralProductsList}
-            invertBackground={
-              index % 2 === 1 && index !== viralProductsLists.length - 1
-            }
-          />
+          >
+            <ViralProductsList
+              key={viralProductsList.key}
+              viralProductsList={viralProductsList}
+              invertBackground={
+                index % 2 === 1 && index !== viralProductsLists.length - 1
+              }
+            />
+          </section>
         ))}
       {brands?.length > 0 && (
-        <div className="relative">
-          <HomepageBrands brands={brands} />
-        </div>
+        <section id="brands">
+          <div className="relative">
+            <HomepageBrands brands={brands} />
+          </div>
+        </section>
       )}
-
-      <MainInfoSection articles={articles} categories={categories} />
-    </div>
+      <section id="blog">
+        <MainInfoSection articles={articles} categories={categories} />
+      </section>
+    </section>
   );
 };
 

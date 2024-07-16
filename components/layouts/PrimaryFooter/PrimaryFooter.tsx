@@ -17,22 +17,23 @@ function PrimaryFooter() {
 
   return (
     <>
-      {!!products.length && (
-        <div className="py-2 px-4 md:py-8 lg:container lg:px-0">
-          <Typography.Title
-            level={3}
-            className={
-              'm-0 text-center font-medium uppercase md:my-4 lg:text-left'
-            }
-          >
-            Sản phẩm vừa xem
-          </Typography.Title>
-          <ProductList products={products} forceSlide />
-        </div>
-      )}
+      <section id="focus">
+        {!!products.length && (
+          <div className="py-2 px-4 md:py-4 lg:container lg:px-0">
+            <Typography.Title
+              level={3}
+              className={
+                'm-0 text-center font-medium uppercase md:my-4 lg:text-left'
+              }
+            >
+              Sản phẩm vừa xem
+            </Typography.Title>
+            <ProductList products={products} forceSlide />
+          </div>
+        )}
 
-      <FocusContentSection focusContent={focusContent || []} />
-
+        <FocusContentSection focusContent={focusContent || []} />
+      </section>
       <footer className="bg-white">
         <div className="m-auto justify-center py-8 px-4 lg:container lg:px-0">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">

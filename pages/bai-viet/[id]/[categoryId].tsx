@@ -63,7 +63,7 @@ const CategoryListChildrenPage: NextPageWithLayout<EventPageProps> = ({
   };
 
   return (
-    <>
+    <section id="items">
       <div className="px-4 lg:container lg:px-0">
         <Breadcrumbs
           className="md:pb-2 md:pt-4"
@@ -123,7 +123,7 @@ const CategoryListChildrenPage: NextPageWithLayout<EventPageProps> = ({
           )}
         </div>
       </div>
-    </>
+    </section>
   );
 };
 

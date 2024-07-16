@@ -23,7 +23,7 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
   categories,
 }) => {
   return (
-    <>
+    <section id="blog">
       <div className="px-4 pb-4 lg:container lg:px-0">
         <Breadcrumbs
           className="pb-2 md:pt-4"
@@ -71,7 +71,7 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
           ))}
         </CategoryList>
       </div>
-    </>
+    </section>
   );
 };
 

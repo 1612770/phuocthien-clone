@@ -62,7 +62,7 @@ const ProductGroupPage = ({
   }, [productGroup?.key, productType?.key, query]);
 
   return (
-    <div className="px-4 pb-4 lg:container lg:px-0">
+    <section className="px-4 pb-4 lg:container lg:px-0">
       <Breadcrumbs
         className="mb-4 pt-4 text-primary"
         breadcrumbs={[
@@ -235,7 +235,7 @@ const ProductGroupPage = ({
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

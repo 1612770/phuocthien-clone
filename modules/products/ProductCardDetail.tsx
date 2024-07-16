@@ -21,7 +21,7 @@ function ProductCardDetail(
       <div className="lg:container lg:pl-0">
         <Typography.Title
           level={3}
-          className="mb-0 mt-2 font-medium capitalize md:mt-4 lg:mb-4 "
+          className="mb-0 font-medium capitalize  lg:mb-4 "
         >
           Thông tin sản phẩm
         </Typography.Title>

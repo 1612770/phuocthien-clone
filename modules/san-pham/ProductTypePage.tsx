@@ -61,7 +61,7 @@ function ProductTypePage({
   }, [productTypeSeoUrlToGetFromFullMenu, query]);
 
   return (
-    <div className="grid px-4 pb-4 lg:container lg:px-0">
+    <section className="grid px-4 pb-4 lg:container lg:px-0">
       <Breadcrumbs
         className="mb-4 pt-4"
         breadcrumbs={[
@@ -236,7 +236,7 @@ function ProductTypePage({
           ></Empty>
         </div>
       )}
-    </div>
+    </section>
   );
 }
 

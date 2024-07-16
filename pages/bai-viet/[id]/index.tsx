@@ -69,13 +69,13 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
   };
   if (article) {
     return (
-      <div>
+      <section id={article.slug}>
         <ArticlePage article={article} />
-      </div>
+      </section>
     );
   }
   return (
-    <>
+    <section id="blog-items">
       <div className="px-4 pb-4 lg:container lg:px-0">
         <Breadcrumbs
           className="md:pb-2 md:pt-4"
@@ -135,7 +135,7 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
           )}
         </div>
       </div>
-    </>
+    </section>
   );
 };
 
