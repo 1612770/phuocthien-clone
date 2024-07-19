@@ -141,36 +141,38 @@ function ProductCard({
                   >
                     {displayName}
                   </Typography.Text>
-                  {product.isPrescripted && (
+                  {(product.isPrescripted || product.detail?.isFoceNotSell) && (
                     <div className="text-xs font-bold text-primary md:mt-3">
                       <i>Sản phẩm cần tư vấn của dược sĩ</i>
                     </div>
                   )}
-                  {!hidePrice && !product.isPrescripted && (
-                    <div>
-                      <Typography.Text className="mt-1 block">
-                        <Typography.Text className="text-sm font-semibold text-primary-dark md:text-base">
-                          {promotionPercent?.showPromoOnPrice
-                            ? priceWithDiscount
-                            : price}
+                  {!hidePrice &&
+                    !product.isPrescripted &&
+                    !product.detail?.isFoceNotSell && (
+                      <div>
+                        <Typography.Text className="mt-1 block">
+                          <Typography.Text className="text-sm font-semibold text-primary-dark md:text-base">
+                            {promotionPercent?.showPromoOnPrice
+                              ? priceWithDiscount
+                              : price}
+                          </Typography.Text>
+                          {product?.unit && (
+                            <Typography.Text className="text-sm md:text-base">
+                              &nbsp;/&nbsp;{product?.unit}
+                            </Typography.Text>
+                          )}
                         </Typography.Text>
-                        {product?.unit && (
-                          <Typography.Text className="text-sm md:text-base">
-                            &nbsp;/&nbsp;{product?.unit}
+                        {promotionPercent?.showPromoOnPrice && (
+                          <Typography.Text className="text-gray text-sm line-through md:text-base">
+                            {price}
                           </Typography.Text>
                         )}
-                      </Typography.Text>
-                      {promotionPercent?.showPromoOnPrice && (
-                        <Typography.Text className="text-gray text-sm line-through md:text-base">
-                          {price}
-                        </Typography.Text>
-                      )}
-                    </div>
-                  )}
+                      </div>
+                    )}
                 </div>
                 {size !== 'small' && (
                   <div className="mt-2">
-                    {product.isPrescripted ? (
+                    {product.isPrescripted || product.detail?.isFoceNotSell ? (
                       <div className="w-full text-center">
                         <Button className="w-full">Liên hệ dược sĩ</Button>
                       </div>
@@ -192,7 +194,7 @@ function ProductCard({
         {variant === 'list' && (
           <div className="flex">
             <div
-              className={`relative ${
+              className={`relative z-[120] ${
                 size !== 'small'
                   ? 'h-[80px] min-w-[100px]'
                   : 'h-[40px] min-w-[60px]'
@@ -220,7 +222,8 @@ function ProductCard({
                   <Typography.Text className={`mt-1 block`} title={displayName}>
                     {displayName}
                   </Typography.Text>
-                  {product?.isPrescripted && (
+                  {(product?.isPrescripted ||
+                    product.detail?.isFoceNotSell) && (
                     <div className="text-xs font-bold text-primary md:mt-3">
                       <i>Sản phẩm cần tư vấn của dược sĩ</i>
                     </div>
@@ -229,27 +232,29 @@ function ProductCard({
                     {product?.productGroup?.name}
                   </Tag>
 
-                  {!hidePrice && !product?.isPrescripted && (
-                    <div>
-                      <Typography.Text className="mt-1 block">
-                        <Typography.Text className="text-base font-semibold text-primary-dark">
-                          {priceWithDiscount !== price
-                            ? priceWithDiscount
-                            : price}
+                  {!hidePrice &&
+                    !product?.isPrescripted &&
+                    !product.detail?.isFoceNotSell && (
+                      <div>
+                        <Typography.Text className="mt-1 block">
+                          <Typography.Text className="text-base font-semibold text-primary-dark">
+                            {priceWithDiscount !== price
+                              ? priceWithDiscount
+                              : price}
+                          </Typography.Text>
+                          {product?.unit && (
+                            <Typography.Text className="text-base">
+                              &nbsp;/&nbsp;{product?.unit}
+                            </Typography.Text>
+                          )}
                         </Typography.Text>
-                        {product?.unit && (
-                          <Typography.Text className="text-base">
-                            &nbsp;/&nbsp;{product?.unit}
+                        {priceWithDiscount !== price && (
+                          <Typography.Text className="text-gray line-through">
+                            {price}
                           </Typography.Text>
                         )}
-                      </Typography.Text>
-                      {priceWithDiscount !== price && (
-                        <Typography.Text className="text-gray line-through">
-                          {price}
-                        </Typography.Text>
-                      )}
-                    </div>
-                  )}
+                      </div>
+                    )}
                 </Space>
               </div>
               {actionComponent && <div>{actionComponent}</div>}

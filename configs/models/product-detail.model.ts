@@ -19,6 +19,7 @@ type ProductDetailModel = Partial<{
   titleSeo: string;
   metaSeo: string;
   keywordSeo: string;
+  isFoceNotSell: boolean;
 }>;
 
 export default ProductDetailModel;

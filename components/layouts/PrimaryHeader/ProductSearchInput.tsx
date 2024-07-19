@@ -98,7 +98,7 @@ function ProductSearchInput() {
 
   const backdrop = (
     <div
-      className="fixed inset-0 z-[100] bg-black opacity-50"
+      className="fixed inset-0 z-[120] bg-black opacity-50"
       onClick={() => {
         setSearchFocus(false);
       }}
@@ -109,7 +109,7 @@ function ProductSearchInput() {
     <>
       {searchFocus && backdrop}
 
-      <div className="relative z-[100]">
+      <div className="relative z-[120]">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -150,7 +150,7 @@ function ProductSearchInput() {
         </form>
 
         {searchFocus && (
-          <div className="absolute left-0 right-0 top-10 max-h-[800px] overflow-auto rounded-br-md rounded-bl-md bg-white">
+          <div className="absolute left-0 right-0 top-10 z-[100] max-h-[800px] overflow-auto rounded-br-md rounded-bl-md bg-white">
             <div className="mx-2 mt-4">
               <Space size={[8, 8]} wrap>
                 {productSearchKeywords.map((keyword, index) => (
@@ -179,7 +179,7 @@ function ProductSearchInput() {
                   </Typography>
                 )}
                 <Spin spinning={searching}>
-                  <List>
+                  <List className="z-[120]">
                     {searchedProducts?.data.map((searchedProduct) => (
                       <List.Item
                         key={searchedProduct.key}

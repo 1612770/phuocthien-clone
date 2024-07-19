@@ -104,7 +104,7 @@ function ProductMain({
         )}
         <ProductBonusSection offers={offers} />
         <div className="flex items-center justify-around rounded-3xl border-2 border-solid border-gray-100 p-2 shadow-md md:mb-4">
-          {product.isPrescripted ? (
+          {product.isPrescripted || product.detail?.isFoceNotSell ? (
             <div className="grid w-full grid-flow-row grid-cols-2 gap-x-2">
               <div className="w-full">
                 <Button
