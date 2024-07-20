@@ -38,10 +38,10 @@ class MyDocument extends Document {
           />
 
           <Script
-            async
             src="https://www.googletagmanager.com/gtag/js?id=G-M15MVM4EXS"
+            strategy="beforeInteractive"
           />
-          <Script id="google-analytics" strategy="afterInteractive" defer>
+          <Script id="google-analytics" strategy="beforeInteractive">
             {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){window.dataLayer.push(arguments);}
