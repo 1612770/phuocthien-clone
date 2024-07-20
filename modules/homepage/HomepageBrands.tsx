@@ -5,6 +5,7 @@ import BrandSlideItems from './BrandSlideItems';
 import { CarouselRef } from 'antd/es/carousel';
 import { useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'react-feather';
+import Image from 'next/image';
 
 function HomepageBrands({ brands }: { brands: BrandModel[] }) {
   const carouselRef = useRef<CarouselRef | null>(null);
@@ -14,10 +15,12 @@ function HomepageBrands({ brands }: { brands: BrandModel[] }) {
       <div className="flex items-center ">
         <div>
           <div className="mr-1 md:mr-4">
-            <img
+            <Image
               src={IMAGES.awards}
               alt="Thương hiệu yêu thích"
-              style={{ minHeight: 48, height: 50 }}
+              height={50}
+              width={50}
+              loading="lazy"
             />
           </div>
         </div>

@@ -2,7 +2,6 @@ import { ConfigProvider, App as AntdApp } from 'antd';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 
-import 'antd/dist/reset.css';
 import '../styles/style.scss';
 import 'nprogress/nprogress.css';
 import '../styles/_ckedit.scss';
@@ -10,7 +9,7 @@ import '../styles/_ckedit.scss';
 import { NextPageWithLayout } from './page';
 import COLORS from 'configs/colors';
 import MenuModel from '@configs/models/menu.model';
-import React, { Suspense } from 'react';
+// import React from 'react';
 import CartProvider from '@providers/CartProvider';
 import AppMessageProvider from '@providers/AppMessageProvider';
 import AuthProvider from '@providers/AuthProvider';
@@ -26,6 +25,7 @@ const DEFAUT_PAGE_TITLE = 'Nhà thuốc Phước Thiện';
 
 const ZaloChat = dynamic(() => import('../modules/zaloChat'), {
   ssr: false,
+  suspense: true,
 });
 
 interface AppPropsWithLayout<T> extends AppProps<T> {
@@ -126,9 +126,9 @@ function MyApp({
           </AntdApp>
         </ConfigProvider>
       </NProgress>
-      <Suspense>
-        <ZaloChat />
-      </Suspense>
+      {/* <Suspense> */}
+      <ZaloChat />
+      {/* </Suspense> */}
     </>
   );
 }

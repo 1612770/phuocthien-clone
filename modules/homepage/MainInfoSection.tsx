@@ -6,6 +6,7 @@ import ArticleItem from '@modules/tin-tuc/danh-muc/chi-tiet/ArticleItem';
 import IMAGES from '@configs/assests/images';
 import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 function MainInfoSection({
   articles,
@@ -21,11 +22,13 @@ function MainInfoSection({
         <div className="flex items-center lg:mb-2 ">
           <div className="flex items-center ">
             <div className="mr-1 md:mr-4 ">
-              <img
+              <Image
                 src={IMAGES.news}
                 alt="Góc sức khoẻ"
                 className="primary"
-                style={{ minHeight: 48, height: 50 }}
+                width={50}
+                height={50}
+                loading="lazy"
               />
             </div>
             <Typography.Title

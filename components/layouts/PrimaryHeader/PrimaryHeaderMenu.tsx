@@ -106,7 +106,7 @@ function PrimaryHeaderMenu() {
               </Typography.Text>
             </Space>
           </LinkWrapper>
-          <Link href={'/nha-thuoc'} passHref>
+          <Link href={'/nha-thuoc'} passHref prefetch={false}>
             <a>
               <div style={{ color: 'white' }} className="hidden xl:flex">
                 <Space

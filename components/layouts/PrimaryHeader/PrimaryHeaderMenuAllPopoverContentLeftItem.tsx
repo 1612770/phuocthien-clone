@@ -1,6 +1,7 @@
 import { List } from 'antd';
 import ImageUtils from '@libs/utils/image.utils';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 function PrimaryHeaderMenuAllPopoverContentLeftItem({
   href,
@@ -26,14 +27,20 @@ function PrimaryHeaderMenuAllPopoverContentLeftItem({
       }
       onClick={() => router.push(href)}
     >
-      <List.Item onMouseEnter={onMouseEnter}>
-        <img
+      <List.Item
+        onMouseEnter={onMouseEnter}
+        className="flex items-center justify-start"
+      >
+        <Image
           src={ImageUtils.getFullMenuImageUrl(image)}
           alt={label}
+          loading="lazy"
           onError={(e) => {
             e.currentTarget.src = ImageUtils.getRandomMockMenuUrl();
           }}
-          className="mr-2 aspect-square w-8"
+          width={32}
+          height={32}
+          // className="mr-2"
         />
         {label}
       </List.Item>

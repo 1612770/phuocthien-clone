@@ -1,15 +1,6 @@
 import Script from 'next/script';
-import { useEffect, useState } from 'react';
-export const ZaloChat = () => {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setTimeout(() => {
-      setMounted(true);
-    }, 5000);
-  }, []);
-
-  if (!mounted) return null;
-
+import { memo } from 'react';
+const ZaloChat = () => {
   return (
     <>
       <div className="app__zalo-chat-widget-container">
@@ -23,17 +14,15 @@ export const ZaloChat = () => {
         ></div>
         <Script
           src="https://sp.zalo.me/plugins/sdk.js"
-          async
-          onLoad={() => {
-            setTimeout(() => {
-              const iframe = document.querySelector(
-                '.zalo-chat-widget iframe'
-              ) as HTMLIFrameElement | null;
-              if (iframe) {
-                iframe.title = 'Zalo Chat Widget';
-              }
-            });
-          }}
+          strategy="afterInteractive"
+          // onReady={() => {
+          //   const iframe = document.querySelector(
+          //     '.zalo-chat-widget iframe'
+          //   ) as HTMLIFrameElement | null;
+          //   if (iframe) {
+          //     iframe.title = 'Zalo Chat Widget';
+          //   }
+          // }}
         ></Script>
         <p className="zalo-chat-widget-time">(7h - 21h)</p>
       </div>
@@ -41,4 +30,4 @@ export const ZaloChat = () => {
   );
 };
 
-export default ZaloChat;
+export default memo(ZaloChat);

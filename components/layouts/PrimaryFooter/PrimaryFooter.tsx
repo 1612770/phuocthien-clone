@@ -1,5 +1,4 @@
 import { Divider, Space, Typography } from 'antd';
-import Link from 'next/link';
 import IMAGES from 'configs/assests/images';
 import { useAppData } from '@providers/AppDataProvider';
 import { useWatchCacheProduct } from '@libs/utils/hooks/useWatchCacheProduct';
@@ -8,7 +7,13 @@ import ProductList from '@components/templates/ProductList';
 import { GlobalOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
 import { configPage } from '@configs/constants/generalPage';
 import { useRouter } from 'next/router';
-import FocusContentSection from '@modules/homepage/FocusContentSection';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+import Link from 'next/link';
+const FocusContentSection = dynamic(
+  () => import('@modules/homepage/FocusContentSection'),
+  { ssr: false }
+);
 
 function PrimaryFooter() {
   const { focusContent } = useAppData();
@@ -39,13 +44,14 @@ function PrimaryFooter() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div className=" text-white" onClick={() => router.push('/')}>
               <div>
-                <img
+                <Image
                   src={IMAGES.logo}
                   alt="Nhà thuốc Phước Thiện"
                   className="mr-2 h-8"
                   style={{ minHeight: 60, objectFit: 'contain' }}
                   width={242}
                   height={60}
+                  loading="lazy"
                 />
               </div>
 
@@ -60,11 +66,13 @@ function PrimaryFooter() {
                     rel="noreferrer"
                     aria-label="Google Play Store"
                   >
-                    <img
+                    <Image
                       src="/chplay.png"
-                      alt=""
+                      alt="chplay"
                       className="w-[120px]"
-                      style={{ width: 120, height: 40 }}
+                      width={120}
+                      loading="lazy"
+                      height={40}
                     />
                   </a>
                   <a
@@ -73,11 +81,11 @@ function PrimaryFooter() {
                     rel="noreferrer"
                     aria-label="App Store"
                   >
-                    <img
+                    <Image
                       src="/appstore.png"
-                      alt=""
-                      className="w-[120px]"
-                      style={{ width: 120, height: 40 }}
+                      alt="appstore"
+                      width={120}
+                      height={40}
                     />
                   </a>
                 </div>
@@ -92,7 +100,12 @@ function PrimaryFooter() {
                   </Typography.Text>
                   {el.children.length > 0 ? (
                     el.children.map((page, idx) => (
-                      <Link href={page.link} passHref key={`${page}-${idx}`}>
+                      <Link
+                        href={page.link}
+                        passHref
+                        key={`${page}-${idx}`}
+                        prefetch={false}
+                      >
                         <a className="flex min-h-[25px] md:min-h-[32px]">
                           <Space className="my-0.5 w-full">
                             <Typography.Text className="cursor-pointer text-primary">
@@ -151,24 +164,21 @@ function PrimaryFooter() {
               target="_blank"
               rel="noreferrer"
             >
-              <img
+              <Image
                 src={IMAGES.bocongthuongDathongbao}
                 alt="bocongthuong-dathongbao"
                 className="h-10"
-                style={{
-                  height: 40,
-                  width: 104,
-                }}
+                width={104}
+                height={40}
+                loading="lazy"
               />
             </a>
-            <img
+            <Image
               src={IMAGES.dmcaProtected}
               alt="dmca-protected"
-              className="h-6"
-              style={{
-                height: 24,
-                width: 128,
-              }}
+              loading="lazy"
+              height={24}
+              width={128}
             />
           </div>
         </div>

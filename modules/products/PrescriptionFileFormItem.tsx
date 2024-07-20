@@ -8,6 +8,7 @@ import { Collapse, Form, FormInstance, Spin, Typography, Upload } from 'antd';
 import { RcFile } from 'antd/es/upload';
 import React, { useState } from 'react';
 import { PrescriptionFormData } from '../../pages/gui-don-thuoc/index';
+import Image from 'next/image';
 
 function PrescriptionFileFormItem({
   form,
@@ -99,14 +100,13 @@ function PrescriptionFileFormItem({
             {prescriptFileUrl && (
               <>
                 {isPrescriptFileImage && (
-                  <img
+                  <Image
                     src={prescriptFileUrl}
-                    style={{
-                      objectFit: 'contain',
-                      padding: '16px',
-                    }}
+                    objectFit="contain"
                     alt="preview"
-                    className="h-[200px] w-full object-cover"
+                    loading="lazy"
+                    height={200}
+                    className="w-full p-[16px]"
                   />
                 )}
 

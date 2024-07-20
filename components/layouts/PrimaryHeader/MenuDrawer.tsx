@@ -5,6 +5,7 @@ import { useAuth } from '@providers/AuthProvider';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { ProductTypesCollapse } from './ProductTypesCollapse';
+import Image from 'next/image';
 
 function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
   const { logOut, isUserLoggedIn } = useAuth();
@@ -20,10 +21,14 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
             router.push('/');
           }}
         >
-          <img
+          <Image
             src={IMAGES.logo}
             alt="Nhà thuốc Phước Thiện"
-            className="mr-2 h-8 object-contain"
+            loading="lazy"
+            width={32}
+            height={32}
+            objectFit="contain"
+            className="mr-2"
           />
         </div>
       }
@@ -34,7 +39,7 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
       closeIcon={<X size={40} className="mr-0 text-primary" />}
     >
       <Space size={16} direction="vertical" className="w-full">
-        <Link href={'/lich-su-don-hang'} passHref>
+        <Link href={'/lich-su-don-hang'} passHref prefetch={false}>
           <a>
             <Button
               onClick={onClose}
@@ -52,7 +57,7 @@ function PrimaryHeaderMenuDrawer({ open, onClose }: DrawerProps) {
         </Link>
 
         {isUserLoggedIn && (
-          <Link href={'/thong-tin-ca-nhan'} passHref>
+          <Link href={'/thong-tin-ca-nhan'} passHref prefetch={false}>
             <a>
               <Button
                 onClick={onClose}

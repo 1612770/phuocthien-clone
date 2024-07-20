@@ -5,6 +5,9 @@ const path = require('path');
 // });
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  compiler: {
+    styledComponents: true,
+  },
   swcMinify: true,
   compress: true,
   output: 'standalone',

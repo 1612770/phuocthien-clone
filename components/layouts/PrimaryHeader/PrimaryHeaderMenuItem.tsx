@@ -19,7 +19,7 @@ function PrimaryHeaderMenuItem({
   productGroups?: MenuProductGroup[];
 }) {
   return (
-    <Link href={href} passHref>
+    <Link href={href} passHref prefetch={false}>
       <a>
         <div style={{ color: 'white' }}>
           <Popover

@@ -18,7 +18,7 @@ const UserLayout: React.FC<IUserLayout> = ({ children }) => {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[240px_1fr]">
       <List className="-mt-2 hidden lg:block">
-        <Link href="/lich-su-don-hang">
+        <Link href="/lich-su-don-hang" prefetch={false}>
           <a>
             <List.Item className="border-none p-0">
               <div

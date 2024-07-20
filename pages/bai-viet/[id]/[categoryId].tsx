@@ -170,7 +170,7 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
       categories: [],
       totalArticle: 0,
     },
-    revalidate: 86400, // 1 day
+    revalidate: 3600, // 1 day
   };
 
   const cmsClient = new CmsClient(context, {});

@@ -14,7 +14,7 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
       page: {} as Article,
       SEOData: {},
     },
-    revalidate: 3600, // 1 hour
+    revalidate: 86400, // 1 hour
   };
   const cmsClient = new CmsClient(context, {});
   try {

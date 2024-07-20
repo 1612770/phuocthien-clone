@@ -12,7 +12,7 @@ function LinkWrapper({
   if (href) {
     return (
       <span className={className}>
-        <Link href={href} passHref>
+        <Link href={href} passHref prefetch={false}>
           <a className="text-primary">{children}</a>
         </Link>
       </span>

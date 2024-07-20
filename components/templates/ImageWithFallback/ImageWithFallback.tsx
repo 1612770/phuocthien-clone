@@ -13,13 +13,13 @@ function ImageWithFallback({
 
   const imageSource = useMemo(() => {
     if (isImageLoadFailed) {
-      return getMockImage ? getMockImage() : '/image-placeholder.png';
+      return '/image-placeholder.png';
     }
 
     if (typeof src === 'string') return ImageUtils.getFullImageUrl(src);
 
     return src;
-  }, [isImageLoadFailed, src, getMockImage]);
+  }, [isImageLoadFailed, src]);
 
   return (
     <Image
@@ -29,6 +29,7 @@ function ImageWithFallback({
         setisImageLoadFailed(true);
       }}
       {...props}
+      loading="lazy"
       src={imageSource}
     />
   );

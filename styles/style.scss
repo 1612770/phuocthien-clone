@@ -141,6 +141,7 @@
   .zalo-chat-widget {
     bottom: 128px !important;
     right: 128px !important;
+    
   }
 
   .zalo-chat-widget-time {
@@ -162,6 +163,7 @@
     .zalo-chat-widget {
       bottom: 102px !important;
       right: 26px !important;
+      
     }
 
     .zalo-chat-widget-time {
@@ -174,12 +176,13 @@
 @media only screen and (max-width: 512px) {
   .app__zalo-chat-widget-container {
     .zalo-chat-widget {
-      bottom: 102px !important;
-      right: 26px !important;
+      bottom: 30px !important;
+      right: 30px !important;
+      
     }
 
     .zalo-chat-widget-time {
-      bottom: 76px;
+      bottom: 5px;
       right: 12px;
     }
   }

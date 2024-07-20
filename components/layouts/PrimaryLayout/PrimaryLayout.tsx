@@ -1,7 +1,7 @@
 import { Layout } from 'antd';
 import PrimaryHeader from '../PrimaryHeader';
 import PrimaryFooter from '../PrimaryFooter';
-import React, { useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import { useAppData } from '@providers/AppDataProvider';
 
 export interface IPrimaryLayout {
@@ -33,4 +33,4 @@ const PrimaryLayout: React.FC<IPrimaryLayout> = ({
   );
 };
 
-export default PrimaryLayout;
+export default memo(PrimaryLayout);

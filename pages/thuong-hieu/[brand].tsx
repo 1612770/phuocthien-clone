@@ -71,7 +71,7 @@ export const getStaticProps: GetStaticProps<PageProps> = async (
       },
       SEOData: {},
     },
-    revalidate: 86400, // 1 day
+    revalidate: 3600, // 1 day
   };
 
   const brandSeoUrl = context.params?.brand as string;

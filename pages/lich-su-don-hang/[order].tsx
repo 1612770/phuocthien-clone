@@ -68,7 +68,7 @@ const OrderPage: NextPageWithLayout<{ order?: OrderModel }> = ({ order }) => {
     <div className="container px-2 pb-4 lg:px-0">
       <Breadcrumb className="mt-4 mb-2">
         <Breadcrumb.Item>
-          <Link href="/">
+          <Link href="/" prefetch={false}>
             <a>
               <ChevronLeft size={14} />
               <span>Trang chủ</span>

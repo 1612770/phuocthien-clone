@@ -1,7 +1,7 @@
 import IMAGES from '@configs/assests/images';
 import { Typography } from 'antd';
 import Image from 'next/image';
-import { HOST } from '@configs/env';
+
 import Link from 'next/link';
 
 const listUtils = [
@@ -37,7 +37,11 @@ export const HomeUtils = () => {
       <div className="col-span-3 hidden md:col-span-2 md:block"></div>
       {listUtils.map((el, idx) => (
         <div className="col-span-3  md:col-span-2" key={`${el.title}#${idx}`}>
-          <Link href={el.link} target={el.newTab ? '_blank' : ''}>
+          <Link
+            href={el.link}
+            target={el.newTab ? '_blank' : ''}
+            prefetch={false}
+          >
             <a target={el.newTab ? '_blank' : ''}>
               <div className="flex h-full cursor-pointer flex-col items-center gap-2 rounded-lg border-solid border-white bg-white py-[10px] px-2 shadow-md hover:border-solid hover:border-primary md:flex-row md:gap-2 md:py-[16px] md:px-[18px]">
                 <div className="relative flex h-6 w-6 shrink-0 justify-center md:h-8 md:w-8 lg:h-10 lg:w-10">

@@ -53,7 +53,7 @@ function HomepageCarousel({
         autoplay
         dots={false}
         fade={type === 'primary'}
-        autoplaySpeed={type === 'primary' ? 2000 : 3500}
+        autoplaySpeed={type === 'primary' ? 2500 : 3500}
         ref={(ref) => (carouselRef.current = ref)}
         className="h-[100%] max-w-[100%]"
       >

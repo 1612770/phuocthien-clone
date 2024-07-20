@@ -1,7 +1,7 @@
 import { Badge, Button, Input, Popover, Space, Typography } from 'antd';
 import { Menu, Search, ShoppingCart, User } from 'react-feather';
 import IMAGES from 'configs/assests/images';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { useCart } from '@providers/CartProvider';
 import { useRouter } from 'next/router';
 import PrimaryHeaderMenu from './PrimaryHeaderMenu';
@@ -12,6 +12,7 @@ import { useIntersectionObserver } from '@libs/utils/hooks';
 import CartPopupContent from '@modules/gio-hang/CartPopupContent';
 import CurrencyUtils from '@libs/utils/currency.utils';
 import Link from 'next/link';
+import Image from 'next/image';
 
 function PrimaryHeader({ showSearch = true }) {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
@@ -63,15 +64,14 @@ function PrimaryHeader({ showSearch = true }) {
               className="w-[200px] cursor-pointer px-1 pb-2 lg:min-w-[128px]"
               onClick={() => router.push('/')}
             >
-              <img
+              <Image
                 src={IMAGES.logo}
                 alt="Nhà thuốc Phước Thiện"
-                className="w-full "
+                className="w-full"
+                loading="lazy"
                 width={192}
                 height={48}
-                style={{
-                  objectFit: 'contain',
-                }}
+                objectFit="contain"
               />
             </div>
 
@@ -82,7 +82,12 @@ function PrimaryHeader({ showSearch = true }) {
             )}
           </div>
 
-          <Link href={'/gio-hang'} passHref aria-label="Giỏ hàng">
+          <Link
+            href={'/gio-hang'}
+            passHref
+            aria-label="Giỏ hàng"
+            prefetch={false}
+          >
             <a aria-label="Giỏ hàng">
               <div className="mr-2 block cursor-pointer md:hidden">
                 <Badge count={totalProducts}>
@@ -213,4 +218,4 @@ function PrimaryHeader({ showSearch = true }) {
   );
 }
 
-export default PrimaryHeader;
+export default memo(PrimaryHeader);
