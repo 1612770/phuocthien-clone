@@ -15,7 +15,7 @@ import {
   Tag,
   Typography,
 } from 'antd';
-import Link from 'next/link';
+
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Search } from 'react-feather';

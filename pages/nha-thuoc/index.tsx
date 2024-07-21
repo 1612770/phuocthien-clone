@@ -67,7 +67,7 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
     props: {
       drugstores: [],
     },
-    revalidate: 3600, // 1 hour
+    revalidate: 86400, // 1 hour
   };
 
   const drugstoreClient = new DrugstoreClient(context, {});

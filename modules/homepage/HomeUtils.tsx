@@ -31,7 +31,7 @@ const listUtils = [
   },
 ];
 
-export const HomeUtils = () => {
+const HomeUtils = () => {
   return (
     <div className="relative mt-4 grid w-full grid-cols-12 gap-3 p-0 py-2 pt-0 md:mt-0 md:p-4 md:px-0">
       <div className="col-span-3 hidden md:col-span-2 md:block"></div>
@@ -47,7 +47,7 @@ export const HomeUtils = () => {
                 <div className="relative flex h-6 w-6 shrink-0 justify-center md:h-8 md:w-8 lg:h-10 lg:w-10">
                   <Image
                     src={el.img}
-                    alt={el.title}
+                    alt={`${el.title}-${new Date().getTime()}`}
                     layout="fill"
                     unoptimized
                   />
@@ -65,3 +65,4 @@ export const HomeUtils = () => {
     </div>
   );
 };
+export default HomeUtils;

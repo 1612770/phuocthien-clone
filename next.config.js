@@ -1,5 +1,6 @@
 /* eslint-disable */
 const path = require('path');
+
 // const withBundleAnalyzer = require('@next/bundle-analyzer')({
 //   enabled: process.env.ANALYZE === 'true',
 // });
@@ -7,11 +8,12 @@ const path = require('path');
 const nextConfig = {
   compiler: {
     styledComponents: true,
+    removeConsole: process.env.NODE_ENV === 'production',
   },
   swcMinify: true,
   compress: true,
   output: 'standalone',
-  reactStrictMode: false,
+  reactStrictMode: true,
   staticPageGenerationTimeout: 1000,
   productionBrowserSourceMaps: true,
   sassOptions: {
@@ -29,6 +31,7 @@ const nextConfig = {
     HOST: process.env.HOST,
   },
   images: {
+    minimumCacheTTL: 3600,
     domains: [
       process.env.HOST_IMAGE,
       process.env.INTERNAL_HOST_IMAGE,

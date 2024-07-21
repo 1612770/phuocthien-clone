@@ -1,32 +1,54 @@
-import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { NextPageWithLayout } from './page';
-import { GetStaticProps, GetStaticPropsContext } from 'next';
-import { ProductClient } from '@libs/client/Product';
-import HomepageCarousel from '@modules/homepage/HomepageCarousel';
-import HomepageSearchSection from '@modules/homepage/HomepageSearchSection';
-import ViralProductsListModel from '@configs/models/viral-products-list.model';
 import VIRAL_PRODUCTS_LOAD_PER_TIME from '@configs/constants/viral-products-load-per-time';
-import { useAppData } from '@providers/AppDataProvider';
-import { GeneralClient } from '@libs/client/General';
-import SlideBannerModel from '@configs/models/slide-banner.model';
-import ProductSearchKeyword from '@configs/models/product-search-keyword.model';
-import { useEffect } from 'react';
-import { PromotionClient } from '@libs/client/Promotion';
-import { Campaign, Promotion } from '@configs/models/promotion.model';
-import { getVisibleItems } from '@libs/helpers';
-import { Col, Grid, Row } from 'antd';
-import Product from '@configs/models/product.model';
 import { BANNER_ENABLED } from '@configs/env';
 import BrandModel from '@configs/models/brand.model';
 import { Article, Category } from '@configs/models/cms.model';
-import { CmsClient } from '@libs/client/Cms';
+import ProductSearchKeyword from '@configs/models/product-search-keyword.model';
+import Product from '@configs/models/product.model';
+import { Campaign, Promotion } from '@configs/models/promotion.model';
+import SlideBannerModel from '@configs/models/slide-banner.model';
+import ViralProductsListModel from '@configs/models/viral-products-list.model';
 import PagePropsWithSeo from '@configs/types/page-props-with-seo';
-import LinkWrapper from '@components/templates/LinkWrapper';
+import { CmsClient } from '@libs/client/Cms';
+import { GeneralClient } from '@libs/client/General';
+import { ProductClient } from '@libs/client/Product';
+import { PromotionClient } from '@libs/client/Promotion';
+import { getVisibleItems } from '@libs/helpers';
+import { useAppData } from '@providers/AppDataProvider';
+import { Col, Grid, Row } from 'antd';
+import { GetStaticProps, GetStaticPropsContext } from 'next';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { HomeUtils } from '@modules/homepage/HomeUtils';
-import ViralProductsList from '@modules/products/ViralProductsList';
+import { useEffect } from 'react';
+import { NextPageWithLayout } from './page';
+
 import HomepageBrands from '@modules/homepage/HomepageBrands';
+import HomepageCarousel from '@modules/homepage/HomepageCarousel';
+import HomepageSearchSection from '@modules/homepage/HomepageSearchSection';
+import HomeUtils from '@modules/homepage/HomeUtils';
 import MainInfoSection from '@modules/homepage/MainInfoSection';
+import ViralProductsList from '@modules/products/ViralProductsList';
+
+const PrimaryLayout = dynamic(
+  () => import('../components/layouts/PrimaryLayout'),
+  {
+    ssr: false,
+  }
+);
+const LinkWrapper = dynamic(
+  () => import('../components/templates/LinkWrapper'),
+  {
+    ssr: false,
+  }
+);
+// const HomeUtils = dynamic(() => import('../modules/homepage/HomeUtils'), {
+//   ssr: false,
+// });
+// const ViralProductsList = dynamic(
+//   () => import('../modules/products/ViralProductsList'),
+//   {
+//     ssr: false,
+//   }
+// );
 
 const { useBreakpoint } = Grid;
 

@@ -29,7 +29,7 @@ function ImageWithFallback({
         setisImageLoadFailed(true);
       }}
       {...props}
-      loading="lazy"
+      loading={props?.loading ? props.loading : 'lazy'}
       src={imageSource}
     />
   );

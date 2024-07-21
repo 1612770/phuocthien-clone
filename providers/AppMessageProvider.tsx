@@ -1,9 +1,9 @@
 import { getErrorMessage } from '@libs/helpers';
-import { message } from 'antd';
-import { ArgsProps } from 'antd/es/message';
+import { message, MessageArgsProps } from 'antd';
+// import { ArgsProps } from 'antd/es/message';
 import React, { useCallback } from 'react';
 
-type MessageType = Partial<ArgsProps> & { data: unknown };
+type MessageType = Partial<MessageArgsProps> & { data: unknown };
 
 function processPayloadContent(payload: MessageType, defaultContent: string) {
   payload.content = getErrorMessage(payload.data, defaultContent);

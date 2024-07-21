@@ -38,16 +38,18 @@ class MyDocument extends Document {
           />
 
           <Script
+            async
             src="https://www.googletagmanager.com/gtag/js?id=G-M15MVM4EXS"
             strategy="beforeInteractive"
           />
-          <Script id="google-analytics" strategy="beforeInteractive">
-            {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){window.dataLayer.push(arguments);}
-          gtag('js', new Date());
+          <Script async id="google-analytics" strategy="beforeInteractive">
+            {`setTimeout(()=>{
+                window.dataLayer = window.dataLayer || [];
+              function gtag(){window.dataLayer.push(arguments);}
+              gtag('js', new Date());
 
-          gtag('config', 'G-M15MVM4EXS');
+              gtag('config', 'G-M15MVM4EXS');
+            },5000)
         `}
           </Script>
         </Head>

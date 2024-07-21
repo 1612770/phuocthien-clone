@@ -2,7 +2,7 @@ import { Divider, Space, Typography } from 'antd';
 import IMAGES from 'configs/assests/images';
 import { useAppData } from '@providers/AppDataProvider';
 import { useWatchCacheProduct } from '@libs/utils/hooks/useWatchCacheProduct';
-import ProductList from '@components/templates/ProductList';
+// import ProductList from '@components/templates/ProductList';
 
 import { GlobalOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
 import { configPage } from '@configs/constants/generalPage';
@@ -10,10 +10,14 @@ import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
+import { memo } from 'react';
 const FocusContentSection = dynamic(
   () => import('@modules/homepage/FocusContentSection'),
   { ssr: false }
 );
+const ProductList = dynamic(() => import('@components/templates/ProductList'), {
+  ssr: false,
+});
 
 function PrimaryFooter() {
   const { focusContent } = useAppData();
@@ -187,4 +191,4 @@ function PrimaryFooter() {
   );
 }
 
-export default PrimaryFooter;
+export default memo(PrimaryFooter);

@@ -1,6 +1,6 @@
 import ProductTypeGroupModel from '@configs/models/product-type-group.model';
 import Product from '@configs/models/product.model';
-import { flatten } from 'lodash';
+import flatten from 'lodash/flatten';
 
 export const listMenu = [
   {

@@ -3,7 +3,7 @@ import LinkWrapper from '@components/templates/LinkWrapper';
 import { configPage } from '@configs/constants/generalPage';
 import { Article } from '@configs/models/cms.model';
 import { Grid, Typography } from 'antd';
-import { flatten } from 'lodash';
+import flatten from 'lodash/flatten';
 const { useBreakpoint } = Grid;
 export const GeneralPageDetail = ({ page }: { page: Article }) => {
   const breakp = useBreakpoint();

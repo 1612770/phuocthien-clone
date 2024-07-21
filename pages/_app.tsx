@@ -1,7 +1,7 @@
 import { ConfigProvider, App as AntdApp } from 'antd';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-
+import dynamic from 'next/dynamic';
 import '../styles/style.scss';
 import 'nprogress/nprogress.css';
 import '../styles/_ckedit.scss';
@@ -9,24 +9,38 @@ import '../styles/_ckedit.scss';
 import { NextPageWithLayout } from './page';
 import COLORS from 'configs/colors';
 import MenuModel from '@configs/models/menu.model';
-// import React from 'react';
-import CartProvider from '@providers/CartProvider';
-import AppMessageProvider from '@providers/AppMessageProvider';
-import AuthProvider from '@providers/AuthProvider';
-import AppConfirmDialogProvider from '@providers/AppConfirmDialogProvider';
 import FocusContentModel from '@configs/models/focus-content.model';
-import AppDataProvider from '@providers/AppDataProvider';
-import NProgress from '@components/templates/NProgress';
 import { useRouter } from 'next/router';
 import { HOST } from '@configs/env';
-import dynamic from 'next/dynamic';
 
 const DEFAUT_PAGE_TITLE = 'Nhà thuốc Phước Thiện';
-
 const ZaloChat = dynamic(() => import('../modules/zaloChat'), {
   ssr: false,
-  suspense: true,
 });
+const NProgress = dynamic(() => import('../components/templates/NProgress'), {
+  ssr: false,
+});
+const AppDataProvider = dynamic(() => import('../providers/AppDataProvider'), {
+  ssr: false,
+});
+const AuthProvider = dynamic(() => import('../providers/AuthProvider'), {
+  ssr: false,
+});
+const CartProvider = dynamic(() => import('../providers/CartProvider'), {
+  ssr: false,
+});
+const AppMessageProvider = dynamic(
+  () => import('../providers/AppMessageProvider'),
+  {
+    ssr: false,
+  }
+);
+const AppConfirmDialogProvider = dynamic(
+  () => import('../providers/AppConfirmDialogProvider'),
+  {
+    ssr: false,
+  }
+);
 
 interface AppPropsWithLayout<T> extends AppProps<T> {
   Component: NextPageWithLayout<T>;

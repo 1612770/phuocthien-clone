@@ -2,7 +2,7 @@ import Script from 'next/script';
 import { memo } from 'react';
 const ZaloChat = () => {
   return (
-    <>
+    <div>
       <div className="app__zalo-chat-widget-container">
         <div
           className="zalo-chat-widget"
@@ -13,20 +13,22 @@ const ZaloChat = () => {
           data-width="220"
         ></div>
         <Script
+          className="hidden md:block"
+          async
           src="https://sp.zalo.me/plugins/sdk.js"
-          strategy="afterInteractive"
-          // onReady={() => {
-          //   const iframe = document.querySelector(
-          //     '.zalo-chat-widget iframe'
-          //   ) as HTMLIFrameElement | null;
-          //   if (iframe) {
-          //     iframe.title = 'Zalo Chat Widget';
-          //   }
-          // }}
+          strategy="lazyOnload"
+          onReady={() => {
+            const iframe = document.querySelector(
+              '.zalo-chat-widget iframe'
+            ) as HTMLIFrameElement | null;
+            if (iframe) {
+              iframe.title = 'Zalo Chat Widget';
+            }
+          }}
         ></Script>
-        <p className="zalo-chat-widget-time">(7h - 21h)</p>
+        <p className="zalo-chat-widget-time hidden md:block">(7h - 21h)</p>
       </div>
-    </>
+    </div>
   );
 };
 
