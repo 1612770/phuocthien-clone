@@ -6,16 +6,13 @@ import {
   useState,
 } from 'react';
 import React from 'react';
-import {
-  Swiper as SwiperReactComponent,
-  SwiperProps as SwiperReactComponentProps,
-  SwiperSlide,
-} from 'swiper/react';
+import { Swiper as SwiperReactComponent, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Controller } from 'swiper/modules';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
 import css from './Swiper.module.scss';
+import SwiperReactComponentType from 'swiper';
 
 interface SwiperProps {
   autoplay?: boolean;
@@ -23,12 +20,14 @@ interface SwiperProps {
   autoplaySpeed?: number;
   className?: string;
   slidesPerView?: number;
+  slidesPerGroup?: number;
   breakpoints?: {
     [key: number]: {
       slidesPerView: number;
+      slidesPerGroup?: number;
     };
   };
-  onSlideChange?: (swiper: SwiperReactComponentProps) => void;
+  onSlideChange?: (swiper: SwiperReactComponentType) => void;
 }
 
 const Swiper = forwardRef(function SwiperImpl(
@@ -37,6 +36,7 @@ const Swiper = forwardRef(function SwiperImpl(
     autoplaySpeed,
 
     slidesPerView,
+    slidesPerGroup,
 
     breakpoints,
 
@@ -45,9 +45,11 @@ const Swiper = forwardRef(function SwiperImpl(
     className,
     children,
   }: PropsWithChildren<SwiperProps>,
-  ref: React.Ref<SwiperReactComponentProps>
+  ref: React.Ref<{ swiper: SwiperReactComponentType | undefined }>
 ) {
-  const [controlledSwiper, setControlledSwiper] = useState(null);
+  const [controlledSwiper, setControlledSwiper] = useState<
+    SwiperReactComponentType | undefined
+  >(undefined);
 
   useImperativeHandle(ref, () => ({
     swiper: controlledSwiper,
@@ -80,7 +82,7 @@ const Swiper = forwardRef(function SwiperImpl(
       modules={modules}
       spaceBetween={0}
       slidesPerView={slidesPerView || 1}
-      slidesPerGroup={slidesPerView || 1}
+      slidesPerGroup={slidesPerGroup || 1}
       navigation
       loop
       loopAddBlankSlides={false}

@@ -32,15 +32,19 @@ function HomepageBrands({ brands }: { brands: BrandModel[] }) {
         breakpoints={{
           0: {
             slidesPerView: 2,
+            slidesPerGroup: 2,
           },
           992: {
             slidesPerView: 3,
+            slidesPerGroup: 3,
           },
           1200: {
             slidesPerView: 5,
+            slidesPerGroup: 5,
           },
         }}
         slidesPerView={5}
+        slidesPerGroup={5}
       >
         {brands.map((brand, index) =>
           brand ? (
