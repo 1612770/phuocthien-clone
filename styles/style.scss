@@ -4,6 +4,9 @@
 // base
 @import './base/_reset';
 
+// fonts
+@import './font';
+
 .product-cart-item-collapse {
   .ant-collapse-header {
     padding-left: 0 !important;
@@ -141,7 +144,6 @@
   .zalo-chat-widget {
     bottom: 128px !important;
     right: 128px !important;
-    
   }
 
   .zalo-chat-widget-time {
@@ -163,7 +165,6 @@
     .zalo-chat-widget {
       bottom: 102px !important;
       right: 26px !important;
-      
     }
 
     .zalo-chat-widget-time {
@@ -178,7 +179,6 @@
     .zalo-chat-widget {
       bottom: 30px !important;
       right: 30px !important;
-      
     }
 
     .zalo-chat-widget-time {
