@@ -1,6 +1,5 @@
 import { Button, Divider, Tag, Tooltip, Typography, Grid } from 'antd';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
-import ImageUtils from '@libs/utils/image.utils';
 import OrderStatusUtils from '@libs/utils/order-status.utils';
 import TimeUtils from '@libs/utils/time.utils';
 import OrderModel from '@configs/models/order.model';
@@ -44,7 +43,6 @@ function OrderItem({ order }: { order: OrderModel }) {
               layout="fill"
               objectFit="cover"
               loading="lazy"
-              getMockImage={() => ImageUtils.getRandomMockProductImageUrl()}
             />
           </div>
 

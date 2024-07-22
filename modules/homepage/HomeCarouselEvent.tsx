@@ -1,21 +1,12 @@
+import Swiper from '@components/Swiper';
 import LinkWrapper from '@components/templates/LinkWrapper';
 import { Article } from '@configs/models/cms.model';
-import { Carousel } from 'antd';
-import { CarouselRef } from 'antd/es/carousel';
 import Image from 'next/image';
 
-import { useRef } from 'react';
 function HomepageCarouselEvent({ articles }: { articles: Article[] }) {
-  const carouselRef = useRef<CarouselRef | null>(null);
-
   return (
     <div className="relative h-[150px] w-full">
-      <Carousel
-        autoplay
-        dots={false}
-        effect="scrollx"
-        ref={(ref) => (carouselRef.current = ref)}
-      >
+      <Swiper autoplay>
         {articles.map((article, idx) => (
           <LinkWrapper
             key={idx}
@@ -40,7 +31,7 @@ function HomepageCarouselEvent({ articles }: { articles: Article[] }) {
             </div>
           </LinkWrapper>
         ))}
-      </Carousel>
+      </Swiper>
     </div>
   );
 }

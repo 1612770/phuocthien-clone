@@ -55,6 +55,13 @@ interface PageProps extends PagePropsWithSeo {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  if (process.env.PREVENT_STATIC_BUILD === 'true') {
+    return {
+      paths: [],
+      fallback: 'blocking',
+    };
+  }
+
   const productTypePaths = listMenu.reduce((acc, menu) => {
     if (menu.productTypeUrl) {
       return [

@@ -3,7 +3,6 @@ import { GetServerSidePropsContext } from 'next';
 import { Breadcrumb, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
-import ImageUtils from '@libs/utils/image.utils';
 import { DrugstoreClient } from '@libs/client/DrugStore';
 import DrugStore from '@configs/models/drug-store.model';
 import { MapPin, Phone } from 'react-feather';
@@ -45,7 +44,6 @@ const DrugstorePage: NextPageWithLayout<{
             src={drugstore?.image || ''}
             layout="fill"
             objectFit="cover"
-            getMockImage={() => ImageUtils.getRandomMockCampaignImageUrl()}
           ></ImageWithFallback>
         </div>
       )}

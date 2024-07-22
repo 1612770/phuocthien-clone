@@ -6,7 +6,6 @@ import { useAppMessage } from '@providers/AppMessageProvider';
 import DrugStore from '@configs/models/drug-store.model';
 import { ProductClient } from '@libs/client/Product';
 import Product, { InventoryAtDrugStore } from '@configs/models/product.model';
-import ImageUtils from '@libs/utils/image.utils';
 import { useCheckout } from '@providers/CheckoutProvider';
 
 function DrugStorePickerInventoryChecking({
@@ -173,9 +172,6 @@ function DrugStorePickerInventoryChecking({
                     <ImageWithFallback
                       src={productStatus.product.detail?.image || ''}
                       alt="product image"
-                      getMockImage={() => {
-                        return ImageUtils.getRandomMockProductImageUrl();
-                      }}
                       layout="fill"
                     />
                   </div>

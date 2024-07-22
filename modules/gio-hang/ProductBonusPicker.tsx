@@ -76,7 +76,6 @@ function ProductBonusPicker({
                     <ImageWithFallback
                       src={of.offerImg || ''}
                       alt="Khuyen mai"
-                      getMockImage={() => '/promotion.png'}
                       width={32}
                       height={32}
                       layout="fixed"

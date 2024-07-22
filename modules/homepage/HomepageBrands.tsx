@@ -1,15 +1,11 @@
 import IMAGES from '@configs/assests/images';
 import BrandModel from '@configs/models/brand.model';
-import { Button, Carousel, Typography } from 'antd';
+import { Typography } from 'antd';
 import BrandSlideItems from './BrandSlideItems';
-import { CarouselRef } from 'antd/es/carousel';
-import { useRef } from 'react';
-import { ChevronLeft, ChevronRight } from 'react-feather';
 import Image from 'next/image';
+import Swiper from '@components/Swiper';
 
 function HomepageBrands({ brands }: { brands: BrandModel[] }) {
-  const carouselRef = useRef<CarouselRef | null>(null);
-
   return (
     <div className="lg:container">
       <div className="flex items-center ">
@@ -30,63 +26,27 @@ function HomepageBrands({ brands }: { brands: BrandModel[] }) {
           </Typography.Title>
         </div>
       </div>
-      <div className="relative">
-        <Carousel
-          autoplay
-          infinite={brands.length > 5}
-          dots={false}
-          ref={(ref) => (carouselRef.current = ref)}
-          responsive={[
-            {
-              breakpoint: 600,
-              settings: {
-                slidesToShow: 2,
-                slidesToScroll: 2,
-                infinite: brands.length > 2,
-              },
-            },
-            {
-              breakpoint: 1200,
-              settings: {
-                slidesToShow: 3,
-                slidesToScroll: 3,
-                infinite: brands.length > 3,
-              },
-            },
-          ]}
-          slidesToShow={5}
-          slidesToScroll={5}
-        >
-          {brands.map((brand, index) =>
-            brand ? (
-              <div className="w-full  p-4 px-3" key={index}>
-                <BrandSlideItems brand={brand} />
-              </div>
-            ) : null
-          )}
-        </Carousel>
-        {brands.length > 1 && (
-          <>
-            <Button
-              shape="circle"
-              size="small"
-              onClick={() => carouselRef.current?.prev()}
-              icon={<ChevronLeft size={14} />}
-              aria-label="previous slide"
-              className="z-999 absolute top-1/2 left-[16px] ml-[16px] flex  -translate-y-1/2 -translate-x-1/2 items-center justify-center  lg:ml-0"
-            />
 
-            <Button
-              shape="circle"
-              size="small"
-              onClick={() => carouselRef.current?.next()}
-              icon={<ChevronRight size={14} />}
-              aria-label="next slide"
-              className="z-999 absolute top-1/2 right-[16px] mr-[16px] flex  -translate-y-1/2 translate-x-1/2 items-center justify-center  lg:mr-0"
-            />
-          </>
+      <Swiper
+        autoplay
+        breakpoints={{
+          0: {
+            slidesPerView: 2,
+          },
+          1080: {
+            slidesPerView: 3,
+          },
+        }}
+        slidesPerView={5}
+      >
+        {brands.map((brand, index) =>
+          brand ? (
+            <div className="w-full p-4 px-3" key={index}>
+              <BrandSlideItems brand={brand} />
+            </div>
+          ) : null
         )}
-      </div>
+      </Swiper>
     </div>
   );
 }

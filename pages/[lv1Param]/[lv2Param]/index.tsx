@@ -98,6 +98,13 @@ LV2ParamPage.getLayout = (page) => {
 export const getStaticPaths: GetStaticPaths = async (
   context: GetStaticPathsContext
 ) => {
+  if (process.env.PREVENT_STATIC_BUILD === 'true') {
+    return {
+      paths: [],
+      fallback: 'blocking',
+    };
+  }
+
   const generalClient = new GeneralClient(context, {});
 
   const productTypeGroupPromises: ReturnType<
