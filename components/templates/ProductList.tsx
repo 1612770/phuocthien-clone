@@ -32,8 +32,11 @@ function ProductList({
             0: {
               slidesPerView: 2,
             },
-            1080: {
+            992: {
               slidesPerView: 3,
+            },
+            1200: {
+              slidesPerView: 5,
             },
           }}
           slidesPerView={forArticlePage ? 3 : 5}

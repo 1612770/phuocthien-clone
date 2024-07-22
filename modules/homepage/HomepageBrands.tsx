@@ -33,8 +33,11 @@ function HomepageBrands({ brands }: { brands: BrandModel[] }) {
           0: {
             slidesPerView: 2,
           },
-          1080: {
+          992: {
             slidesPerView: 3,
+          },
+          1200: {
+            slidesPerView: 5,
           },
         }}
         slidesPerView={5}

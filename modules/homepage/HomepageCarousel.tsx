@@ -38,7 +38,7 @@ function HomepageCarousel({
     ...sliderImages,
     { url: 'https://pt-storage-prd.hn.ss.bfcplatform.vn/ban1.jpg' },
     { url: 'https://pt-storage-prd.hn.ss.bfcplatform.vn/ban2.jpg' },
-    { url: 'https://pt-storage-prd.hn.ss.bfcplatform.vn/ban1.jpg' },
+    { url: 'https://pt-storage-prd.hn.ss.bfcplatform.vn/ban3.jpg' },
   ];
   const pairedSlides = getPairedSlides(sliderImages, numberSlidePerPage);
 
