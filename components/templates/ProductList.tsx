@@ -1,7 +1,6 @@
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import Swiper from '@components/Swiper';
 import ProductCard from '@components/templates/ProductCard';
 import Product from '@configs/models/product.model';
-import { Button, Carousel } from 'antd';
 import React from 'react';
 
 function ProductList({
@@ -28,52 +27,23 @@ function ProductList({
       )}
 
       <div className={`relative ${forceSlide ? '' : 'lg:hidden'}`}>
-        <Carousel
-          infinite={forArticlePage ? true : products.length > 5}
-          arrows={true}
-          responsive={[
-            {
-              breakpoint: 600,
-              settings: {
-                slidesToShow: 2,
-                slidesToScroll: 2,
-                infinite: products.length > 2,
-              },
+        <Swiper
+          breakpoints={{
+            0: {
+              slidesPerView: 2,
+              slidesPerGroup: 2,
             },
-            {
-              breakpoint: 1200,
-              settings: {
-                slidesToShow: forArticlePage ? 2 : 3,
-                slidesToScroll: forArticlePage ? 2 : 3,
-                infinite: forArticlePage ? true : products.length > 3,
-              },
+            992: {
+              slidesPerView: 3,
+              slidesPerGroup: 3,
             },
-          ]}
-          slidesToShow={forArticlePage ? 3 : 5}
-          slidesToScroll={forArticlePage ? 3 : 5}
-          dots={false}
-          nextArrow={
-            <div className="">
-              <Button
-                shape="circle"
-                size="small"
-                className="z-10 translate-x-[5px] translate-y-[-10px]"
-              >
-                <RightOutlined />
-              </Button>
-            </div>
-          }
-          prevArrow={
-            <div className="">
-              <Button
-                shape="circle"
-                size="small"
-                className="z-10 translate-x-[-5px] translate-y-[-10px]"
-              >
-                <LeftOutlined />
-              </Button>
-            </div>
-          }
+            1200: {
+              slidesPerView: 5,
+              slidesPerGroup: 5,
+            },
+          }}
+          slidesPerView={forArticlePage ? 3 : 5}
+          slidesPerGroup={forArticlePage ? 3 : 5}
         >
           {products.map((product, index) =>
             product ? (
@@ -82,7 +52,7 @@ function ProductList({
               </div>
             ) : null
           )}
-        </Carousel>
+        </Swiper>
       </div>
     </div>
   );

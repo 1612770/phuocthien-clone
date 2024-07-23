@@ -1,9 +1,6 @@
+import Swiper from '@components/Swiper';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import LinkWrapper from '@components/templates/LinkWrapper';
-import { Button, Carousel } from 'antd';
-import { CarouselRef } from 'antd/es/carousel';
-import { useRef } from 'react';
-import { ChevronLeft, ChevronRight } from 'react-feather';
 
 const getPairedSlides = (
   visibleSlides: { url: string; link?: string }[],
@@ -34,8 +31,6 @@ function HomepageCarousel({
   numberSlidePerPage?: number;
   type?: 'primary' | 'secondary';
 }) {
-  const carouselRef = useRef<CarouselRef | null>(null);
-
   if (!sliderImages || sliderImages.length === 0) {
     return <div className="relative aspect-[3/1]"></div>;
   }
@@ -43,22 +38,20 @@ function HomepageCarousel({
     ...sliderImages,
     { url: 'https://pt-storage-prd.hn.ss.bfcplatform.vn/ban1.jpg' },
     { url: 'https://pt-storage-prd.hn.ss.bfcplatform.vn/ban2.jpg' },
-    { url: 'https://pt-storage-prd.hn.ss.bfcplatform.vn/ban1.jpg' },
+    { url: 'https://pt-storage-prd.hn.ss.bfcplatform.vn/ban3.jpg' },
   ];
   const pairedSlides = getPairedSlides(sliderImages, numberSlidePerPage);
 
   return (
     <div className="relative">
-      <Carousel
+      <Swiper
         autoplay
-        dots={false}
         fade={type === 'primary'}
         autoplaySpeed={type === 'primary' ? 2500 : 3500}
-        ref={(ref) => (carouselRef.current = ref)}
         className="h-[100%] max-w-[100%]"
       >
         {pairedSlides.map((slides, index) => (
-          <div className="flex gap-2 lg:gap-4 " key={index}>
+          <div className="flex" key={index}>
             {slides.map((slide, index) => (
               <LinkWrapper
                 key={index}
@@ -88,29 +81,7 @@ function HomepageCarousel({
             ))}
           </div>
         ))}
-      </Carousel>
-
-      {sliderImages.length > 1 && (
-        <>
-          <Button
-            size="small"
-            shape="circle"
-            aria-label="previous slide"
-            onClick={() => carouselRef.current?.prev()}
-            icon={<ChevronLeft size={14} />}
-            className="absolute top-1/2 left-[16px] -translate-y-1/2 -translate-x-1/2"
-          />
-
-          <Button
-            size="small"
-            shape="circle"
-            aria-label="next slide"
-            onClick={() => carouselRef.current?.next()}
-            icon={<ChevronRight size={14} />}
-            className="absolute top-1/2 right-[16px] -translate-y-1/2 translate-x-1/2"
-          />
-        </>
-      )}
+      </Swiper>
     </div>
   );
 }

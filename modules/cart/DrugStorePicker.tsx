@@ -5,7 +5,6 @@ import { useAppMessage } from '@providers/AppMessageProvider';
 import DrugStore from '@configs/models/drug-store.model';
 import DrugStorePickerInventoryChecking from './DrugStorePickerInventoryChecking';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
-import ImageUtils from '@libs/utils/image.utils';
 
 function DrugStorePicker() {
   const [drugStores, setDrugStores] = useState<DrugStore[]>([]);
@@ -75,9 +74,6 @@ function DrugStorePicker() {
                           height={48}
                           layout="fixed"
                           objectFit="contain"
-                          getMockImage={() =>
-                            ImageUtils.getRandomMockDrugstoreUrl()
-                          }
                         />
                         <div className="ml-3">
                           <Typography className="">{drugStore.name}</Typography>

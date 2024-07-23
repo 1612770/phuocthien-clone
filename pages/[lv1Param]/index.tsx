@@ -55,6 +55,13 @@ interface PageProps extends PagePropsWithSeo {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  if (process.env.PREVENT_STATIC_BUILD === 'true') {
+    return {
+      paths: [],
+      fallback: 'blocking',
+    };
+  }
+
   const productTypePaths = listMenu.reduce((acc, menu) => {
     if (menu.productTypeUrl) {
       return [
@@ -87,7 +94,7 @@ export const getStaticProps: GetStaticProps<PageProps> = async (
       productType: {},
       SEOData: {},
     },
-    revalidate: 3600, // 1 day
+    revalidate: 1800, // 1 day
   };
 
   const lv1ParamSeoUrl = context.params?.lv1Param as string;

@@ -2,7 +2,6 @@ import { List, Typography } from 'antd';
 import React from 'react';
 import DrugStore from '@configs/models/drug-store.model';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
-import ImageUtils from '@libs/utils/image.utils';
 import { EnvironmentTwoTone } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 function DrugstoreItem({
@@ -30,7 +29,6 @@ function DrugstoreItem({
                 height={72}
                 layout="fixed"
                 objectFit="contain"
-                getMockImage={() => ImageUtils.getRandomMockDrugstoreUrl()}
               />
             </div>
             <div className="ml-2">
@@ -65,7 +63,6 @@ function DrugstoreItem({
               height={48}
               layout="fixed"
               objectFit="contain"
-              getMockImage={() => ImageUtils.getRandomMockDrugstoreUrl()}
             />
             <div className="ml-2">
               <Typography className="text-sm">{drugstore.name}</Typography>

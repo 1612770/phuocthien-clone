@@ -8,7 +8,6 @@ import VIRAL_PRODUCTS_LOAD_PER_TIME from '@configs/constants/viral-products-load
 import ViralProductsListModel from '@configs/models/viral-products-list.model';
 import { NextPageWithLayout } from 'pages/page';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
-import ImageUtils from '@libs/utils/image.utils';
 
 const ViralGroupPage: NextPageWithLayout<{
   viralProductsLists?: ViralProductsListModel[];
@@ -27,7 +26,6 @@ const ViralGroupPage: NextPageWithLayout<{
             src={viralProductsLists?.[0]?.imageUrl || ''}
             layout="fill"
             objectFit="cover"
-            getMockImage={() => ImageUtils.getRandomMockCampaignImageUrl()}
           ></ImageWithFallback>
         </div>
       )}

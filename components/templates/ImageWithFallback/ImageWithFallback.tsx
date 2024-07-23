@@ -2,13 +2,7 @@ import ImageUtils from '@libs/utils/image.utils';
 import Image, { ImageProps } from 'next/image';
 import { useMemo, useState } from 'react';
 
-function ImageWithFallback({
-  getMockImage,
-  src,
-  ...props
-}: ImageProps & {
-  getMockImage?: () => string;
-}) {
+function ImageWithFallback({ src, ...props }: ImageProps) {
   const [isImageLoadFailed, setisImageLoadFailed] = useState(false);
 
   const imageSource = useMemo(() => {
@@ -21,6 +15,8 @@ function ImageWithFallback({
     return src;
   }, [isImageLoadFailed, src]);
 
+  const _loading = props.priority ? 'eager' : 'lazy';
+
   return (
     <Image
       alt={props?.alt || 'default'}
@@ -29,7 +25,7 @@ function ImageWithFallback({
         setisImageLoadFailed(true);
       }}
       {...props}
-      loading={props?.loading ? props.loading : 'lazy'}
+      loading={_loading}
       src={imageSource}
     />
   );

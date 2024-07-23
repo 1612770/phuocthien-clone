@@ -2,9 +2,8 @@ import { Typography } from 'antd';
 import FocusContentModel from '@configs/models/focus-content.model';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import LinkWrapper from '@components/templates/LinkWrapper';
-import ImageUtils from '@libs/utils/image.utils';
 
-function FocusContentSection({
+function FocusContentSection({ 
   focusContent,
   isProductPage,
 }: {
@@ -32,7 +31,6 @@ function FocusContentSection({
                     unoptimized
                     alt={focus.name}
                     src={focus.imageUrl || ''}
-                    getMockImage={() => ImageUtils.getFocusMockUrl()}
                   />
                 </div>
 

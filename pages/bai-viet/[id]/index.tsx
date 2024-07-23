@@ -142,6 +142,13 @@ const EventPage: NextPageWithLayout<EventPageProps> = ({
 export const getStaticPaths: GetStaticPaths = async (
   context: GetStaticPathsContext
 ) => {
+  if (process.env.PREVENT_STATIC_BUILD === 'true') {
+    return {
+      paths: [],
+      fallback: 'blocking',
+    };
+  }
+
   const cmsClient = new CmsClient(context, {});
 
   const categories = await loadAll(

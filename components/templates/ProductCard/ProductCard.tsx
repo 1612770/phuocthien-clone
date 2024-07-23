@@ -2,7 +2,6 @@ import Product from '@configs/models/product.model';
 import { Button, Card, Space, Tag, Typography } from 'antd';
 import React from 'react';
 import ImageWithFallback from '../ImageWithFallback';
-import ImageUtils from '@libs/utils/image.utils';
 import COLORS from '@configs/colors';
 import AddToCartButton from '@modules/products/AddToCartButton';
 import CurrencyUtils from '@libs/utils/currency.utils';
@@ -207,7 +206,6 @@ function ProductCard({
                 layout="fill"
                 objectFit="cover"
                 loading="lazy"
-                getMockImage={() => ImageUtils.getRandomMockProductImageUrl()}
               />
               {isDiscount && (
                 <Tag

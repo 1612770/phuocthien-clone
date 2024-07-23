@@ -98,6 +98,13 @@ LV2ParamPage.getLayout = (page) => {
 export const getStaticPaths: GetStaticPaths = async (
   context: GetStaticPathsContext
 ) => {
+  if (process.env.PREVENT_STATIC_BUILD === 'true') {
+    return {
+      paths: [],
+      fallback: 'blocking',
+    };
+  }
+
   const generalClient = new GeneralClient(context, {});
 
   const productTypeGroupPromises: ReturnType<
@@ -196,7 +203,7 @@ export const getStaticProps: GetStaticProps<LV2ParamPageProps> = async (
       product: {},
       SEOData: {},
     },
-    revalidate: 3600, // 1 day
+    revalidate: 60, // 1 day
   };
 
   const lv1ParamSeoUrl = context.params?.lv1Param as string;

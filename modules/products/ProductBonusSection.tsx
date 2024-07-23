@@ -18,7 +18,6 @@ function ProductBonusSection({ offers }: { offers?: OfferModel[] }) {
                 <ImageWithFallback
                   src={offer.offerImg || ''}
                   alt="Khuyen mai"
-                  getMockImage={() => '/promotion.png'}
                   width={32}
                   height={32}
                   layout="fixed"

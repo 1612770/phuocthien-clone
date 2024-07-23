@@ -1,8 +1,9 @@
-import { ExpandOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { ExpandOutlined } from '@ant-design/icons';
+import Swiper from '@components/Swiper';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
-import { Carousel, Button } from 'antd';
-import { CarouselRef } from 'antd/es/carousel';
-import React, { useEffect, useRef, useState } from 'react';
+import { Button } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { SwiperProps } from 'swiper/react';
 
 function ProductImageCarousel({
   images,
@@ -19,8 +20,8 @@ function ProductImageCarousel({
   type?: 'default' | 'in-modal';
   defaultActiveIndex?: number;
 }) {
-  const carouselRef = useRef<CarouselRef | null>();
   const [active, setActive] = useState(defaultActiveIndex);
+  const ref = React.useRef<SwiperProps>(null);
 
   useEffect(() => {
     setActive(defaultActiveIndex);
@@ -32,14 +33,16 @@ function ProductImageCarousel({
     generateThumbnailId || ((index: number) => 'image-' + index + '-thumbnail');
 
   useEffect(() => {
-    carouselRef.current?.goTo(active);
+    ref.current?.swiper?.slideTo?.(active);
 
     const container = document.getElementById(
       _generateThumbnailContainerId()
     ) as HTMLDivElement;
+
     const thumbnail = document.getElementById(
       _generateThumbnailId(active)
     ) as HTMLDivElement;
+
     if (container && thumbnail) {
       container.scrollTo({
         left:
@@ -57,43 +60,37 @@ function ProductImageCarousel({
   return (
     <div className="my-2 lg:col-span-2 xl:col-span-1">
       <div className="relative">
-        <Carousel
+        <Swiper
           className={`rounded-lg border-0 border-solid border-gray-200 lg:border`}
-          dots={false}
-          beforeChange={(_, index) => {
-            setActive(index);
-          }}
-          effect="scrollx"
           autoplay
           autoplaySpeed={4000}
-          ref={(ref) => (carouselRef.current = ref)}
+          onSlideChange={(swiper) => setActive(swiper.activeIndex)}
+          ref={ref}
         >
-          {imagesToShow.map((image, index) => {
-            return (
-              <div
-                key={index}
-                className={`relative ${
-                  type === 'in-modal' ? 'h-[60vh]' : 'h-[400px]'
-                } w-full`}
-              >
-                <ImageWithFallback
-                  key={image}
-                  src={image}
-                  alt="product"
-                  placeholder="blur"
-                  layout="fill"
-                  objectFit="contain"
-                  className="m-auto w-full"
-                />
-              </div>
-            );
-          })}
-        </Carousel>
+          {imagesToShow.map((image, index) => (
+            <div
+              key={index}
+              className={`relative ${
+                type === 'in-modal' ? 'h-[60vh]' : 'h-[400px]'
+              } w-full`}
+            >
+              <ImageWithFallback
+                key={image}
+                src={image}
+                alt="Hình ảnh sản phẩm"
+                placeholder="blur"
+                layout="fill"
+                objectFit="contain"
+                className="m-auto w-full"
+              />
+            </div>
+          ))}
+        </Swiper>
 
         {onExpand && (
           <Button
             shape="circle"
-            className="absolute bottom-2 right-2 border-0 bg-gray-100"
+            className="absolute bottom-2 right-2 z-10 border-0 bg-gray-100"
             size="large"
             onClick={() => {
               onExpand(active);
@@ -107,35 +104,6 @@ function ProductImageCarousel({
           <div className="absolute bottom-2 left-[50%] translate-x-[-50%] transform rounded-full bg-gray-200 px-2 py-1 text-sm font-semibold">
             {active + 1} / {images.length}
           </div>
-        )}
-
-        {images.length > 1 && (
-          <>
-            {active > 0 && (
-              <Button
-                shape="circle"
-                className="absolute top-1/2 left-2 -translate-y-1/2 border-0 bg-gray-100"
-                size="large"
-                onClick={() => {
-                  carouselRef.current?.prev();
-                }}
-              >
-                <LeftOutlined />
-              </Button>
-            )}
-            {active < images.length - 1 && (
-              <Button
-                shape="circle"
-                className="absolute top-1/2 right-2 -translate-y-1/2 border-0 bg-gray-100"
-                size="large"
-                onClick={() => {
-                  carouselRef.current?.next();
-                }}
-              >
-                <RightOutlined />
-              </Button>
-            )}
-          </>
         )}
       </div>
 
