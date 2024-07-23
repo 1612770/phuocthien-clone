@@ -203,7 +203,7 @@ export const getStaticProps: GetStaticProps<LV2ParamPageProps> = async (
       product: {},
       SEOData: {},
     },
-    revalidate: 1800, // 1 day
+    revalidate: 60, // 1 day
   };
 
   const lv1ParamSeoUrl = context.params?.lv1Param as string;
