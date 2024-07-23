@@ -16,6 +16,7 @@ const PrimaryLayout: React.FC<IPrimaryLayout> = ({
   children,
 }) => {
   const { focusContent, getFocusData } = useAppData();
+
   const computedBg =
     background === 'white' ? 'bg-gray-50' : 'bg-primary-background';
 
@@ -24,6 +25,7 @@ const PrimaryLayout: React.FC<IPrimaryLayout> = ({
       getFocusData();
     }
   }, [focusContent.length, getFocusData]);
+
   return (
     <>
       <PrimaryHeader showSearch={showSearch} />
