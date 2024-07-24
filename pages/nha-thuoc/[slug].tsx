@@ -1,5 +1,10 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
-import { GetServerSidePropsContext } from 'next';
+import {
+  GetStaticPaths,
+  GetStaticPathsContext,
+  GetStaticProps,
+  GetStaticPropsContext,
+} from 'next';
 import { Breadcrumb, Typography } from 'antd';
 import { NextPageWithLayout } from 'pages/page';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
@@ -72,15 +77,41 @@ DrugstorePage.getLayout = (page) => {
   return <PrimaryLayout>{page}</PrimaryLayout>;
 };
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
+export const getStaticPaths: GetStaticPaths = async (
+  context: GetStaticPathsContext
 ) => {
-  const serverSideProps: {
-    props: {
+  const drugstoreClient = new DrugstoreClient(context, {});
+
+  const drugstores = await drugstoreClient.getAllDrugStores();
+
+  const paths = (drugstores.data || []).reduce((acc, drugstore) => {
+    if (drugstore.seoUrl) {
+      return [
+        ...acc,
+        {
+          params: {
+            slug: drugstore.seoUrl,
+          },
+        },
+      ];
+    }
+    return acc;
+  }, [] as { params: { slug: string } }[]);
+
+  return {
+    paths,
+    fallback: 'blocking',
+  };
+};
+
+export const getStaticProps = async (context: GetStaticPropsContext) => {
+  const staticProps: ReturnType<
+    GetStaticProps<{
       drugstore?: DrugStore;
-    };
-  } = {
+    }>
+  > = {
     props: {},
+    revalidate: 3600, // 1 day
   };
 
   const drugstoreClient = new DrugstoreClient(context, {});
@@ -88,16 +119,16 @@ export const getServerSideProps = async (
   try {
     const [drugstore] = await Promise.all([
       drugstoreClient.getDrugStore({
-        key: context.params?.drugstoreKey as string,
+        key: context.params?.slug as string,
       }),
     ]);
 
     if (drugstore.data) {
-      serverSideProps.props.drugstore = drugstore.data || [];
+      staticProps.props.drugstore = drugstore.data || undefined;
     }
   } catch (error) {
     console.error(error);
   }
 
-  return serverSideProps;
+  return staticProps;
 };
