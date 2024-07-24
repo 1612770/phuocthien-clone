@@ -36,16 +36,15 @@ class MyDocument extends Document {
           <Script
             async
             src="https://www.googletagmanager.com/gtag/js?id=G-M15MVM4EXS"
-            strategy="beforeInteractive"
+            strategy="lazyOnload"
           />
-          <Script async id="google-analytics" strategy="beforeInteractive">
-            {`setTimeout(()=>{
+          <Script async id="google-analytics" strategy="lazyOnload">
+            {`
                 window.dataLayer = window.dataLayer || [];
               function gtag(){window.dataLayer.push(arguments);}
               gtag('js', new Date());
 
               gtag('config', 'G-M15MVM4EXS');
-            },5000)
         `}
           </Script>
         </Head>

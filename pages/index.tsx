@@ -27,13 +27,7 @@ import HomepageSearchSection from '@modules/homepage/HomepageSearchSection';
 import HomeUtils from '@modules/homepage/HomeUtils';
 import MainInfoSection from '@modules/homepage/MainInfoSection';
 import ViralProductsList from '@modules/products/ViralProductsList';
-
-const PrimaryLayout = dynamic(
-  () => import('../components/layouts/PrimaryLayout'),
-  {
-    ssr: false,
-  }
-);
+import PrimaryLayout from '@components/layouts/PrimaryLayout';
 const LinkWrapper = dynamic(
   () => import('../components/templates/LinkWrapper'),
   {

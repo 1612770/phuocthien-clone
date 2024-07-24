@@ -1,19 +1,33 @@
-import { Badge, Button, Input, Popover, Space, Typography } from 'antd';
-import { Menu, Search, ShoppingCart, User } from 'react-feather';
-import IMAGES from 'configs/assests/images';
-import { memo, useEffect, useRef, useState } from 'react';
-import { useCart } from '@providers/CartProvider';
-import { useRouter } from 'next/router';
-import PrimaryHeaderMenu from './PrimaryHeaderMenu';
-import ProductSearchInput from './ProductSearchInput';
-import ProductSearchInputMobile from './ProductSearchInputMobile';
-import PrimaryHeaderMenuDrawer from './MenuDrawer';
-import { useIntersectionObserver } from '@libs/utils/hooks';
-import CartPopupContent from '@modules/gio-hang/CartPopupContent';
 import CurrencyUtils from '@libs/utils/currency.utils';
-import Link from 'next/link';
+import { useIntersectionObserver } from '@libs/utils/hooks';
+// import CartPopupContent from '@modules/gio-hang/CartPopupContent';
+import { useCart } from '@providers/CartProvider';
+import { Badge, Button, Input, Popover, Space, Typography } from 'antd';
+import IMAGES from 'configs/assests/images';
 import Image from 'next/image';
-
+import Link from 'next/link';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
+import { memo, useEffect, useRef, useState } from 'react';
+import { Menu, Search, ShoppingCart, User } from 'react-feather';
+// import PrimaryHeaderMenuDrawer from './MenuDrawer';
+import PrimaryHeaderMenu from './PrimaryHeaderMenu';
+// import ProductSearchInput from './ProductSearchInput';
+// import ProductSearchInputMobile from './ProductSearchInputMobile';
+const PrimaryHeaderMenuDrawer = dynamic(() => import('./MenuDrawer'), {
+  ssr: false,
+});
+const ProductSearchInput = dynamic(() => import('./ProductSearchInput'), {
+  ssr: false,
+});
+const ProductSearchInputMobile = dynamic(
+  () => import('./ProductSearchInputMobile'),
+  { ssr: false }
+);
+const CartPopupContent = dynamic(
+  () => import('@modules/gio-hang/CartPopupContent'),
+  { ssr: false }
+);
 function PrimaryHeader({ showSearch = true }) {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const [openMobileSearch, setOpenMobileSearch] = useState(false);

@@ -1,9 +1,10 @@
 import { Layout } from 'antd';
 import PrimaryHeader from '../PrimaryHeader';
-import PrimaryFooter from '../PrimaryFooter';
+import dynamic from 'next/dynamic';
 import React, { memo, useEffect } from 'react';
 import { useAppData } from '@providers/AppDataProvider';
 
+const PrimaryFooter = dynamic(() => import('../PrimaryFooter'), { ssr: false });
 export interface IPrimaryLayout {
   children: React.ReactNode;
   showSearch?: boolean;
