@@ -15,7 +15,7 @@ import { HOST } from '@configs/env';
 
 const DEFAUT_PAGE_TITLE = 'Nhà thuốc Phước Thiện';
 
-const ZaloChat = dynamic(() => import('../modules/ZaloChat'), {
+const ZaloChat = dynamic(() => import('../modules/zaloChat/index'), {
   ssr: false,
 });
 
