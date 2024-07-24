@@ -63,6 +63,7 @@ function DrugstoreItem({
               height={48}
               layout="fixed"
               objectFit="contain"
+              placeholderImageSrc="/logo.png"
             />
             <div className="ml-2">
               <Typography className="text-sm">{drugstore.name}</Typography>

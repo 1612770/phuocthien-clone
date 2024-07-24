@@ -42,7 +42,7 @@ function AppDataProvider({ children }: { children: React.ReactNode }) {
     }
   }, [productSearchKeywords]);
 
-  const getFocusData = async () => {
+  const getFocusData = useCallback(async () => {
     try {
       const generalClient = new GeneralClient(null, {});
       const resFocusData = await generalClient.getFocusContent();
@@ -57,7 +57,8 @@ function AppDataProvider({ children }: { children: React.ReactNode }) {
       console.error(error);
       setFocusData([]);
     }
-  };
+  }, []);
+
   return (
     <AppDataContext.Provider
       value={{

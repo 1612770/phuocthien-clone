@@ -2,18 +2,24 @@ import ImageUtils from '@libs/utils/image.utils';
 import Image, { ImageProps } from 'next/image';
 import { useMemo, useState } from 'react';
 
-function ImageWithFallback({ src, ...props }: ImageProps) {
+function ImageWithFallback({
+  placeholderImageSrc,
+  src,
+  ...props
+}: ImageProps & {
+  placeholderImageSrc?: string;
+}) {
   const [isImageLoadFailed, setisImageLoadFailed] = useState(false);
 
   const imageSource = useMemo(() => {
     if (isImageLoadFailed) {
-      return '/image-placeholder.png';
+      return placeholderImageSrc || '/image-placeholder.png';
     }
 
     if (typeof src === 'string') return ImageUtils.getFullImageUrl(src);
 
     return src;
-  }, [isImageLoadFailed, src]);
+  }, [isImageLoadFailed, placeholderImageSrc, src]);
 
   const _loading = props.priority ? 'eager' : 'lazy';
 

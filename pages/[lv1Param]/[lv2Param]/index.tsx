@@ -27,6 +27,7 @@ import { listMenu } from '@configs/constants/listMenu';
 import { GeneralClient } from '@libs/client/General';
 import APIResponse from '@configs/types/api-response.type';
 import { ProductTypeGroupCategory } from '@configs/models/menu.model';
+import { ProductClient } from '@libs/client/Product';
 
 interface LV2ParamPageProps extends PagePropsWithSeo {
   productTypeGroup: {
@@ -106,6 +107,53 @@ export const getStaticPaths: GetStaticPaths = async (
   }
 
   const generalClient = new GeneralClient(context, {});
+  const productClient = new ProductClient(context, {});
+
+  const productPromises = Array.from(
+    { length: 10 },
+    (_, index) => index + 1
+  ).map((page) => {
+    return productClient.getProducts({
+      page,
+      pageSize: 50,
+      isPrescripted: false,
+    });
+  });
+
+  const productSettledResponses = await Promise.allSettled(productPromises);
+
+  const productResponses = productSettledResponses
+    .filter((response) => response.status === 'fulfilled')
+    .map((response) =>
+      response.status === 'fulfilled'
+        ? (response.value as APIResponse<WithPagination<Product[]>>)
+        : undefined
+    );
+
+  const productPaths = productResponses.reduce((acc, productResponse) => {
+    if (productResponse?.data?.data) {
+      return [
+        ...acc,
+        ...productResponse.data.data.reduce((acc, product) => {
+          if (!product.productType?.seoUrl || !product.detail?.seoUrl) {
+            return acc;
+          }
+
+          return [
+            ...acc,
+            {
+              params: {
+                lv1Param: product.productType?.seoUrl,
+                lv2Param: product.detail?.seoUrl,
+              },
+            },
+          ];
+        }, [] as { params: { lv1Param: string; lv2Param: string } }[]),
+      ];
+    }
+
+    return acc;
+  }, [] as { params: { lv1Param: string; lv2Param: string } }[]);
 
   const productTypeGroupPromises: ReturnType<
     GeneralClient['getCategoryProduct']
@@ -185,7 +233,11 @@ export const getStaticPaths: GetStaticPaths = async (
     [] as { params: { lv1Param: string; lv2Param: string } }[]
   );
 
-  const paths = [...productGroupSlugPaths, ...productTypeGroupSlugPaths];
+  const paths = [
+    ...productGroupSlugPaths,
+    ...productTypeGroupSlugPaths,
+    ...productPaths,
+  ];
 
   return {
     paths,

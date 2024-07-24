@@ -1,6 +1,20 @@
+import useIsMobile from '@libs/utils/hooks/use-is-mobile';
+import useIsMounted from '@libs/utils/hooks/use-is-mounted';
 import Script from 'next/script';
 import { memo } from 'react';
+
 const ZaloChat = () => {
+  const isMobile = useIsMobile();
+  const isMounted = useIsMounted();
+
+  if (!isMounted) {
+    return null;
+  }
+
+  if (isMobile) {
+    return null;
+  }
+
   return (
     <div>
       <div className="app__zalo-chat-widget-container">
