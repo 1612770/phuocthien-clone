@@ -14,9 +14,11 @@ import { useRouter } from 'next/router';
 import { HOST } from '@configs/env';
 
 const DEFAUT_PAGE_TITLE = 'Nhà thuốc Phước Thiện';
-const ZaloChat = dynamic(() => import('../modules/zaloChat'), {
+
+const ZaloChat = dynamic(() => import('../modules/ZaloChat'), {
   ssr: false,
 });
+
 const NProgress = dynamic(() => import('../components/templates/NProgress'), {
   ssr: false,
 });
@@ -140,9 +142,7 @@ function MyApp({
           </AntdApp>
         </ConfigProvider>
       </NProgress>
-      {/* <Suspense> */}
       <ZaloChat />
-      {/* </Suspense> */}
     </>
   );
 }
