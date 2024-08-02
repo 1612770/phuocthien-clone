@@ -3,6 +3,8 @@ import { OrderClient } from '@libs/client/Order';
 import { DeliveryConfigs } from '@configs/models/order.model';
 import { useCheckout } from './CheckoutProvider';
 import ShippingTypes from '@configs/enums/shipping-types.enum';
+import { useCart } from './CartProvider';
+import { useMasterData } from './MasterDataProvider';
 
 const DeliveryConfigsContext = React.createContext<{
   deliveryConfigs: DeliveryConfigs | undefined;
@@ -26,9 +28,14 @@ function DeliveryConfigsProvider({ children }: { children: React.ReactNode }) {
     checkoutForm,
     cartStep,
   } = useCheckout();
+  const { cartProducts } = useCart();
+  const { provinces } = useMasterData();
 
+  const listProduct = cartProducts.filter((el) => el.choosen);
   const shippingType = checkoutForm?.getFieldValue('shippingType');
-
+  const _selectedProvinceKey =
+    checkoutForm?.getFieldValue('currentProvinceKey');
+  // console.log(_selectedProvinceKey);
   const getDeliveryConfigs = useCallback(async function getDeliveryConfigs() {
     try {
       const orderClient = new OrderClient(null, {});
@@ -41,23 +48,43 @@ function DeliveryConfigsProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const shippingFee = useMemo(() => {
+    const listTPCN = listProduct.filter(
+      (el) => el.product?.productType?.seoUrl === 'thuc-pham-chuc-nang'
+    );
+    const sumPriceTPCN = listTPCN.reduce(
+      (sum, list) => (sum += (list?.finalPrice || 0) * (list.quantity || 0)),
+      0
+    );
     let shippingFee = 0;
-    if (
-      shippingType === ShippingTypes.DELIVERY &&
-      cartStep === 'checkout' &&
-      totalPriceAfterDiscountOnProduct <
-        (deliveryConfigs?.totalAmountOrderApply || 0)
-    ) {
-      shippingFee = deliveryConfigs?.feeDelivery || 0;
+    if (cartStep === 'checkout' && shippingType === ShippingTypes.DELIVERY) {
+      const currentProvince = provinces.find(
+        (province) => province.provinceCode === _selectedProvinceKey
+      );
+      if (currentProvince?.provinceName?.includes('Đà Nẵng')) {
+        if (
+          totalPriceAfterDiscountOnProduct <=
+          (deliveryConfigs?.totalAmountOrderApply || 0)
+        ) {
+          shippingFee = deliveryConfigs?.feeDelivery || 0;
+        }
+      } else {
+        if (sumPriceTPCN <= (deliveryConfigs?.totalAmountOrderApply || 0)) {
+          shippingFee = deliveryConfigs?.feeInterprovincialDelivery || 0;
+        }
+      }
     }
 
     return shippingFee;
   }, [
     cartStep,
     deliveryConfigs?.feeDelivery,
+    deliveryConfigs?.feeInterprovincialDelivery,
     deliveryConfigs?.totalAmountOrderApply,
     shippingType,
     totalPriceAfterDiscountOnProduct,
+    _selectedProvinceKey,
+    listProduct,
+    provinces,
   ]);
 
   return (

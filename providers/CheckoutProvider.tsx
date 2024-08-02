@@ -137,6 +137,13 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
   }>();
 
   const shippingType = Form.useWatch('shippingType', checkoutForm);
+  // const _selectedProvinceKey = Form.useWatch(
+  //   'currentProvinceKey',
+  //   checkoutForm
+  // );
+  // console.log(
+  //   provinces.find((province) => province.provinceCode === _selectedProvinceKey)
+  // );
   const [checkProductInventory, setCheckProductInventory] = useState<
     {
       product: CartProduct;
@@ -168,6 +175,8 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
   const choosenCartCombos = cartCombos.filter((cartCombo) => cartCombo.choosen);
   const choosenCartGifts = cartGifts.filter((cartGift) => cartGift.choosen);
   const choosenCartDeals = cartDeals.filter((cartDeal) => cartDeal.choosen);
+
+  // const [feeShipProvincial,setFeeShipProvincial] =  useState();
 
   const totalPriceBeforeDiscountOnProduct = useMemo(() => {
     const productCostPrice = choosenCartProducts.reduce(

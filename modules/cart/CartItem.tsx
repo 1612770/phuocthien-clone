@@ -336,7 +336,7 @@ function CartItem({
               }
               ghost
               shape="circle"
-              className=" bg-stone-50 hover:bg-stone-100"
+              className=" bg-red-500 hover:bg-stone-100"
               icon={
                 <DeleteOutlined
                   style={{

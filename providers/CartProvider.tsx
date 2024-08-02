@@ -333,7 +333,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         );
         return;
       } else {
-        setRecentAddedToCartType('combo' || '');
+        setRecentAddedToCartType('combo');
         const newCartCombos = [...cartCombos, { ...payload }];
         setCartCombos(newCartCombos);
         LocalStorageUtils.setItem(
@@ -374,7 +374,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         );
         return;
       } else {
-        setRecentAddedToCartType('deal' || '');
+        setRecentAddedToCartType('deal');
         const newCartDeals = [...cartDeals, { ...payload }];
         setCartDeals(newCartDeals);
         LocalStorageUtils.setItem(
@@ -415,7 +415,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         );
         return;
       } else {
-        setRecentAddedToCartType('gift' || '');
+        setRecentAddedToCartType('gift');
         const newCartGifts = [...cartGifts, { ...payload }];
         setCartGifts(newCartGifts);
         LocalStorageUtils.setItem(
@@ -467,7 +467,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         );
         return;
       } else {
-        setRecentAddedToCartType('product' || '');
+        setRecentAddedToCartType('product');
         const discountValue =
           payload.product?.promotions && payload.product?.promotions.length > 0
             ? (payload.product.retailPrice || 0) *

@@ -146,7 +146,7 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
             </Typography>
           )}
 
-          <Button hidden htmlType="submit" />
+          <Button hidden htmlType="submit" className="hidden" />
           {cartStep === 'checkout' && (
             <Button
               type="primary"
@@ -203,7 +203,7 @@ function CheckoutPrice({ offers, onCheckout }: CheckoutPriceProps) {
               </Typography.Title>
             </div>
             <div>
-              <Button hidden htmlType="submit" />
+              <Button hidden htmlType="submit" className="hidden" />
               {cartStep === 'checkout' && (
                 <Button
                   type="primary"

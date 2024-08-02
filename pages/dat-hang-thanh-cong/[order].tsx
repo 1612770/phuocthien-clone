@@ -239,13 +239,15 @@ const OrderPage: NextPageWithLayout = ({
                       )}
                       <div className="mt-2 flex flex-col justify-center">
                         <div>
-                          <img src="/msb.jpeg" alt="msb" width={64} />
+                          <img src="/PBVN.png" alt="pbvn" width={200} />
                         </div>
                         <div className=" font-bold text-black">
-                          <div>Ngân hàng Hàng Hải MSB</div>
-                          <div>06086015494524</div>
+                          <div>
+                            PBVN - Ngân hàng TNHH MTV PublicBank Viet Nam
+                          </div>
+                          <div>4003000044524</div>
                           <div className="text-xs">
-                            CONG HUYEN TON NU HAI VAN
+                            CONG TY TNHH PHUOC THIEN 3T
                           </div>
                         </div>
                       </div>

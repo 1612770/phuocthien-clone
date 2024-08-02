@@ -34,6 +34,7 @@ type OrderModel = Partial<{
 export interface DeliveryConfigs {
   totalAmountOrderApply: number;
   feeDelivery: number;
+  feeInterprovincialDelivery: number;
 }
 
 export default OrderModel;
