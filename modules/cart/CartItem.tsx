@@ -9,7 +9,10 @@ import { useCart } from '@providers/CartProvider';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import { useEffect, useRef, useState } from 'react';
 import CartProductItemNoteInput from './CartProductItemNoteInput';
-import { useCheckout } from '@providers/CheckoutProvider';
+import {
+  getLargestMatchedMinConditionProduct,
+  useCheckout,
+} from '@providers/CheckoutProvider';
 import { ProductClient } from '@libs/client/Product';
 import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
 import CurrencyUtils from '@libs/utils/currency.utils';
@@ -193,7 +196,11 @@ function CartItem({
     }
   }, [cartGift]);
 
-  const productPromotionPercent = cartProduct?.product?.promotions?.[0];
+  const productPromotionPercent = getLargestMatchedMinConditionProduct(
+    cartProduct?.product?.promotions || [],
+    cartProduct?.quantity || 0
+  );
+
   const displayName = cartCombo
     ? cartCombo?.comboPromotion.name
     : cartDeal

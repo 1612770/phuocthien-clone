@@ -277,7 +277,7 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
       articles: [],
       SEOData: {},
     },
-    revalidate: 3600, // 1 hour
+    revalidate: 1800, // 30 mins
   };
 
   staticProps.props.SEOData.titleSeo =

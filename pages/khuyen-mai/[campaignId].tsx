@@ -16,6 +16,8 @@ const getPromotionId = (id: string) => {
   return `promotion-section-${id}`;
 };
 
+export const MAX_PRODUCT_PER_PAGE = 20;
+
 const Home: NextPageWithLayout<{
   campaign: Campaign;
   listProducts: Product[][];
@@ -147,7 +149,7 @@ export const getServerSideProps = async (
         ...promotions.map((promotion) =>
           promotionClient.getPromoProducts({
             page: 1,
-            pageSize: 20,
+            pageSize: MAX_PRODUCT_PER_PAGE,
             keyPromo: promotion.key,
             isHide: false,
           })

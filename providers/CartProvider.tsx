@@ -17,12 +17,12 @@ import React, {
 import { useAppConfirmDialog } from './AppConfirmDialogProvider';
 import { useRouter } from 'next/router';
 import { ProductClient } from '@libs/client/Product';
-import { PromotionPercent } from '@configs/models/promotion.model';
 import {
   ComboPromotion,
   DealPromotion,
   GiftPromotion,
 } from '@libs/client/Promotion';
+import { getLargestMatchedMinConditionProduct } from './CheckoutProvider';
 
 type CartChangeProductData =
   | {
@@ -41,22 +41,6 @@ type CartChangeProductData =
       field: 'choosen';
       value: boolean;
     };
-const getMaxDiscount = (
-  promotionPercents: PromotionPercent[],
-  quantity: number
-): number => {
-  let maxDiscount = 0;
-
-  promotionPercents.forEach((promotionPercent) => {
-    if (quantity < promotionPercent.productQuantityMinCondition) {
-      maxDiscount = 0;
-      return maxDiscount;
-    } else if (promotionPercent.val > maxDiscount) {
-      maxDiscount = promotionPercent.val;
-    }
-  });
-  return maxDiscount;
-};
 
 /**
  * Using final prices of each item in cart to recalculate total price
@@ -438,22 +422,20 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         const newCartProducts = cartProducts.map((cartProduct) => {
           // calculate final price
           if (cartProduct.product?.key === payload.product?.key) {
-            const discountValue =
-              payload.product?.promotions &&
-              payload.product?.promotions.length > 0
-                ? (payload.product.retailPrice || 0) *
-                  (1 -
-                    getMaxDiscount(
-                      payload.product.promotions,
-                      payload.quantity
-                    ))
-                : payload.product?.retailPrice || 0;
+            const finalPrice = payload.product?.promotions?.length
+              ? (payload.product.retailPrice || 0) *
+                (1 -
+                  (getLargestMatchedMinConditionProduct(
+                    payload.product.promotions,
+                    payload.quantity
+                  )?.val || 0))
+              : payload.product?.retailPrice || 0;
 
             return {
               ...cartProduct,
               quantity: payload.quantity,
               choosen: true,
-              finalPrice: discountValue,
+              finalPrice: finalPrice,
             };
           }
 
@@ -468,14 +450,18 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         return;
       } else {
         setRecentAddedToCartType('product');
-        const discountValue =
-          payload.product?.promotions && payload.product?.promotions.length > 0
-            ? (payload.product.retailPrice || 0) *
-              (1 - getMaxDiscount(payload.product.promotions, payload.quantity))
-            : payload.product?.retailPrice || 0;
+        const finalPrice = payload.product?.promotions?.length
+          ? (payload.product.retailPrice || 0) *
+            (1 -
+              (getLargestMatchedMinConditionProduct(
+                payload.product.promotions,
+                payload.quantity
+              )?.val || 0))
+          : payload.product?.retailPrice || 0;
+
         const newCartProducts = [
           ...cartProducts,
-          { ...payload, choosen: true, finalPrice: discountValue },
+          { ...payload, choosen: true, finalPrice },
         ];
 
         setCartProducts(newCartProducts);

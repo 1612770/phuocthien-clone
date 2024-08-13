@@ -1,11 +1,16 @@
-import { PercentageOutlined } from '@ant-design/icons';
+import { DoubleRightOutlined, PercentageOutlined } from '@ant-design/icons';
 import { PromotionPercent } from '@configs/models/promotion.model';
 import { GiftPromotion, DealPromotion } from '@libs/client/Promotion';
-import { Typography } from 'antd';
-import React from 'react';
+import { Button, Typography } from 'antd';
+import React, { useState } from 'react';
 import PromotionListGiftListItem from './PromotionListGiftListItem';
 import PromotionListDealListItem from './PromotionListDealListItem';
 import PromotionListPercentListItem from './PromotionListPercentListItem';
+
+type WithType<T> = {
+  type: 'percent' | 'gift' | 'deal';
+  promotion: T;
+};
 
 function PromotionList({
   promotionPercents,
@@ -18,43 +23,87 @@ function PromotionList({
   giftPromotions?: GiftPromotion[];
   dealPromotions?: DealPromotion[];
 }) {
-  return promotionPercents.length > 0 ||
-    (giftPromotions?.length && giftPromotions?.length > 0) ||
-    (dealPromotions?.length && dealPromotions?.length > 0) ? (
-    <div className=" flex flex-col overflow-hidden rounded-xl border border-solid border-waring-border">
-      <div className="flex items-center gap-2 bg-waring-background px-4 py-2 text-waring">
+  const [showMore, setShowMore] = useState(false);
+
+  const shouldShowSeeMoreButton = promotionPercents.length > 4;
+
+  if (
+    !promotionPercents.length &&
+    !giftPromotions?.length &&
+    !dealPromotions?.length
+  )
+    return null;
+
+  const promotionsWithType: WithType<
+    PromotionPercent | GiftPromotion | DealPromotion
+  >[] = [
+    ...promotionPercents.map((promotion) => ({
+      type: 'percent' as const,
+      promotion,
+    })),
+    ...(giftPromotions || []).map((giftPromotion) => ({
+      type: 'gift' as const,
+      promotion: giftPromotion,
+    })),
+    ...(dealPromotions || []).map((dealPromotion) => ({
+      type: 'deal' as const,
+      promotion: dealPromotion,
+    })),
+  ];
+
+  const showedPromotionsWithType = showMore
+    ? promotionsWithType
+    : promotionsWithType.slice(0, 4);
+
+  return (
+    <div className=" flex flex-col overflow-hidden rounded-xl border border-solid border-orange-500">
+      <div className="flex items-center gap-2 bg-orange-200 px-4 py-3 text-orange-500">
         <PercentageOutlined />
-        <Typography.Text className="font-medium text-inherit">
+        <Typography.Text className="text-base font-semibold text-orange-600">
           Khuyến mãi dành riêng cho sản phẩm
         </Typography.Text>
       </div>
 
       <div className="grid grid-cols-1 divide-y divide-x-0 divide-solid divide-gray-200 py-1">
-        {promotionPercents.map((promotion) => (
-          <PromotionListPercentListItem
-            promotion={promotion}
-            key={promotion.promotionKey}
-            retailPrice={retailPrice}
-          />
-        ))}
+        {showedPromotionsWithType.map(({ type, promotion }) => {
+          switch (type) {
+            case 'percent':
+              return (
+                <PromotionListPercentListItem
+                  promotion={promotion as PromotionPercent}
+                  retailPrice={retailPrice}
+                />
+              );
+            case 'gift':
+              return (
+                <PromotionListGiftListItem
+                  giftPromotion={promotion as GiftPromotion}
+                />
+              );
+            case 'deal':
+              return (
+                <PromotionListDealListItem
+                  dealPromotion={promotion as DealPromotion}
+                />
+              );
 
-        {giftPromotions?.map((giftPromotion) => (
-          <PromotionListGiftListItem
-            giftPromotion={giftPromotion}
-            key={giftPromotion.promotionGiftId}
-          />
-        ))}
+            default:
+              return null;
+          }
+        })}
 
-        {dealPromotions?.map((dealPromotion) => (
-          <PromotionListDealListItem
-            dealPromotion={dealPromotion}
-            key={dealPromotion.promotionDealId}
-          />
-        ))}
+        {shouldShowSeeMoreButton && (
+          <Button
+            icon={showMore ? null : <DoubleRightOutlined />}
+            iconPosition="end"
+            type="link"
+            onClick={() => setShowMore(!showMore)}
+          >
+            {showMore ? 'Thu gọn' : 'Xem thêm'}
+          </Button>
+        )}
       </div>
     </div>
-  ) : (
-    <></>
   );
 }
 

@@ -8,6 +8,7 @@ import CurrencyUtils from '@libs/utils/currency.utils';
 import { PromotionPercent } from '@configs/models/promotion.model';
 import { GiftFilled } from '@ant-design/icons';
 import LinkWrapper from '../LinkWrapper';
+import { getMaxPromotion } from '@modules/san-pham/chi-tiet/ProductMain';
 
 type ProductCardProps = {
   product: Product;
@@ -20,16 +21,6 @@ type ProductCardProps = {
   actionComponent?: React.ReactNode;
   hrefDisabled?: boolean;
   hidePrice?: boolean;
-};
-
-const getMaxDiscount = (promotionPercents: PromotionPercent[]): number => {
-  let maxDiscount = 0;
-  promotionPercents.forEach((promotionPercent) => {
-    if (promotionPercent.val > maxDiscount) {
-      maxDiscount = promotionPercent.val;
-    }
-  });
-  return maxDiscount;
 };
 
 function ProductCard({
@@ -45,7 +36,9 @@ function ProductCard({
   hidePrice,
 }: ProductCardProps) {
   const productDiscountVal =
-    promotionPercent?.val || getMaxDiscount(product?.promotions || []) || 0;
+    promotionPercent?.val ||
+    getMaxPromotion(product?.promotions || [])?.val ||
+    0;
 
   const displayName = product?.detail?.displayName || product.name;
   const image = product?.detail?.image || product.images?.[0]?.url || '';

@@ -11,6 +11,7 @@ import LinkWrapper from '@components/templates/LinkWrapper';
 import { PromotionClient } from '@libs/client/Promotion';
 import { Button } from 'antd';
 import { DoubleRightOutlined } from '@ant-design/icons';
+import { MAX_PRODUCT_PER_PAGE } from 'pages/khuyen-mai/[campaignId]';
 
 function PromotionProductsList({
   promotion,
@@ -18,9 +19,7 @@ function PromotionProductsList({
   defaultProducts,
   isPrimaryBackground,
   scrollable,
-  campaginSlug,
 }: {
-  campaginSlug?: string;
   promotion?: CampaignPromotion;
   defaultProducts: Product[];
   id?: string;
@@ -29,11 +28,15 @@ function PromotionProductsList({
 }) {
   const [promotionProducts, setPromotionProducts] = useState<Product[]>([]);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [allowLoadMore, setAllowLoadMore] = useState(
-    promotionProducts.length === 20
-  );
+  const [allowLoadMore, setAllowLoadMore] = useState(false);
 
   const { toastError } = useAppMessage();
+
+  useEffect(() => {
+    if (promotionProducts.length < MAX_PRODUCT_PER_PAGE) {
+      setAllowLoadMore(true);
+    }
+  }, [promotionProducts]);
 
   useEffect(() => {
     setPromotionProducts(defaultProducts || []);
@@ -48,8 +51,8 @@ function PromotionProductsList({
       setLoadingMore(true);
 
       const { data } = await promotionClient.getPromoProducts({
-        page: Math.floor(promotionProducts.length / 20) + 1,
-        pageSize: 20,
+        page: Math.floor(promotionProducts.length / MAX_PRODUCT_PER_PAGE) + 1,
+        pageSize: MAX_PRODUCT_PER_PAGE,
         keyPromo: promotion?.key,
         isHide: false,
       });

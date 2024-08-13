@@ -1,11 +1,9 @@
-import COLORS from '@configs/colors';
 import OfferModel from '@configs/models/offer.model';
 import Product, { InventoryAtDrugStore } from '@configs/models/product.model';
-import { PromotionPercent } from '@configs/models/promotion.model';
 import PriceUnit from '@modules/products/PriceUnit';
 import ProductBonusSection from '@modules/products/ProductBonusSection';
 import PromotionList from '@modules/products/PromotionList';
-import { Typography, Tag, Button } from 'antd';
+import { Typography, Button, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import ProductDrugStoresSection from './ProductDrugStoresSection';
 import ProductCTA from '@modules/products/ProductCTA';
@@ -13,29 +11,39 @@ import { useAppData } from '@providers/AppDataProvider';
 import FocusContentSection from '@modules/homepage/FocusContentSection';
 import { GiftPromotion, DealPromotion } from '@libs/client/Promotion';
 import { ProductClient } from '@libs/client/Product';
+import { useCart } from '@providers/CartProvider';
+import { PromotionPercent } from '@configs/models/promotion.model';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import COLORS from '@configs/colors';
 
-const getMaxDiscount = (promotionPercents: PromotionPercent[]): number => {
-  let maxDiscount = 0;
-  promotionPercents.forEach((promotion) => {
-    if (promotion.val > maxDiscount) {
-      maxDiscount = promotion.val;
-    }
-  });
-  return maxDiscount;
-};
-const getMaxPercentObj = (
+export const getMaxPromotion = (
   promotionPercents: PromotionPercent[]
-): PromotionPercent | null => {
-  let maxDiscount = 0;
-  let obj: PromotionPercent | null = null;
-  promotionPercents.forEach((promotion) => {
-    if (promotion.val > maxDiscount) {
-      maxDiscount = promotion.val;
-      obj = promotion;
+): PromotionPercent | undefined => {
+  return promotionPercents.reduce((prev, curr) => {
+    if (curr.val > (prev?.val || 0)) {
+      return curr;
     }
-  });
-  return obj;
+
+    return prev;
+  }, undefined as PromotionPercent | undefined);
 };
+
+const getMaxPromotionInstruction = (
+  promotionPercents: PromotionPercent[],
+  currentQuantity?: number
+): string => {
+  const maxPromotion = getMaxPromotion(promotionPercents);
+
+  if (!maxPromotion) return '';
+
+  if (maxPromotion.productQuantityMinCondition <= (currentQuantity || 0))
+    return '';
+
+  return `Mua ${currentQuantity ? 'thêm' : 'ít nhất'} ${
+    maxPromotion.productQuantityMinCondition - (currentQuantity || 0)
+  } sản phẩm để được giảm ${maxPromotion.val * 100}%`;
+};
+
 function ProductMain({
   product,
   offers,
@@ -51,12 +59,24 @@ function ProductMain({
     message?: string;
   };
 }) {
-  const maxDisCount = getMaxDiscount(product?.promotions || []);
-  const objPercent = getMaxPercentObj(product?.promotions || []);
   const { focusContent } = useAppData();
+  const { cartProducts } = useCart();
+
   const [drugStoresAvailable, setDrugStoresAvailable] = useState<
     InventoryAtDrugStore[] | undefined
   >(undefined);
+
+  const curProductIncart = cartProducts.find(
+    (item) => item.product?.key === product?.key
+  );
+
+  const maxPromotionInstruction = getMaxPromotionInstruction(
+    product?.promotions || [],
+    curProductIncart?.quantity
+  );
+
+  const maxPromotion = getMaxPromotion(product.promotions || []);
+
   useEffect(() => {
     const loadInventory = async () => {
       try {
@@ -73,20 +93,22 @@ function ProductMain({
         setDrugStoresAvailable([]);
       }
     };
+
     if (product.key) {
       loadInventory();
     }
   }, [product.key]);
+
   return (
     <div className="relative flex flex-col gap-2">
       <div className="flex flex-col gap-2">
         <Typography.Title className="mx-0 mt-2 text-2xl font-medium">
-          {maxDisCount > 0 && (
+          {(maxPromotion?.val || 0) > 0 && (
             <Tag
               color={COLORS.red}
               className="m-0 mt-[-2px] rounded-full align-middle"
             >
-              Giảm {maxDisCount * 100}%
+              Giảm {(maxPromotion?.val || 0) * 100}%
             </Tag>
           )}{' '}
           {product?.detail?.displayName || product?.name}
@@ -127,27 +149,34 @@ function ProductMain({
             </div>
           ) : (
             <>
-              <PriceUnit
-                price={product.retailPrice}
-                discountVal={objPercent?.showPromoOnPrice ? maxDisCount : 0}
-                unit={product.unit}
-              />
-              <ProductCTA
-                product={product}
-                isAvailable={
-                  drugStoresAvailable &&
-                  drugStoresAvailable?.length > 0 &&
-                  drugStoresAvailable.filter((el) => el.quantity > 0).length > 0
-                }
-                price={
-                  <PriceUnit
-                    price={product.retailPrice}
-                    discountVal={maxDisCount}
-                    unit={product.unit}
-                    size="small"
-                  />
-                }
-              />
+              <PriceUnit price={product.retailPrice} unit={product.unit} />
+              <div className="flex flex-col gap-1 py-2">
+                <ProductCTA
+                  product={product}
+                  isAvailable={
+                    drugStoresAvailable &&
+                    drugStoresAvailable?.length > 0 &&
+                    drugStoresAvailable.filter((el) => el.quantity > 0).length >
+                      0
+                  }
+                  price={
+                    <PriceUnit
+                      price={product.retailPrice}
+                      unit={product.unit}
+                      size="small"
+                    />
+                  }
+                />
+
+                {maxPromotionInstruction && (
+                  <div className="flex items-center gap-2 text-blue-500">
+                    <InfoCircleOutlined size={12} />
+                    <Typography.Text className="text-inherit">
+                      {maxPromotionInstruction}
+                    </Typography.Text>
+                  </div>
+                )}
+              </div>
             </>
           )}
         </div>

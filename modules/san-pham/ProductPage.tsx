@@ -1,9 +1,7 @@
 import Breadcrumbs from '@components/Breadcrumbs';
 import DrugStore from '@configs/models/drug-store.model';
-import { FAQ } from '@configs/models/faq.model';
 import OfferModel from '@configs/models/offer.model';
 import Product, { InventoryAtDrugStore } from '@configs/models/product.model';
-import { Review } from '@configs/models/review.model';
 import { useCacheProduct } from '@libs/utils/hooks/useCacheProduct';
 import ProductCardDetail from '@modules/products/ProductCardDetail';
 import ProductCarousel from '@modules/products/ProductCarousel';

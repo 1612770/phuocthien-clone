@@ -15,6 +15,42 @@ import { useMasterData } from './MasterDataProvider';
 import { Form, FormInstance } from 'antd';
 import { ProductClient } from '@libs/client/Product';
 import { PromotionClient } from '@libs/client/Promotion';
+import { PromotionPercent } from '@configs/models/promotion.model';
+
+export const getLargestMatchedMinConditionProduct = (
+  promotions: PromotionPercent[],
+  productQuantity: number
+) => {
+  return promotions.reduce((prev, curr) => {
+    // xét điều kiện min tối thiểu
+    if (curr.productQuantityMinCondition <= productQuantity) {
+      if (!prev) {
+        return curr;
+      }
+
+      // ưu tiên lấy min tối thiểu lớn nhất
+      if (curr.productQuantityMinCondition > prev.productQuantityMinCondition) {
+        return curr;
+      }
+
+      // nếu min tối thiểu bằng nhau, ưu tiên lấy val lớn hơn
+      if (
+        curr.productQuantityMinCondition === prev.productQuantityMinCondition
+      ) {
+        // check val
+        if (curr.val > prev.val) {
+          return curr;
+        }
+
+        return prev;
+      }
+
+      return prev;
+    }
+
+    return prev;
+  }, undefined as PromotionPercent | undefined);
+};
 
 const CheckoutContext = React.createContext<{
   productStatuses: {
@@ -216,11 +252,20 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
   const totalPriceAfterDiscountOnProduct = useMemo(() => {
     const productCostPriceAfterDiscount = choosenCartProducts.reduce(
       (total, cartProduct) => {
-        const discountVal = cartProduct.product?.promotions?.[0]?.val || 0;
+        const hasAnyPromotion = !!cartProduct.product?.promotions?.length;
+
+        const largestMatchedMinConditionProduct = hasAnyPromotion
+          ? getLargestMatchedMinConditionProduct(
+              cartProduct.product?.promotions || [],
+              cartProduct.quantity
+            )
+          : undefined;
+
+        const discountVal = largestMatchedMinConditionProduct?.val || 0;
 
         const productQuantityMinCondition =
-          cartProduct.product?.promotions?.[0]?.productQuantityMinCondition ||
-          0;
+          largestMatchedMinConditionProduct?.productQuantityMinCondition || 0;
+
         const retailPrice = cartProduct.product?.retailPrice || 0;
 
         if (cartProduct.quantity >= productQuantityMinCondition) {
@@ -303,7 +348,11 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
     quantity: number;
     note?: string;
   }) => {
-    const promotionPercent = cartProduct.product?.promotions?.[0];
+    const largestMatchedMinConditionProduct =
+      getLargestMatchedMinConditionProduct(
+        cartProduct.product?.promotions || [],
+        cartProduct.quantity
+      );
 
     const res: {
       productKey: string;
@@ -318,11 +367,12 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
     };
 
     if (
-      promotionPercent &&
-      cartProduct.quantity >= promotionPercent.productQuantityMinCondition
+      largestMatchedMinConditionProduct &&
+      cartProduct.quantity >=
+        largestMatchedMinConditionProduct.productQuantityMinCondition
     ) {
-      res.keyPromo = promotionPercent.promotionKey;
-      res.keyPromoPercent = promotionPercent.key;
+      res.keyPromo = largestMatchedMinConditionProduct.promotionKey;
+      res.keyPromoPercent = largestMatchedMinConditionProduct.key;
     }
 
     return res;
