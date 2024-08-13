@@ -71,9 +71,9 @@ const Home: NextPageWithLayout<HomeProps> = ({
   const { setProductSearchKeywords } = useAppData();
   const percentPromotionSliderImages =
     campaigns?.map((campaign) => {
-      let link;
-      if (campaign.promotions.length > 0) {
-        link = '/khuyen-mai/' + (campaign.slug || campaign.key);
+      let link = '#';
+      if (campaign?.promotions && campaign?.promotions?.length > 0) {
+        link = '/khuyen-mai/' + (campaign?.slug || campaign?.key);
       }
 
       return {

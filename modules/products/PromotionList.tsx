@@ -57,9 +57,9 @@ function PromotionList({
 
   return (
     <div className=" flex flex-col overflow-hidden rounded-xl border border-solid border-orange-500">
-      <div className="flex items-center gap-2 bg-orange-200 px-4 py-3 text-orange-500">
+      <div className="flex items-center gap-2 bg-orange-200 px-2 py-1 text-orange-500">
         <PercentageOutlined />
-        <Typography.Text className="text-base font-semibold text-orange-600">
+        <Typography.Text className="text-md font-semibold text-orange-600">
           Khuyến mãi dành riêng cho sản phẩm
         </Typography.Text>
       </div>
