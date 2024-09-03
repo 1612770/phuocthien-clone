@@ -80,7 +80,10 @@ const Home: NextPageWithLayout<{
 
         {listProducts?.map((listProduct, index) => {
           if (!listProducts.length) return null;
-          const keyPromo = listProduct[0].keyPromo;
+          const keyPromo = listProduct[0]?.keyPromo;
+          if (!keyPromo) {
+            return null;
+          }
           const promotion = percentPromotions.find(
             (promotion) => promotion.key === keyPromo
           );

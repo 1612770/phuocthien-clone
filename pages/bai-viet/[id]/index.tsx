@@ -205,7 +205,7 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
       totalArticle: 0,
       SEOData: {},
     },
-    revalidate: 3600, // 1 day
+    revalidate: 60, // 1 day
   };
 
   const cmsClient = new CmsClient(context, {});
