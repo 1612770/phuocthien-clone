@@ -66,7 +66,7 @@ function CartItemsTable() {
       ))}
 
       {cartCombosToShow.map((cartCombo, index) => (
-        <Fragment key={cartCombo.comboPromotion?.promotionComboId}>
+        <Fragment key={cartCombo.comboPromotion?.key}>
           <CartItem cartCombo={cartCombo} />
           {index !== cartCombosToShow.length - 1 && (
             <Divider className="my-2" />
@@ -75,14 +75,14 @@ function CartItemsTable() {
       ))}
 
       {cartDealsToShow.map((cartDeal, index) => (
-        <Fragment key={cartDeal.dealPromotion?.promotionDealId}>
+        <Fragment key={cartDeal.dealPromotion?.key}>
           <CartItem cartDeal={cartDeal} />
           {index !== cartDealsToShow.length - 1 && <Divider className="my-2" />}
         </Fragment>
       ))}
 
       {cartGiftsToShow.map((cartGift, index) => (
-        <Fragment key={cartGift.giftPromotion?.promotionGiftId}>
+        <Fragment key={cartGift.giftPromotion?.key}>
           <CartItem cartGift={cartGift} />
           {index !== cartGiftsToShow.length - 1 && <Divider className="my-2" />}
         </Fragment>

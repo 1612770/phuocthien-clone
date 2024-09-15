@@ -1,18 +1,18 @@
 import { Typography } from 'antd';
-import { ComboPromotion } from '@libs/client/Promotion';
 import useProductAutoLoadByIds from '@libs/utils/hooks/useProductAutoLoadByIds';
 import AddToCartButton from '@modules/products/AddToCartButton';
 import CurrencyUtils from '@libs/utils/currency.utils';
 import ProductImages from './ProductImages';
 import Link from 'next/link';
+import { ComboPromotionModel } from '@configs/models/promotion.model';
 
 function ComboPromotionItem({
   comboPromotion,
 }: {
-  comboPromotion: ComboPromotion;
+  comboPromotion: ComboPromotionModel;
 }) {
-  const productIds = (comboPromotion.policy || []).map(
-    (policy) => policy.productId
+  const productIds = (comboPromotion.policies || []).map(
+    (policy) => policy.prodId
   );
 
   const { products } = useProductAutoLoadByIds(productIds);
@@ -23,12 +23,12 @@ function ComboPromotionItem({
     ) || [];
 
   const productsWithPolicyAndDiscount = products.map((product) => {
-    const policy = comboPromotion.policy?.find(
-      (policy) => policy.productId === product.key
+    const policy = comboPromotion.policies?.find(
+      (policy) => policy.prodId === product.key
     );
 
-    const discount = comboPromotion.discount?.find(
-      (discount) => discount.productId === product.key
+    const discount = comboPromotion.discounts?.find(
+      (discount) => discount.prodId === product.key
     );
 
     return {
@@ -55,7 +55,7 @@ function ComboPromotionItem({
               >
                 <a className="hover:text-primary">
                   <Typography.Text>
-                    • {product.policy?.requiredQty} x{' '}
+                    • {product.policy?.requiredProdQty} x{' '}
                     <span className="inline-block" style={{ fontWeight: 500 }}>
                       {product.detail?.displayName}
                     </span>

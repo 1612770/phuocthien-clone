@@ -3,7 +3,7 @@ import { NextPageWithLayout } from '../page';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
 import { Typography } from 'antd';
 import Product from '@configs/models/product.model';
-import { ComboPromotion, PromotionClient } from '@libs/client/Promotion';
+import { PromotionClient } from '@libs/client/Promotion';
 import { Campaign, CampaignPromotion } from '@configs/models/promotion.model';
 import { GetServerSidePropsContext } from 'next';
 import PromotionProductsList from '@modules/products/PromotionProductsList';
@@ -21,7 +21,6 @@ export const MAX_PRODUCT_PER_PAGE = 20;
 const Home: NextPageWithLayout<{
   campaign: Campaign;
   listProducts: Product[][];
-  comboPromotions: ComboPromotion[];
 }> = ({ campaign, listProducts }) => {
   const router = useRouter();
 

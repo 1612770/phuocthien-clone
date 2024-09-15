@@ -20,7 +20,6 @@ import PagePropsWithSeo from '@configs/types/page-props-with-seo';
 import ProductTypeGroupModel from '@configs/models/product-type-group.model';
 import getProductTypeGroupData from '@modules/san-pham/getProductTypeGroupData';
 import ProductTypeGroupPage from '@modules/san-pham/ProductTypeGroupPage';
-import { GiftPromotion, DealPromotion } from '@libs/client/Promotion';
 import { HOST_IMAGE } from '@configs/env';
 import { OthersClient } from '@libs/client/Others';
 import { listMenu } from '@configs/constants/listMenu';
@@ -48,8 +47,6 @@ interface LV2ParamPageProps extends PagePropsWithSeo {
     product?: Product;
     otherProducts?: Product[];
     offers?: OfferModel[];
-    giftPromotions?: GiftPromotion[];
-    dealPromotions?: DealPromotion[];
   };
 }
 
@@ -64,8 +61,6 @@ const LV2ParamPage: NextPageWithLayout<LV2ParamPageProps> = ({
         product={product.product}
         otherProducts={product.otherProducts}
         offers={product.offers || []}
-        giftPromotions={product.giftPromotions || []}
-        dealPromotions={product.dealPromotions || []}
       />
     );
   }

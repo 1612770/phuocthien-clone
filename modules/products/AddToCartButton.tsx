@@ -2,14 +2,14 @@ import { Button, Input } from 'antd';
 import Product from '@configs/models/product.model';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useCart } from '@providers/CartProvider';
-import { PromotionPercent } from '@configs/models/promotion.model';
+import {
+  ComboPromotionModel,
+  DealPromotionModel,
+  GiftPromotionModel,
+  PromotionPercent,
+} from '@configs/models/promotion.model';
 import { useAppConfirmDialog } from '@providers/AppConfirmDialogProvider';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import {
-  ComboPromotion,
-  DealPromotion,
-  GiftPromotion,
-} from '@libs/client/Promotion';
 
 const putPromotionIntoNonPromotionProduct = (
   product: Product,
@@ -37,9 +37,9 @@ function AddToCartButton({
   product?: Product;
   className?: string;
   promotionPercent?: PromotionPercent;
-  comboPromotion?: ComboPromotion;
-  dealPromotion?: DealPromotion;
-  giftPromotion?: GiftPromotion;
+  comboPromotion?: ComboPromotionModel & { images: string[] };
+  dealPromotion?: DealPromotionModel;
+  giftPromotion?: GiftPromotionModel;
   label?: string;
   type?: 'default' | 'in-detail';
 }) {
@@ -71,9 +71,7 @@ function AddToCartButton({
     () =>
       comboPromotion
         ? cartCombos.find(
-            (cartCombo) =>
-              cartCombo.comboPromotion?.promotionComboId ===
-              comboPromotion?.promotionComboId
+            (cartCombo) => cartCombo.comboPromotion?.key === comboPromotion?.key
           )
         : undefined,
     [cartCombos, comboPromotion]
@@ -83,9 +81,7 @@ function AddToCartButton({
     () =>
       dealPromotion
         ? cartDeals.find(
-            (cartDeal) =>
-              cartDeal.dealPromotion?.promotionDealId ===
-              dealPromotion?.promotionDealId
+            (cartDeal) => cartDeal.dealPromotion?.key === dealPromotion?.key
           )
         : undefined,
     [cartDeals, dealPromotion]
@@ -95,9 +91,7 @@ function AddToCartButton({
     () =>
       giftPromotion
         ? cartGifts.find(
-            (cartGift) =>
-              cartGift.giftPromotion?.promotionGiftId ===
-              giftPromotion?.promotionGiftId
+            (cartGift) => cartGift.giftPromotion?.key === giftPromotion?.key
           )
         : undefined,
     [cartGifts, giftPromotion]
@@ -137,7 +131,7 @@ function AddToCartButton({
     if (!quantity) {
       setConfirmData({
         title: 'Xóa khỏi giỏ hàng',
-        content: `Deal #${dealPromotion?.promotionDealId} sẽ được loại bỏ khỏi giỏ hàng của bạn?`,
+        content: `Deal #${dealPromotion?.key} sẽ được loại bỏ khỏi giỏ hàng của bạn?`,
         onOk: () => {
           removeFromCart(
             { dealPromotion },
@@ -165,7 +159,7 @@ function AddToCartButton({
     if (!quantity) {
       setConfirmData({
         title: 'Xóa khỏi giỏ hàng',
-        content: `Gift #${giftPromotion?.promotionGiftId} sẽ được loại bỏ khỏi giỏ hàng của bạn?`,
+        content: `Gift #${giftPromotion?.key} sẽ được loại bỏ khỏi giỏ hàng của bạn?`,
         onOk: () => {
           removeFromCart(
             { giftPromotion },

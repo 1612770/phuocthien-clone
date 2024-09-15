@@ -3,30 +3,30 @@ import ProductGroupModel from './product-group.model';
 import ProductBrand from './product-brand.model';
 import ProductType from './product-type.model';
 import ProductDetailModel from './product-detail.model';
-import { PromotionPercent } from './promotion.model';
+import {
+  ComboPromotionModel,
+  DealPromotionModel,
+  GiftPromotionModel,
+  PromotionPercent,
+} from './promotion.model';
 import DrugStore from './drug-store.model';
 import ProductTypeGroupModel from './product-type-group.model';
 import ManufactoringCountry from './manufactoring-country.model';
-import {
-  ComboPromotion,
-  DealPromotion,
-  GiftPromotion,
-} from '@libs/client/Promotion';
 
 export interface CartCombo {
-  comboPromotion: ComboPromotion;
+  comboPromotion: ComboPromotionModel;
   quantity: number;
   choosen: boolean;
 }
 
 export interface CartDeal {
-  dealPromotion: DealPromotion;
+  dealPromotion: DealPromotionModel;
   quantity: number;
   choosen: boolean;
 }
 
 export interface CartGift {
-  giftPromotion: GiftPromotion;
+  giftPromotion: GiftPromotionModel;
   quantity: number;
   choosen: boolean;
 }
@@ -34,9 +34,9 @@ export interface CartGift {
 export interface CartProduct {
   product?: Product;
   quantity: number;
-  comboPromotion?: ComboPromotion;
-  dealPromotion?: DealPromotion;
-  giftPromotion?: GiftPromotion;
+  comboPromotion?: ComboPromotionModel;
+  dealPromotion?: DealPromotionModel;
+  giftPromotion?: GiftPromotionModel;
   finalPrice?: number;
   note?: string;
   choosen: boolean;
@@ -86,6 +86,8 @@ type Product = Partial<{
   keyPromoPercent: string;
   promoValue: number;
   showPromoOnPrice?: boolean;
+  promoDeals: DealPromotionModel[];
+  promoGifts: GiftPromotionModel[];
 }>;
 
 export interface InventoryAtDrugStore {

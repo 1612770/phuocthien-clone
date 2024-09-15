@@ -214,8 +214,8 @@ function CartItem({
       : cartDeal
       ? cartDeal.dealPromotion.totalAmount
       : cartGift
-      ? cartGift.giftPromotion.policy?.reduce(
-          (acc, cur) => acc + (cur.product?.retailPrice || 0),
+      ? cartGift.giftPromotion.policies?.reduce(
+          (acc, cur) => acc + (cur.prodInfo?.retailPrice || 0),
           0
         )
       : cartProduct?.product?.retailPrice

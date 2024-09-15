@@ -1,5 +1,4 @@
 import { StarOutlined } from '@ant-design/icons';
-import { DealPromotion } from '@libs/client/Promotion';
 import CurrencyUtils from '@libs/utils/currency.utils';
 import useProductAutoLoadByIds from '@libs/utils/hooks/useProductAutoLoadByIds';
 import { Typography } from 'antd';
@@ -7,18 +6,19 @@ import Link from 'next/link';
 import React from 'react';
 import AddToCartButton from './AddToCartButton';
 import { getProductName } from '@libs/helpers';
+import { DealPromotionModel } from '@configs/models/promotion.model';
 
 function PromotionListDealListItem({
   dealPromotion,
 }: {
-  dealPromotion: DealPromotion;
+  dealPromotion: DealPromotionModel;
 }) {
-  const productIds = [...(dealPromotion.policy?.map((p) => p.productId) || [])];
+  const productIds = [...(dealPromotion.policies?.map((p) => p.prodId) || [])];
   const { products } = useProductAutoLoadByIds(productIds);
 
   return (
     <div
-      key={dealPromotion.promotionDealId}
+      key={dealPromotion.key}
       className="my-2 flex flex-col items-start gap-2 px-4 lg:flex-row lg:items-center"
     >
       <div className="flex items-center">
@@ -31,14 +31,14 @@ function PromotionListDealListItem({
             Mua kèm các sản phẩm sau để nhận ưu đãi
           </Typography.Paragraph>
           <ul>
-            {dealPromotion.policy?.map((policy) => {
-              const product = products.find((p) => p.key === policy.productId);
+            {dealPromotion.policies?.map((policy) => {
+              const product = products.find((p) => p.key === policy.prodId);
               return (
-                <li key={policy.productId} className="text-xs text-black">
-                  {policy.requiredQty} x{' '}
+                <li key={policy.prodId} className="text-xs text-black">
+                  {policy.requiredProdQty} x{' '}
                   <Link
                     href={`/${product?.productType?.seoUrl}/${product?.detail?.seoUrl}`}
-                    key={policy.productId}
+                    key={policy.prodId}
                     passHref
                   >
                     <a className="hover:text-primary">

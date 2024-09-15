@@ -17,12 +17,12 @@ import React, {
 import { useAppConfirmDialog } from './AppConfirmDialogProvider';
 import { useRouter } from 'next/router';
 import { ProductClient } from '@libs/client/Product';
-import {
-  ComboPromotion,
-  DealPromotion,
-  GiftPromotion,
-} from '@libs/client/Promotion';
 import { getLargestMatchedMinConditionProduct } from './CheckoutProvider';
+import {
+  ComboPromotionModel,
+  DealPromotionModel,
+  GiftPromotionModel,
+} from '@configs/models/promotion.model';
 
 type CartChangeProductData =
   | {
@@ -76,8 +76,8 @@ const recalculateTotalPrice = ({
   const giftTotalPrice = cartGifts.reduce(
     (sum, item) =>
       sum +
-      (item?.giftPromotion.policy?.reduce(
-        (sum, policy) => sum + (policy.product?.retailPrice || 0),
+      (item?.giftPromotion.policies?.reduce(
+        (sum, policy) => sum + (policy.prodInfo?.retailPrice || 0),
         0
       ) || 0) *
         item.quantity,
@@ -102,12 +102,12 @@ const CartContext = React.createContext<{
   removeFromCart: (
     payload: {
       product?: Product;
-      comboPromotion?: ComboPromotion;
-      dealPromotion?: DealPromotion;
-      giftPromotion?: GiftPromotion;
-      comboPromotions?: ComboPromotion[];
-      dealPromotions?: DealPromotion[];
-      giftPromotions?: GiftPromotion[];
+      comboPromotion?: ComboPromotionModel;
+      dealPromotion?: DealPromotionModel;
+      giftPromotion?: GiftPromotionModel;
+      comboPromotions?: ComboPromotionModel[];
+      dealPromotions?: DealPromotionModel[];
+      giftPromotions?: GiftPromotionModel[];
     },
     options?: {
       isShowConfirm?: boolean;
@@ -120,10 +120,10 @@ const CartContext = React.createContext<{
       dealPromotion,
       giftPromotion,
     }: {
-      comboPromotion?: ComboPromotion;
+      comboPromotion?: ComboPromotionModel;
       product?: Product;
-      dealPromotion?: DealPromotion;
-      giftPromotion?: GiftPromotion;
+      dealPromotion?: DealPromotionModel;
+      giftPromotion?: GiftPromotionModel;
     },
     payload: CartChangeProductData
   ) => void;
@@ -234,8 +234,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
       ...cartProducts.map((cartProduct) => cartProduct.product?.key || ''),
       ...cartGifts.flatMap(
         (cartGift) =>
-          cartGift.giftPromotion?.policy?.map((policy) => policy.productId) ||
-          []
+          cartGift.giftPromotion?.policies?.map((policy) => policy.prodId) || []
       ),
     ];
 
@@ -259,9 +258,9 @@ function CartProvider({ children }: { children: React.ReactNode }) {
       });
 
       const newCartGifts = cartGifts.map((cartGift) => {
-        const newPolicy = cartGift.giftPromotion?.policy?.map((policy) => {
+        const newPolicy = cartGift.giftPromotion?.policies?.map((policy) => {
           const product = products.data?.data.find(
-            (product) => product.key === policy.productId
+            (product) => product.key === policy.prodId
           );
           return {
             ...policy,
@@ -293,16 +292,12 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     (payload: CartCombo) => {
       const existedInCartCombo = cartCombos.find(
         (cartCombo) =>
-          cartCombo.comboPromotion?.promotionComboId ===
-          payload.comboPromotion?.promotionComboId
+          cartCombo.comboPromotion?.key === payload.comboPromotion?.key
       );
 
       if (existedInCartCombo) {
         const newCartCombos = cartCombos.map((cartCombo) => {
-          if (
-            cartCombo.comboPromotion?.promotionComboId ===
-            payload.comboPromotion?.promotionComboId
-          ) {
+          if (cartCombo.comboPromotion?.key === payload.comboPromotion?.key) {
             return {
               ...cartCombo,
               quantity: payload.quantity,
@@ -333,17 +328,12 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   const addDealToCart = useCallback(
     (payload: CartDeal) => {
       const existedInCartDeal = cartDeals.find(
-        (cartDeal) =>
-          cartDeal.dealPromotion?.promotionDealId ===
-          payload.dealPromotion?.promotionDealId
+        (cartDeal) => cartDeal.dealPromotion?.key === payload.dealPromotion?.key
       );
 
       if (existedInCartDeal) {
         const newCartDeals = cartDeals.map((cartDeal) => {
-          if (
-            cartDeal.dealPromotion?.promotionDealId ===
-            payload.dealPromotion?.promotionDealId
-          ) {
+          if (cartDeal.dealPromotion?.key === payload.dealPromotion?.key) {
             return {
               ...cartDeal,
               quantity: payload.quantity,
@@ -374,17 +364,12 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   const addGiftToCart = useCallback(
     (payload: CartGift) => {
       const existedInCartGift = cartGifts.find(
-        (cartGift) =>
-          cartGift.giftPromotion?.promotionGiftId ===
-          payload.giftPromotion?.promotionGiftId
+        (cartGift) => cartGift.giftPromotion?.key === payload.giftPromotion?.key
       );
 
       if (existedInCartGift) {
         const newCartGifts = cartGifts.map((cartGift) => {
-          if (
-            cartGift.giftPromotion?.promotionGiftId ===
-            payload.giftPromotion?.promotionGiftId
-          ) {
+          if (cartGift.giftPromotion?.key === payload.giftPromotion?.key) {
             return {
               ...cartGift,
               quantity: payload.quantity,
@@ -550,11 +535,9 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const _onRemoveComboFromCart = useCallback(
-    (comboPromotion?: ComboPromotion) => {
+    (comboPromotion?: ComboPromotionModel) => {
       const newCartCombos = cartCombos.filter(
-        (cartCombo) =>
-          cartCombo.comboPromotion?.promotionComboId !==
-          comboPromotion?.promotionComboId
+        (cartCombo) => cartCombo.comboPromotion?.key !== comboPromotion?.key
       );
 
       setCartCombos(newCartCombos);
@@ -567,11 +550,9 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const _onRemoveDealFromCart = useCallback(
-    (dealPromotion?: DealPromotion) => {
+    (dealPromotion?: DealPromotionModel) => {
       const newCartDeals = cartDeals.filter(
-        (cartDeal) =>
-          cartDeal.dealPromotion?.promotionDealId !==
-          dealPromotion?.promotionDealId
+        (cartDeal) => cartDeal.dealPromotion?.key !== dealPromotion?.key
       );
 
       setCartDeals(newCartDeals);
@@ -584,11 +565,9 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const _onRemoveGiftFromCart = useCallback(
-    (giftPromotion?: GiftPromotion) => {
+    (giftPromotion?: GiftPromotionModel) => {
       const newCartGifts = cartGifts.filter(
-        (cartGift) =>
-          cartGift.giftPromotion?.promotionGiftId !==
-          giftPromotion?.promotionGiftId
+        (cartGift) => cartGift.giftPromotion?.key !== giftPromotion?.key
       );
 
       setCartGifts(newCartGifts);
@@ -601,13 +580,12 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const _onRemoveCombosFromCart = useCallback(
-    (comboPromotions?: ComboPromotion[]) => {
+    (comboPromotions?: ComboPromotionModel[]) => {
       const newCartCombos = cartCombos.filter(
         (cartCombo) =>
           !comboPromotions?.some(
             (comboPromotion) =>
-              comboPromotion.promotionComboId ===
-              cartCombo.comboPromotion?.promotionComboId
+              comboPromotion.key === cartCombo.comboPromotion?.key
           )
       );
 
@@ -621,13 +599,11 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const _onRemoveDealsFromCart = useCallback(
-    (dealPromotions?: DealPromotion[]) => {
+    (dealPromotions?: DealPromotionModel[]) => {
       const newCartDeals = cartDeals.filter(
         (cartDeal) =>
           !dealPromotions?.some(
-            (dealPromotion) =>
-              dealPromotion.promotionDealId ===
-              cartDeal.dealPromotion?.promotionDealId
+            (dealPromotion) => dealPromotion.key === cartDeal.dealPromotion?.key
           )
       );
 
@@ -641,13 +617,11 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const _onRemoveGiftsFromCart = useCallback(
-    (giftPromotions?: GiftPromotion[]) => {
+    (giftPromotions?: GiftPromotionModel[]) => {
       const newCartGifts = cartGifts.filter(
         (cartGift) =>
           !giftPromotions?.some(
-            (giftPromotion) =>
-              giftPromotion.promotionGiftId ===
-              cartGift.giftPromotion?.promotionGiftId
+            (giftPromotion) => giftPromotion.key === cartGift.giftPromotion?.key
           )
       );
 
@@ -671,12 +645,12 @@ function CartProvider({ children }: { children: React.ReactNode }) {
       giftPromotions,
     }: {
       product?: Product;
-      comboPromotion?: ComboPromotion;
-      dealPromotion?: DealPromotion;
-      giftPromotion?: GiftPromotion;
-      comboPromotions?: ComboPromotion[];
-      dealPromotions?: DealPromotion[];
-      giftPromotions?: GiftPromotion[];
+      comboPromotion?: ComboPromotionModel;
+      dealPromotion?: DealPromotionModel;
+      giftPromotion?: GiftPromotionModel;
+      comboPromotions?: ComboPromotionModel[];
+      dealPromotions?: DealPromotionModel[];
+      giftPromotions?: GiftPromotionModel[];
     }) => {
       if (comboPromotion) {
         _onRemoveComboFromCart(comboPromotion);
@@ -715,12 +689,12 @@ function CartProvider({ children }: { children: React.ReactNode }) {
     (
       payload: {
         product?: Product;
-        comboPromotion?: ComboPromotion;
-        dealPromotion?: DealPromotion;
-        giftPromotion?: GiftPromotion;
-        comboPromotions?: ComboPromotion[];
-        dealPromotions?: DealPromotion[];
-        giftPromotions?: GiftPromotion[];
+        comboPromotion?: ComboPromotionModel;
+        dealPromotion?: DealPromotionModel;
+        giftPromotion?: GiftPromotionModel;
+        comboPromotions?: ComboPromotionModel[];
+        dealPromotions?: DealPromotionModel[];
+        giftPromotions?: GiftPromotionModel[];
       },
       options: {
         isShowConfirm?: boolean;
@@ -834,15 +808,12 @@ function CartProvider({ children }: { children: React.ReactNode }) {
       {
         comboPromotion,
       }: {
-        comboPromotion?: ComboPromotion;
+        comboPromotion?: ComboPromotionModel;
       },
       payload: CartChangeProductData
     ) => {
       const newCartCombos = cartCombos.map((cartCombo) => {
-        if (
-          cartCombo.comboPromotion?.promotionComboId ===
-          comboPromotion?.promotionComboId
-        ) {
+        if (cartCombo.comboPromotion?.key === comboPromotion?.key) {
           return {
             ...cartCombo,
             [payload.field]: payload.value,
@@ -867,15 +838,12 @@ function CartProvider({ children }: { children: React.ReactNode }) {
       {
         dealPromotion,
       }: {
-        dealPromotion?: DealPromotion;
+        dealPromotion?: DealPromotionModel;
       },
       payload: CartChangeProductData
     ) => {
       const newCartDeals = cartDeals.map((cartDeal) => {
-        if (
-          cartDeal.dealPromotion?.promotionDealId ===
-          dealPromotion?.promotionDealId
-        ) {
+        if (cartDeal.dealPromotion?.key === dealPromotion?.key) {
           return {
             ...cartDeal,
             [payload.field]: payload.value,
@@ -900,15 +868,12 @@ function CartProvider({ children }: { children: React.ReactNode }) {
       {
         giftPromotion,
       }: {
-        giftPromotion?: GiftPromotion;
+        giftPromotion?: GiftPromotionModel;
       },
       payload: CartChangeProductData
     ) => {
       const newCartGifts = cartGifts.map((cartGift) => {
-        if (
-          cartGift.giftPromotion?.promotionGiftId ===
-          giftPromotion?.promotionGiftId
-        ) {
+        if (cartGift.giftPromotion?.key === giftPromotion?.key) {
           return {
             ...cartGift,
             [payload.field]: payload.value,
@@ -966,10 +931,10 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         dealPromotion,
         giftPromotion,
       }: {
-        comboPromotion?: ComboPromotion;
+        comboPromotion?: ComboPromotionModel;
         product?: Product;
-        dealPromotion?: DealPromotion;
-        giftPromotion?: GiftPromotion;
+        dealPromotion?: DealPromotionModel;
+        giftPromotion?: GiftPromotionModel;
       },
       payload: CartChangeProductData
     ) => {

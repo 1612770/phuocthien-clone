@@ -1,18 +1,21 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { NextPageWithLayout } from '../../page';
 import { Divider, Typography } from 'antd';
-import { ComboPromotion, PromotionClient } from '@libs/client/Promotion';
+import { PromotionClient } from '@libs/client/Promotion';
 import { GetServerSidePropsContext } from 'next';
 import ComboPromotionSection from '@modules/promotion/ComboPromotionSection';
 import ComboPromotionnHeader from '@modules/promotion/ComboPromotionnHeader';
 import ComboPromotionBody from '@modules/promotion/ComboPromotionBody';
 import ComboPromotionItem from '@modules/promotion/ComboPromotionItem';
-import { Promotion } from '@configs/models/promotion.model';
 import ImageWithFallback from '@components/templates/ImageWithFallback';
+import {
+  ComboPromotionModel,
+  PromotionModel,
+} from '@configs/models/promotion.model';
 
 interface ComboPromotionPageProps {
-  comboPromotions: ComboPromotion[];
-  promotion?: Promotion;
+  comboPromotions?: ComboPromotionModel[];
+  promotion?: PromotionModel;
 }
 
 const Home: NextPageWithLayout<ComboPromotionPageProps> = ({
@@ -21,12 +24,12 @@ const Home: NextPageWithLayout<ComboPromotionPageProps> = ({
 }) => {
   return (
     <ComboPromotionSection>
-      {promotion?.imageUrl && (
+      {promotion?.imgUrl && (
         <div className="mb-6">
           <Divider className="m-0" />
           <div className="relative h-[200px]">
             <ImageWithFallback
-              src={promotion?.imageUrl || ''}
+              src={promotion?.imgUrl || ''}
               layout="fill"
               objectFit="cover"
             ></ImageWithFallback>
@@ -40,13 +43,13 @@ const Home: NextPageWithLayout<ComboPromotionPageProps> = ({
           {promotion?.name}
         </Typography.Title>
         <Typography.Paragraph className="m-0 text-center text-xl text-gray-600">
-          ({comboPromotions.length} combo khuyến mãi)
+          ({comboPromotions?.length} combo khuyến mãi)
         </Typography.Paragraph>
       </ComboPromotionnHeader>
       <ComboPromotionBody>
-        {comboPromotions.map((comboPromotion) => (
+        {comboPromotions?.map((comboPromotion) => (
           <ComboPromotionItem
-            key={comboPromotion.promotionId}
+            key={comboPromotion.promotionKey}
             comboPromotion={comboPromotion}
           />
         ))}
@@ -66,9 +69,7 @@ export const getServerSideProps = async (
   const serverSideProps: {
     props: ComboPromotionPageProps;
   } = {
-    props: {
-      comboPromotions: [],
-    },
+    props: {},
   };
 
   const promotionClient = new PromotionClient(context, {});
@@ -76,14 +77,14 @@ export const getServerSideProps = async (
   try {
     const [comboPromotions, promotion] = await Promise.all([
       promotionClient.getPromotionCombo({
-        promotionSlug: slug,
+        filterByPromoSlug: slug,
       }),
       promotionClient.getPromotion({
-        promotionSlug: slug,
+        promoSlug: slug,
       }),
     ]);
 
-    serverSideProps.props.comboPromotions = comboPromotions.data || [];
+    serverSideProps.props.comboPromotions = comboPromotions.data?.data;
     serverSideProps.props.promotion = promotion.data?.[0];
   } catch (error) {
     console.error(error);

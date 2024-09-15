@@ -11,22 +11,17 @@ import ProductFAQsSection from './chi-tiet/ProductFAQsSection';
 import ProductMain from './chi-tiet/ProductMain';
 import ProductOthersSection from './chi-tiet/ProductOthersSection';
 import ProductMetaData from '@modules/products/ProductMetaData';
-import { GiftPromotion, DealPromotion } from '@libs/client/Promotion';
 
 const ProductPage = ({
   product,
   otherProducts,
   offers,
-  giftPromotions,
-  dealPromotions,
 }: {
   product?: Product;
   otherProducts?: Product[];
   drugStoresAvailable?: InventoryAtDrugStore[];
   drugStores?: DrugStore[];
   offers: OfferModel[];
-  giftPromotions: GiftPromotion[];
-  dealPromotions: DealPromotion[];
 }) => {
   useCacheProduct(product?.key);
 
@@ -89,12 +84,7 @@ const ProductPage = ({
           <ProductCarousel images={carouselImages} />
         </div>
 
-        <ProductMain
-          offers={offers}
-          product={product}
-          giftPromotions={giftPromotions}
-          dealPromotions={dealPromotions}
-        />
+        <ProductMain offers={offers} product={product} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:pt-2 lg:grid-cols-[minmax(200px,_1fr)_1fr] lg:gap-6 xl:grid-cols-[600px_minmax(200px,_1fr)]">

@@ -2,11 +2,6 @@ import OfferModel from '@configs/models/offer.model';
 import Product from '@configs/models/product.model';
 import { OfferClient } from '@libs/client/Offer';
 import { ProductClient } from '@libs/client/Product';
-import {
-  DealPromotion,
-  GiftPromotion,
-  PromotionClient,
-} from '@libs/client/Promotion';
 import OfferUtils from '@libs/utils/offer.utils';
 
 const getProductData = async ({
@@ -20,8 +15,6 @@ const getProductData = async ({
     product?: Product;
     otherProducts?: Product[];
     offers?: OfferModel[];
-    giftPromotions?: GiftPromotion[];
-    dealPromotions?: DealPromotion[];
     errors?: {
       code?: string;
       message?: string;
@@ -29,7 +22,6 @@ const getProductData = async ({
   } = {};
 
   const productClient = new ProductClient(null, {});
-  const promotionClient = new PromotionClient(null, {});
 
   const offerClient = new OfferClient(null, {});
   const productResponse = await productClient.getProduct({
@@ -51,31 +43,12 @@ const getProductData = async ({
       pageSize: 10,
       productTypeKey: product.productType?.key,
       productGroupKey: product.productGroup?.key,
+      loadPercents: true,
+      loadDeals: true,
+      loadGifts: true,
     }),
     offerClient.getAllActiveOffers(),
   ]);
-
-  try {
-    const [giftPromotions, dealPromotions] = await Promise.all([
-      promotionClient.getPromotionGiftOfProduct({
-        productId: product.key,
-      }),
-      promotionClient.getDealActiveOfProduct({
-        productId: product.key,
-      }),
-    ]);
-
-    if (giftPromotions.data) {
-      productData.giftPromotions = giftPromotions.data;
-    }
-
-    if (dealPromotions.data) {
-      productData.dealPromotions = dealPromotions.data;
-    }
-  } catch (error) {
-    productData.giftPromotions = [];
-    productData.dealPromotions = [];
-  }
 
   if (offers.data) {
     productData.offers = OfferUtils.filterNonValueOffer(offers.data);

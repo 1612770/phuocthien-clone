@@ -25,6 +25,10 @@ export class ProductClient extends BaseClient {
     filterByIds?: string[];
     sortBy?: 'GIA_BAN_LE';
     sortOrder?: 'ASC' | 'DESC';
+    loadPercents?: boolean;
+    loadComboes?: boolean;
+    loadDeals?: boolean;
+    loadGifts?: boolean;
   }): Promise<APIResponse<WithPagination<Product[]>>> {
     if (!payload.sortBy) {
       payload.sortBy = 'GIA_BAN_LE';

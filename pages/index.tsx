@@ -4,7 +4,7 @@ import BrandModel from '@configs/models/brand.model';
 import { Article, Category } from '@configs/models/cms.model';
 import ProductSearchKeyword from '@configs/models/product-search-keyword.model';
 import Product from '@configs/models/product.model';
-import { Campaign, Promotion } from '@configs/models/promotion.model';
+import { Campaign, PromotionModel } from '@configs/models/promotion.model';
 import SlideBannerModel from '@configs/models/slide-banner.model';
 import ViralProductsListModel from '@configs/models/viral-products-list.model';
 import PagePropsWithSeo from '@configs/types/page-props-with-seo';
@@ -53,7 +53,7 @@ interface HomeProps extends PagePropsWithSeo {
   campaigns?: Campaign[];
   listProducts?: Product[][];
   brands: BrandModel[];
-  promotions: Promotion[];
+  promotions: PromotionModel[];
   categories: Category[];
   articles: Article[];
 }
@@ -82,18 +82,28 @@ const Home: NextPageWithLayout<HomeProps> = ({
       };
     }) || [];
 
-  const promotionsSliderImages = promotions.reduce((acc, promotion) => {
-    let link;
-    if (promotion.type === 'COMBO') {
-      link = '/khuyen-mai/combo/' + promotion.slug;
-      acc.push({
-        url: promotion.imageUrl,
-        link,
-      });
-    }
+  const promotionsSliderImages = promotions.reduce<
+    { url: string; link?: string }[]
+  >((acc, promotion) => {
+    const comboPromotionMetadata = (promotion.promotions || []).reduce<
+      { url: string; link?: string }[]
+    >(
+      (acc, promo) => {
+        if (promo.type === 'PRODUCT_COMBO') {
+          acc.push({
+            url: promo.imgUrl,
+            link: '/khuyen-mai/combo/' + promo.slug,
+          });
+        }
 
-    return acc;
-  }, [] as { url: string; link?: string }[]);
+        return acc;
+      },
+
+      []
+    );
+
+    return [...acc, ...comboPromotionMetadata];
+  }, []);
 
   const promotionSliderImages = [
     ...promotionsSliderImages,
@@ -317,7 +327,8 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
       }),
       generalClient.getProductionBrands(),
       promotionClient.getPromotion({
-        isHide: false,
+        loadHidePromo: false,
+        loadItemsInPromo: false,
       }),
       cmsClient.getArticles({ q: { type: 'BLOG' }, limit: 5, offset: 0 }),
       cmsClient.getCMSCategories({

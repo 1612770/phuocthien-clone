@@ -14,19 +14,19 @@ const Collapse = styled(AntdCollapse)`
 `;
 
 function CartItemComboDetailCollapsse({ cartCombo }: { cartCombo: CartCombo }) {
-  const productIds = (cartCombo.comboPromotion.policy || []).map(
-    (policy) => policy.productId
+  const productIds = (cartCombo.comboPromotion.policies || []).map(
+    (policy) => policy.prodId
   );
 
   const { products } = useProductAutoLoadByIds(productIds);
 
   const productsWithPolicyAndDiscount = products.map((product) => {
-    const policy = cartCombo.comboPromotion.policy?.find(
-      (policy) => policy.productId === product.key
+    const policy = cartCombo.comboPromotion.policies?.find(
+      (policy) => policy.prodId === product.key
     );
 
-    const discount = cartCombo.comboPromotion.discount?.find(
-      (discount) => discount.productId === product.key
+    const discount = cartCombo.comboPromotion.discounts?.find(
+      (discount) => discount.prodId === product.key
     );
 
     return {
@@ -72,7 +72,8 @@ function CartItemComboDetailCollapsse({ cartCombo }: { cartCombo: CartCombo }) {
                       />
                     </div>
                     <Typography.Text className="text-xs font-medium">
-                      {(product.policy?.requiredQty || 0) * cartCombo.quantity}{' '}
+                      {(product.policy?.requiredProdQty || 0) *
+                        cartCombo.quantity}{' '}
                       <span className="font-normal">x</span>{' '}
                       {getProductName(product)}
                     </Typography.Text>

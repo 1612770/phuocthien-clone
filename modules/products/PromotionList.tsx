@@ -1,10 +1,13 @@
 import { DoubleRightOutlined, PercentageOutlined } from '@ant-design/icons';
-import { PromotionPercent } from '@configs/models/promotion.model';
-import { GiftPromotion, DealPromotion } from '@libs/client/Promotion';
+import {
+  DealPromotionModel,
+  GiftPromotionModel,
+  PromotionPercent,
+} from '@configs/models/promotion.model';
 import { Button, Typography } from 'antd';
 import React, { useState } from 'react';
-import PromotionListGiftListItem from './PromotionListGiftListItem';
 import PromotionListDealListItem from './PromotionListDealListItem';
+import PromotionListGiftListItem from './PromotionListGiftListItem';
 import PromotionListPercentListItem from './PromotionListPercentListItem';
 
 type WithType<T> = {
@@ -15,13 +18,13 @@ type WithType<T> = {
 function PromotionList({
   promotionPercents,
   retailPrice,
-  giftPromotions,
   dealPromotions,
+  giftPromotions,
 }: {
   promotionPercents: PromotionPercent[];
   retailPrice?: number;
-  giftPromotions?: GiftPromotion[];
-  dealPromotions?: DealPromotion[];
+  dealPromotions?: DealPromotionModel[];
+  giftPromotions?: GiftPromotionModel[];
 }) {
   const [showMore, setShowMore] = useState(false);
 
@@ -35,7 +38,7 @@ function PromotionList({
     return null;
 
   const promotionsWithType: WithType<
-    PromotionPercent | GiftPromotion | DealPromotion
+    PromotionPercent | DealPromotionModel | GiftPromotionModel
   >[] = [
     ...promotionPercents.map((promotion) => ({
       type: 'percent' as const,
@@ -77,13 +80,13 @@ function PromotionList({
             case 'gift':
               return (
                 <PromotionListGiftListItem
-                  giftPromotion={promotion as GiftPromotion}
+                  giftPromotion={promotion as GiftPromotionModel}
                 />
               );
             case 'deal':
               return (
                 <PromotionListDealListItem
-                  dealPromotion={promotion as DealPromotion}
+                  dealPromotion={promotion as DealPromotionModel}
                 />
               );
 

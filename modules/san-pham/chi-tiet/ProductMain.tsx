@@ -9,7 +9,6 @@ import ProductDrugStoresSection from './ProductDrugStoresSection';
 import ProductCTA from '@modules/products/ProductCTA';
 import { useAppData } from '@providers/AppDataProvider';
 import FocusContentSection from '@modules/homepage/FocusContentSection';
-import { GiftPromotion, DealPromotion } from '@libs/client/Promotion';
 import { ProductClient } from '@libs/client/Product';
 import { useCart } from '@providers/CartProvider';
 import { PromotionPercent } from '@configs/models/promotion.model';
@@ -47,13 +46,9 @@ const getMaxPromotionInstruction = (
 function ProductMain({
   product,
   offers,
-  giftPromotions,
-  dealPromotions,
 }: {
   product: Product;
   offers: OfferModel[];
-  giftPromotions: GiftPromotion[];
-  dealPromotions: DealPromotion[];
   errorsInventory?: {
     code?: string;
     message?: string;
@@ -183,8 +178,8 @@ function ProductMain({
         <PromotionList
           promotionPercents={product.promotions || []}
           retailPrice={product.retailPrice}
-          giftPromotions={giftPromotions}
-          dealPromotions={dealPromotions}
+          dealPromotions={product.promoDeals || []}
+          giftPromotions={product.promoGifts || []}
         />
       </div>
       <ProductDrugStoresSection drugStoresAvailable={drugStoresAvailable} />

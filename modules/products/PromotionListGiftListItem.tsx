@@ -1,5 +1,5 @@
 import { GiftOutlined } from '@ant-design/icons';
-import { GiftPromotion } from '@libs/client/Promotion';
+import { GiftPromotionModel } from '@configs/models/promotion.model';
 import useProductAutoLoadByIds from '@libs/utils/hooks/useProductAutoLoadByIds';
 import { Typography } from 'antd';
 import Link from 'next/link';
@@ -9,18 +9,18 @@ import AddToCartButton from './AddToCartButton';
 function PromotionListGiftListItem({
   giftPromotion,
 }: {
-  giftPromotion: GiftPromotion;
+  giftPromotion: GiftPromotionModel;
 }) {
   const productIds = [
-    ...(giftPromotion.policy?.map((p) => p.productId) || []),
-    ...(giftPromotion.gift?.map((p) => p.productId) || []),
+    ...(giftPromotion.policies?.map((p) => p.prodId) || []),
+    ...(giftPromotion.gifts?.map((p) => p.prodId) || []),
   ];
   const { products } = useProductAutoLoadByIds(productIds);
 
-  const giftPromotionWithPolicyProducts: GiftPromotion = {
+  const giftPromotionWithPolicyProducts: GiftPromotionModel = {
     ...giftPromotion,
-    policy: giftPromotion.policy?.map((policy) => {
-      const product = products.find((p) => p.key === policy.productId);
+    policies: giftPromotion.policies?.map((policy) => {
+      const product = products.find((p) => p.key === policy.prodId);
       return {
         ...policy,
         product,
@@ -30,24 +30,24 @@ function PromotionListGiftListItem({
 
   return (
     <div
-      key={giftPromotion.promotionGiftId}
+      key={giftPromotion.key}
       className="my-2 flex flex-col items-start gap-2 px-4 lg:flex-row lg:items-center"
     >
-      <div className="flex items-center">
+      <div className="flex flex-1 items-center">
         <div className="flex h-[32px] w-[32px] border-collapse items-center justify-center rounded-lg bg-primary-background">
           <GiftOutlined size={20} className="text-primary" />
         </div>
         <div className="flex-1">
           <Typography.Paragraph className="m-0">Mua kèm</Typography.Paragraph>
           <ul className="m-0 py-0">
-            {giftPromotion.policy?.map((policy) => {
-              const product = products.find((p) => p.key === policy.productId);
+            {giftPromotion.policies?.map((policy) => {
+              const product = products.find((p) => p.key === policy.prodId);
               return (
-                <li key={policy.productId} className="text-xs text-black">
-                  {policy.requiredQuantity} x{' '}
+                <li key={policy.prodId} className="text-xs text-black">
+                  {policy.requiredProdQty} x{' '}
                   <Link
                     href={`/${product?.productType?.seoUrl}/${product?.detail?.seoUrl}`}
-                    key={policy.productId}
+                    key={policy.prodId}
                     passHref
                   >
                     <a className="hover:text-primary">
@@ -64,14 +64,14 @@ function PromotionListGiftListItem({
           </Typography.Paragraph>
 
           <ul>
-            {giftPromotion.gift?.map((gift) => {
-              const product = products.find((p) => p.key === gift.productId);
+            {giftPromotion.gifts?.map((gift) => {
+              const product = products.find((p) => p.key === gift.prodId);
               return (
-                <li key={gift.productId} className="text-xs text-black">
-                  {gift.quantity} x{' '}
+                <li key={gift.prodId} className="text-xs text-black">
+                  {gift.prodQty} x{' '}
                   <Link
                     href={`/${product?.productType?.seoUrl}/${product?.detail?.seoUrl}`}
-                    key={gift.productId}
+                    key={gift.prodId}
                     passHref
                   >
                     <a className="hover:text-primary">

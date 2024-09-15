@@ -15,7 +15,7 @@ const Collapse = styled(AntdCollapse)`
 
 function CartItemDealDetailCollapsse({ cartDeal }: { cartDeal: CartDeal }) {
   const productIds = [
-    ...(cartDeal.dealPromotion.policy?.map((p) => p.productId) || []),
+    ...(cartDeal.dealPromotion.policies?.map((p) => p.prodId) || []),
   ];
 
   const { products } = useProductAutoLoadByIds(productIds);
@@ -39,10 +39,10 @@ function CartItemDealDetailCollapsse({ cartDeal }: { cartDeal: CartDeal }) {
         className="p-0"
       >
         <ul className="p-0">
-          {cartDeal.dealPromotion.policy?.map((policy) => {
-            const product = products.find((p) => p.key === policy.productId);
+          {cartDeal.dealPromotion.policies?.map((policy) => {
+            const product = products.find((p) => p.key === policy.prodId);
             return (
-              <li key={policy.productId} className="my-1 flex">
+              <li key={policy.prodId} className="my-1 flex">
                 <Link
                   href={`/${product?.productType?.seoUrl}/${product?.detail?.seoUrl}`}
                   passHref
@@ -58,7 +58,7 @@ function CartItemDealDetailCollapsse({ cartDeal }: { cartDeal: CartDeal }) {
                         />
                       </div>
                       <Typography.Text className="text-xs font-medium">
-                        {(policy.requiredQty || 0) * cartDeal.quantity}{' '}
+                        {(policy.requiredProdQty || 0) * cartDeal.quantity}{' '}
                         <span className="font-normal">x</span>{' '}
                         {getProductName(product)}
                       </Typography.Text>

@@ -16,8 +16,8 @@ const Collapse = styled(AntdCollapse)`
 
 function CartItemGiftDetailCollapsse({ cartGift }: { cartGift: CartGift }) {
   const productIds = [
-    ...(cartGift.giftPromotion.policy?.map((p) => p.productId) || []),
-    ...(cartGift.giftPromotion.gift?.map((p) => p.productId) || []),
+    ...(cartGift.giftPromotion.policies?.map((p) => p.prodId) || []),
+    ...(cartGift.giftPromotion.gifts?.map((p) => p.prodId) || []),
   ];
   const { products } = useProductAutoLoadByIds(productIds);
 
@@ -41,8 +41,8 @@ function CartItemGiftDetailCollapsse({ cartGift }: { cartGift: CartGift }) {
       >
         <div>
           <ul className="m-0 p-0 py-0 pl-0">
-            {cartGift.giftPromotion.policy?.map((policy) => {
-              const product = products.find((p) => p.key === policy.productId);
+            {cartGift.giftPromotion.policies?.map((policy) => {
+              const product = products.find((p) => p.key === policy.prodId);
               return (
                 <li key={product?.key} className="my-1 flex">
                   <Link
@@ -61,15 +61,14 @@ function CartItemGiftDetailCollapsse({ cartGift }: { cartGift: CartGift }) {
                         </div>
                         <div>
                           <Typography.Text className="block text-xs font-medium">
-                            {(policy?.requiredQuantity || 0) *
-                              cartGift.quantity}{' '}
+                            {(policy?.requiredProdQty || 0) * cartGift.quantity}{' '}
                             <span className="font-normal">x</span>{' '}
                             {getProductName(product)}
                           </Typography.Text>
-                          {policy.product?.retailPrice && (
+                          {policy.prodInfo?.retailPrice && (
                             <Typography.Text className="mt-2 block text-xs font-medium text-gray-500">
                               {CurrencyUtils.format(
-                                policy.product?.retailPrice
+                                policy.prodInfo?.retailPrice
                               )}
                             </Typography.Text>
                           )}
@@ -89,8 +88,8 @@ function CartItemGiftDetailCollapsse({ cartGift }: { cartGift: CartGift }) {
             </Typography.Paragraph>
 
             <ul className="pl-8">
-              {cartGift.giftPromotion.gift?.map((gift) => {
-                const product = products.find((p) => p.key === gift.productId);
+              {cartGift.giftPromotion.gifts?.map((gift) => {
+                const product = products.find((p) => p.key === gift.prodId);
                 return (
                   <li key={product?.key} className="my-1 flex">
                     <Link
@@ -108,7 +107,7 @@ function CartItemGiftDetailCollapsse({ cartGift }: { cartGift: CartGift }) {
                             />
                           </div>
                           <Typography.Text className="text-[12px] font-medium">
-                            {(gift?.quantity || 0) * cartGift.quantity}{' '}
+                            {(gift?.prodQty || 0) * cartGift.quantity}{' '}
                             <span className="font-normal">x</span>{' '}
                             {getProductName(product)}
                           </Typography.Text>

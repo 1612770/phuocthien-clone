@@ -1,10 +1,8 @@
 import { InfoCircleOutlined, ShopOutlined } from '@ant-design/icons';
-import DrugStore from '@configs/models/drug-store.model';
-import Product, { InventoryAtDrugStore } from '@configs/models/product.model';
-import { ProductClient } from '@libs/client/Product';
+import { InventoryAtDrugStore } from '@configs/models/product.model';
 import DrugstoreItem from '@modules/drugstore/DrugstoreItem';
 import { Typography, List, Empty, Modal, ModalProps } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 function ProductDrugStoresModal({
   drugStoresAvailable,
