@@ -35,6 +35,7 @@ const nextConfig = {
     domains: [
       process.env.HOST_IMAGE,
       process.env.INTERNAL_HOST_IMAGE,
+      'pt-storage-prd.hn.ss.bfcplatform.vn',
       // process.env.INTERNAL_HOST_IMAGE_STG,
     ],
   },

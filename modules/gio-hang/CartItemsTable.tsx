@@ -1,7 +1,7 @@
 import CartItem from '@modules/cart/CartItem';
 import { useCart } from '@providers/CartProvider';
 import { useCheckout } from '@providers/CheckoutProvider';
-import { Divider, Radio, Typography } from 'antd';
+import { Checkbox, Divider, Typography } from 'antd';
 import React, { Fragment } from 'react';
 
 function CartItemsTable() {
@@ -42,7 +42,7 @@ function CartItemsTable() {
   return (
     <>
       {cartStep === 'cart' && (
-        <Radio
+        <Checkbox
           className="my-2"
           checked={isAllCartItemsChoosen}
           onClick={() => {
@@ -50,7 +50,7 @@ function CartItemsTable() {
           }}
         >
           <Typography>Chọn tất cả</Typography>
-        </Radio>
+        </Checkbox>
       )}
 
       {cartProductsToShow.map((cartProduct, index) => (

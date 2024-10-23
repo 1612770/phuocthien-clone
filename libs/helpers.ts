@@ -118,6 +118,6 @@ export function convertFromStringToHTML(text: string) {
   return parse(text);
 }
 
-export const getProductName = (product?: Product) => {
+export function getProductName(product?: Product) {
   return product?.detail?.displayName || product?.name;
-};
+}

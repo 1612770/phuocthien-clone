@@ -137,7 +137,9 @@ interface Promotion {
   metaSeo: string;
   name: string;
   promoPercentProds: PromoPercentProd[];
-  promoComboes: ComboPromotionModel[];
+  promoComboes?: ComboPromotionModel[];
+  promoGifts?: GiftPromotionModel[];
+  promoDeals?: DealPromotionModel[];
   slug: string;
   startDate: string;
   type: 'PRODUCT_COMBO';
@@ -271,4 +273,74 @@ interface GiftPromotionModelPolicy {
   prodInfo: ProdInfo;
   prodUnit: string | null;
   requiredProdQty: number;
+}
+
+export interface SynthesisCampaign {
+  SHOW_APP_WEB: boolean;
+  SHOW_AT_STORE: boolean;
+  SHOW_ON_APP: boolean;
+  SHOW_ON_WEB: boolean;
+  createdAt: string;
+  endDate: string;
+  imgUrl: string;
+  isActive: boolean;
+  key: string;
+  metaSeo: string;
+  name: string;
+  promotions: [
+    {
+      SHOW_AT_STORE: boolean;
+      SHOW_ON_APP: boolean;
+      SHOW_ON_WEB: boolean;
+      campaignKey: string;
+      code: string;
+      createdAt: string;
+      endDate: string;
+      imgUrl: string;
+      isHide: boolean;
+      key: string;
+      metaSeo: string;
+      name: string;
+      promoCombo?: {
+        SHOW_AT_STORE: boolean;
+        SHOW_ON_APP: boolean;
+        SHOW_ON_WEB: boolean;
+        SLUG: string;
+        createdAt: string;
+        desc: string;
+        key: string;
+        name: string;
+        promotionKey: string;
+        status: 'ACTIVE';
+        totalAmount: number;
+        totalCost: number;
+        totalDiscount: number;
+        updatedAt: string;
+      }[];
+      promoPercent?: {
+        SHOW_AT_STORE: boolean;
+        SHOW_ON_APP: boolean;
+        SHOW_ON_WEB: boolean;
+        createdAt: string;
+        key: string;
+        productQuantityMinCondition: number;
+        promotionKey: string;
+        showPromoOnPrice: boolean;
+        updatedAt: string;
+        val: number;
+      }[];
+      slug: string;
+      startDate: string;
+      status: 'ACTIVE';
+      type:
+        | 'PRODUCT_COMBO'
+        | 'PRODUCT_PERCENT'
+        | 'PRODUCT_GIFT'
+        | 'PRODUCT_DEAL';
+      updatedAt: string;
+    }
+  ];
+  slug: string;
+  startDate: string;
+  updatedAt: string;
 }

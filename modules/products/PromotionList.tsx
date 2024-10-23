@@ -28,8 +28,6 @@ function PromotionList({
 }) {
   const [showMore, setShowMore] = useState(false);
 
-  const shouldShowSeeMoreButton = promotionPercents.length > 4;
-
   if (
     !promotionPercents.length &&
     !giftPromotions?.length &&
@@ -53,6 +51,8 @@ function PromotionList({
       promotion: dealPromotion,
     })),
   ];
+
+  const shouldShowSeeMoreButton = promotionsWithType.length > 4;
 
   const showedPromotionsWithType = showMore
     ? promotionsWithType
@@ -80,6 +80,7 @@ function PromotionList({
             case 'gift':
               return (
                 <PromotionListGiftListItem
+                  retailPrice={retailPrice || 0}
                   giftPromotion={promotion as GiftPromotionModel}
                 />
               );

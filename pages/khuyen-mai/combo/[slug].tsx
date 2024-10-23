@@ -1,6 +1,6 @@
 import PrimaryLayout from 'components/layouts/PrimaryLayout';
 import { NextPageWithLayout } from '../../page';
-import { Divider, Typography } from 'antd';
+import { Divider, Empty, Spin, Typography } from 'antd';
 import { PromotionClient } from '@libs/client/Promotion';
 import { GetServerSidePropsContext } from 'next';
 import ComboPromotionSection from '@modules/promotion/ComboPromotionSection';
@@ -12,55 +12,131 @@ import {
   ComboPromotionModel,
   PromotionModel,
 } from '@configs/models/promotion.model';
+import { ChevronsDown } from 'react-feather';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 interface ComboPromotionPageProps {
   comboPromotions?: ComboPromotionModel[];
-  promotion?: PromotionModel;
+  promotion?: PromotionModel | null;
 }
 
 const Home: NextPageWithLayout<ComboPromotionPageProps> = ({
   comboPromotions,
   promotion,
 }) => {
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [canLoadMore, setCanLoadMore] = useState(
+    comboPromotions?.length === 10
+  );
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [localComboPromotions, setLocalComboPromotions] = useState<
+    ComboPromotionModel[]
+  >(comboPromotions || []);
+  const router = useRouter();
+
+  useEffect(() => {
+    setLocalComboPromotions(comboPromotions || []);
+
+    return () => {
+      setPage(1);
+      setLocalComboPromotions([]);
+    };
+  }, [comboPromotions]);
+
+  const handleLoadMore = async () => {
+    const promotionClient = new PromotionClient(null, {});
+
+    setLoadingMore(true);
+    const resComboPromotions = await promotionClient.getPromotionCombo({
+      filterByPromoSlug: router.query.slug as string,
+      page: 1,
+      pageSize: pageSize,
+    });
+
+    if (resComboPromotions.data && !!resComboPromotions.data.data.length) {
+      setLocalComboPromotions([
+        ...localComboPromotions,
+        ...resComboPromotions.data.data,
+      ]);
+    }
+
+    if ((resComboPromotions.data?.data || []).length < pageSize) {
+      setCanLoadMore(false);
+    }
+
+    setPage(page + 1);
+    setLoadingMore(false);
+  };
+
+  if (!localComboPromotions?.length) {
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description="Không có combo nào"
+        />
+      </div>
+    );
+  }
+
   return (
-    <ComboPromotionSection>
+    <div>
       {promotion?.imgUrl && (
-        <div className="mb-6">
+        <div className="mb-0 md:mb-6">
           <Divider className="m-0" />
-          <div className="relative h-[200px]">
+          <div className="relative h-[30vh]">
             <ImageWithFallback
               src={promotion?.imgUrl || ''}
               layout="fill"
+              style={{ objectFit: 'cover' }}
               objectFit="cover"
             ></ImageWithFallback>
           </div>
           <Divider className="m-0" />
         </div>
       )}
+      <ComboPromotionSection>
+        <ComboPromotionnHeader>
+          <Typography.Title
+            level={2}
+            className="m-0 text-center text-lg font-bold text-primary-light md:text-xl md:font-semibold"
+          >
+            {promotion?.name}
+          </Typography.Title>
+          <Typography.Paragraph className="m-0 text-center text-sm font-normal text-gray-600 md:text-base">
+            {localComboPromotions?.length || 0} combo dành cho bạn
+          </Typography.Paragraph>
+        </ComboPromotionnHeader>
+        <ComboPromotionBody>
+          {localComboPromotions?.map((comboPromotion) => (
+            <ComboPromotionItem
+              key={comboPromotion.promotionKey}
+              comboPromotion={comboPromotion}
+            />
+          ))}
 
-      <ComboPromotionnHeader>
-        <Typography.Title level={3} className="m-0 text-center">
-          {promotion?.name}
-        </Typography.Title>
-        <Typography.Paragraph className="m-0 text-center text-xl text-gray-600">
-          ({comboPromotions?.length} combo khuyến mãi)
-        </Typography.Paragraph>
-      </ComboPromotionnHeader>
-      <ComboPromotionBody>
-        {comboPromotions?.map((comboPromotion) => (
-          <ComboPromotionItem
-            key={comboPromotion.promotionKey}
-            comboPromotion={comboPromotion}
-          />
-        ))}
-      </ComboPromotionBody>
-    </ComboPromotionSection>
+          {canLoadMore && (
+            <Spin spinning={loadingMore}>
+              <div
+                className="mt-4 cursor-pointer text-center text-primary"
+                onClick={handleLoadMore}
+              >
+                <ChevronsDown />
+                <div>Xem thêm</div>
+              </div>
+            </Spin>
+          )}
+        </ComboPromotionBody>
+      </ComboPromotionSection>
+    </div>
   );
 };
 
 export default Home;
 Home.getLayout = (page) => {
-  return <PrimaryLayout>{page}</PrimaryLayout>;
+  return <PrimaryLayout background="primary">{page}</PrimaryLayout>;
 };
 
 export const getServerSideProps = async (
@@ -78,14 +154,16 @@ export const getServerSideProps = async (
     const [comboPromotions, promotion] = await Promise.all([
       promotionClient.getPromotionCombo({
         filterByPromoSlug: slug,
+        page: 1,
+        pageSize: 10,
       }),
-      promotionClient.getPromotion({
+      promotionClient.getPromotions({
         promoSlug: slug,
       }),
     ]);
 
     serverSideProps.props.comboPromotions = comboPromotions.data?.data;
-    serverSideProps.props.promotion = promotion.data?.[0];
+    serverSideProps.props.promotion = promotion.data?.[0] || null;
   } catch (error) {
     console.error(error);
   }

@@ -24,16 +24,16 @@ export class PromotionClient extends BaseClient {
     return await super.call('POST', `promo`, payload);
   }
 
-  async getPromotion(
+  async getPromotions(
     payload: Partial<{
-      campaignKey: null;
-      campaignSlug: null;
-      promoKey: null;
+      campaignKey: string;
+      campaignSlug: string;
+      promoKey: string;
       promoSlug: string;
       loadHidePromo: boolean;
       loadItemsInPromo: boolean;
-      itemPage: 1;
-      itemPageSize: 10;
+      itemPage: number;
+      itemPageSize: number;
       itemGetTotal: boolean;
     }>
   ): Promise<APIResponse<PromotionModel[]>> {
@@ -69,5 +69,19 @@ export class PromotionClient extends BaseClient {
     if (!payload.pageSize) payload.pageSize = 20;
 
     return await super.call('POST', `promo/combo/filter`, payload);
+  }
+
+  async getPromoCampaignSynthesis(
+    payload: Partial<{
+      campaignKey: string;
+      campaignSlug: string;
+      promoKey: string;
+      promoSlug: string;
+      loadHidePromo: boolean;
+      loadItemsInPromo: boolean;
+      itemCountInPromo: boolean;
+    }>
+  ): Promise<APIResponse<Campaign[]>> {
+    return await super.call('POST', `promo/campaign-synthesis`, payload);
   }
 }

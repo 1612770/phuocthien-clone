@@ -40,7 +40,7 @@ function AddToCartButton({
   comboPromotion?: ComboPromotionModel & { images: string[] };
   dealPromotion?: DealPromotionModel;
   giftPromotion?: GiftPromotionModel;
-  label?: string;
+  label?: string | React.ReactNode;
   type?: 'default' | 'in-detail';
 }) {
   const {

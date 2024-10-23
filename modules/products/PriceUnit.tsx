@@ -20,7 +20,7 @@ function PriceUnit({
 
   return (
     <div className="mr-0 md:mr-8">
-      <div className="flex items-end">
+      <div className="flex flex-col items-center xl:flex-row">
         <Typography.Title
           level={size === 'small' ? 5 : 3}
           className="m-0 -mb-[2px] font-bold text-primary "
@@ -30,7 +30,7 @@ function PriceUnit({
 
         {unit && (
           <Typography.Text className={size === 'small' ? 'text-sm' : 'text-xl'}>
-            &nbsp;/&nbsp;{unit}
+            / {unit}
           </Typography.Text>
         )}
       </div>

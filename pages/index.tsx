@@ -53,7 +53,7 @@ interface HomeProps extends PagePropsWithSeo {
   campaigns?: Campaign[];
   listProducts?: Product[][];
   brands: BrandModel[];
-  promotions: PromotionModel[];
+  promotionCampaigns: PromotionModel[];
   categories: Category[];
   articles: Article[];
 }
@@ -64,11 +64,12 @@ const Home: NextPageWithLayout<HomeProps> = ({
   productSearchKeywords,
   campaigns,
   brands,
-  promotions,
+  promotionCampaigns: synthesisCampaigns,
   articles,
   categories,
 }) => {
   const { setProductSearchKeywords } = useAppData();
+
   const percentPromotionSliderImages =
     campaigns?.map((campaign) => {
       let link = '#';
@@ -82,10 +83,10 @@ const Home: NextPageWithLayout<HomeProps> = ({
       };
     }) || [];
 
-  const promotionsSliderImages = promotions.reduce<
+  const promotionsSliderImages = synthesisCampaigns.reduce<
     { url: string; link?: string }[]
-  >((acc, promotion) => {
-    const comboPromotionMetadata = (promotion.promotions || []).reduce<
+  >((acc, campaign) => {
+    const comboPromotionMetadata = (campaign.promotions || []).reduce<
       { url: string; link?: string }[]
     >(
       (acc, promo) => {
@@ -282,7 +283,7 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
       campaigns: [],
       listProducts: [],
       brands: [],
-      promotions: [],
+      promotionCampaigns: [],
       categories: [],
       articles: [],
       SEOData: {},
@@ -326,7 +327,7 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
         isHide: false,
       }),
       generalClient.getProductionBrands(),
-      promotionClient.getPromotion({
+      promotionClient.getPromotions({
         loadHidePromo: false,
         loadItemsInPromo: false,
       }),
@@ -369,8 +370,9 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
       staticProps.props.campaigns = campaigns.value.data;
     }
 
+    
     if (promotions.status === 'fulfilled' && promotions.value.data) {
-      staticProps.props.promotions = promotions.value.data;
+      staticProps.props.promotionCampaigns = promotions.value.data;
     }
   } catch (error) {
     // do nothing

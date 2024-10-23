@@ -32,20 +32,21 @@ function CartProductItemNoteInput({
     <>
       <Button
         type="link"
-        className={`h-auto p-0 text-gray-500`}
+        className={`h-auto justify-start p-0 text-gray-500`}
         onClick={() => {
           inputRef.current?.focus();
           setOpen(true);
         }}
       >
-        <div className="flex gap-2">
-          <EditOutlined />
+        <div className="mt-2 flex justify-start gap-2">
+          <EditOutlined className="text-blue-500" />
           <Typography.Text
             className={`${
-              cartProduct.note ? 'text-black-100' : 'text-gray-500'
-            } whitespace-pre-wrap text-left`}
+              cartProduct.note ? 'text-blue-500' : 'text-gray-500'
+            } whitespace-pre-wrap text-left text-xs`}
           >
-            &nbsp;{cartProduct.note || 'Thêm ghi chú'}
+            &nbsp;
+            {cartProduct.note ? `Ghi chú: ${cartProduct.note}` : 'Thêm ghi chú'}
           </Typography.Text>
         </div>
       </Button>
@@ -61,7 +62,7 @@ function CartProductItemNoteInput({
         focusTriggerAfterClose={false}
         title={
           <Typography className="text-base font-medium">
-            Nhập ghi chú cho sản phẩm $
+            Nhập ghi chú cho sản phẩm&nbsp;
             {cartProduct.product?.detail?.displayName}
           </Typography>
         }

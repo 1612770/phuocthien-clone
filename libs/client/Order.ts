@@ -69,4 +69,36 @@ export class OrderClient extends BaseClient {
   }): Promise<APIResponse<OrderModel>> {
     return await super.call('PUT', `order/confirm-banked`, payload);
   }
+
+  async bookOrder(payload: {
+    customerInfo: {
+      name: string;
+      tel: string;
+    };
+    paymentMethodKey: string;
+    shippingType: ShippingTypes;
+    drugstoreKey?: string;
+    deliveryAddressInfo?: {
+      province: string;
+      district: string;
+      ward: string;
+      detail: string;
+    };
+    items: {
+      productKey: string;
+      productUnit: string;
+      quantity: number;
+      note: string;
+    }[];
+    promoItems: {
+      itemKey: string;
+      quantity: number;
+      itemType: string;
+      note: string;
+    }[];
+    offerCode?: string;
+    orderNote?: string;
+  }): Promise<APIResponse<OrderModel>> {
+    return await super.call('POST', `order`, payload);
+  }
 }

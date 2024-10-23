@@ -14,6 +14,7 @@ import { useCart } from '@providers/CartProvider';
 import { PromotionPercent } from '@configs/models/promotion.model';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import COLORS from '@configs/colors';
+import { getProductName } from '@libs/helpers';
 
 export const getMaxPromotion = (
   promotionPercents: PromotionPercent[]
@@ -106,7 +107,7 @@ function ProductMain({
               Giảm {(maxPromotion?.val || 0) * 100}%
             </Tag>
           )}{' '}
-          {product?.detail?.displayName || product?.name}
+          {getProductName(product)}
         </Typography.Title>
         {product?.isPrescripted && (
           <div className="text-primary">
@@ -143,7 +144,7 @@ function ProductMain({
               </div>
             </div>
           ) : (
-            <>
+            <div className="flex flex-col items-center gap-4 sm:flex-row md:gap-2">
               <PriceUnit price={product.retailPrice} unit={product.unit} />
               <div className="flex flex-col gap-1 py-2">
                 <ProductCTA
@@ -172,7 +173,7 @@ function ProductMain({
                   </div>
                 )}
               </div>
-            </>
+            </div>
           )}
         </div>
         <PromotionList

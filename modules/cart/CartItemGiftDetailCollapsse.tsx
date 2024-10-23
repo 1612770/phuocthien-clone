@@ -30,7 +30,7 @@ function CartItemGiftDetailCollapsse({ cartGift }: { cartGift: CartGift }) {
       <Collapse.Panel
         showArrow={false}
         header={
-          <span className="mb-[-32px] inline-block rounded-lg border border-solid px-2 py-0 text-blue-500">
+          <span className="mt-1 mb-[-32px] inline-block rounded-lg border border-solid px-2 py-0 text-blue-500">
             <Typography.Text className="text-xs text-inherit">
               Gói quà tặng
             </Typography.Text>

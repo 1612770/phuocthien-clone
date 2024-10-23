@@ -1,4 +1,12 @@
-import { Button, Grid, Input, Radio, Space, Tooltip, Typography } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Grid,
+  Input,
+  Space,
+  Tooltip,
+  Typography,
+} from 'antd';
 import Product, {
   CartCombo,
   CartDeal,
@@ -208,6 +216,7 @@ function CartItem({
     : cartGift
     ? ''
     : getProductName(cartProduct?.product);
+
   const price = CurrencyUtils.format(
     cartCombo
       ? cartCombo.comboPromotion.totalAmount
@@ -259,38 +268,28 @@ function CartItem({
     : cartProduct?.choosen;
 
   const cartUnit = cartCombo
-    ? 'Combo'
+    ? ''
     : cartDeal
-    ? 'Deal'
+    ? ''
     : cartGift
-    ? 'Quà'
+    ? ''
     : cartProduct?.product?.unit || '';
 
   const { xl } = Grid.useBreakpoint();
   const productMeta = (
-    <div className="flex flex-wrap items-center justify-between gap-2">
-      <div className="flex shrink-0 basis-[112px] flex-col">
+    <div className="flex items-center justify-between gap-2 md:justify-start">
+      <div className="flex w-[120px] flex-col">
         <Typography.Text className="">
-          <Typography.Text className="text-sm font-semibold">
+          <Typography.Text className="text-sm font-semibold text-primary">
             {isDiscount ? priceWithDiscount : price}
           </Typography.Text>
         </Typography.Text>
         {isDiscount && (
-          <Typography.Text className="text-left text-xs font-semibold text-gray-500 line-through">
+          <Typography.Text className="font-regular text-left text-xs text-gray-500 line-through">
             {price}
           </Typography.Text>
         )}
       </div>
-
-      {cartStep === 'cart' && (
-        <div className="flex shrink-0 basis-[80px] items-center">
-          {cartUnit && (
-            <Typography.Text className=" whitespace-nowrap text-sm ">
-              {cartUnit}
-            </Typography.Text>
-          )}
-        </div>
-      )}
 
       {cartStep === 'cart' && (
         <Space size={4} className="shrink-0 basis-[160px] sm:ml-auto">
@@ -357,18 +356,9 @@ function CartItem({
       )}
 
       {cartStep === 'checkout' && (
-        <Typography.Text className="text-right text-sm text-gray-500">
+        <Typography.Text className="text-right text-lg font-bold text-neutral-900">
           x {quantity} {cartProduct?.product?.unit}
         </Typography.Text>
-      )}
-      {checkInventory && !checkInventory.statusData.isStillAvailable && (
-        <div className="text-red-700">
-          Hiện tại mặt hàng này không đủ số lượng bạn yêu cầu.
-          <br /> Tổng số lượng sản phẩm hiện tại là:{' '}
-          <b>{checkInventory.statusData.drugstoreQuantity}</b>
-          <br />
-          Vui lòng cập nhật lại giỏ hàng.
-        </div>
       )}
     </div>
   );
@@ -381,9 +371,10 @@ function CartItem({
           : ''
       }`}
     >
-      <div className="flex items-center justify-start gap-1 xl:justify-between ">
+      <div className="flex items-start justify-start gap-2 md:gap-4 xl:justify-between ">
         {cartStep === 'cart' && (
-          <Radio
+          <Checkbox
+            className="mt-2"
             checked={cartItemChoosen}
             onClick={() => {
               if (
@@ -427,13 +418,16 @@ function CartItem({
                   href={`/${cartProduct?.product?.productType?.seoUrl}/${cartProduct?.product?.detail?.seoUrl}`}
                 >
                   <Typography.Text className="mt-2">
+                    <div className="mr-1 inline-block rounded-lg bg-gray-200 p-1 px-2 text-xs font-medium text-neutral-900">
+                      {cartUnit}
+                    </div>{' '}
                     {displayName}
                   </Typography.Text>
                 </LinkWrapper>
               )}
 
               {cartCombo && (
-                <Typography.Text className="mt-2">
+                <Typography.Text className="mt-2 font-medium">
                   {displayName}
                 </Typography.Text>
               )}
@@ -457,17 +451,19 @@ function CartItem({
           </div>
 
           {!xl && <div className="ml-[60px]">{productMeta}</div>}
+
+          {checkInventory && !checkInventory.statusData.isStillAvailable && (
+            <div className="mt-4 text-red-700">
+              Hiện tại mặt hàng này không đủ số lượng bạn yêu cầu.
+              <br /> Tổng số lượng sản phẩm hiện tại là:{' '}
+              <b>{checkInventory.statusData.drugstoreQuantity}</b>
+              <br />
+              Vui lòng cập nhật lại giỏ hàng.
+            </div>
+          )}
         </div>
 
-        {xl && (
-          <div
-            className={`shrink-0 ${
-              cartStep === 'cart' ? 'basis-[380px]' : 'basis-[200px]'
-            }`}
-          >
-            {productMeta}
-          </div>
-        )}
+        {xl && <div>{productMeta}</div>}
       </div>
     </div>
   );

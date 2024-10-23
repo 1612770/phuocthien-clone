@@ -15,7 +15,13 @@ import { useMasterData } from './MasterDataProvider';
 import { Form, FormInstance } from 'antd';
 import { ProductClient } from '@libs/client/Product';
 import { PromotionClient } from '@libs/client/Promotion';
-import { PromotionPercent } from '@configs/models/promotion.model';
+import {
+  ComboPromotionModel,
+  DealPromotionModel,
+  GiftPromotionModel,
+  PromotionModel,
+  PromotionPercent,
+} from '@configs/models/promotion.model';
 
 export const getLargestMatchedMinConditionProduct = (
   promotions: PromotionPercent[],
@@ -348,141 +354,172 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
     quantity: number;
     note?: string;
   }) => {
-    const largestMatchedMinConditionProduct =
-      getLargestMatchedMinConditionProduct(
-        cartProduct.product?.promotions || [],
-        cartProduct.quantity
-      );
-
     const res: {
       productKey: string;
+      productUnit: string;
       quantity: number;
       note: string;
-      keyPromo?: string;
-      keyPromoPercent?: string;
     } = {
       productKey: cartProduct.product?.key || '',
+      productUnit: cartProduct.product?.unit || '',
       quantity: cartProduct.quantity || 0,
       note: cartProduct.note || '',
     };
-
-    if (
-      largestMatchedMinConditionProduct &&
-      cartProduct.quantity >=
-        largestMatchedMinConditionProduct.productQuantityMinCondition
-    ) {
-      res.keyPromo = largestMatchedMinConditionProduct.promotionKey;
-      res.keyPromoPercent = largestMatchedMinConditionProduct.key;
-    }
 
     return res;
   };
 
   const _checkPromotionsInventoryBeforeCheckOut = async () => {
-    // TODO: Implement this function
-    // const promotionClient = new PromotionClient(null, {});
-    // const [latestPromotions] = await Promise.all([
-    //   promotionClient.getPromotion({
-    //     loadHidePromo: true,
-    //     loadItemsInPromo: true,
-    //   }),
-    // ]);
-    // // const comboPromotions = latestPromotions.data?.filter(promotion => promotion.promotions.filter) || [];
-    // // const giftPromotions = giftPromotionResponse.data || [];
-    // // const dealPromotions = dealPromotionResponse.data || [];
-    // const comboPromotions = [];
-    // const giftPromotions = [];
-    // const dealPromotions = [];
-    // const notAvailableComboPromotionsInCart = choosenCartCombos.filter(
-    //   (choosenCombo) => {
-    //     const availablePromotion = comboPromotions.find((promotion) => {
-    //       return promotion.key == choosenCombo.comboPromotion.key;
-    //     });
-    //     if (!availablePromotion) {
-    //       return true;
-    //     }
-    //     return false;
-    //   }
-    // );
-    // const notAvailableGiftPromotionsInCart = choosenCartGifts.filter(
-    //   (choosenGift) => {
-    //     const availablePromotion = giftPromotions.find((promotion) => {
-    //       return promotion.key == choosenGift.giftPromotion.key;
-    //     });
-    //     if (!availablePromotion) {
-    //       return true;
-    //     }
-    //     return false;
-    //   }
-    // );
-    // const notAvailableDealPromotionsInCart = choosenCartDeals.filter(
-    //   (choosenDeal) => {
-    //     const availablePromotion = dealPromotions.find((promotion) => {
-    //       return promotion.key == choosenDeal.dealPromotion.key;
-    //     });
-    //     if (!availablePromotion) {
-    //       return true;
-    //     }
-    //     return false;
-    //   }
-    // );
-    // if (
-    //   notAvailableComboPromotionsInCart.length ||
-    //   notAvailableGiftPromotionsInCart.length ||
-    //   notAvailableDealPromotionsInCart.length
-    // ) {
-    //   setConfirmData({
-    //     title: 'Có sản phẩm không còn khuyến mãi',
-    //     content: (
-    //       <>
-    //         Các sản phẩm sau sẽ bị loại bỏ khỏi giỏ hàng vì không còn khuyến
-    //         mãi:
-    //         <ul>
-    //           {notAvailableComboPromotionsInCart.map((combo) => (
-    //             <li key={combo.comboPromotion.key}>
-    //               {combo.comboPromotion.name}
-    //             </li>
-    //           ))}
-    //           {notAvailableGiftPromotionsInCart.map((gift) => (
-    //             <li key={gift.giftPromotion.key}>
-    //               Gift #{gift.giftPromotion.key}
-    //             </li>
-    //           ))}
-    //           {notAvailableDealPromotionsInCart.map((deal) => (
-    //             <li key={deal.dealPromotion.key}>
-    //               Deal #{deal.dealPromotion.key}
-    //             </li>
-    //           ))}
-    //         </ul>
-    //       </>
-    //     ),
-    //     cancelButtonProps: {
-    //       hidden: true,
-    //     },
-    //     onOk: () => {
-    //       removeFromCart(
-    //         {
-    //           comboPromotions: notAvailableComboPromotionsInCart.map(
-    //             (cartCombo) => cartCombo.comboPromotion
-    //           ),
-    //           giftPromotions: notAvailableGiftPromotionsInCart.map(
-    //             (cartGift) => cartGift.giftPromotion
-    //           ),
-    //           dealPromotions: notAvailableDealPromotionsInCart.map(
-    //             (cartDeal) => cartDeal.dealPromotion
-    //           ),
-    //         },
-    //         {
-    //           isShowConfirm: false,
-    //         }
-    //       );
-    //       toastSuccess({
-    //         data: 'Đã loại bỏ sản phẩm không còn khuyến mãi khỏi giỏ hàng.',
-    //       });
-    //     },
-    //   });
-    // throw new Error('Có sản phẩm không còn khuyến mãi');
-    // }
+    const promotionClient = new PromotionClient(null, {});
+    const recentPromotions = await promotionClient.getPromotions({
+      loadHidePromo: false,
+      loadItemsInPromo: true,
+    });
+
+    const promotions = (recentPromotions.data || []).reduce((prev, curr) => {
+      return [...prev, ...curr.promotions];
+    }, [] as PromotionModel['promotions']);
+
+    const { promotionsCombos, promotionsGifts, promotionsDeals } =
+      promotions.reduce(
+        (
+          prev: {
+            promotionsCombos: ComboPromotionModel[];
+            promotionsGifts: GiftPromotionModel[];
+            promotionsDeals: DealPromotionModel[];
+          },
+          curr
+        ) => {
+          if ('promoComboes' in curr && !!curr.promoComboes) {
+            return {
+              ...prev,
+              promotionsCombos: [
+                ...prev.promotionsCombos,
+                ...curr.promoComboes,
+              ],
+            };
+          }
+
+          if ('promoGifts' in curr && !!curr.promoGifts) {
+            return {
+              ...prev,
+              promotionsGifts: [...prev.promotionsGifts, ...curr.promoGifts],
+            };
+          }
+
+          if ('promoDeals' in curr && !!curr.promoDeals) {
+            return {
+              ...prev,
+              promotionsDeals: [...prev.promotionsDeals, ...curr.promoDeals],
+            };
+          }
+
+          return prev;
+        },
+        {
+          promotionsCombos: [],
+          promotionsGifts: [],
+          promotionsDeals: [],
+        }
+      ) || {};
+
+    const notAvailableComboPromotionsInCart = choosenCartCombos.filter(
+      (choosenCombo) => {
+        const availablePromotion = promotionsCombos.find((_combo) => {
+          return _combo.key == choosenCombo.comboPromotion.key;
+        });
+
+        if (!availablePromotion) {
+          return true;
+        }
+
+        return false;
+      }
+    );
+
+    const notAvailableGiftPromotionsInCart = choosenCartGifts.filter(
+      (choosenGift) => {
+        const availablePromotion = promotionsGifts.find((gift) => {
+          return gift.key == choosenGift.giftPromotion.key;
+        });
+
+        if (!availablePromotion) {
+          return true;
+        }
+
+        return false;
+      }
+    );
+    const notAvailableDealPromotionsInCart = choosenCartDeals.filter(
+      (choosenDeal) => {
+        const availablePromotion = promotionsDeals.find((deal) => {
+          return deal.key == choosenDeal.dealPromotion.key;
+        });
+
+        if (!availablePromotion) {
+          return true;
+        }
+
+        return false;
+      }
+    );
+    if (
+      notAvailableComboPromotionsInCart.length ||
+      notAvailableGiftPromotionsInCart.length ||
+      notAvailableDealPromotionsInCart.length
+    ) {
+      setConfirmData({
+        title: 'Có sản phẩm không còn khuyến mãi',
+        content: (
+          <>
+            Các sản phẩm sau sẽ bị loại bỏ khỏi giỏ hàng vì không còn khuyến
+            mãi:
+            <ul>
+              {notAvailableComboPromotionsInCart.map((combo) => (
+                <li key={combo.comboPromotion.key}>
+                  {combo.comboPromotion.name}
+                </li>
+              ))}
+              {notAvailableGiftPromotionsInCart.map((gift) => (
+                <li key={gift.giftPromotion.key}>
+                  Gift #{gift.giftPromotion.key}
+                </li>
+              ))}
+              {notAvailableDealPromotionsInCart.map((deal) => (
+                <li key={deal.dealPromotion.key}>
+                  Deal #{deal.dealPromotion.key}
+                </li>
+              ))}
+            </ul>
+          </>
+        ),
+        cancelButtonProps: {
+          hidden: true,
+        },
+        onOk: () => {
+          removeFromCart(
+            {
+              comboPromotions: notAvailableComboPromotionsInCart.map(
+                (cartCombo) => cartCombo.comboPromotion
+              ),
+              giftPromotions: notAvailableGiftPromotionsInCart.map(
+                (cartGift) => cartGift.giftPromotion
+              ),
+              dealPromotions: notAvailableDealPromotionsInCart.map(
+                (cartDeal) => cartDeal.dealPromotion
+              ),
+            },
+            {
+              isShowConfirm: false,
+            }
+          );
+          toastSuccess({
+            data: 'Đã loại bỏ sản phẩm không còn khuyến mãi khỏi giỏ hàng.',
+          });
+        },
+      });
+      throw new Error('Có sản phẩm không còn khuyến mãi');
+    }
   };
 
   const checkInventoryBeforeCheckOut = async () => {
@@ -583,7 +620,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
       const valuesToSubmit = checkoutForm.getFieldsValue();
 
       const order = new OrderClient(null, {});
-      const orderResponse = await order.order({
+      const orderResponse = await order.bookOrder({
         customerInfo: {
           name: valuesToSubmit.name.trim(),
           tel: valuesToSubmit.tel.trim(),
@@ -601,6 +638,26 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         items: choosenCartProducts.map((cartProduct) =>
           getCartProductOrderItem(cartProduct)
         ),
+        promoItems: [
+          ...choosenCartCombos.map((cartCombo) => ({
+            itemKey: cartCombo.comboPromotion.key,
+            quantity: cartCombo.quantity,
+            itemType: 'PRODUCT_COMBO',
+            note: '',
+          })),
+          ...choosenCartDeals.map((cartDeal) => ({
+            itemKey: cartDeal.dealPromotion.key,
+            quantity: cartDeal.quantity,
+            itemType: 'PRODUCT_DEAL',
+            note: '',
+          })),
+          ...choosenCartGifts.map((cartGift) => ({
+            itemKey: cartGift.giftPromotion.key,
+            quantity: cartGift.quantity,
+            itemType: 'PRODUCT_GIFT',
+            note: '',
+          })),
+        ],
         offerCode: offer?.offerCode || undefined,
         orderNote: valuesToSubmit.orderNote || undefined,
       });
