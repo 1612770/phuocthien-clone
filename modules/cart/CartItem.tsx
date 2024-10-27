@@ -357,7 +357,7 @@ function CartItem({
 
       {cartStep === 'checkout' && (
         <Typography.Text className="text-right text-lg font-bold text-neutral-900">
-          x {quantity} {cartProduct?.product?.unit}
+          x {quantity}
         </Typography.Text>
       )}
     </div>

@@ -43,7 +43,8 @@ const Home: NextPageWithLayout<{
 
   if (!campaign) return null;
 
-  const percentPromotions = campaign.promotions;
+  const campaignPromotions = campaign.promotions;
+
   return (
     <>
       {campaign.metaSeo && (
@@ -63,11 +64,18 @@ const Home: NextPageWithLayout<{
         </div>
         <div className=" z-[100] bg-primary-light">
           <div className="container flex justify-center gap-2 overflow-auto px-2 py-2 md:px-0 lg:justify-center">
-            {(percentPromotions || []).map((promotion) => (
+            {(campaignPromotions || []).map((promotion) => (
               <div
                 className="cursor-pointer rounded-full border border-solid border-white px-4 py-1 text-white transition-all duration-200 ease-in-out hover:bg-white hover:text-primary"
                 key={promotion.key}
-                onClick={() => scrollIntoView(promotion.key)}
+                onClick={() => {
+                  if (promotion.type === 'PRODUCT_COMBO') {
+                    router.push(`/khuyen-mai/combo/${promotion.slug}`);
+                    return;
+                  }
+
+                  scrollIntoView(promotion.key);
+                }}
               >
                 <Typography.Text className="whitespace-nowrap  capitalize text-inherit transition-all duration-200 ease-in-out">
                   {promotion.name}
@@ -83,7 +91,7 @@ const Home: NextPageWithLayout<{
           if (!keyPromo) {
             return null;
           }
-          const promotion = percentPromotions.find(
+          const promotion = campaignPromotions.find(
             (promotion) => promotion.key === keyPromo
           );
           if (!promotion) return null;

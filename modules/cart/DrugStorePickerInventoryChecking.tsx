@@ -145,9 +145,9 @@ function DrugStorePickerInventoryChecking({
     <div className="bg-red-100">
       {productStatuses.length > 0 && (
         <>
-          <Spin spinning={checking}>
-            <div className="bg-red-50 p-4">
-              {notAvailableProducts.length > 0 && (
+          {notAvailableProducts.length > 0 && (
+            <Spin spinning={checking}>
+              <div className="bg-red-50 p-4">
                 <>
                   <Form.Item
                     className="m-0 h-1 w-0 overflow-hidden"
@@ -161,111 +161,113 @@ function DrugStorePickerInventoryChecking({
                     thức nhận hàng.
                   </Typography>
                 </>
-              )}
 
-              {notAvailableProducts.map((productStatus, index) => (
-                <div
-                  key={index}
-                  className="mx-2 flex items-center rounded-lg border-b py-2"
-                >
-                  <div className="relative mr-4 flex h-[60px] w-[60px] flex-col">
-                    <ImageWithFallback
-                      src={productStatus.product.detail?.image || ''}
-                      alt="product image"
-                      layout="fill"
-                    />
+                {notAvailableProducts.map((productStatus, index) => (
+                  <div
+                    key={index}
+                    className="mx-2 flex items-center rounded-lg border-b py-2"
+                  >
+                    <div className="relative mr-4 flex h-[60px] w-[60px] flex-col">
+                      <ImageWithFallback
+                        src={productStatus.product.detail?.image || ''}
+                        alt="product image"
+                        layout="fill"
+                      />
+                    </div>
+                    <div key={productStatus.product.key} className="  p-2">
+                      <Typography className="font-medium">
+                        {productStatus.product.detail?.displayName}
+                      </Typography>
+                      {!productStatus.statusData.isStillAvailable && (
+                        <>
+                          {(productStatus.statusData.drugstoreQuantity ||
+                            0 > 0) && (
+                            <>
+                              <Typography className={'text-red-500'}>
+                                Hiện tại, nhà thuốc này chỉ còn{' '}
+                                <b>
+                                  {productStatus.statusData.drugstoreQuantity}{' '}
+                                </b>
+                                {(
+                                  productStatus.product.unit || ''
+                                ).toLowerCase()}
+                              </Typography>
+                              <Button
+                                type="primary"
+                                ghost
+                                className="mt-2"
+                                onClick={() => {
+                                  changeCartItemData(
+                                    { product: productStatus.product },
+                                    {
+                                      field: 'quantity',
+                                      value:
+                                        productStatus.statusData
+                                          .drugstoreQuantity || 1,
+                                    }
+                                  );
+
+                                  setProductStatuses(
+                                    productStatuses.filter(
+                                      (productStatus) =>
+                                        productStatus.product.key !==
+                                        productStatus.product.key
+                                    )
+                                  );
+
+                                  toastSuccess({
+                                    data: 'Cập nhật số lượng thành công',
+                                  });
+                                }}
+                              >
+                                Cập nhật giỏ hàng
+                              </Button>
+                            </>
+                          )}
+
+                          {!productStatus.statusData.drugstoreQuantity && (
+                            <>
+                              <Typography className={'text-red-500'}>
+                                Hiện tại, nhà thuốc này đã hết hàng
+                              </Typography>
+                              <Button
+                                type="primary"
+                                ghost
+                                danger
+                                className="mt-2"
+                                onClick={() => {
+                                  removeFromCart(
+                                    { product: productStatus.product },
+                                    {
+                                      isShowConfirm: false,
+                                    }
+                                  );
+
+                                  setProductStatuses(
+                                    productStatuses.filter(
+                                      (productStatus) =>
+                                        productStatus.product.key !==
+                                        productStatus.product.key
+                                    )
+                                  );
+
+                                  toastSuccess({
+                                    data: 'Bỏ khỏi giỏ hàng thành công',
+                                  });
+                                }}
+                              >
+                                Bỏ khỏi giỏ hàng
+                              </Button>
+                            </>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
-                  <div key={productStatus.product.key} className="  p-2">
-                    <Typography className="font-medium">
-                      {productStatus.product.detail?.displayName}
-                    </Typography>
-                    {!productStatus.statusData.isStillAvailable && (
-                      <>
-                        {(productStatus.statusData.drugstoreQuantity ||
-                          0 > 0) && (
-                          <>
-                            <Typography className={'text-red-500'}>
-                              Hiện tại, nhà thuốc này chỉ còn{' '}
-                              <b>
-                                {productStatus.statusData.drugstoreQuantity}{' '}
-                              </b>
-                              {(productStatus.product.unit || '').toLowerCase()}
-                            </Typography>
-                            <Button
-                              type="primary"
-                              ghost
-                              className="mt-2"
-                              onClick={() => {
-                                changeCartItemData(
-                                  { product: productStatus.product },
-                                  {
-                                    field: 'quantity',
-                                    value:
-                                      productStatus.statusData
-                                        .drugstoreQuantity || 1,
-                                  }
-                                );
-
-                                setProductStatuses(
-                                  productStatuses.filter(
-                                    (productStatus) =>
-                                      productStatus.product.key !==
-                                      productStatus.product.key
-                                  )
-                                );
-
-                                toastSuccess({
-                                  data: 'Cập nhật số lượng thành công',
-                                });
-                              }}
-                            >
-                              Cập nhật giỏ hàng
-                            </Button>
-                          </>
-                        )}
-
-                        {!productStatus.statusData.drugstoreQuantity && (
-                          <>
-                            <Typography className={'text-red-500'}>
-                              Hiện tại, nhà thuốc này đã hết hàng
-                            </Typography>
-                            <Button
-                              type="primary"
-                              ghost
-                              danger
-                              className="mt-2"
-                              onClick={() => {
-                                removeFromCart(
-                                  { product: productStatus.product },
-                                  {
-                                    isShowConfirm: false,
-                                  }
-                                );
-
-                                setProductStatuses(
-                                  productStatuses.filter(
-                                    (productStatus) =>
-                                      productStatus.product.key !==
-                                      productStatus.product.key
-                                  )
-                                );
-
-                                toastSuccess({
-                                  data: 'Bỏ khỏi giỏ hàng thành công',
-                                });
-                              }}
-                            >
-                              Bỏ khỏi giỏ hàng
-                            </Button>
-                          </>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Spin>
+                ))}
+              </div>
+            </Spin>
+          )}
         </>
       )}
     </div>

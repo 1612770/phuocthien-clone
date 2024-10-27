@@ -39,6 +39,7 @@ const OrderPage: NextPageWithLayout = ({
 }) => {
   const router = useRouter();
   const [orderToShow, setOrderToShow] = useState(order);
+
   const [loading, setLoading] = useState(false);
 
   const appConfirmDialog = useAppConfirmDialog();

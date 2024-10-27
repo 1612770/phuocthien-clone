@@ -66,13 +66,13 @@ function PromotionListDealListItem({
           <div className="flex items-center">
             {dealPromotion.totalAmount != dealPromotion.totalCost && (
               <Typography.Paragraph className="text m-0 line-through">
-                {CurrencyUtils.format(dealPromotion.totalCost)}
+                {CurrencyUtils.format(dealPromotion.totalAmount)}
               </Typography.Paragraph>
             )}
             &nbsp;
             <Typography.Paragraph className="text text-bold m-0 text-primary">
               <span className="text-xs text-gray-900">Chỉ còn </span>
-              <b>{CurrencyUtils.format(dealPromotion.totalAmount)}</b>
+              <b>{CurrencyUtils.format(dealPromotion.totalCost)}</b>
             </Typography.Paragraph>
           </div>
 

@@ -27,16 +27,17 @@ function PromotionProductsList({
   scrollable?: boolean;
 }) {
   const [promotionProducts, setPromotionProducts] = useState<Product[]>([]);
+
   const [loadingMore, setLoadingMore] = useState(false);
-  const [allowLoadMore, setAllowLoadMore] = useState(false);
+  const [allowLoadMore, setAllowLoadMore] = useState(true);
 
   const { toastError } = useAppMessage();
 
   useEffect(() => {
-    if (promotionProducts.length < MAX_PRODUCT_PER_PAGE) {
-      setAllowLoadMore(true);
+    if (defaultProducts.length < MAX_PRODUCT_PER_PAGE) {
+      setAllowLoadMore(false);
     }
-  }, [promotionProducts]);
+  }, [defaultProducts]);
 
   useEffect(() => {
     setPromotionProducts(defaultProducts || []);
@@ -51,7 +52,7 @@ function PromotionProductsList({
       setLoadingMore(true);
 
       const { data } = await promotionClient.getPromoProducts({
-        page: Math.floor(promotionProducts.length / MAX_PRODUCT_PER_PAGE) + 1,
+        page: Math.ceil(promotionProducts.length / MAX_PRODUCT_PER_PAGE) + 1,
         pageSize: MAX_PRODUCT_PER_PAGE,
         keyPromo: promotion?.key,
         isHide: false,
@@ -60,7 +61,7 @@ function PromotionProductsList({
       if (data?.length) {
         setPromotionProducts((prev) => [...prev, ...data]);
       }
-      if ((data?.length || 0) < 8) {
+      if ((data?.length || 0) < MAX_PRODUCT_PER_PAGE) {
         setAllowLoadMore(false);
       }
     } catch (error) {

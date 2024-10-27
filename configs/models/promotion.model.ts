@@ -61,7 +61,7 @@ export interface CampaignPromotion {
   promoPercent: CampaignpromotionPercent[];
   startDate: string;
   status: string;
-  type: string;
+  type: PromotionType;
   updatedAt: string;
 }
 
@@ -275,6 +275,12 @@ interface GiftPromotionModelPolicy {
   requiredProdQty: number;
 }
 
+type PromotionType =
+  | 'PRODUCT_PERCENT'
+  | 'PRODUCT_COMBO'
+  | 'PRODUCT_GIFT'
+  | 'PRODUCT_DEAL';
+
 export interface SynthesisCampaign {
   SHOW_APP_WEB: boolean;
   SHOW_AT_STORE: boolean;
@@ -332,11 +338,8 @@ export interface SynthesisCampaign {
       slug: string;
       startDate: string;
       status: 'ACTIVE';
-      type:
-        | 'PRODUCT_COMBO'
-        | 'PRODUCT_PERCENT'
-        | 'PRODUCT_GIFT'
-        | 'PRODUCT_DEAL';
+      type: PromotionType;
+
       updatedAt: string;
     }
   ];

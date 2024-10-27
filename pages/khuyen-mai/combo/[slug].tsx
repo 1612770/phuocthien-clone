@@ -16,9 +16,11 @@ import { ChevronsDown } from 'react-feather';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
+type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType[number];
+
 interface ComboPromotionPageProps {
   comboPromotions?: ComboPromotionModel[];
-  promotion?: PromotionModel | null;
+  promotion: ArrayElement<PromotionModel['promotions']> | null;
 }
 
 const Home: NextPageWithLayout<ComboPromotionPageProps> = ({
@@ -51,7 +53,7 @@ const Home: NextPageWithLayout<ComboPromotionPageProps> = ({
     setLoadingMore(true);
     const resComboPromotions = await promotionClient.getPromotionCombo({
       filterByPromoSlug: router.query.slug as string,
-      page: 1,
+      page: page + 1,
       pageSize: pageSize,
     });
 
@@ -145,7 +147,9 @@ export const getServerSideProps = async (
   const serverSideProps: {
     props: ComboPromotionPageProps;
   } = {
-    props: {},
+    props: {
+      promotion: null,
+    },
   };
 
   const promotionClient = new PromotionClient(context, {});
@@ -163,7 +167,8 @@ export const getServerSideProps = async (
     ]);
 
     serverSideProps.props.comboPromotions = comboPromotions.data?.data;
-    serverSideProps.props.promotion = promotion.data?.[0] || null;
+    serverSideProps.props.promotion =
+      promotion.data?.[0]?.promotions?.[0] || null;
   } catch (error) {
     console.error(error);
   }

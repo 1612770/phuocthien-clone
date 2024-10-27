@@ -371,12 +371,19 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
 
   const _checkPromotionsInventoryBeforeCheckOut = async () => {
     const promotionClient = new PromotionClient(null, {});
-    const recentPromotions = await promotionClient.getPromotions({
+    const recentHiddenPromotions = await promotionClient.getPromotions({
       loadHidePromo: false,
       loadItemsInPromo: true,
     });
+    const recentShowedPromotions = await promotionClient.getPromotions({
+      loadHidePromo: true,
+      loadItemsInPromo: true,
+    });
 
-    const promotions = (recentPromotions.data || []).reduce((prev, curr) => {
+    const promotions = [
+      ...(recentHiddenPromotions.data || []),
+      ...(recentShowedPromotions.data || []),
+    ].reduce((prev, curr) => {
       return [...prev, ...curr.promotions];
     }, [] as PromotionModel['promotions']);
 
@@ -450,6 +457,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
     );
+
     const notAvailableDealPromotionsInCart = choosenCartDeals.filter(
       (choosenDeal) => {
         const availablePromotion = promotionsDeals.find((deal) => {
@@ -463,6 +471,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
     );
+
     if (
       notAvailableComboPromotionsInCart.length ||
       notAvailableGiftPromotionsInCart.length ||
@@ -534,7 +543,6 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
         await _checkPromotionsInventoryBeforeCheckOut();
       } catch (error) {
         setCheckingPrice(false);
-        return;
       }
     }
 
@@ -648,7 +656,7 @@ function CheckoutProvider({ children }: { children: React.ReactNode }) {
           ...choosenCartDeals.map((cartDeal) => ({
             itemKey: cartDeal.dealPromotion.key,
             quantity: cartDeal.quantity,
-            itemType: 'PRODUCT_DEAL',
+            itemType: 'booo',
             note: '',
           })),
           ...choosenCartGifts.map((cartGift) => ({
